@@ -1,0 +1,81 @@
+name: Generate and publish
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+    inputs:
+      generate_concepts:
+        description: Generate today's three concepts before publishing
+        required: false
+        default: true
+        type: boolean
+
+  schedule:
+    - cron: "15 07 * * *"
+      timezone: "Europe/Riga"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Generate three daily concepts
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.generate_concepts)
+        run: npm run generate
+
+      - name: Commit generated concepts
+        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.generate_concepts)
+        run: |
+          if git diff --quiet; then
+            echo "No new concepts to commit."
+            exit 0
+          fi
+
+          git config user.name "ai-booklet-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/booklets.json
+          git commit -m "Add daily booklet concepts"
+          git push
+
+      - name: Prepare static site
+        run: |
+          mkdir -p _site
+          cp index.html styles.css app.js .nojekyll _site/
+          cp -R data _site/data
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload static site
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: "_site"
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
