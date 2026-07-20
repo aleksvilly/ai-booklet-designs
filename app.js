@@ -8,27 +8,37 @@ const emptyState = document.querySelector('#empty-state');
 
 let allBooklets = [];
 let activeFilter = 'All';
-
 const today = new Date();
 today.setHours(23, 59, 59, 999);
 
-function isPublished(item) {
-  const date = new Date(`${item.publishDate}T00:00:00`);
-  return date <= today;
+function escapeHtml(value = '') {
+  return String(value).replace(/[&<>'"]/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[char]);
 }
-
+function safeUrl(value = '') {
+  try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : '#'; }
+  catch { return '#'; }
+}
+function isPublished(item) { return new Date(`${item.publishDate}T00:00:00`) <= today; }
 function visibleBooklets() {
-  return allBooklets
-    .filter(isPublished)
-    .filter(item => activeFilter === 'All' || item.category === activeFilter)
+  return allBooklets.filter(isPublished).filter(item => activeFilter === 'All' || item.category === activeFilter)
     .sort((a, b) => b.publishDate.localeCompare(a.publishDate));
 }
-
 function coverTitle(title) {
   const words = title.split(' ');
-  if (words.length < 3) return title;
-  return `${words.slice(0, -1).join(' ')}\n${words.at(-1)}`;
+  return words.length < 3 ? title : `${words.slice(0, -1).join(' ')}\n${words.at(-1)}`;
 }
+function applyPalette(node, palette) { palette.forEach((color, index) => node.style.setProperty(`--c${index + 1}`, color)); }
+
+function legacyPages(item) {
+  const titles = item.spreads || ['Opening statement', 'A world in fragments', 'The central visual story', 'A quiet final note'];
+  return titles.map((title, index) => ({
+    type: index === 0 ? 'cover' : index === titles.length - 1 ? 'closing' : 'editorial',
+    title,
+    body: item.spreadNotes?.[index] || 'A distinct editorial moment using scale, contrast and controlled asymmetry.',
+    layout: ['minimal', 'split', 'overlap', 'full'][index % 4]
+  }));
+}
+function pagesFor(item) { return Array.isArray(item.pages) && item.pages.length ? item.pages : legacyPages(item); }
 
 function renderFilters() {
   const categories = ['All', ...new Set(allBooklets.filter(isPublished).map(item => item.category))];
@@ -38,24 +48,15 @@ function renderFilters() {
     button.className = `filter-button${category === activeFilter ? ' active' : ''}`;
     button.type = 'button';
     button.textContent = category;
-    button.addEventListener('click', () => {
-      activeFilter = category;
-      renderFilters();
-      renderCards();
-    });
+    button.addEventListener('click', () => { activeFilter = category; renderFilters(); renderCards(); });
     filtersNode.append(button);
   }
-}
-
-function applyPalette(node, palette) {
-  palette.forEach((color, index) => node.style.setProperty(`--c${index + 1}`, color));
 }
 
 function renderCards() {
   const items = visibleBooklets();
   grid.innerHTML = '';
   emptyState.hidden = items.length > 0;
-
   items.forEach((item, index) => {
     const card = template.content.firstElementChild.cloneNode(true);
     card.dataset.layout = item.layout;
@@ -63,7 +64,7 @@ function renderCards() {
     card.querySelector('.cover-kicker').textContent = `${item.era} / ${item.style}`;
     card.querySelector('.cover-title').textContent = coverTitle(item.title);
     card.querySelector('.cover-number').textContent = String(index + 1).padStart(2, '0');
-    card.querySelector('.card-audience').textContent = `For ${item.audience}`;
+    card.querySelector('.card-audience').textContent = `For ${item.audience} · ${pagesFor(item).length} pages`;
     card.querySelector('.card-title').textContent = item.title;
     card.querySelector('.card-direction').textContent = item.direction;
     card.querySelector('.cover').addEventListener('click', () => openBooklet(item));
@@ -71,107 +72,70 @@ function renderCards() {
   });
 }
 
-function detailHtml(item) {
-  const spreadTitles = item.spreads || [
-    'Opening statement',
-    'A world in fragments',
-    'The central visual story',
-    'A quiet final note'
-  ];
+function imageMarkup(page) {
+  if (!page.image?.url) return '<span class="page-art" aria-hidden="true"></span>';
+  const image = page.image;
+  return `<figure class="page-image">
+    <img src="${safeUrl(image.url)}" alt="${escapeHtml(image.alt || page.title)}" loading="lazy">
+    <figcaption>© <a href="${safeUrl(image.creatorUrl || image.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(image.creator || 'Creator')}</a> · <a href="${safeUrl(image.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(image.source || 'Source')}</a> · <a href="${safeUrl(image.licenseUrl || image.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(image.license || 'Licence')}</a></figcaption>
+  </figure>`;
+}
+function sourceMarkup(page) {
+  if (!page.source?.url) return '';
+  return `<a class="page-source" href="${safeUrl(page.source.url)}" target="_blank" rel="noopener">Source suggestion: ${escapeHtml(page.source.title)} ↗</a>`;
+}
+function pageMarkup(page, index) {
+  return `<article class="book-page type-${escapeHtml(page.type || 'editorial')} layout-${escapeHtml(page.layout || 'minimal')}">
+    <span class="book-page-number">${String(index + 1).padStart(2, '0')}</span>
+    ${imageMarkup(page)}
+    <div class="book-page-copy">
+      <p class="book-page-type">${escapeHtml((page.type || 'editorial').replaceAll('_', ' '))}</p>
+      <h4>${escapeHtml(page.title)}</h4>
+      <p>${escapeHtml(page.body)}</p>
+      ${page.caption ? `<small>${escapeHtml(page.caption)}</small>` : ''}
+      ${sourceMarkup(page)}
+    </div>
+  </article>`;
+}
 
-  return `
-    <section class="detail-hero" style="--c1:${item.palette[0]};--c2:${item.palette[1]};--c3:${item.palette[2]};--c4:${item.palette[3]}">
-      <div class="detail-cover">
-        <span class="detail-shape-a"></span>
-        <span class="detail-shape-b"></span>
-        <p class="eyebrow">For ${item.audience}</p>
-        <h2 class="detail-title">${coverTitle(item.title)}</h2>
-      </div>
-      <div class="detail-meta">
-        <p class="eyebrow">Concept ${item.publishDate}</p>
-        <p class="detail-description">${item.description}</p>
-        <div class="detail-facts">
-          <div><span>Era</span><strong>${item.era}</strong></div>
-          <div><span>Direction</span><strong>${item.style}</strong></div>
-          <div><span>Format</span><strong>${item.format}</strong></div>
-          <div><span>Category</span><strong>${item.category}</strong></div>
-        </div>
+function detailHtml(item) {
+  const pages = pagesFor(item);
+  return `<section class="detail-hero" style="--c1:${item.palette[0]};--c2:${item.palette[1]};--c3:${item.palette[2]};--c4:${item.palette[3]}">
+      <div class="detail-cover"><span class="detail-shape-a"></span><span class="detail-shape-b"></span><p class="eyebrow">For ${escapeHtml(item.audience)}</p><h2 class="detail-title">${escapeHtml(coverTitle(item.title))}</h2></div>
+      <div class="detail-meta"><p class="eyebrow">Concept ${escapeHtml(item.publishDate)}</p><p class="detail-description">${escapeHtml(item.description)}</p>
+        <div class="detail-facts"><div><span>Era</span><strong>${escapeHtml(item.era)}</strong></div><div><span>Direction</span><strong>${escapeHtml(item.style)}</strong></div><div><span>Format</span><strong>${escapeHtml(item.format)}</strong></div><div><span>Preview</span><strong>${pages.length} pages</strong></div></div>
       </div>
     </section>
     <section class="spread-section" style="--c1:${item.palette[0]};--c2:${item.palette[1]};--c3:${item.palette[2]};--c4:${item.palette[3]}">
-      <div class="spread-heading">
-        <h3>Page rhythm</h3>
-        <p>${item.direction} The final booklet would combine licensed or public-domain imagery with original typography and compositional elements.</p>
-      </div>
-      <div class="spread-grid">
-        ${spreadTitles.map((title, i) => `
-          <article class="spread">
-            <span class="spread-num">0${i + 1}</span>
-            <h4>${title}</h4>
-            <p>${item.spreadNotes?.[i] || 'A distinct editorial moment using scale, contrast and controlled asymmetry.'}</p>
-          </article>`).join('')}
-      </div>
-      <div class="detail-actions">
-        <button type="button" data-action="copy">Copy share link</button>
-        <button type="button" data-action="close">Back to collection</button>
-      </div>
+      <div class="spread-heading"><h3>Booklet preview</h3><p>${escapeHtml(item.direction)} Images keep creator, source and licence records. Facts include a source suggestion for verification.</p></div>
+      <div class="page-grid">${pages.map(pageMarkup).join('')}</div>
+      <div class="detail-actions"><button type="button" data-action="copy">Copy share link</button><button type="button" data-action="print">Print / save PDF</button><button type="button" data-action="close">Back to collection</button></div>
     </section>`;
 }
 
 function openBooklet(item, updateUrl = true) {
   dialogContent.innerHTML = detailHtml(item);
-  if (updateUrl) {
-    const url = new URL(window.location.href);
-    url.searchParams.set('booklet', item.id);
-    history.pushState({ booklet: item.id }, '', url);
-  }
+  if (updateUrl) { const url = new URL(window.location.href); url.searchParams.set('booklet', item.id); history.pushState({ booklet: item.id }, '', url); }
   dialog.showModal();
   dialogContent.querySelector('[data-action="close"]').addEventListener('click', closeDialog);
-  dialogContent.querySelector('[data-action="copy"]').addEventListener('click', async event => {
-    await navigator.clipboard.writeText(window.location.href);
-    event.currentTarget.textContent = 'Link copied';
-  });
+  dialogContent.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
+  dialogContent.querySelector('[data-action="copy"]').addEventListener('click', async event => { await navigator.clipboard.writeText(window.location.href); event.currentTarget.textContent = 'Link copied'; });
 }
-
-function closeDialog() {
-  dialog.close();
-  const url = new URL(window.location.href);
-  url.searchParams.delete('booklet');
-  history.pushState({}, '', url);
-}
+function closeDialog() { dialog.close(); const url = new URL(window.location.href); url.searchParams.delete('booklet'); history.pushState({}, '', url); }
 
 document.querySelector('#dialog-close').addEventListener('click', closeDialog);
-dialog.addEventListener('click', event => {
-  const rect = dialog.getBoundingClientRect();
-  const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
-  if (outside) closeDialog();
-});
-window.addEventListener('popstate', () => {
-  const id = new URL(window.location.href).searchParams.get('booklet');
-  if (!id) return dialog.close();
-  const item = allBooklets.find(booklet => booklet.id === id);
-  if (item) openBooklet(item, false);
-});
-
-document.querySelector('#surprise-button').addEventListener('click', () => {
-  const items = allBooklets.filter(isPublished);
-  if (items.length) openBooklet(items[Math.floor(Math.random() * items.length)]);
-});
+dialog.addEventListener('click', event => { const rect = dialog.getBoundingClientRect(); const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom; if (outside) closeDialog(); });
+window.addEventListener('popstate', () => { const id = new URL(window.location.href).searchParams.get('booklet'); if (!id) return dialog.close(); const item = allBooklets.find(booklet => booklet.id === id); if (item) openBooklet(item, false); });
+document.querySelector('#surprise-button').addEventListener('click', () => { const items = allBooklets.filter(isPublished); if (items.length) openBooklet(items[Math.floor(Math.random() * items.length)]); });
 
 async function init() {
   const response = await fetch('./data/booklets.json', { cache: 'no-store' });
   if (!response.ok) throw new Error(`Failed to load booklets: ${response.status}`);
   allBooklets = await response.json();
   countNode.textContent = `${allBooklets.filter(isPublished).length} published`;
-  renderFilters();
-  renderCards();
-
+  renderFilters(); renderCards();
   const requestedId = new URL(window.location.href).searchParams.get('booklet');
   const requested = allBooklets.find(item => item.id === requestedId && isPublished(item));
   if (requested) openBooklet(requested, false);
 }
-
-init().catch(error => {
-  console.error(error);
-  grid.innerHTML = '<p>Unable to load the collection. Please refresh the page.</p>';
-});
+init().catch(error => { console.error(error); grid.innerHTML = '<p>Unable to load the collection. Please refresh the page.</p>'; });
