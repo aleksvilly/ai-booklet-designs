@@ -1,0 +1,281 @@
+[
+  {
+    "id": "captain-atlas-of-storms",
+    "title": "Atlas of Storms",
+    "audience": "the Captain",
+    "category": "Sea",
+    "era": "1970s",
+    "style": "Scientific editorial",
+    "layout": "grid",
+    "direction": "Navigation charts, hard geometry and weather-system diagrams meet warm analogue print colours.",
+    "description": "A compact visual voyage through storms, routes, lighthouses and the decisions that define a captain. Designed as a personal tribute rather than a general book about the sea.",
+    "format": "A5 / 16 pages",
+    "publishDate": "2026-07-20",
+    "palette": [
+      "#f3e7c2",
+      "#dc4f31",
+      "#16858f",
+      "#172429"
+    ],
+    "spreads": [
+      "Latitude 57°",
+      "Reading the weather",
+      "Routes through pressure",
+      "Land after darkness"
+    ],
+    "spreadNotes": [
+      "A sparse opener built like a navigation document.",
+      "Weather symbols become an abstract image system.",
+      "A panoramic spread where routes cross a full-width storm field.",
+      "A restrained ending around the idea of safe return."
+    ]
+  },
+  {
+    "id": "architect-concrete-dreams",
+    "title": "Concrete Dreams",
+    "audience": "the Architect",
+    "category": "Architecture",
+    "era": "1960s",
+    "style": "Brutalist modernism",
+    "layout": "radical",
+    "direction": "Oversized mono typography, raw plans, concrete textures and deliberately severe spacing.",
+    "description": "A booklet about structures that feel impossible: towers, cantilevers, hidden courtyards and buildings that resemble monuments from another civilisation.",
+    "format": "A5 / 20 pages",
+    "publishDate": "2026-07-20",
+    "palette": [
+      "#d8d2c7",
+      "#ff5b35",
+      "#63625f",
+      "#171717"
+    ],
+    "spreads": [
+      "Mass",
+      "Void",
+      "The inhabited machine",
+      "After the monument"
+    ],
+    "spreadNotes": [
+      "The title behaves like a physical block.",
+      "White space becomes an architectural material.",
+      "Plans and photographs overlap without a conventional grid.",
+      "A quiet closing spread built around one human-scale detail."
+    ]
+  },
+  {
+    "id": "photographer-chasing-light",
+    "title": "Chasing the Light",
+    "audience": "the Photographer",
+    "category": "Photography",
+    "era": "Contemporary",
+    "style": "Cinematic minimalism",
+    "layout": "cinematic",
+    "direction": "Wide image fields, dark pauses and small editorial captions that follow changing light.",
+    "description": "A personal visual essay about the brief moments photographers wait for: fog lifting, a reflection appearing, a street turning gold and night becoming blue.",
+    "format": "A5 landscape / 16 pages",
+    "publishDate": "2026-07-20",
+    "palette": [
+      "#122126",
+      "#eb9e45",
+      "#244f63",
+      "#f1e8d8"
+    ],
+    "spreads": [
+      "Before sunrise",
+      "The decisive reflection",
+      "Blue hour",
+      "One frame remains"
+    ],
+    "spreadNotes": [
+      "A nearly empty page opens the sequence.",
+      "A reflected image crosses the fold and breaks the caption grid.",
+      "Several small frames create a slow cinematic sequence.",
+      "The final page isolates one image and one sentence."
+    ]
+  },
+  {
+    "id": "musician-electric-memory",
+    "title": "Electric Memory",
+    "audience": "the Musician",
+    "category": "Music",
+    "era": "1980s",
+    "style": "Post-punk zine",
+    "layout": "radical",
+    "direction": "Photocopied textures, compressed typography and abrupt rhythm inspired by independent music publications.",
+    "description": "A booklet about the sounds, venues, instruments and imperfect recordings that become part of a musician’s identity.",
+    "format": "A5 / 16 pages",
+    "publishDate": "2026-07-19",
+    "palette": [
+      "#f4eddd",
+      "#e80042",
+      "#7d5cff",
+      "#171717"
+    ],
+    "spreads": [
+      "Feedback",
+      "Room tone",
+      "Four tracks at midnight",
+      "The sound after silence"
+    ],
+    "spreadNotes": [
+      "A torn visual overture with a single loud word.",
+      "Venue details and handwritten fragments create atmosphere.",
+      "The centre spread resembles an experimental record sleeve.",
+      "The last spread removes almost everything except one lyric-like line."
+    ]
+  },
+  {
+    "id": "traveller-roads-unfinished",
+    "title": "Roads Unfinished",
+    "audience": "the Traveller",
+    "category": "Travel",
+    "era": "1970s",
+    "style": "Nomadic photo essay",
+    "layout": "editorial",
+    "direction": "Dusty colour, handwritten coordinates and page transitions that resemble changing landscapes.",
+    "description": "Not a list of destinations, but a book about movement: border crossings, night buses, remote roads and places remembered only by atmosphere.",
+    "format": "A5 / 20 pages",
+    "publishDate": "2026-07-19",
+    "palette": [
+      "#d77a45",
+      "#f2c14e",
+      "#5f7156",
+      "#1e2928"
+    ],
+    "spreads": [
+      "Departure without a map",
+      "Roadside archaeology",
+      "A city between trains",
+      "The route continues"
+    ],
+    "spreadNotes": [
+      "The opening resembles a faded travel document.",
+      "Objects found along the way become a visual archive.",
+      "Urban fragments are arranged like memories rather than reportage.",
+      "The ending deliberately leaves the journey unresolved."
+    ]
+  },
+  {
+    "id": "gardener-secret-life-of-flowers",
+    "title": "The Secret Life of Flowers",
+    "audience": "the Gardener",
+    "category": "Nature",
+    "era": "1970s",
+    "style": "Ecological botanical surrealism",
+    "layout": "editorial",
+    "direction": "Historic botanical plates collide with contemporary macro photography and dreamlike cut-paper forms.",
+    "description": "A gift booklet that sees a garden as a private universe of timing, patience, repetition and unexpectedly strange forms.",
+    "format": "A5 / 16 pages",
+    "publishDate": "2026-07-19",
+    "palette": [
+      "#e7ddc8",
+      "#b8485d",
+      "#657b47",
+      "#242119"
+    ],
+    "spreads": [
+      "The first opening",
+      "Architecture of a petal",
+      "Night garden",
+      "Seeds for another year"
+    ],
+    "spreadNotes": [
+      "A flower emerges gradually across the opening pages.",
+      "Macro detail is treated like an architectural drawing.",
+      "Dark botanical forms create a surreal nocturnal chapter.",
+      "The final spread shifts from flowers to future possibility."
+    ]
+  },
+  {
+    "id": "engineer-giants-are-built",
+    "title": "How Giants Are Built",
+    "audience": "the Engineer",
+    "category": "Engineering",
+    "era": "1960s",
+    "style": "Industrial systems modernism",
+    "layout": "grid",
+    "direction": "Exploded views, numbered systems and heroic industrial photography arranged with exact visual logic.",
+    "description": "A tribute to the people who turn drawings into bridges, tunnels, machines and structures larger than any individual.",
+    "format": "A5 / 20 pages",
+    "publishDate": "2026-07-18",
+    "palette": [
+      "#e5e0d4",
+      "#e15d35",
+      "#2e6f83",
+      "#202423"
+    ],
+    "spreads": [
+      "Load",
+      "Tolerance",
+      "Assembly at scale",
+      "The invisible signature"
+    ],
+    "spreadNotes": [
+      "A structural diagram introduces the visual grammar.",
+      "Small technical differences become the centre of the page.",
+      "The centre spread turns construction stages into a single continuous sequence.",
+      "The final chapter focuses on the maker rather than the object."
+    ]
+  },
+  {
+    "id": "dreamer-between-worlds",
+    "title": "Between Worlds",
+    "audience": "the Dreamer",
+    "category": "Abstract",
+    "era": "2026",
+    "style": "Organic freeform surrealism",
+    "layout": "cinematic",
+    "direction": "Unreal horizons, translucent forms and typography that appears to drift between foreground and distance.",
+    "description": "A completely open-ended booklet for someone drawn to dreams, imagined landscapes and things that cannot be explained literally.",
+    "format": "A5 / 16 pages",
+    "publishDate": "2026-07-18",
+    "palette": [
+      "#302b50",
+      "#ff8f70",
+      "#68c6bc",
+      "#f3e8df"
+    ],
+    "spreads": [
+      "A door without a room",
+      "Gravity becomes optional",
+      "The landscape remembers",
+      "Wake slowly"
+    ],
+    "spreadNotes": [
+      "The opener creates a question rather than an answer.",
+      "Elements ignore realistic scale and direction.",
+      "The centre spread builds an invented world from layered fragments.",
+      "The ending dissolves instead of concluding."
+    ]
+  },
+  {
+    "id": "railway-last-train-north",
+    "title": "The Last Train North",
+    "audience": "the Railway Enthusiast",
+    "category": "Railways",
+    "era": "1960s × 1970s",
+    "style": "Travel-poster cinematic modernism",
+    "layout": "cinematic",
+    "direction": "Historic timetable structure, winter darkness and bold destination typography with cinematic pacing.",
+    "description": "A night journey through stations, snow, mechanical detail and the strange emotional pull of a train disappearing into distance.",
+    "format": "A5 / 16 pages",
+    "publishDate": "2026-07-18",
+    "palette": [
+      "#172328",
+      "#d4b85d",
+      "#7c242b",
+      "#eee5d4"
+    ],
+    "spreads": [
+      "Platform 4",
+      "Signals in snow",
+      "Night compartment",
+      "The line beyond the map"
+    ],
+    "spreadNotes": [
+      "A station-board composition establishes time and place.",
+      "Signal geometry cuts through a photographic winter field.",
+      "The middle chapter becomes intimate and almost silent.",
+      "The final page lets the tracks continue beyond the trim."
+    ]
+  }
+]

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An evolving collection of gift booklet concepts for different people, professions and passions.">
+  <meta name="theme-color" content="#111111">
+  <title>AI Booklet Designs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="AI Booklet Designs home">
+      <span class="brand-mark">AB</span>
+      <span>AI Booklet Designs</span>
+    </a>
+    <div class="header-meta">
+      <span id="published-count">— published</span>
+      <span class="live-dot" aria-hidden="true"></span>
+      <span>3 new concepts daily</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">A growing gift-booklet laboratory</p>
+      <h1>Designed for a person,<br><em>not for everyone.</em></h1>
+      <p class="hero-copy">Each concept starts with a profession, passion or dream, then receives its own era, visual language, typography and page rhythm.</p>
+      <div class="hero-actions">
+        <a class="primary-button" href="#collection">Explore the collection</a>
+        <button class="text-button" id="surprise-button" type="button">Surprise me ↗</button>
+      </div>
+    </section>
+
+    <section class="manifesto" aria-label="Design method">
+      <article><span>01</span><strong>Person</strong><p>Captain, architect, photographer, musician, traveller or dreamer.</p></article>
+      <article><span>02</span><strong>World</strong><p>A subject close to that person: routes, structures, light, sound or discovery.</p></article>
+      <article><span>03</span><strong>Language</strong><p>A different era and layout system, from Swiss modernism to radical abstraction.</p></article>
+    </section>
+
+    <section class="collection" id="collection">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Current collection</p>
+          <h2>Gift-booklet concepts</h2>
+        </div>
+        <div class="filters" id="filters" aria-label="Filter booklets"></div>
+      </div>
+      <div class="booklet-grid" id="booklet-grid" aria-live="polite"></div>
+      <p class="empty-state" id="empty-state" hidden>No concepts match this filter yet.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p>Experimental editorial concepts. Source and licence records belong to each finished booklet.</p>
+    <p>Updated automatically through GitHub Actions.</p>
+  </footer>
+
+  <dialog class="booklet-dialog" id="booklet-dialog">
+    <button class="dialog-close" id="dialog-close" type="button" aria-label="Close">×</button>
+    <div id="dialog-content"></div>
+  </dialog>
+
+  <template id="booklet-card-template">
+    <article class="booklet-card">
+      <button class="cover" type="button" aria-label="Open booklet concept">
+        <span class="cover-kicker"></span>
+        <span class="cover-title"></span>
+        <span class="cover-number"></span>
+        <span class="shape shape-a"></span>
+        <span class="shape shape-b"></span>
+        <span class="shape shape-c"></span>
+      </button>
+      <div class="card-copy">
+        <p class="card-audience"></p>
+        <h3 class="card-title"></h3>
+        <p class="card-direction"></p>
+      </div>
+    </article>
+  </template>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
