@@ -75,9 +75,12 @@ function renderCards() {
 function imageMarkup(page) {
   if (!page.image?.url) return '<span class="page-art" aria-hidden="true"></span>';
   const image = page.image;
+  const url = safeUrl(image.url);
+  if (!url || url === '#') return '<span class="page-art" aria-hidden="true"></span>';
+  const alt = escapeHtml(image.alt || page.title);
   return `<figure class="page-image">
-    <img src="${safeUrl(image.url)}" alt="${escapeHtml(image.alt || page.title)}" loading="lazy">
-    <figcaption>© <a href="${safeUrl(image.creatorUrl || image.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(image.creator || 'Creator')}</a> · <a href="${safeUrl(image.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(image.source || 'Source')}</a> · <a href="${safeUrl(image.licenseUrl || image.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(image.license || 'Licence')}</a></figcaption>
+    <img class="page-photo" data-src="${escapeHtml(url)}" alt="${alt}" decoding="async">
+    <figcaption>© <a href="${safeUrl(image.creatorUrl || image.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(image.creator || 'Creator')}</a> · <a href="${safeUrl(image.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(image.sourceTitle || 'Source')}</a></figcaption>
   </figure>`;
 }
 function sourceMarkup(page) {
@@ -101,31 +104,59 @@ function pageMarkup(page, index) {
 function detailHtml(item) {
   const pages = pagesFor(item);
   return `<section class="detail-hero" style="--c1:${item.palette[0]};--c2:${item.palette[1]};--c3:${item.palette[2]};--c4:${item.palette[3]}">
-      <div class="detail-cover"><span class="detail-shape-a"></span><span class="detail-shape-b"></span><p class="eyebrow">For ${escapeHtml(item.audience)}</p><h2 class="detail-title">${escapeHtml(coverTitle(item.title))}</h2></div>
+      <div class="detail-cover"><span class="detail-shape-a"></span><span class="detail-shape-b"></span><p class="eyebrow">For ${escapeHtml(item.audience)}</p><h2 class="detail-title">${escapeHtml(item.title)}</h2></div>
       <div class="detail-meta"><p class="eyebrow">Concept ${escapeHtml(item.publishDate)}</p><p class="detail-description">${escapeHtml(item.description)}</p>
-        <div class="detail-facts"><div><span>Era</span><strong>${escapeHtml(item.era)}</strong></div><div><span>Direction</span><strong>${escapeHtml(item.style)}</strong></div><div><span>Format</span><strong>${escapeHtml(item.format)}</strong></div><div><span>Preview</span><strong>${pages.length} pages</strong></div></div>
+        <div class="detail-facts"><div><span>Era</span><strong>${escapeHtml(item.era)}</strong></div><div><span>Direction</span><strong>${escapeHtml(item.style)}</strong></div><div><span>Format</span><strong>${pagesFor(item).length} pages</strong></div></div>
       </div>
     </section>
     <section class="spread-section" style="--c1:${item.palette[0]};--c2:${item.palette[1]};--c3:${item.palette[2]};--c4:${item.palette[3]}">
       <div class="spread-heading"><h3>Booklet preview</h3><p>${escapeHtml(item.direction)} Images keep creator, source and licence records. Facts include a source suggestion for verification.</p></div>
       <div class="page-grid">${pages.map(pageMarkup).join('')}</div>
-      <div class="detail-actions"><button type="button" data-action="copy">Copy share link</button><button type="button" data-action="print">Print / save PDF</button><button type="button" data-action="close">Back to collection</button></div>
+      <div class="detail-actions"><button type="button" data-action="copy">Copy share link</button><button type="button" data-action="print">Print / save PDF</button><button type="button" data-action="close">Close</button></div>
     </section>`;
+}
+
+function loadBookletImages(container) {
+  const images = container.querySelectorAll('img[data-src]');
+  images.forEach((image) => {
+    const source = image.dataset.src;
+    if (!source || image.src === source) return;
+    
+    image.addEventListener('load', () => {
+      image.closest('.page-image')?.classList.add('is-loaded');
+    }, { once: true });
+    
+    image.addEventListener('error', () => {
+      image.closest('.page-image')?.classList.add('is-error');
+      image.removeAttribute('src');
+    }, { once: true });
+    
+    image.src = source;
+    
+    if (image.complete && image.naturalWidth > 0) {
+      image.closest('.page-image')?.classList.add('is-loaded');
+    }
+  });
 }
 
 function openBooklet(item, updateUrl = true) {
   dialogContent.innerHTML = detailHtml(item);
   if (updateUrl) { const url = new URL(window.location.href); url.searchParams.set('booklet', item.id); history.pushState({ booklet: item.id }, '', url); }
   dialog.showModal();
+  
+  requestAnimationFrame(() => {
+    loadBookletImages(dialog);
+  });
+  
   dialogContent.querySelector('[data-action="close"]').addEventListener('click', closeDialog);
   dialogContent.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
-  dialogContent.querySelector('[data-action="copy"]').addEventListener('click', async event => { await navigator.clipboard.writeText(window.location.href); event.currentTarget.textContent = 'Link copied'; });
+  dialogContent.querySelector('[data-action="copy"]').addEventListener('click', async event => { await navigator.clipboard.writeText(window.location.href); event.currentTarget.textContent = 'Link copied'; setTimeout(() => { event.currentTarget.textContent = 'Copy share link'; }, 2000); });
 }
 function closeDialog() { dialog.close(); const url = new URL(window.location.href); url.searchParams.delete('booklet'); history.pushState({}, '', url); }
 
 document.querySelector('#dialog-close').addEventListener('click', closeDialog);
 dialog.addEventListener('click', event => { const rect = dialog.getBoundingClientRect(); const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom; if (outside) closeDialog(); });
-window.addEventListener('popstate', () => { const id = new URL(window.location.href).searchParams.get('booklet'); if (!id) return dialog.close(); const item = allBooklets.find(booklet => booklet.id === id); if (item) openBooklet(item, false); });
+window.addEventListener('popstate', () => { const id = new URL(window.location.href).searchParams.get('booklet'); if (!id) return dialog.close(); const item = allBooklets.find(booklet => booklet.id === id); if (item && isPublished(item)) openBooklet(item, false); });
 document.querySelector('#surprise-button').addEventListener('click', () => { const items = allBooklets.filter(isPublished); if (items.length) openBooklet(items[Math.floor(Math.random() * items.length)]); });
 
 async function init() {
