@@ -2,20 +2,32 @@ name: Generate and publish
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
 
   workflow_dispatch:
     inputs:
-      generate_concepts:
-        description: Generate today's three concepts before publishing
-        required: false
+      count:
+        description: How many new booklets to generate
+        required: true
+        default: '3'
+        type: choice
+        options: ['1', '3', '6']
+
+      force_generate:
+        description: Generate more even if today's three already exist
+        required: true
+        default: false
+        type: boolean
+
+      use_ai:
+        description: Use OpenAI when OPENAI_API_KEY is configured
+        required: true
         default: true
         type: boolean
 
   schedule:
-    - cron: "15 07 * * *"
-      timezone: "Europe/Riga"
+    - cron: '15 07 * * *'
+      timezone: 'Europe/Riga'
 
 permissions:
   contents: write
@@ -28,11 +40,11 @@ concurrency:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
-
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
@@ -43,12 +55,26 @@ jobs:
         with:
           node-version: 24
 
-      - name: Generate three daily concepts
-        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.generate_concepts)
+      - name: Generate booklet concepts
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_MODEL: gpt-5.6-luna
+          UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+          IMAGE_PROVIDER: mixed
+
+          BOOKLET_COUNT: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '3' }}
+
+          FORCE_GENERATE: ${{ github.event_name == 'workflow_dispatch' && inputs.force_generate && 'true' || 'false' }}
+
+          USE_AI: ${{ github.event_name == 'schedule' && 'true' || (inputs.use_ai && 'true' || 'false') }}
+
+          BOOKLET_RUN_ID: ${{ github.run_id }}
+
         run: npm run generate
 
       - name: Commit generated concepts
-        if: github.event_name == 'schedule' || (github.event_name == 'workflow_dispatch' && inputs.generate_concepts)
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
           if git diff --quiet; then
             echo "No new concepts to commit."
@@ -59,15 +85,15 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add data/booklets.json
-          git commit -m "Add daily booklet concepts"
+          git commit -m "Add generated booklet concepts"
           git push
 
       - name: Prepare static site
         run: |
           mkdir -p _site
           cp index.html styles.css app.js _site/
-          cp -R data _site/data
           touch _site/.nojekyll
+          cp -R data _site/data
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -75,7 +101,7 @@ jobs:
       - name: Upload static site
         uses: actions/upload-pages-artifact@v4
         with:
-          path: "_site"
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         id: deployment
