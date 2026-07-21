@@ -1,5 +1,98 @@
 [
   {
+    "id": "dreamer-the-shape-of-waiting-2026-07-21",
+    "title": "The Shape of Waiting",
+    "audience": "the Dreamer",
+    "category": "Abstract",
+    "era": "1990s",
+    "style": "Grunge editorial",
+    "layout": "radical",
+    "direction": "Grunge editorial interprets pauses, anticipation and moments just before change, using a page rhythm, type hierarchy and image treatment distinct from recently generated concepts.",
+    "description": "A personal gift-booklet concept for the Dreamer, built around pauses, anticipation and moments just before change. References should be mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 16 pages",
+    "publishDate": "2026-07-21",
+    "palette": [
+      "#f1e6cc",
+      "#ef6b40",
+      "#1f8993",
+      "#21312e"
+    ],
+    "spreads": [
+      "Opening signal",
+      "Objects and traces",
+      "The central visual movement",
+      "A personal ending"
+    ],
+    "spreadNotes": [
+      "A first spread that establishes the 1990s visual language without becoming a costume copy.",
+      "A collage of details, documents and image fragments from licensed or open sources.",
+      "A larger composition where the main visual idea crosses the fold.",
+      "A restrained final page written directly for the recipient."
+    ]
+  },
+  {
+    "id": "cyclist-a-field-guide-to-motion-2026-07-21",
+    "title": "A Field Guide to Motion",
+    "audience": "the Cyclist",
+    "category": "Cycling",
+    "era": "2020–2024",
+    "style": "Neo-brutalist publishing",
+    "layout": "radical",
+    "direction": "Neo-brutalist publishing interprets speed, balance, direction and the body moving through space, using a page rhythm, type hierarchy and image treatment distinct from recently generated concepts.",
+    "description": "A personal gift-booklet concept for the Cyclist, built around speed, balance, direction and the body moving through space. References should be mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 20 pages",
+    "publishDate": "2026-07-21",
+    "palette": [
+      "#f1e6cc",
+      "#ef6b40",
+      "#1f8993",
+      "#21312e"
+    ],
+    "spreads": [
+      "Opening signal",
+      "Objects and traces",
+      "The central visual movement",
+      "A personal ending"
+    ],
+    "spreadNotes": [
+      "A first spread that establishes the 2020–2024 visual language without becoming a costume copy.",
+      "A collage of details, documents and image fragments from licensed or open sources.",
+      "A larger composition where the main visual idea crosses the fold.",
+      "A restrained final page written directly for the recipient."
+    ]
+  },
+  {
+    "id": "cinema-lover-after-the-last-light-2026-07-21",
+    "title": "After the Last Light",
+    "audience": "the Cinema Lover",
+    "category": "Cinema",
+    "era": "1960s",
+    "style": "Swiss international editorial",
+    "layout": "grid",
+    "direction": "Swiss international editorial interprets the visual transformation that begins when daylight disappears, using a page rhythm, type hierarchy and image treatment distinct from recently generated concepts.",
+    "description": "A personal gift-booklet concept for the Cinema Lover, built around the visual transformation that begins when daylight disappears. References should be mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 16 pages",
+    "publishDate": "2026-07-21",
+    "palette": [
+      "#161827",
+      "#f06449",
+      "#55b9ae",
+      "#f4e9d8"
+    ],
+    "spreads": [
+      "Opening signal",
+      "Objects and traces",
+      "The central visual movement",
+      "A personal ending"
+    ],
+    "spreadNotes": [
+      "A first spread that establishes the 1960s visual language without becoming a costume copy.",
+      "A collage of details, documents and image fragments from licensed or open sources.",
+      "A larger composition where the main visual idea crosses the fold.",
+      "A restrained final page written directly for the recipient."
+    ]
+  },
+  {
     "id": "captain-atlas-of-storms",
     "title": "Atlas of Storms",
     "audience": "the Captain",
