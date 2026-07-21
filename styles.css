@@ -126,9 +126,9 @@ h2 { margin: 0; font-size: clamp(42px, 5vw, 78px); line-height: .95; letter-spac
 
 footer { display: flex; justify-content: space-between; gap: 30px; padding: 28px clamp(20px, 4vw, 64px); border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
 
-.booklet-dialog { width: min(1120px, calc(100vw - 26px)); max-height: calc(100vh - 26px); padding: 0; border: 0; background: var(--paper); color: var(--ink); box-shadow: 0 30px 100px rgba(0,0,0,.24); }
+.booklet-dialog { width: min(1120px, calc(100vw - 26px)); max-height: calc(100vh - 26px); padding: 0; border: 0; background: var(--paper); color: var(--ink); box-shadow: 0 30px 100px rgba(0,0,0,.28); }
 .booklet-dialog::backdrop { background: rgba(16,15,13,.75); backdrop-filter: blur(8px); }
-.dialog-close { position: sticky; top: 16px; float: right; z-index: 8; margin: 16px 16px -60px 0; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; background: color-mix(in srgb, var(--paper) 95%, transparent); backdrop-filter: blur(8px); cursor: pointer; font: 500 18px "IBM Plex Mono", monospace; }
+.dialog-close { position: sticky; top: 16px; float: right; z-index: 8; margin: 16px 16px -60px 0; width: 44px; height: 44px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; background: rgba(0,0,0,.55); color: white; font-size: 28px; cursor: pointer; }
 .detail-hero { min-height: 610px; display: grid; grid-template-columns: 1.15fr .85fr; background: var(--c1); color: var(--c4); }
 .detail-cover { position: relative; min-height: 610px; overflow: hidden; padding: clamp(32px, 6vw, 86px); isolation: isolate; }
 .detail-title { position: relative; z-index: 3; margin: 0; max-width: 720px; font-size: clamp(64px, 10vw, 145px); line-height: .82; letter-spacing: -.07em; white-space: pre-line; }
@@ -145,51 +145,6 @@ footer { display: flex; justify-content: space-between; gap: 30px; padding: 28px
 .spread-heading { display: flex; justify-content: space-between; align-items: end; gap: 30px; margin-bottom: 34px; }
 .spread-heading h3 { margin: 0; font-size: clamp(40px, 6vw, 76px); letter-spacing: -.05em; }
 .spread-heading p { max-width: 420px; margin: 0; color: var(--muted); line-height: 1.5; }
-.page-grid { display: grid; grid-template-columns: 1fr; gap: 34px; }
-.book-page { position: relative; display: grid; grid-template-columns: 80px 1fr; gap: 24px; min-height: 280px; }
-.book-page-number { position: relative; z-index: 2; font: 500 10px/1 "IBM Plex Mono", monospace; color: var(--muted); }
-.page-art { display: block; width: 100%; min-height: 220px; background: linear-gradient(135deg, var(--muted) 0%, color-mix(in srgb, var(--muted) 50%, transparent) 100%); }
-
-.page-image {
-  position: relative;
-  width: 100%;
-  min-height: 220px;
-  overflow: hidden;
-  background: rgba(0, 0, 0, 0.08);
-}
-
-.page-image .page-photo {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: block;
-  width: 100%;
-  height: 100%;
-  min-height: 220px;
-  object-fit: cover;
-  object-position: center;
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.page-image.is-loaded .page-photo {
-  opacity: 1;
-}
-
-.page-image.is-error {
-  display: none;
-}
-
-.page-image figcaption { position: relative; z-index: 2; font-size: 11px; color: var(--muted); margin-top: 10px; line-height: 1.4; }
-.page-image figcaption a { text-decoration: underline; }
-.book-page-copy { grid-column: 1 / -1; }
-.book-page-type { margin: 0 0 8px; font: 500 11px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
-.book-page h4 { margin: 0 0 12px; font-size: clamp(24px, 3vw, 34px); line-height: 1.2; letter-spacing: -.025em; }
-.book-page p { margin: 0 0 12px; max-width: 680px; line-height: 1.6; }
-.book-page small { display: block; margin-top: 16px; color: var(--muted); font-style: italic; line-height: 1.5; }
-.page-source { display: inline-block; margin-top: 16px; padding: 10px 13px; border: 1px solid var(--line); font-size: 13px; text-decoration: none; }
-.page-source:hover { background: var(--ink); color: var(--paper); }
-
 .spread-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
 .spread { position: relative; min-height: 310px; overflow: hidden; padding: 26px; border: 1px solid var(--line); background: #fff; }
 .spread:nth-child(2) { background: var(--c2); color: var(--c4); }
@@ -214,7 +169,7 @@ footer { display: flex; justify-content: space-between; gap: 30px; padding: 28px
   .detail-meta { border-left: 0; border-top: 1px solid color-mix(in srgb, var(--c4) 25%, transparent); }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 620px) {
   .site-header { min-height: 62px; }
   .brand > span:last-child { display: none; }
   .hero { min-height: 80vh; }
@@ -229,12 +184,100 @@ footer { display: flex; justify-content: space-between; gap: 30px; padding: 28px
   .detail-meta { padding-top: 40px; }
   .spread-grid { grid-template-columns: 1fr; }
   .spread:nth-child(3) { grid-column: span 1; }
-  
-  .page-image {
-    min-height: 280px;
-  }
+}
 
-  .page-image .page-photo {
-    min-height: 280px;
-  }
+/* V2: variable booklet pages */
+.page-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.book-page { position: relative; min-height: 430px; overflow: hidden; padding: 28px; border: 1px solid var(--line); background: #fff; isolation: isolate; }
+.book-page-number { position: absolute; z-index: 4; top: 20px; right: 22px; font: 500 10px/1 "IBM Plex Mono", monospace; }
+.book-page-copy { position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: end; min-height: 360px; max-width: 82%; }
+.book-page-type { margin: 0 0 18px; font: 500 10px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; }
+.book-page h4 { margin: 0; font-size: clamp(36px, 5vw, 76px); line-height: .88; letter-spacing: -.055em; }
+.book-page-copy > p:not(.book-page-type) { max-width: 460px; margin: 18px 0 0; line-height: 1.45; }
+.book-page small { display: block; margin-top: 16px; max-width: 420px; opacity: .72; }
+.page-art { position: absolute; width: 64%; aspect-ratio: 1; right: -22%; top: -16%; border: 34px solid currentColor; border-radius: 50%; opacity: .11; }
+.page-image {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  overflow: hidden;
+  margin: 0;
+  background: #171717;
+}
+.page-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0,0,0,.08) 0%, transparent 28%, rgba(0,0,0,.78) 100%);
+}
+.page-image img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+.page-image.is-loaded img { opacity: 1; }
+.page-image figcaption {
+  position: absolute;
+  z-index: 4;
+  left: 22px;
+  right: 22px;
+  bottom: 18px;
+  font: 400 9px/1.35 "IBM Plex Mono", monospace;
+  color: #fff;
+  opacity: .82;
+}
+.page-image a { color: inherit; }
+
+/* JS adds this class, so mobile support does not depend on :has(). */
+.book-page.has-image {
+  color: #fff;
+  background: #171717;
+}
+.book-page.has-image .book-page-copy {
+  justify-content: start;
+  min-height: auto;
+  max-width: 72%;
+  text-shadow: 0 1px 16px rgba(0,0,0,.45);
+}
+.page-source { display: inline-block; margin-top: 16px; color: inherit; font: 500 10px/1.3 "IBM Plex Mono", monospace; }
+.type-cover { grid-row: span 2; background: var(--c1); color: var(--c4); }
+.type-cover h4, .type-full_bleed h4 { font-size: clamp(52px, 7vw, 108px); }
+.type-facts { background: var(--c2); color: var(--c4); }
+.type-quote { background: var(--c4); color: var(--c1); }
+.type-quote h4 { font-family: "Playfair Display", serif; font-style: italic; }
+.type-collage { background: var(--c3); }
+.type-timeline, .type-diagram { background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 28px 28px; }
+.type-closing { grid-column: span 2; min-height: 340px; background: var(--c4); color: var(--c1); }
+.layout-split .book-page-copy { margin-left: 45%; }
+.layout-vertical h4 { writing-mode: vertical-rl; max-height: 300px; }
+.layout-overlap .book-page-copy { transform: translateY(28px); }
+.layout-archive { background-color: #eee9df; }
+
+@media (max-width: 700px) {
+  .page-grid { grid-template-columns: 1fr; }
+  .book-page, .type-closing { grid-column: auto; min-height: 390px; }
+  .type-cover { grid-row: auto; }
+  .book-page.has-image .book-page-copy { max-width: 90%; }
+  .page-image,
+  .page-image img { min-width: 100%; min-height: 100%; }
+}
+
+@media print {
+  body > header, body > main, body > footer, .dialog-close, .detail-actions { display: none !important; }
+  .booklet-dialog { display: block !important; position: static; width: 100%; max-height: none; box-shadow: none; }
+  .booklet-dialog::backdrop { display: none; }
+  .detail-hero { min-height: 100vh; break-after: page; }
+  .spread-section { padding: 0; }
+  .spread-heading { padding: 20mm 16mm 8mm; }
+  .page-grid { display: block; }
+  .book-page { min-height: 100vh; break-after: page; border: 0; }
 }
