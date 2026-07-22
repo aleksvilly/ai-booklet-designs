@@ -1,0 +1,20 @@
+Upgrade the current AI Booklet Designs repository to the supplied V4 implementation.
+
+Replace only these files with the versions from the V4 package:
+- scripts/generate-daily.mjs
+- app.js
+- styles.css
+- index.html
+- .github/workflows/publish.yml
+
+Do not delete or replace data/booklets.json.
+
+After replacement:
+1. Run `node --check scripts/generate-daily.mjs`.
+2. Run `node --check app.js`.
+3. Run a local fallback generation with USE_AI=false, SKIP_ENRICHMENT=true, FORCE_GENERATE=true, BOOKLET_COUNT=3, CHAOS_LEVEL=5 and MAX_FONTS=20.
+4. Confirm every generated booklet has an even number of physical pages between 6 and 16.
+5. Confirm designDna contains coverArchetype, fontPalette, fontCount, fontStrategy and printMode.
+6. Confirm pages can contain imageCount up to 20, and paired spread pages use matching spreadId values with left/right roles.
+7. Do not simplify the cover systems, page grids, font loading or print CSS.
+8. Preserve the existing custom topic and description workflow inputs.

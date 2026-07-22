@@ -18,10 +18,22 @@ const runId = force ? (process.env.BOOKLET_RUN_ID || `${Date.now()}`) : date;
 const alreadyToday = existing.filter(item => item.publishDate === date).length;
 const count = force ? requestedCount : Math.max(0, requestedCount - alreadyToday);
 const configuredChaos = clampInt(process.env.CHAOS_LEVEL, 0, 5, -1);
+const configuredFontLimit = clampInt(process.env.MAX_FONTS, 2, 20, 20);
 const customTopic = cleanInput(process.env.BOOKLET_TOPIC, 140);
 const customDescription = cleanInput(process.env.BOOKLET_DESCRIPTION, 800);
 const hasCustomBrief = Boolean(customTopic || customDescription);
 const customSubject = customTopic || subjectFromDescription(customDescription);
+
+const apiStats = {
+  openaiSuccess: 0,
+  openaiFailed: 0,
+  unsplashSearches: 0,
+  unsplashImages: 0,
+  openverseSearches: 0,
+  openverseImages: 0,
+  wikipediaSuccess: 0,
+  imageFailures: 0
+};
 
 if (count === 0) {
   console.log(`${requestedCount} concepts already exist for ${date}. Use force_generate to create more today.`);
@@ -35,7 +47,7 @@ if (hasCustomBrief) {
 }
 
 const PAGE_TYPES = ['cover', 'full_bleed', 'editorial', 'facts', 'quote', 'timeline', 'collage', 'diagram', 'map', 'closing'];
-const PAGE_LAYOUTS = ['minimal', 'split', 'overlap', 'grid', 'full', 'asymmetric', 'vertical', 'archive'];
+const PAGE_LAYOUTS = ['minimal', 'split', 'overlap', 'grid', 'full', 'asymmetric', 'vertical', 'archive', 'newspaper', 'contact-sheet', 'masonry', 'panorama', 'catalog', 'poster', 'modular'];
 
 const CATEGORIES = [
   {
@@ -185,6 +197,64 @@ const ERAS = ['1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020–2024
 const ARCHETYPES = ['gift-booklet', 'editorial-magazine', 'museum-brochure', 'art-zine', 'travel-guide', 'personal-tribute', 'fact-book', 'visual-diary', 'poster-book', 'archive-booklet', 'children-storybook', 'futurist-dossier'];
 const COLOR_MODES = ['full-color', 'black-white', 'duotone', 'pastel', 'neon', 'earthy', 'muted', 'one-accent', 'high-contrast', 'inverted', 'warm-analog', 'chrome', 'dark-tech', 'dreamy'];
 const TYPOGRAPHY_MODES = ['huge-serif', 'tiny-editorial', 'clean-sans', 'mixed-serif-sans', 'poster-bold', 'typewriter', 'condensed-headlines', 'handwritten-accent', 'tech-mono', 'playful-rounded'];
+
+
+const COVER_ARCHETYPES = [
+  'full-photo', 'type-only', 'contact-sheet', 'magazine', 'luxury-minimal',
+  'neo-tech', 'children-cutout', 'black-white-archive', 'split-object',
+  'kinetic-type', 'poster-grid', 'collage-chaos', 'classic-book',
+  'data-cover', 'negative-space'
+];
+
+const FONT_LIBRARY = [
+  { family: 'DM Sans', category: 'sans' }, { family: 'Inter', category: 'sans' },
+  { family: 'Space Grotesk', category: 'sans' }, { family: 'Manrope', category: 'sans' },
+  { family: 'Work Sans', category: 'sans' }, { family: 'Archivo', category: 'sans' },
+  { family: 'Barlow', category: 'sans' }, { family: 'Rubik', category: 'sans' },
+  { family: 'Outfit', category: 'sans' }, { family: 'Urbanist', category: 'sans' },
+  { family: 'Montserrat', category: 'sans' }, { family: 'Poppins', category: 'sans' },
+  { family: 'Raleway', category: 'sans' }, { family: 'Figtree', category: 'sans' },
+  { family: 'IBM Plex Sans', category: 'sans' }, { family: 'Source Sans 3', category: 'sans' },
+  { family: 'Noto Sans', category: 'sans' }, { family: 'Afacad', category: 'sans' },
+  { family: 'Playfair Display', category: 'serif' }, { family: 'Cormorant Garamond', category: 'serif' },
+  { family: 'Bodoni Moda', category: 'serif' }, { family: 'Libre Baskerville', category: 'serif' },
+  { family: 'Lora', category: 'serif' }, { family: 'Spectral', category: 'serif' },
+  { family: 'Fraunces', category: 'serif' }, { family: 'DM Serif Display', category: 'serif' },
+  { family: 'Prata', category: 'serif' }, { family: 'Cinzel', category: 'serif' },
+  { family: 'EB Garamond', category: 'serif' }, { family: 'Cardo', category: 'serif' },
+  { family: 'Merriweather', category: 'serif' }, { family: 'Noto Serif', category: 'serif' },
+  { family: 'Noto Serif Display', category: 'serif' }, { family: 'Gloock', category: 'serif' },
+  { family: 'Bebas Neue', category: 'display' }, { family: 'Anton', category: 'display' },
+  { family: 'Bungee', category: 'display' }, { family: 'Black Ops One', category: 'display' },
+  { family: 'Bowlby One SC', category: 'display' }, { family: 'Climate Crisis', category: 'display' },
+  { family: 'Fascinate', category: 'display' }, { family: 'Fjalla One', category: 'display' },
+  { family: 'Graduate', category: 'display' }, { family: 'Limelight', category: 'display' },
+  { family: 'Monoton', category: 'display' }, { family: 'Righteous', category: 'display' },
+  { family: 'Russo One', category: 'display' }, { family: 'Syne', category: 'display' },
+  { family: 'Unbounded', category: 'display' }, { family: 'Yeseva One', category: 'display' },
+  { family: 'Alfa Slab One', category: 'display' }, { family: 'Abril Fatface', category: 'display' },
+  { family: 'IBM Plex Mono', category: 'mono' }, { family: 'JetBrains Mono', category: 'mono' },
+  { family: 'Space Mono', category: 'mono' }, { family: 'Roboto Mono', category: 'mono' },
+  { family: 'Source Code Pro', category: 'mono' }, { family: 'VT323', category: 'mono' },
+  { family: 'Share Tech Mono', category: 'mono' }, { family: 'Azeret Mono', category: 'mono' },
+  { family: 'Caveat', category: 'hand' }, { family: 'Patrick Hand', category: 'hand' },
+  { family: 'Permanent Marker', category: 'hand' }, { family: 'Rock Salt', category: 'hand' },
+  { family: 'Kalam', category: 'hand' }, { family: 'Indie Flower', category: 'hand' },
+  { family: 'Gloria Hallelujah', category: 'hand' }, { family: 'Architects Daughter', category: 'hand' },
+  { family: 'Shadows Into Light', category: 'hand' }, { family: 'Schoolbell', category: 'hand' },
+  { family: 'Fredoka', category: 'playful' }, { family: 'Baloo 2', category: 'playful' },
+  { family: 'Bubblegum Sans', category: 'playful' }, { family: 'Chewy', category: 'playful' },
+  { family: 'Lilita One', category: 'playful' }, { family: 'Modak', category: 'playful' },
+  { family: 'Titan One', category: 'playful' }, { family: 'Coiny', category: 'playful' },
+  { family: 'DynaPuff', category: 'playful' }, { family: 'Roboto Condensed', category: 'condensed' },
+  { family: 'Archivo Narrow', category: 'condensed' }, { family: 'Barlow Condensed', category: 'condensed' },
+  { family: 'Oswald', category: 'condensed' }, { family: 'Teko', category: 'condensed' },
+  { family: 'Yanone Kaffeesatz', category: 'condensed' }
+];
+
+const HEADLINE_SCALES = ['micro', 'small', 'medium', 'large', 'huge', 'extreme'];
+const BODY_SCALES = ['micro', 'small', 'normal', 'large'];
+const FONT_STRATEGIES = ['disciplined-pair', 'editorial-quartet', 'mixed-voices', 'page-by-page', 'maximal-typography'];
 const LAYOUT_SYSTEMS = ['single-hero-image', 'split-layout', 'strict-grid', 'chaotic-collage', 'poster-layout', 'text-heavy-editorial', 'image-heavy-magazine', 'white-space-minimal', 'full-bleed', 'framed-gallery', 'asymmetric-modern', 'timeline-flow', 'layered-overlap', 'modular-cards', 'vertical-rhythm'];
 const IMAGE_TREATMENTS = ['clean-photo', 'grainy-photo', 'black-white-photo', 'cutout-collage', 'duotone-photo', 'archival-scan', 'posterized', 'blurred-dreamy', 'illustration-mix', 'diagram-overlay', 'photo-with-text-overlay', 'halftone-photo', 'chrome-reflection', 'infrared-color', 'xerox-copy'];
 const TEXT_DENSITIES = ['very-low', 'low', 'medium', 'high', 'variable'];
@@ -232,54 +302,70 @@ const PALETTES = [
 ];
 
 const PAGE_MODULES = {
-  cover: { type: 'cover', layouts: ['minimal', 'full', 'asymmetric'], image: 'optional', source: false },
-  minimal_cover: { type: 'cover', layouts: ['minimal', 'vertical'], image: 'no', source: false },
-  poster_cover: { type: 'cover', layouts: ['full', 'overlap', 'asymmetric'], image: 'optional', source: false },
-  hero_photo: { type: 'full_bleed', layouts: ['full', 'asymmetric'], image: 'yes', source: false },
-  photo_caption: { type: 'full_bleed', layouts: ['split', 'full'], image: 'yes', source: false },
-  two_image_story: { type: 'collage', layouts: ['split', 'grid'], image: 'yes', source: false },
-  four_image_grid: { type: 'collage', layouts: ['grid'], image: 'yes', source: false },
-  fact_page: { type: 'facts', layouts: ['grid', 'split', 'archive'], image: 'optional', source: true },
-  giant_fact: { type: 'facts', layouts: ['minimal', 'full'], image: 'optional', source: true },
-  quote_page: { type: 'quote', layouts: ['minimal', 'vertical', 'full'], image: 'no', source: false },
-  timeline_page: { type: 'timeline', layouts: ['vertical', 'grid', 'archive'], image: 'optional', source: true },
-  map_page: { type: 'map', layouts: ['grid', 'full', 'archive'], image: 'optional', source: true },
-  diagram_page: { type: 'diagram', layouts: ['grid', 'split', 'archive'], image: 'optional', source: true },
-  micro_essay: { type: 'editorial', layouts: ['split', 'minimal', 'vertical'], image: 'optional', source: false },
-  list_page: { type: 'facts', layouts: ['grid', 'vertical'], image: 'no', source: false },
-  collage_page: { type: 'collage', layouts: ['overlap', 'asymmetric', 'grid'], image: 'yes', source: false },
-  chapter_divider: { type: 'editorial', layouts: ['minimal', 'full'], image: 'no', source: false },
-  full_bleed_image: { type: 'full_bleed', layouts: ['full'], image: 'yes', source: false },
-  caption_gallery: { type: 'collage', layouts: ['grid', 'archive'], image: 'yes', source: false },
-  archive_page: { type: 'editorial', layouts: ['archive', 'grid'], image: 'yes', source: true },
-  object_closeup: { type: 'full_bleed', layouts: ['split', 'full'], image: 'yes', source: false },
-  text_over_image: { type: 'full_bleed', layouts: ['overlap', 'full'], image: 'yes', source: false },
-  index_page: { type: 'facts', layouts: ['grid', 'vertical'], image: 'no', source: false },
-  contrast_page: { type: 'editorial', layouts: ['split', 'asymmetric'], image: 'optional', source: false },
-  black_page: { type: 'quote', layouts: ['minimal', 'full'], image: 'no', source: false },
-  white_page: { type: 'editorial', layouts: ['minimal'], image: 'no', source: false },
-  duotone_poster: { type: 'cover', layouts: ['full', 'overlap'], image: 'yes', source: false },
-  scrapbook_page: { type: 'collage', layouts: ['archive', 'overlap'], image: 'yes', source: false },
-  dedication_page: { type: 'quote', layouts: ['minimal', 'split'], image: 'optional', source: false },
-  before_after: { type: 'editorial', layouts: ['split', 'grid'], image: 'yes', source: true },
-  data_page: { type: 'diagram', layouts: ['grid', 'vertical'], image: 'optional', source: true },
-  empty_breath: { type: 'quote', layouts: ['minimal'], image: 'no', source: false },
-  closing: { type: 'closing', layouts: ['full', 'minimal', 'split'], image: 'optional', source: false }
+  cover: { type: 'cover', layouts: ['minimal', 'full', 'asymmetric', 'poster', 'contact-sheet'], image: 'optional', source: false, imageCount: 0 },
+  hero_photo: { type: 'full_bleed', layouts: ['full', 'asymmetric'], image: 'yes', source: false, imageCount: 1 },
+  photo_caption: { type: 'full_bleed', layouts: ['split', 'full'], image: 'yes', source: false, imageCount: 1 },
+  image_diptych: { type: 'collage', layouts: ['split', 'grid'], image: 'yes', source: false, imageCount: 2 },
+  image_triptych: { type: 'collage', layouts: ['grid', 'asymmetric'], image: 'yes', source: false, imageCount: 3 },
+  photo_grid_4: { type: 'collage', layouts: ['grid', 'catalog'], image: 'yes', source: false, imageCount: 4 },
+  photo_grid_6: { type: 'collage', layouts: ['grid', 'catalog'], image: 'yes', source: false, imageCount: 6 },
+  photo_grid_9: { type: 'collage', layouts: ['grid', 'contact-sheet'], image: 'yes', source: false, imageCount: 9 },
+  photo_grid_12: { type: 'collage', layouts: ['grid', 'contact-sheet'], image: 'yes', source: false, imageCount: 12 },
+  contact_sheet_20: { type: 'collage', layouts: ['contact-sheet', 'catalog'], image: 'yes', source: false, imageCount: 20 },
+  masonry_gallery: { type: 'collage', layouts: ['masonry', 'asymmetric'], image: 'yes', source: false, imageCount: 8 },
+  polaroid_wall: { type: 'collage', layouts: ['overlap', 'masonry'], image: 'yes', source: false, imageCount: 7 },
+  image_strip: { type: 'collage', layouts: ['vertical', 'grid'], image: 'yes', source: false, imageCount: 5 },
+  catalog_labels: { type: 'facts', layouts: ['catalog', 'grid'], image: 'yes', source: true, imageCount: 12 },
+  fact_page: { type: 'facts', layouts: ['grid', 'split', 'archive'], image: 'optional', source: true, imageCount: 1 },
+  giant_fact: { type: 'facts', layouts: ['minimal', 'full'], image: 'optional', source: true, imageCount: 1 },
+  quote_page: { type: 'quote', layouts: ['minimal', 'vertical', 'full'], image: 'no', source: false, imageCount: 0 },
+  timeline_page: { type: 'timeline', layouts: ['vertical', 'grid', 'archive'], image: 'optional', source: true, imageCount: 1 },
+  map_page: { type: 'map', layouts: ['grid', 'full', 'archive'], image: 'optional', source: true, imageCount: 1 },
+  diagram_page: { type: 'diagram', layouts: ['grid', 'split', 'archive'], image: 'optional', source: true, imageCount: 1 },
+  micro_essay: { type: 'editorial', layouts: ['split', 'minimal', 'vertical'], image: 'optional', source: false, imageCount: 1 },
+  newspaper_page: { type: 'editorial', layouts: ['newspaper'], image: 'optional', source: true, imageCount: 2 },
+  microtype_index: { type: 'facts', layouts: ['newspaper', 'catalog'], image: 'no', source: false, imageCount: 0 },
+  list_page: { type: 'facts', layouts: ['grid', 'vertical'], image: 'no', source: false, imageCount: 0 },
+  collage_page: { type: 'collage', layouts: ['overlap', 'asymmetric', 'grid'], image: 'yes', source: false, imageCount: 5 },
+  chapter_divider: { type: 'editorial', layouts: ['minimal', 'full'], image: 'no', source: false, imageCount: 0 },
+  full_bleed_image: { type: 'full_bleed', layouts: ['full'], image: 'yes', source: false, imageCount: 1 },
+  caption_gallery: { type: 'collage', layouts: ['grid', 'archive'], image: 'yes', source: false, imageCount: 6 },
+  archive_page: { type: 'editorial', layouts: ['archive', 'grid'], image: 'yes', source: true, imageCount: 3 },
+  object_closeup: { type: 'full_bleed', layouts: ['split', 'full'], image: 'yes', source: false, imageCount: 1 },
+  text_over_image: { type: 'full_bleed', layouts: ['overlap', 'full'], image: 'yes', source: false, imageCount: 1 },
+  index_page: { type: 'facts', layouts: ['grid', 'vertical'], image: 'no', source: false, imageCount: 0 },
+  contrast_page: { type: 'editorial', layouts: ['split', 'asymmetric'], image: 'optional', source: false, imageCount: 2 },
+  black_page: { type: 'quote', layouts: ['minimal', 'full'], image: 'no', source: false, imageCount: 0 },
+  white_page: { type: 'editorial', layouts: ['minimal'], image: 'no', source: false, imageCount: 0 },
+  duotone_poster: { type: 'cover', layouts: ['full', 'overlap', 'poster'], image: 'yes', source: false, imageCount: 1 },
+  typographic_poster: { type: 'cover', layouts: ['poster', 'full'], image: 'no', source: false, imageCount: 0 },
+  scrapbook_page: { type: 'collage', layouts: ['archive', 'overlap'], image: 'yes', source: false, imageCount: 6 },
+  dedication_page: { type: 'quote', layouts: ['minimal', 'split'], image: 'optional', source: false, imageCount: 1 },
+  before_after: { type: 'editorial', layouts: ['split', 'grid'], image: 'yes', source: true, imageCount: 2 },
+  data_page: { type: 'diagram', layouts: ['grid', 'vertical'], image: 'optional', source: true, imageCount: 1 },
+  empty_breath: { type: 'quote', layouts: ['minimal'], image: 'no', source: false, imageCount: 0 },
+  panorama_left: { type: 'full_bleed', layouts: ['panorama'], image: 'yes', source: false, imageCount: 1 },
+  panorama_right: { type: 'full_bleed', layouts: ['panorama'], image: 'yes', source: false, imageCount: 1 },
+  split_feature_left: { type: 'editorial', layouts: ['split'], image: 'yes', source: false, imageCount: 1 },
+  split_feature_right: { type: 'editorial', layouts: ['split'], image: 'yes', source: false, imageCount: 1 },
+  quote_spread_left: { type: 'quote', layouts: ['full'], image: 'optional', source: false, imageCount: 1 },
+  quote_spread_right: { type: 'quote', layouts: ['full'], image: 'optional', source: false, imageCount: 1 },
+  closing: { type: 'closing', layouts: ['full', 'minimal', 'split'], image: 'optional', source: false, imageCount: 1 }
 };
 
 const ARCHETYPE_MODULES = {
-  'gift-booklet': ['hero_photo', 'quote_page', 'fact_page', 'collage_page', 'dedication_page', 'empty_breath'],
-  'editorial-magazine': ['micro_essay', 'photo_caption', 'fact_page', 'caption_gallery', 'contrast_page', 'giant_fact'],
-  'museum-brochure': ['archive_page', 'fact_page', 'timeline_page', 'object_closeup', 'index_page', 'diagram_page'],
-  'art-zine': ['collage_page', 'scrapbook_page', 'black_page', 'duotone_poster', 'text_over_image', 'empty_breath'],
-  'travel-guide': ['map_page', 'hero_photo', 'fact_page', 'timeline_page', 'photo_caption', 'list_page'],
-  'personal-tribute': ['dedication_page', 'hero_photo', 'quote_page', 'timeline_page', 'scrapbook_page', 'micro_essay'],
-  'fact-book': ['fact_page', 'giant_fact', 'diagram_page', 'timeline_page', 'data_page', 'map_page'],
-  'visual-diary': ['photo_caption', 'scrapbook_page', 'micro_essay', 'object_closeup', 'empty_breath', 'quote_page'],
-  'poster-book': ['poster_cover', 'duotone_poster', 'giant_fact', 'text_over_image', 'black_page', 'full_bleed_image'],
-  'archive-booklet': ['archive_page', 'timeline_page', 'index_page', 'object_closeup', 'fact_page', 'map_page'],
-  'children-storybook': ['hero_photo', 'collage_page', 'quote_page', 'list_page', 'empty_breath', 'dedication_page'],
-  'futurist-dossier': ['data_page', 'diagram_page', 'text_over_image', 'giant_fact', 'map_page', 'black_page']
+  'gift-booklet': ['hero_photo', 'quote_page', 'fact_page', 'collage_page', 'dedication_page', 'empty_breath', 'photo_grid_4'],
+  'editorial-magazine': ['micro_essay', 'photo_caption', 'fact_page', 'caption_gallery', 'contrast_page', 'giant_fact', 'newspaper_page'],
+  'museum-brochure': ['archive_page', 'fact_page', 'timeline_page', 'object_closeup', 'index_page', 'diagram_page', 'catalog_labels'],
+  'art-zine': ['collage_page', 'scrapbook_page', 'black_page', 'duotone_poster', 'text_over_image', 'empty_breath', 'polaroid_wall'],
+  'travel-guide': ['map_page', 'hero_photo', 'fact_page', 'timeline_page', 'photo_caption', 'list_page', 'photo_grid_9'],
+  'personal-tribute': ['dedication_page', 'hero_photo', 'quote_page', 'timeline_page', 'scrapbook_page', 'micro_essay', 'image_strip'],
+  'fact-book': ['fact_page', 'giant_fact', 'diagram_page', 'timeline_page', 'data_page', 'map_page', 'contact_sheet_20'],
+  'visual-diary': ['photo_caption', 'scrapbook_page', 'micro_essay', 'object_closeup', 'empty_breath', 'quote_page', 'masonry_gallery'],
+  'poster-book': ['duotone_poster', 'typographic_poster', 'giant_fact', 'text_over_image', 'black_page', 'full_bleed_image'],
+  'archive-booklet': ['archive_page', 'timeline_page', 'index_page', 'object_closeup', 'fact_page', 'map_page', 'contact_sheet_20'],
+  'children-storybook': ['hero_photo', 'collage_page', 'quote_page', 'list_page', 'empty_breath', 'dedication_page', 'photo_grid_6'],
+  'futurist-dossier': ['data_page', 'diagram_page', 'text_over_image', 'giant_fact', 'map_page', 'black_page', 'catalog_labels']
 };
 
 function clampInt(value, min, max, fallback) {
@@ -438,6 +524,88 @@ function pageCountFor(archetype, seed) {
   return weightedPick(options, seed, 'page-count').value;
 }
 
+
+function preferredFontCategories(typographyMode) {
+  return {
+    'huge-serif': ['serif', 'display'],
+    'tiny-editorial': ['serif', 'sans'],
+    'clean-sans': ['sans'],
+    'mixed-serif-sans': ['serif', 'sans'],
+    'poster-bold': ['display', 'condensed'],
+    typewriter: ['mono'],
+    'condensed-headlines': ['condensed', 'display'],
+    'handwritten-accent': ['hand', 'playful'],
+    'tech-mono': ['mono', 'sans'],
+    'playful-rounded': ['playful', 'hand', 'sans']
+  }[typographyMode] || ['sans', 'serif'];
+}
+
+function fontCountFor(level, seed) {
+  const pools = {
+    0: [2, 2, 3], 1: [2, 3, 3, 4], 2: [3, 4, 5, 6],
+    3: [4, 5, 6, 7, 8], 4: [6, 8, 10, 12, 14], 5: [8, 10, 12, 14, 16, 18, 20]
+  };
+  return Math.min(configuredFontLimit, pick(pools[level] || pools[2], seed, 'font-count'));
+}
+
+function chooseFontPalette(typographyMode, level, seed) {
+  const preferred = preferredFontCategories(typographyMode);
+  const count = fontCountFor(level, seed);
+  const preferredFonts = FONT_LIBRARY.filter(font => preferred.includes(font.category));
+  const primaryCount = Math.min(count, Math.max(2, Math.ceil(count * 0.55)));
+  const primary = pickUnique(preferredFonts, primaryCount, seed, 'preferred-fonts');
+  const remaining = FONT_LIBRARY.filter(font => !primary.some(chosen => chosen.family === font.family));
+  const extras = pickUnique(remaining, count - primary.length, seed, 'extra-fonts');
+  return [...primary, ...extras].map(font => font.family);
+}
+
+function chooseFontStrategy(fontCount, seed) {
+  if (fontCount <= 2) return 'disciplined-pair';
+  if (fontCount <= 4) return 'editorial-quartet';
+  if (fontCount <= 8) return pick(['mixed-voices', 'page-by-page'], seed, 'font-strategy');
+  return 'maximal-typography';
+}
+
+function chooseCoverArchetype(dnaLike, seed) {
+  const style = dnaLike.styleFamily;
+  const archetype = dnaLike.archetype;
+  let pool = COVER_ARCHETYPES;
+  if (archetype === 'children-storybook') pool = ['children-cutout', 'collage-chaos', 'poster-grid', 'full-photo'];
+  else if (archetype === 'poster-book') pool = ['type-only', 'kinetic-type', 'poster-grid', 'collage-chaos'];
+  else if (['museum-brochure', 'archive-booklet'].includes(archetype)) pool = ['black-white-archive', 'classic-book', 'contact-sheet', 'data-cover'];
+  else if (style === 'neo-tech-interface') pool = ['neo-tech', 'data-cover', 'split-object'];
+  else if (style === 'luxury-editorial') pool = ['luxury-minimal', 'negative-space', 'full-photo'];
+  else if (['post-punk-zine', 'grunge-90s', 'early-web-maximalism'].includes(style)) pool = ['collage-chaos', 'kinetic-type', 'contact-sheet'];
+  return pick(pool, seed, 'cover-archetype');
+}
+
+function coverImageCount(coverArchetype) {
+  return {
+    'type-only': 0, 'kinetic-type': 0, 'negative-space': 0, 'classic-book': 0,
+    'full-photo': 1, magazine: 1, 'luxury-minimal': 1, 'neo-tech': 1,
+    'black-white-archive': 1, 'split-object': 1, 'data-cover': 1,
+    'children-cutout': 3, 'poster-grid': 4, 'collage-chaos': 6, 'contact-sheet': 12
+  }[coverArchetype] ?? 1;
+}
+
+function headlineScaleFor(module, seed, index) {
+  if (['typographic_poster', 'giant_fact', 'quote_page', 'black_page', 'chapter_divider'].includes(module)) return pick(['huge', 'extreme'], seed, `headline-scale:${index}`);
+  if (['contact_sheet_20', 'photo_grid_12', 'catalog_labels', 'microtype_index', 'newspaper_page'].includes(module)) return pick(['micro', 'small', 'medium'], seed, `headline-scale:${index}`);
+  return pick(HEADLINE_SCALES, seed, `headline-scale:${index}`);
+}
+
+function bodyScaleFor(module, seed, index) {
+  if (['microtype_index', 'contact_sheet_20', 'catalog_labels', 'newspaper_page'].includes(module)) return pick(['micro', 'small'], seed, `body-scale:${index}`);
+  if (['quote_page', 'empty_breath', 'black_page'].includes(module)) return 'large';
+  return pick(BODY_SCALES, seed, `body-scale:${index}`);
+}
+
+function textColumnsFor(module, seed, index) {
+  if (module === 'newspaper_page') return 3;
+  if (['fact_page', 'archive_page', 'catalog_labels', 'microtype_index'].includes(module)) return pick([2, 3, 4], seed, `columns:${index}`);
+  return pick([1, 1, 1, 2], seed, `columns:${index}`);
+}
+
 function buildDesignDna(seed, slot) {
   const randomCategory = weightedPick(CATEGORIES, seed, 'category');
   const experimentalLevel = chooseExperimentalLevel(seed, slot);
@@ -475,6 +643,9 @@ function buildDesignDna(seed, slot) {
   const effectCount = Math.max(1, Math.min(5, experimentalLevel + (hashFloat(seed, 'effect-bonus') > 0.66 ? 1 : 0)));
   const effects = pickUnique(effectPool, effectCount, seed, 'effects');
   const pageCount = pageCountFor(archetype, seed);
+  const fontPalette = chooseFontPalette(typographyMode, experimentalLevel, seed);
+  const fontStrategy = chooseFontStrategy(fontPalette.length, seed);
+  const coverArchetype = chooseCoverArchetype({ styleFamily: styleFamily.id, archetype }, seed);
 
   return {
     slot,
@@ -508,6 +679,12 @@ function buildDesignDna(seed, slot) {
     logicMode,
     surpriseElements,
     pageCount,
+    coverArchetype,
+    fontPalette,
+    fontCount: fontPalette.length,
+    fontStrategy,
+    fontProvider: 'google-fonts-css2',
+    printMode: 'a5-stapled-spreads',
     palette: choosePalette(colorMode, seed)
   };
 }
@@ -575,47 +752,84 @@ function choosePageModule(pool, used, seed, index) {
 }
 
 function buildPagePlan(dna, seed) {
-  const plan = [];
-  const coverPool = dna.archetype === 'poster-book' ? ['poster_cover', 'duotone_poster'] : dna.archetype === 'children-storybook' ? ['cover', 'poster_cover'] : ['cover', 'minimal_cover', 'poster_cover'];
-  plan.push(pick(coverPool, seed, 'cover-module'));
-
-  const bodyForbidden = new Set(['cover', 'minimal_cover', 'poster_cover', 'closing']);
+  const plan = [{ module: 'cover' }];
+  const bodyForbidden = new Set(['cover', 'closing', 'panorama_left', 'panorama_right', 'split_feature_left', 'split_feature_right', 'quote_spread_left', 'quote_spread_right']);
   const basePool = (ARCHETYPE_MODULES[dna.archetype] || ARCHETYPE_MODULES['editorial-magazine']).filter(module => !bodyForbidden.has(module));
-  const extraPool = Object.keys(PAGE_MODULES).filter(module => !['cover', 'minimal_cover', 'poster_cover', 'closing'].includes(module));
-  const mixedPool = [...new Set([...basePool, ...pickUnique(extraPool, 8, seed, 'extra-modules')])];
+  const extraPool = Object.keys(PAGE_MODULES).filter(module => !bodyForbidden.has(module));
+  const mixedPool = [...new Set([...basePool, ...pickUnique(extraPool, 14, seed, 'extra-modules')])];
+  const desiredSpreadPairs = dna.pageCount >= 14 ? 3 : dna.pageCount >= 10 ? 2 : 1;
+  let spreadPairs = 0;
 
-  if (dna.pageCount >= 8 && hashFloat(seed, 'divider') > 0.35) plan.push('chapter_divider');
+  if (dna.pageCount >= 8 && hashFloat(seed, 'divider') > 0.44) plan.push({ module: 'chapter_divider' });
 
-  while (plan.length < dna.pageCount - 1) {
-    plan.push(choosePageModule(mixedPool, plan, seed, plan.length));
+  const denseGalleryChance = dna.imageDensity === 'maximal' ? 0.92 : dna.imageDensity === 'high' ? 0.72 : dna.pageCount >= 12 ? 0.48 : 0.24;
+  if (plan.length < dna.pageCount - 2 && hashFloat(seed, 'dense-gallery') < denseGalleryChance) {
+    plan.push({ module: pick(['photo_grid_9', 'photo_grid_12', 'contact_sheet_20', 'catalog_labels'], seed, 'dense-gallery-module') });
   }
 
-  plan.push('closing');
+  while (plan.length < dna.pageCount - 1) {
+    const remaining = dna.pageCount - 1 - plan.length;
+    const canAddSpread = remaining >= 2 && spreadPairs < desiredSpreadPairs;
+    const spreadChance = 0.18 + dna.experimentalLevel * 0.055;
 
-  return plan.slice(0, dna.pageCount).map((module, index) => {
+    if (canAddSpread && hashFloat(seed, `spread:${plan.length}`) < spreadChance) {
+      const kind = pick(['panorama', 'split-feature', 'quote-spread'], seed, `spread-kind:${plan.length}`);
+      const spreadId = `spread-${plan.length}-${kind}`;
+      const modules = kind === 'panorama'
+        ? ['panorama_left', 'panorama_right']
+        : kind === 'split-feature'
+          ? ['split_feature_left', 'split_feature_right']
+          : ['quote_spread_left', 'quote_spread_right'];
+      plan.push({ module: modules[0], spreadId, spreadRole: 'left', spreadKind: kind });
+      plan.push({ module: modules[1], spreadId, spreadRole: 'right', spreadKind: kind });
+      spreadPairs += 1;
+      continue;
+    }
+
+    const usedModules = plan.map(entry => entry.module);
+    plan.push({ module: choosePageModule(mixedPool, usedModules, seed, plan.length) });
+  }
+
+  plan.push({ module: 'closing' });
+
+  return plan.slice(0, dna.pageCount).map((entry, index) => {
+    const module = entry.module;
     const config = PAGE_MODULES[module];
     const layout = pick(config.layouts, seed, `module-layout:${index}`);
     const effect = pick(dna.effects, seed, `page-effect:${index}`);
-    const typography = hashFloat(seed, `page-typography-bias:${index}`) < 0.72 ? dna.typographyMode : pick(TYPOGRAPHY_MODES, seed, `page-typography:${index}`);
-    const background = hashFloat(seed, `page-background-bias:${index}`) < 0.66 ? dna.backgroundStyle : pick(BACKGROUND_STYLES, seed, `page-background:${index}`);
-    const imageTreatment = hashFloat(seed, `page-image-bias:${index}`) < 0.75 ? dna.imageTreatment : pick(IMAGE_TREATMENTS, seed, `page-image:${index}`);
-    const textAlign = pick(['left', 'left', 'left', 'center', 'right'], seed, `text-align:${index}`);
-    const rotation = Number(((hashFloat(seed, `rotation:${index}`) - 0.5) * (dna.experimentalLevel * 2.4)).toFixed(2));
+    const typography = hashFloat(seed, `page-typography-bias:${index}`) < 0.52 ? dna.typographyMode : pick(TYPOGRAPHY_MODES, seed, `page-typography:${index}`);
+    const background = hashFloat(seed, `page-background-bias:${index}`) < 0.58 ? dna.backgroundStyle : pick(BACKGROUND_STYLES, seed, `page-background:${index}`);
+    const imageTreatment = hashFloat(seed, `page-image-bias:${index}`) < 0.66 ? dna.imageTreatment : pick(IMAGE_TREATMENTS, seed, `page-image:${index}`);
+    const textAlign = pick(['left', 'left', 'center', 'right'], seed, `text-align:${index}`);
+    const rotation = Number(((hashFloat(seed, `rotation:${index}`) - 0.5) * (dna.experimentalLevel * 2.8)).toFixed(2));
     const imagePosition = pick(['center', 'center top', 'center bottom', 'left center', 'right center'], seed, `image-position:${index}`);
+    const fontFamily = dna.fontPalette[index % dna.fontPalette.length] || dna.fontPalette[0] || 'DM Sans';
+    let imageCount = config.imageCount || 0;
+    if (index === 0) imageCount = coverImageCount(dna.coverArchetype);
+    if (index !== 0 && config.image === 'optional' && hashFloat(seed, `optional-image:${index}`) < 0.38) imageCount = 0;
 
     return {
       module,
       type: config.type,
       layout,
-      needsImage: config.image,
+      needsImage: imageCount > 0 ? 'yes' : config.image,
       needsSource: config.source,
+      imageCount,
       effect,
       typography,
       background,
       imageTreatment,
       textAlign,
       rotation,
-      imagePosition
+      imagePosition,
+      fontFamily,
+      fontWeight: pick([300, 400, 500, 600, 700, 800, 900], seed, `font-weight:${index}`),
+      headlineScale: headlineScaleFor(module, seed, index),
+      bodyScale: bodyScaleFor(module, seed, index),
+      textColumns: textColumnsFor(module, seed, index),
+      spreadId: entry.spreadId || '',
+      spreadRole: entry.spreadRole || '',
+      spreadKind: entry.spreadKind || ''
     };
   });
 }
@@ -680,6 +894,17 @@ function titleForModule(module, dna, seed, index, bookletTitle) {
     photo_caption: `One Image, One Clue`,
     two_image_story: `Two Views of the Same Thing`,
     four_image_grid: `Fragments / 01–04`,
+    image_diptych: `Two Views / One Subject`,
+    image_triptych: `Three Angles`,
+    photo_grid_4: `Four Frames`,
+    photo_grid_6: `Six Pieces of Evidence`,
+    photo_grid_9: `Nine Ways to Look`,
+    photo_grid_12: `Twelve Small Worlds`,
+    contact_sheet_20: `Twenty Images / No Hierarchy`,
+    masonry_gallery: `A Wall Without a Grid`,
+    polaroid_wall: `Loose Evidence`,
+    image_strip: `Five Moments in Sequence`,
+    catalog_labels: `A Catalog of Details`,
     fact_page: `Things Worth Verifying`,
     giant_fact: `One Number Changes the Scale`,
     quote_page: `A Sentence with Its Own Room`,
@@ -687,6 +912,8 @@ function titleForModule(module, dna, seed, index, bookletTitle) {
     map_page: `A Route Through ${subject}`,
     diagram_page: `How the Invisible Part Works`,
     micro_essay: `A Short Note on ${subject}`,
+    newspaper_page: `The Daily ${subject}`,
+    microtype_index: `Index / References / Small Print`,
     list_page: `A List Without a Ranking`,
     collage_page: `Memory in Fragments`,
     chapter_divider: `Chapter ${String(index).padStart(2, '0')}`,
@@ -700,19 +927,26 @@ function titleForModule(module, dna, seed, index, bookletTitle) {
     black_page: `Pause in Black`,
     white_page: `Almost Nothing`,
     duotone_poster: `${subject} in Two Colors`,
+    typographic_poster: `${subject} at Maximum Volume`,
     scrapbook_page: `Evidence, Tape, Memory`,
     dedication_page: `For ${dna.audience.replace(/^the /i, '')}`,
     before_after: `Then and Now`,
     data_page: `Signals and Measurements`,
     empty_breath: `Leave Some Air`,
+    panorama_left: `One Image Begins Here`,
+    panorama_right: `And Continues Across the Fold`,
+    split_feature_left: `The Image Side`,
+    split_feature_right: `The Text Side`,
+    quote_spread_left: `One Sentence`,
+    quote_spread_right: `Given Two Pages`,
     closing: `Continue Beyond the Page`
   };
   return titles[module] || pick([`On ${subject}`, `Another Way to See It`, `A Change of Scale`], seed, `fallback-title:${index}`);
 }
 
 function imageQueryForPage(dna, pagePlan, seed, index) {
-  if (pagePlan.needsImage === 'no') return '';
-  if (pagePlan.needsImage === 'optional' && hashFloat(seed, `optional-image:${index}`) < 0.44) return '';
+  if ((pagePlan.imageCount || 0) <= 0 || pagePlan.needsImage === 'no') return '';
+  if (pagePlan.needsImage === 'optional' && hashFloat(seed, `optional-image:${index}`) < 0.22) return '';
   const secondary = dna.secondarySubject ? ` ${dna.secondarySubject}` : '';
   const surprise = dna.surpriseElements.length && hashFloat(seed, `image-surprise:${index}`) > 0.45 ? ` ${pick(dna.surpriseElements, seed, `surprise-image:${index}`)}` : '';
   return `${dna.subject}${secondary}${surprise} ${pagePlan.imageTreatment.replaceAll('-', ' ')} ${dna.referenceCulture} editorial photography`;
@@ -739,7 +973,16 @@ function fallbackPages(dna, pagePlan, title, seed) {
     imageTreatment: plan.imageTreatment,
     textAlign: plan.textAlign,
     rotation: plan.rotation,
-    imagePosition: plan.imagePosition
+    imagePosition: plan.imagePosition,
+    imageCount: plan.imageCount,
+    fontFamily: plan.fontFamily,
+    fontWeight: plan.fontWeight,
+    headlineScale: plan.headlineScale,
+    bodyScale: plan.bodyScale,
+    textColumns: plan.textColumns,
+    spreadId: plan.spreadId,
+    spreadRole: plan.spreadRole,
+    spreadKind: plan.spreadKind
   }));
 }
 
@@ -765,7 +1008,7 @@ function fallbackConceptFromDna(dna, pagePlan, seed) {
     description: dna.customDescription
       ? truncateText(dna.customDescription, 700)
       : `A ${dna.archetype.replaceAll('-', ' ')} about ${dna.subject}, designed for ${dna.audience}. The sequence deliberately varies image scale, text volume, typography, negative space and page effects instead of reskinning one template.`,
-    format: `A5 / ${dna.pageCount} pages / ${dna.printFeel.replaceAll('-', ' ')}`,
+    format: `A5 print / ${dna.pageCount} pages / ${dna.printFeel.replaceAll('-', ' ')} / paired spreads`,
     palette: dna.palette,
     designDna: dna,
     pages: fallbackPages(dna, pagePlan, title, seed)
@@ -840,7 +1083,11 @@ function aiBrief(dna, pagePlan, index) {
     experimentalLevel: dna.experimentalLevel,
     logicMode: dna.logicMode,
     pageCount: dna.pageCount,
-    pagePlan: pagePlan.map(page => ({ module: page.module, type: page.type, layout: page.layout }))
+    coverArchetype: dna.coverArchetype,
+    fontPalette: dna.fontPalette,
+    fontStrategy: dna.fontStrategy,
+    printMode: dna.printMode,
+    pagePlan: pagePlan.map(page => ({ module: page.module, type: page.type, layout: page.layout, imageCount: page.imageCount, fontFamily: page.fontFamily, headlineScale: page.headlineScale, spreadId: page.spreadId, spreadRole: page.spreadRole }))
   };
 }
 
@@ -867,7 +1114,11 @@ Rules:
 - Do not fall back to a generic art-magazine template.
 - Vary text length strongly: some pages may contain one short line, others a compact paragraph or factual list.
 - Vary page rhythm strongly: image-only feeling, tiny captions, huge type, archive, data, pause, collage and narrative pages should feel different.
-- Keep copy concise enough to fit an A5 page.
+- Keep copy concise enough to fit an A5 page, but vary volume radically from one-line pages to dense multi-column reference pages.
+- Respect contact-sheet and gallery modules: they may contain 4, 6, 9, 12 or 20 photographs with tiny labels.
+- Respect paired spread modules: consecutive left/right pages must feel like one physical A4 landscape spread made of two A5 pages.
+- Typography may use many different Google Fonts in one booklet; treat the supplied fontPalette as deliberate art direction, not an error.
+- Cover archetypes must look fundamentally different: photo, contact sheet, type-only, magazine, luxury, tech, childlike, archive, collage or negative-space.
 - For factual, timeline, map, archive and diagram pages, provide a useful sourceQuery for Wikipedia verification. Do not invent precise claims that cannot be checked.
 - imageQuery must work for Openverse or Unsplash search.
 - If customTopic or customDescription is present, treat it as mandatory user direction. Do not replace it with another primary topic.
@@ -943,6 +1194,15 @@ function mergeAiBooklet(aiItem, dna, pagePlan, seed) {
       textAlign: plan.textAlign,
       rotation: plan.rotation,
       imagePosition: plan.imagePosition,
+      imageCount: plan.imageCount,
+      fontFamily: plan.fontFamily,
+      fontWeight: plan.fontWeight,
+      headlineScale: plan.headlineScale,
+      bodyScale: plan.bodyScale,
+      textColumns: plan.textColumns,
+      spreadId: plan.spreadId,
+      spreadRole: plan.spreadRole,
+      spreadKind: plan.spreadKind,
       title: aiPage.title?.trim() || fallbackPage.title,
       body: aiPage.body?.trim() || fallbackPage.body,
       imageQuery: aiPage.imageQuery?.trim() || fallbackPage.imageQuery,
@@ -968,25 +1228,13 @@ function normalizeBooklet(item, index, additions) {
   return { ...item, id, publishDate: date, palette, pages };
 }
 
-async function fetchOpenverse(query, seed) {
-  const url = new URL('https://api.openverse.org/v1/images/');
-  url.searchParams.set('q', query);
-  url.searchParams.set('license', 'pdm,cc0,by,by-sa');
-  url.searchParams.set('page_size', '20');
-  url.searchParams.set('mature', 'false');
+function rotateResults(results, seed, salt) {
+  if (!results.length) return results;
+  const start = seededIndex(seed, results.length, salt);
+  return [...results.slice(start), ...results.slice(0, start)];
+}
 
-  const response = await fetch(url, {
-    headers: {
-      'User-Agent': 'AI-Booklet-Designs/3.0 (https://github.com/aleksvilly/ai-booklet-designs)'
-    }
-  });
-
-  if (!response.ok) throw new Error(`Openverse ${response.status}`);
-  const data = await response.json();
-  const results = (data.results || []).filter(item => item.thumbnail && item.foreign_landing_url);
-  if (!results.length) return null;
-  const item = results[seededIndex(seed, results.length, 'openverse')];
-
+function mapOpenverseImage(item, query) {
   return {
     url: item.thumbnail,
     fullUrl: item.url || item.thumbnail,
@@ -1001,25 +1249,37 @@ async function fetchOpenverse(query, seed) {
   };
 }
 
-async function fetchUnsplash(query, seed) {
-  if (!process.env.UNSPLASH_ACCESS_KEY) return null;
-  const url = new URL('https://api.unsplash.com/search/photos');
-  url.searchParams.set('query', query);
-  url.searchParams.set('per_page', '20');
-  url.searchParams.set('content_filter', 'high');
+async function fetchOpenverseGallery(query, count, seed) {
+  const url = new URL('https://api.openverse.org/v1/images/');
+  url.searchParams.set('q', query);
+  url.searchParams.set('license', 'pdm,cc0,by,by-sa');
+  url.searchParams.set('page_size', String(Math.min(20, Math.max(count, 8))));
+  url.searchParams.set('mature', 'false');
+  apiStats.openverseSearches += 1;
 
   const response = await fetch(url, {
-    headers: {
-      Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`,
-      'Accept-Version': 'v1'
-    }
+    headers: { 'User-Agent': 'AI-Booklet-Designs/4.0 (https://github.com/aleksvilly/ai-booklet-designs)' }
   });
-
-  if (!response.ok) throw new Error(`Unsplash ${response.status}`);
+  if (!response.ok) throw new Error(`Openverse ${response.status}: ${await response.text()}`);
   const data = await response.json();
-  if (!data.results?.length) return null;
-  const item = data.results[seededIndex(seed, data.results.length, 'unsplash')];
+  const results = (data.results || []).filter(item => item.thumbnail && item.foreign_landing_url);
+  const selected = rotateResults(results, seed, 'openverse-gallery').slice(0, count).map(item => mapOpenverseImage(item, query));
+  apiStats.openverseImages += selected.length;
+  return selected;
+}
 
+async function trackUnsplashDownload(location) {
+  if (!location || !process.env.UNSPLASH_ACCESS_KEY) return;
+  try {
+    await fetch(location, {
+      headers: { Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`, 'Accept-Version': 'v1' }
+    });
+  } catch (error) {
+    console.warn(`[Unsplash] Download tracking failed: ${error.message}`);
+  }
+}
+
+function mapUnsplashImage(item, query) {
   return {
     url: item.urls.regular,
     fullUrl: item.urls.full,
@@ -1030,75 +1290,107 @@ async function fetchUnsplash(query, seed) {
     sourceUrl: `${item.links.html}?utm_source=ai_booklet_designs&utm_medium=referral`,
     license: 'Unsplash License',
     licenseUrl: 'https://unsplash.com/license',
-    attribution: `Photo by ${item.user.name} on Unsplash`
+    attribution: `Photo by ${item.user.name} on Unsplash`,
+    downloadLocation: item.links.download_location
   };
+}
+
+async function fetchUnsplashGallery(query, count, seed) {
+  if (!process.env.UNSPLASH_ACCESS_KEY) return [];
+  const url = new URL('https://api.unsplash.com/search/photos');
+  url.searchParams.set('query', query);
+  url.searchParams.set('per_page', String(Math.min(30, Math.max(count, 10))));
+  url.searchParams.set('content_filter', 'high');
+  apiStats.unsplashSearches += 1;
+
+  const response = await fetch(url, {
+    headers: { Authorization: `Client-ID ${process.env.UNSPLASH_ACCESS_KEY}`, 'Accept-Version': 'v1' }
+  });
+  const remaining = response.headers.get('x-ratelimit-remaining');
+  if (!response.ok) throw new Error(`Unsplash ${response.status}: ${await response.text()}`);
+  const data = await response.json();
+  const selectedItems = rotateResults(data.results || [], seed, 'unsplash-gallery').slice(0, count);
+  await Promise.all(selectedItems.map(item => trackUnsplashDownload(item.links.download_location)));
+  const selected = selectedItems.map(item => mapUnsplashImage(item, query));
+  apiStats.unsplashImages += selected.length;
+  console.log(`[Unsplash] ${selected.length} images for "${query}"; rate limit remaining: ${remaining ?? 'unknown'}.`);
+  return selected;
 }
 
 async function findWikipediaSource(query) {
   const url = new URL('https://en.wikipedia.org/w/rest.php/v1/search/page');
   url.searchParams.set('q', query);
   url.searchParams.set('limit', '1');
-
   const response = await fetch(url, {
-    headers: {
-      'User-Agent': 'AI-Booklet-Designs/3.0 (https://github.com/aleksvilly/ai-booklet-designs)'
-    }
+    headers: { 'User-Agent': 'AI-Booklet-Designs/4.0 (https://github.com/aleksvilly/ai-booklet-designs)' }
   });
-
   if (!response.ok) return null;
   const data = await response.json();
   const page = data.pages?.[0];
   if (!page) return null;
-
-  return {
-    title: page.title,
-    provider: 'Wikipedia',
-    url: `https://en.wikipedia.org/wiki/${encodeURIComponent(page.key)}`
-  };
+  apiStats.wikipediaSuccess += 1;
+  return { title: page.title, provider: 'Wikipedia', url: `https://en.wikipedia.org/wiki/${encodeURIComponent(page.key)}` };
 }
 
-function imageLimitFor(dna) {
-  return {
-    'very-low': 2,
-    low: 3,
-    balanced: 5,
-    high: 7,
-    maximal: 10
-  }[dna.imageDensity] || 5;
+function imageBudgetFor(dna) {
+  const base = { 'very-low': 10, low: 18, balanced: 30, high: 44, maximal: 64 }[dna.imageDensity] || 30;
+  return Math.max(base, coverImageCount(dna.coverArchetype) + 20);
+}
+
+async function fetchGallery(provider, query, count, seed) {
+  const canUseUnsplash = Boolean(process.env.UNSPLASH_ACCESS_KEY);
+  const useUnsplash = provider === 'unsplash' || (provider === 'mixed' && canUseUnsplash && seededIndex(seed, 3, 'provider') === 0);
+  let images = useUnsplash
+    ? await fetchUnsplashGallery(query, count, seed)
+    : await fetchOpenverseGallery(query, count, seed);
+  if (!images.length && useUnsplash) images = await fetchOpenverseGallery(query, count, seed);
+  return images;
 }
 
 async function enrichBooklet(booklet, bookletIndex) {
   if (process.env.SKIP_ENRICHMENT === 'true') return booklet;
-
-  let imageCount = 0;
-  const imageLimit = imageLimitFor(booklet.designDna || {});
+  let usedImages = 0;
+  const imageBudget = imageBudgetFor(booklet.designDna || {});
+  const sharedSpreadImages = new Map();
+  const provider = process.env.IMAGE_PROVIDER || 'mixed';
 
   for (let pageIndex = 0; pageIndex < booklet.pages.length; pageIndex += 1) {
     const page = booklet.pages[pageIndex];
+    const requested = Math.max(0, Math.min(20, Number(page.imageCount || (page.imageQuery ? 1 : 0))));
+    const available = Math.max(0, imageBudget - usedImages);
+    const desired = Math.min(requested, available);
     const seed = `${runId}-${bookletIndex}-${pageIndex}-${page.imageQuery}`;
 
-    if (page.imageQuery && imageCount < imageLimit) {
+    if (page.spreadId && sharedSpreadImages.has(page.spreadId)) {
+      const shared = sharedSpreadImages.get(page.spreadId);
+      page.image = shared[0] || null;
+      page.images = shared;
+    } else if (page.imageQuery && desired > 0) {
       try {
-        const provider = process.env.IMAGE_PROVIDER || 'mixed';
-        const canUseUnsplash = Boolean(process.env.UNSPLASH_ACCESS_KEY);
-        const useUnsplash = provider === 'unsplash' || (provider === 'mixed' && canUseUnsplash && seededIndex(seed, 3, 'provider') === 0);
-        page.image = useUnsplash ? await fetchUnsplash(page.imageQuery, seed) : await fetchOpenverse(page.imageQuery, seed);
-        if (!page.image && useUnsplash) page.image = await fetchOpenverse(page.imageQuery, seed);
-        if (page.image) imageCount += 1;
+        const images = await fetchGallery(provider, page.imageQuery, desired, seed);
+        page.images = images;
+        page.image = images[0] || null;
+        usedImages += images.length;
+        if (page.spreadId && images.length) sharedSpreadImages.set(page.spreadId, images);
       } catch (error) {
+        apiStats.imageFailures += 1;
         console.warn(`Image search failed for "${page.imageQuery}": ${error.message}`);
       }
     }
 
     if (page.sourceQuery) {
-      try {
-        page.source = await findWikipediaSource(page.sourceQuery);
-      } catch (error) {
-        console.warn(`Wikipedia source lookup failed: ${error.message}`);
-      }
+      try { page.source = await findWikipediaSource(page.sourceQuery); }
+      catch (error) { console.warn(`Wikipedia source lookup failed: ${error.message}`); }
     }
   }
 
+  booklet.generationMeta = {
+    ...(booklet.generationMeta || {}),
+    imageProviders: [...new Set(booklet.pages.flatMap(page => (page.images || (page.image ? [page.image] : [])).map(image => image?.source)).filter(Boolean))],
+    fontProvider: booklet.designDna?.fontProvider || 'system',
+    fontCount: booklet.designDna?.fontCount || 0,
+    totalImages: booklet.pages.reduce((sum, page) => sum + (page.images?.length || (page.image ? 1 : 0)), 0)
+  };
   return booklet;
 }
 
@@ -1118,8 +1410,10 @@ if (useAi) {
   try {
     const aiBooklets = await generateWithAi(dnas, pagePlans);
     generated = dnas.map((dna, index) => mergeAiBooklet(aiBooklets[index], dna, pagePlans[index], `${runId}:merge:${index}`));
+    apiStats.openaiSuccess += 1;
     console.log(`Generated ${generated.length} diverse concepts with OpenAI.`);
   } catch (error) {
+    apiStats.openaiFailed += 1;
     console.error(`AI generation failed; using local design-DNA fallback. ${error.message}`);
     generated = dnas.map((dna, index) => fallbackConceptFromDna(dna, pagePlans[index], `${runId}:fallback:${index}`));
   }
@@ -1131,6 +1425,11 @@ if (useAi) {
 const additions = [];
 for (let index = 0; index < generated.length; index += 1) {
   const normalized = normalizeBooklet(generated[index], index, additions);
+  normalized.generationMeta = {
+    textProvider: useAi && apiStats.openaiSuccess ? 'openai' : 'local-fallback',
+    model: useAi && apiStats.openaiSuccess ? (process.env.OPENAI_MODEL || 'gpt-5-mini') : null,
+    generatedAt: new Date().toISOString()
+  };
   additions.push(await enrichBooklet(normalized, index));
 }
 
@@ -1141,3 +1440,13 @@ for (const item of additions) {
   const dna = item.designDna || {};
   console.log(`- ${item.era} / ${item.style}: ${item.title} — ${item.pages.length} pages, ${dna.colorMode}, ${dna.typographyMode}, ${dna.logicMode}`);
 }
+
+
+console.log('\n========== V4 GENERATION SUMMARY ==========');
+console.log(`OpenAI: ${apiStats.openaiSuccess ? 'OK' : apiStats.openaiFailed ? 'FAILED / fallback used' : 'disabled'}`);
+console.log(`Unsplash searches/images: ${apiStats.unsplashSearches}/${apiStats.unsplashImages}`);
+console.log(`Openverse searches/images: ${apiStats.openverseSearches}/${apiStats.openverseImages}`);
+console.log(`Wikipedia sources: ${apiStats.wikipediaSuccess}`);
+console.log(`Image failures: ${apiStats.imageFailures}`);
+console.log('Google Fonts: CSS2 API is loaded lazily by app.js when a booklet opens.');
+console.log('===========================================\n');
