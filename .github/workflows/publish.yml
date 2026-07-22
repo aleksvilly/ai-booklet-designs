@@ -14,9 +14,9 @@ on:
         options: ['1', '3', '6']
 
       force_generate:
-        description: Generate more even if today's three already exist
+        description: Generate more even if today's booklets already exist
         required: true
-        default: false
+        default: true
         type: boolean
 
       use_ai:
@@ -24,6 +24,13 @@ on:
         required: true
         default: true
         type: boolean
+
+      chaos_level:
+        description: Design chaos (-1 auto, 0 safe, 5 wild)
+        required: true
+        default: '-1'
+        type: choice
+        options: ['-1', '0', '1', '2', '3', '4', '5']
 
   schedule:
     - cron: '15 07 * * *'
@@ -48,10 +55,10 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Set up Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v4
         with:
           node-version: 24
 
@@ -59,18 +66,14 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: gpt-5.6-luna
+          OPENAI_MODEL: gpt-5-mini
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           IMAGE_PROVIDER: mixed
-
           BOOKLET_COUNT: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '3' }}
-
           FORCE_GENERATE: ${{ github.event_name == 'workflow_dispatch' && inputs.force_generate && 'true' || 'false' }}
-
           USE_AI: ${{ github.event_name == 'schedule' && 'true' || (inputs.use_ai && 'true' || 'false') }}
-
+          CHAOS_LEVEL: ${{ github.event_name == 'workflow_dispatch' && inputs.chaos_level || '-1' }}
           BOOKLET_RUN_ID: ${{ github.run_id }}
-
         run: npm run generate
 
       - name: Commit generated concepts
@@ -83,7 +86,6 @@ jobs:
 
           git config user.name "ai-booklet-bot"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
           git add data/booklets.json
           git commit -m "Add generated booklet concepts"
           git push
