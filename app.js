@@ -437,6 +437,24 @@ function activateGeneratedEffects(root) {
   });
 }
 
+function resetDialogScroll() {
+  // A native <dialog> keeps its previous scroll position after close/open.
+  // Reset both the dialog and its content because browsers differ on which
+  // element becomes the actual scroll container.
+  dialog.scrollTop = 0;
+  dialog.scrollLeft = 0;
+  dialogContent.scrollTop = 0;
+  dialogContent.scrollLeft = 0;
+
+  if (typeof dialog.scrollTo === 'function') {
+    dialog.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }
+
+  if (typeof dialogContent.scrollTo === 'function') {
+    dialogContent.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }
+}
+
 function openBooklet(item, updateUrl = true) {
   loadGoogleFonts(fontsFor(item), `booklet-${safeClass(item.id)}`);
   dialogContent.innerHTML = detailHtml(item);
@@ -449,10 +467,20 @@ function openBooklet(item, updateUrl = true) {
     history.pushState({ booklet: item.id }, '', url);
   }
 
+  // Reset before and after showModal(). Some browsers restore the old native
+  // dialog scroll position during layout, so one reset is not always enough.
+  resetDialogScroll();
   dialog.showModal();
+  dialog.focus({ preventScroll: true });
+  resetDialogScroll();
+
   requestAnimationFrame(() => {
+    resetDialogScroll();
     loadDialogImages(dialogContent);
     activateGeneratedEffects(dialogContent);
+
+    // A second frame covers delayed dialog layout and dynamically loaded fonts.
+    requestAnimationFrame(resetDialogScroll);
   });
 
   dialogContent.querySelector('[data-action="close"]').addEventListener('click', closeDialog);
@@ -469,6 +497,7 @@ function openBooklet(item, updateUrl = true) {
 
 function closeDialog() {
   dialog.close();
+  resetDialogScroll();
   const url = new URL(window.location.href);
   url.searchParams.delete('booklet');
   history.pushState({}, '', url);
