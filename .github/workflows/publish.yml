@@ -32,6 +32,19 @@ on:
         type: choice
         options: ['-1', '0', '1', '2', '3', '4', '5']
 
+
+      topic:
+        description: Booklet topic (leave empty for automatic selection)
+        required: false
+        default: ''
+        type: string
+
+      description:
+        description: Approximate description or creative brief (leave empty for automatic generation)
+        required: false
+        default: ''
+        type: string
+
   schedule:
     - cron: '15 07 * * *'
       timezone: 'Europe/Riga'
@@ -73,6 +86,8 @@ jobs:
           FORCE_GENERATE: ${{ github.event_name == 'workflow_dispatch' && inputs.force_generate && 'true' || 'false' }}
           USE_AI: ${{ github.event_name == 'schedule' && 'true' || (inputs.use_ai && 'true' || 'false') }}
           CHAOS_LEVEL: ${{ github.event_name == 'workflow_dispatch' && inputs.chaos_level || '-1' }}
+          BOOKLET_TOPIC: ${{ github.event_name == 'workflow_dispatch' && inputs.topic || '' }}
+          BOOKLET_DESCRIPTION: ${{ github.event_name == 'workflow_dispatch' && inputs.description || '' }}
           BOOKLET_RUN_ID: ${{ github.run_id }}
         run: npm run generate
 
