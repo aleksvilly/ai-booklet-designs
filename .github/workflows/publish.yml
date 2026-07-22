@@ -110,6 +110,8 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          GEMINI_FALLBACK_MODEL: ${{ vars.GEMINI_FALLBACK_MODEL }}
+          GEMINI_MAX_ATTEMPTS: '3'
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           IMAGE_PROVIDER: ${{ github.event_name == 'workflow_dispatch' && inputs.image_provider || 'mixed' }}
           BOOKLET_COUNT: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '3' }}
