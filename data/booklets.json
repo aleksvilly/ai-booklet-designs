@@ -1,5 +1,476 @@
 [
   {
+    "title": "Weather for One Person",
+    "audience": "the Architect",
+    "category": "Architecture",
+    "era": "2026",
+    "style": "Local-culture visual identity",
+    "layout": "grid",
+    "direction": "Local-culture visual identity interprets atmosphere used as a portrait of character and memory with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Architect, built around atmosphere used as a portrait of character and memory. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 6 pages",
+    "palette": [
+      "#efe4cd",
+      "#df5537",
+      "#247c82",
+      "#172527"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "Weather for One Person",
+        "body": "A visual gift for the Architect.",
+        "imageQuery": "Architecture portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Architecture portrait editorial.",
+        "layout": "overlap",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/e387b475-136f-4144-8a1c-4beaa01dfc6e/thumb/",
+          "fullUrl": "https://live.staticflickr.com/7673/16462874563_1ff0c19377_b.jpg",
+          "alt": "Mosman Council Urban Planning Team - Mosman Design Awards Presentation Evening 2015",
+          "creator": "Mosman Council",
+          "creatorUrl": "https://www.flickr.com/photos/31209984@N06",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/31209984@N06/16462874563",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Mosman Council Urban Planning Team - Mosman Design Awards Presentation Evening 2015\" by Mosman Council is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes atmosphere used as a portrait of character and memory.",
+        "imageQuery": "Architecture atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Architecture atmospheric landscape.",
+        "layout": "minimal",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/393acbd7-3693-49e2-a88d-a48b44069062/thumb/",
+          "fullUrl": "https://live.staticflickr.com/3899/15287264182_5b57e3ff1c_b.jpg",
+          "alt": "One day's carbon dioxide emissions from the Statue of Liberty - high res still from 'CCS: a 2 degree solution' (film)",
+          "creator": "Carbon Visuals",
+          "creatorUrl": "https://www.flickr.com/photos/42782368@N03",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/42782368@N03/15287264182",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"One day's carbon dioxide emissions from the Statue of Liberty - high res still from 'CCS: a 2 degree solution' (film)\" by Carbon Visuals is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Architecture archive detail",
+        "sourceQuery": "Architecture history facts",
+        "caption": "Image direction: Architecture archive detail.",
+        "layout": "split",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/496458b9-6209-420d-9a03-2d7ef11a0de2/thumb/",
+          "fullUrl": "https://live.staticflickr.com/3509/4073599129_3699e1094e_b.jpg",
+          "alt": "Pekin, Walls Of The Tartar City [c1894-1896] William H. Jackson [RESTORED].",
+          "creator": "ralphrepo",
+          "creatorUrl": "https://www.flickr.com/photos/34607376@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/34607376@N08/4073599129",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Pekin, Walls Of The Tartar City [c1894-1896] William H. Jackson [RESTORED].\" by ralphrepo is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "History of architecture",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/History_of_architecture"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Architecture objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Architecture objects close up.",
+        "layout": "full",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/61028ce6-9a33-4f9d-b947-c22278f24f6c/thumb/",
+          "fullUrl": "https://live.staticflickr.com/3616/3551525153_8ab4fefea7.jpg",
+          "alt": "flying object 01",
+          "creator": "uair01",
+          "creatorUrl": "https://www.flickr.com/photos/56759497@N00",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/56759497@N00/3551525153",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"flying object 01\" by uair01 is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "quote",
+        "title": "A pause",
+        "body": "One sentence receives an entire page and changes the rhythm.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "vertical"
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "full"
+      }
+    ],
+    "id": "architect-weather-for-one-person-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
+    "title": "Maps of Silence",
+    "audience": "the Musician",
+    "category": "Music",
+    "era": "1980s",
+    "style": "Chrome airbrush futurism",
+    "layout": "cinematic",
+    "direction": "Chrome airbrush futurism interprets routes, empty spaces and the emotional meaning of distance with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Musician, built around routes, empty spaces and the emotional meaning of distance. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 8 pages",
+    "palette": [
+      "#1c2b33",
+      "#e6b34c",
+      "#8d3843",
+      "#f0e8d7"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "Maps of Silence",
+        "body": "A visual gift for the Musician.",
+        "imageQuery": "Music portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Music portrait editorial.",
+        "layout": "split",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/4bbcac7f-05a9-4e7c-83b9-f1e48e1c0aa1/thumb/",
+          "fullUrl": "https://live.staticflickr.com/3526/3241023636_d14f797b26_b.jpg",
+          "alt": "sorority row cast push premiere",
+          "creator": "Anthony Citrano",
+          "creatorUrl": "https://www.flickr.com/photos/10607722@N00",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/10607722@N00/3241023636",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"sorority row cast push premiere\" by Anthony Citrano is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes routes, empty spaces and the emotional meaning of distance.",
+        "imageQuery": "Music atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Music atmospheric landscape.",
+        "layout": "full",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/50285fcd-71c5-4e4b-aac9-6d21764a9f36/thumb/",
+          "fullUrl": "https://live.staticflickr.com/5559/14796311778_b3fd2784ba.jpg",
+          "alt": "How the Sun Caused an Aurora This Week",
+          "creator": "NASA Goddard Photo and Video",
+          "creatorUrl": "https://www.flickr.com/photos/24662369@N07",
+          "source": "nasa",
+          "sourceUrl": "https://www.flickr.com/photos/24662369@N07/14796311778",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"How the Sun Caused an Aurora This Week\" by NASA Goddard Photo and Video is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Music archive detail",
+        "sourceQuery": "Music history facts",
+        "caption": "Image direction: Music archive detail.",
+        "layout": "minimal",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/e85f9481-0e30-475c-9c05-9b34cf7fa343/thumb/",
+          "fullUrl": "https://live.staticflickr.com/6156/6176071094_02a27623bc_b.jpg",
+          "alt": "History of Medicine a014808",
+          "creator": "Children's Bureau Centennial",
+          "creatorUrl": "https://www.flickr.com/photos/67331818@N03",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/67331818@N03/6176071094",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"History of Medicine a014808\" by Children's Bureau Centennial is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "History of music",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/History_of_music"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Music objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Music objects close up.",
+        "layout": "minimal",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/b460a5b2-c0e6-4bb5-bb14-9af887a51ce8/thumb/",
+          "fullUrl": "https://live.staticflickr.com/3074/2915986299_58f97434ba_b.jpg",
+          "alt": "SMASH! Droppin' Stuff",
+          "creator": "Sweet One",
+          "creatorUrl": "https://www.flickr.com/photos/84987970@N00",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/84987970@N00/2915986299",
+          "license": "BY-SA 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+          "attribution": "\"SMASH! Droppin' Stuff\" by Sweet One is licensed under CC BY-SA 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/2.0/."
+        }
+      },
+      {
+        "type": "quote",
+        "title": "A pause",
+        "body": "One sentence receives an entire page and changes the rhythm.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "grid"
+      },
+      {
+        "type": "collage",
+        "title": "Memory in fragments",
+        "body": "Documents, photographs and abstract forms overlap without copying one reference layout.",
+        "imageQuery": "Music vintage archive",
+        "sourceQuery": "",
+        "caption": "Image direction: Music vintage archive.",
+        "layout": "archive"
+      },
+      {
+        "type": "timeline",
+        "title": "Then and now",
+        "body": "A compact timeline connects the history of the subject with the present.",
+        "imageQuery": "Music historical photograph",
+        "sourceQuery": "Music history facts",
+        "caption": "Image direction: Music historical photograph.",
+        "layout": "archive",
+        "source": {
+          "title": "History of music",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/History_of_music"
+        }
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "minimal"
+      }
+    ],
+    "id": "musician-maps-of-silence-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
+    "title": "Fragments of a Ritual",
+    "audience": "the Collector",
+    "category": "Collecting",
+    "era": "2010s",
+    "style": "Luxury minimalism",
+    "layout": "editorial",
+    "direction": "Luxury minimalism interprets tools, gestures and repeated actions that become personal with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Collector, built around tools, gestures and repeated actions that become personal. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 12 pages",
+    "palette": [
+      "#e9dfca",
+      "#b84155",
+      "#657a49",
+      "#262219"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "Fragments of a Ritual",
+        "body": "A visual gift for the Collector.",
+        "imageQuery": "Collecting portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting portrait editorial.",
+        "layout": "full",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/535a6b2f-8e16-4d40-9ee7-bfeca974befb/thumb/",
+          "fullUrl": "https://live.staticflickr.com/8213/8366738635_aa7cec0833_b.jpg",
+          "alt": "Dr Martens 'How to Wear' campaign",
+          "creator": "University of Salford",
+          "creatorUrl": "https://www.flickr.com/photos/32104790@N02",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/32104790@N02/8366738635",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Dr Martens 'How to Wear' campaign\" by University of Salford is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes tools, gestures and repeated actions that become personal.",
+        "imageQuery": "Collecting atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting atmospheric landscape.",
+        "layout": "overlap",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/dd882329-fd76-4b65-82af-4c9bb1934d12/thumb/",
+          "fullUrl": "https://live.staticflickr.com/5741/20576371970_3f0d1334b6_b.jpg",
+          "alt": "Collecting atmospheric landscape",
+          "creator": "NASA Goddard Space Flight Center",
+          "creatorUrl": "https://www.flickr.com/photos/35278629@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/35278629@N08/20576371970",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "This work by NASA Goddard Space Flight Center is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Collecting archive detail",
+        "sourceQuery": "Collecting history facts",
+        "caption": "Image direction: Collecting archive detail.",
+        "layout": "archive",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/2a5877e1-4bde-4202-b43f-b22f64e04361/thumb/",
+          "fullUrl": "https://live.staticflickr.com/3909/14786945304_076695160a_b.jpg",
+          "alt": "The Great White Fleet",
+          "creator": "Archives New Zealand",
+          "creatorUrl": "https://www.flickr.com/photos/35759981@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/35759981@N08/14786945304",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"The Great White Fleet\" by Archives New Zealand is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "Coin collecting",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Coin_collecting"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Collecting objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting objects close up.",
+        "layout": "overlap",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/983b5061-04a6-4384-a74b-511ab0e78616/thumb/",
+          "fullUrl": "https://live.staticflickr.com/1522/24717881181_c1fb2711df_b.jpg",
+          "alt": "Tenebrionidae Beetle, Little Stsimons Island, Georgia, face_2016-02-03-17.04",
+          "creator": "Sam Droege",
+          "creatorUrl": "https://www.flickr.com/photos/54563451@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/54563451@N08/24717881181",
+          "license": "PDM 1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "attribution": "\"Tenebrionidae Beetle, Little Stsimons Island, Georgia, face_2016-02-03-17.04\" by Sam Droege is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/."
+        }
+      },
+      {
+        "type": "quote",
+        "title": "A pause",
+        "body": "One sentence receives an entire page and changes the rhythm.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "asymmetric"
+      },
+      {
+        "type": "collage",
+        "title": "Memory in fragments",
+        "body": "Documents, photographs and abstract forms overlap without copying one reference layout.",
+        "imageQuery": "Collecting vintage archive",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting vintage archive.",
+        "layout": "asymmetric"
+      },
+      {
+        "type": "timeline",
+        "title": "Then and now",
+        "body": "A compact timeline connects the history of the subject with the present.",
+        "imageQuery": "Collecting historical photograph",
+        "sourceQuery": "Collecting history facts",
+        "caption": "Image direction: Collecting historical photograph.",
+        "layout": "split",
+        "source": {
+          "title": "Coin collecting",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Coin_collecting"
+        }
+      },
+      {
+        "type": "diagram",
+        "title": "How it works",
+        "body": "A simple visual explanation turns complexity into a memorable page.",
+        "imageQuery": "Collecting technical diagram",
+        "sourceQuery": "Collecting history facts",
+        "caption": "Image direction: Collecting technical diagram.",
+        "layout": "overlap",
+        "source": {
+          "title": "Coin collecting",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Coin_collecting"
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "The central image",
+        "body": "The largest composition crosses the fold and becomes the emotional centre.",
+        "imageQuery": "Collecting cinematic dramatic",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting cinematic dramatic.",
+        "layout": "overlap"
+      },
+      {
+        "type": "editorial",
+        "title": "A personal chapter",
+        "body": "A page designed to accept the recipient’s name, date or private message.",
+        "imageQuery": "Collecting intimate portrait",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting intimate portrait.",
+        "layout": "vertical"
+      },
+      {
+        "type": "map",
+        "title": "A route through the subject",
+        "body": "A map, constellation or conceptual path connects the chapters.",
+        "imageQuery": "Collecting map illustration",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting map illustration.",
+        "layout": "overlap"
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "vertical"
+      }
+    ],
+    "id": "collector-fragments-of-a-ritual-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
     "title": "The Shape of Waiting",
     "audience": "the Railway Enthusiast",
     "category": "Railways",
