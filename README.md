@@ -1,53 +1,58 @@
-# AI Booklet Designs
+# AI Booklet Generator V3 — Design DNA
 
-An evolving catalogue of gift-booklet concepts designed for specific people, professions and interests. The site publishes three new concept directions every day and is deployed as a static GitHub Pages website.
+Главные файлы:
 
-## First publication
+- `scripts/generate-daily.mjs` — основная версия для текущего `package.json`.
+- `scripts/generate.js` — идентичная копия, если хочешь переименовать команду.
+- `optional-renderer-patch/app.js` и `styles.css` — **рекомендуется заменить**, иначе старый сайт не покажет новые шрифтовые режимы, фоновые системы, микро-3D, инверсию, parallax и другие эффекты из `designDna`.
+- `optional-workflow/publish.yml` — рекомендуемый workflow с моделью `gpt-5-mini` и настройкой хаоса.
 
-1. Upload all project files to the `main` branch.
-2. Open **Settings → Pages** in the GitHub repository.
-3. Under **Build and deployment**, select **GitHub Actions** as the source.
-4. Open the **Actions** tab and run **Generate and publish** once.
-5. The public site will appear at:
-   `https://aleksvilly.github.io/ai-booklet-designs/`
+## Что заменить в репозитории
 
-## Daily automation
-
-`.github/workflows/publish.yml` runs every day at 07:15 in the `Europe/Riga` timezone. It:
-
-1. Runs `scripts/generate-daily.mjs`.
-2. Adds three concept records to `data/booklets.json`.
-3. Commits them to `main`.
-4. Publishes the updated static site to GitHub Pages.
-
-The local generator uses curated combinations and does not require an API key.
-
-## Local preview
-
-```bash
-npm run serve
+```text
+scripts/generate-daily.mjs
+app.js
+styles.css
+.github/workflows/publish.yml   (рекомендуется)
 ```
 
-Then open `http://localhost:8080`.
-
-To generate concepts for a specific date:
+После замены:
 
 ```bash
-BOOKLET_DATE=2026-07-21 npm run generate
+git add .
+git commit -m "Add diverse design DNA generator"
+git push origin main
 ```
 
-## Next development stages
+## Что изменилось
 
-- Add a source and licence registry for every image.
-- Connect Openverse, Europeana, Wikimedia Commons and selected museum APIs.
-- Add an AI provider only after the deterministic publication pipeline is stable.
-- Generate full 12–20 page booklet previews for selected concepts.
-- Add private placeholders for commercial assets that have not yet been licensed.
+- Более 20 категорий и сотни подтем.
+- Стили от 1960-х до 2026: детский paper-cut, Swiss, psychedelic, Memphis, post-punk, grunge, rave, Y2K, luxury, noir, museum, neo-brutalism, organic futurism, neo-tech и другие.
+- 40 визуальных эффектов: micro-3D, parallax, inverted sections, text behind image, chrome type, halftone, xerox, paper cut, HUD, scan line, impossible scale и другие.
+- 34 модуля страниц вместо одного шаблона.
+- Разные объёмы текста, плотность фотографий, типографика, цвет, ритм, фон и печатное ощущение.
+- `coherent`, `remix` и `absurd` режимы. Возможны сочетания вроде облаков с картошкой.
+- Каждая автоматическая тройка специально содержит спокойную, выразительную и дикую концепцию.
+- Антиповтор сравнивает новую работу с последними 30 буклетами.
 
-## Publishing caution
+## CHAOS_LEVEL
 
-Reference sites may be used to study general design characteristics, but a published booklet should not reproduce one specific copyrighted layout. Finished designs should combine multiple influences and use appropriately licensed assets.
+- `-1` — автоматический баланс: safe + expressive + wild.
+- `0–1` — спокойно и коммерчески.
+- `2–3` — выразительно и иногда нелогично.
+- `4–5` — сильный эксперимент и абсурдные сочетания.
 
-## Creative era range
+При ручном запуске выбирается в GitHub Actions. Для расписания используется `-1`.
 
-The generator intentionally uses design references from the **1960s through 2026**. It rotates across the 1960s, 1970s, 1980s, 1990s, 2000s, 2010s, 2020–2024, 2025 and 2026, with multiple visual directions inside every period. Styles earlier than the 1960s are excluded from automatic generation.
+## Локальная проверка без API и поиска картинок
+
+```bash
+BOOKLET_COUNT=3 \
+FORCE_GENERATE=true \
+USE_AI=false \
+SKIP_ENRICHMENT=true \
+BOOKLET_RUN_ID=test \
+node scripts/generate-daily.mjs
+```
+
+`SKIP_ENRICHMENT=true` нужен только для быстрой локальной проверки. В GitHub Actions его не добавляй.
