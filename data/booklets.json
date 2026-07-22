@@ -1,5 +1,426 @@
 [
   {
+    "title": "The Shape of Waiting",
+    "audience": "the Railway Enthusiast",
+    "category": "Railways",
+    "era": "2000s",
+    "style": "Indie magazine collage",
+    "layout": "editorial",
+    "direction": "Indie magazine collage interprets pauses, anticipation and moments just before change with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Railway Enthusiast, built around pauses, anticipation and moments just before change. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 10 pages",
+    "palette": [
+      "#d8d1c5",
+      "#ff5a36",
+      "#6c67b7",
+      "#171717"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "The Shape of Waiting",
+        "body": "A visual gift for the Railway Enthusiast.",
+        "imageQuery": "Railways portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Railways portrait editorial.",
+        "layout": "full",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/36c823f5-6a11-43c8-8364-a58cfb6ff6ba/thumb/",
+          "fullUrl": "https://live.staticflickr.com/8093/8529838881_57469802cb_b.jpg",
+          "alt": "Annie 3",
+          "creator": "Arman T Photography",
+          "creatorUrl": "https://www.flickr.com/photos/76597731@N03",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/76597731@N03/8529838881",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Annie 3\" by Arman T Photography is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes pauses, anticipation and moments just before change.",
+        "imageQuery": "Railways atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Railways atmospheric landscape.",
+        "layout": "overlap",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/f8206e7a-0227-4e0f-82c9-f0df8fa0b141/thumb/",
+          "fullUrl": "https://live.staticflickr.com/3304/3230939953_f379d847e3.jpg",
+          "alt": "Train Chartering - Royal Scotsman by lake",
+          "creator": "Luxury Train Club",
+          "creatorUrl": "https://www.flickr.com/photos/14589121@N00",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/14589121@N00/3230939953",
+          "license": "BY-SA 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+          "attribution": "\"Train Chartering - Royal Scotsman by lake\" by Luxury Train Club is licensed under CC BY-SA 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Railways archive detail",
+        "sourceQuery": "Railways history facts",
+        "caption": "Image direction: Railways archive detail.",
+        "layout": "vertical",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/f29bd8ce-db15-41dc-9894-55aa2c415bd4/thumb/",
+          "fullUrl": "https://live.staticflickr.com/976/27159409667_f9acea1845_b.jpg",
+          "alt": "CND 30.419 - Ninns Bin, Kaikoura",
+          "creator": "Archives New Zealand",
+          "creatorUrl": "https://www.flickr.com/photos/35759981@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/35759981@N08/27159409667",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"CND 30.419 - Ninns Bin, Kaikoura\" by Archives New Zealand is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "Indian Railways",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Indian_Railways"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Railways objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Railways objects close up.",
+        "layout": "split",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/a888db58-534a-47f5-99a4-06596bb7d202/thumb/",
+          "fullUrl": "https://live.staticflickr.com/7370/10577849663_02d8247ee9_m.jpg",
+          "alt": "Image taken from page 185 of 'Ireland from sea to sea. A practical handbook to Galway, Connemara, Achill, and the West of Ireland. With a description of the principal objects of interest on the journey from Dublin. Illustrated, etc. [By C. S. Ward.]'",
+          "creator": "mechanicalcurator",
+          "creatorUrl": "https://www.flickr.com/photos/106138792@N02",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/106138792@N02/10577849663",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Image taken from page 185 of 'Ireland from sea to sea. A practical handbook to Galway, Connemara, Achill, and the West of Ireland. With a description of the principal objects of interest on the journey from Dublin. Illustrated, etc. [By C. S. Ward.]'\" by mechanicalcurator is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "quote",
+        "title": "A pause",
+        "body": "One sentence receives an entire page and changes the rhythm.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "split"
+      },
+      {
+        "type": "collage",
+        "title": "Memory in fragments",
+        "body": "Documents, photographs and abstract forms overlap without copying one reference layout.",
+        "imageQuery": "Railways vintage archive",
+        "sourceQuery": "",
+        "caption": "Image direction: Railways vintage archive.",
+        "layout": "overlap"
+      },
+      {
+        "type": "timeline",
+        "title": "Then and now",
+        "body": "A compact timeline connects the history of the subject with the present.",
+        "imageQuery": "Railways historical photograph",
+        "sourceQuery": "Railways history facts",
+        "caption": "Image direction: Railways historical photograph.",
+        "layout": "split",
+        "source": {
+          "title": "Indian Railways",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Indian_Railways"
+        }
+      },
+      {
+        "type": "diagram",
+        "title": "How it works",
+        "body": "A simple visual explanation turns complexity into a memorable page.",
+        "imageQuery": "Railways technical diagram",
+        "sourceQuery": "Railways history facts",
+        "caption": "Image direction: Railways technical diagram.",
+        "layout": "asymmetric",
+        "source": {
+          "title": "Indian Railways",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Indian_Railways"
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "The central image",
+        "body": "The largest composition crosses the fold and becomes the emotional centre.",
+        "imageQuery": "Railways cinematic dramatic",
+        "sourceQuery": "",
+        "caption": "Image direction: Railways cinematic dramatic.",
+        "layout": "minimal"
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "grid"
+      }
+    ],
+    "id": "railway-enthusiast-the-shape-of-waiting-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
+    "title": "Invisible Structures",
+    "audience": "the Dancer",
+    "category": "Dance",
+    "era": "2025",
+    "style": "Expressive serif minimalism",
+    "layout": "grid",
+    "direction": "Expressive serif minimalism interprets systems that quietly hold the visible world together with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Dancer, built around systems that quietly hold the visible world together. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 4 pages",
+    "palette": [
+      "#161827",
+      "#f06449",
+      "#55b9ae",
+      "#f4e9d8"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "Invisible Structures",
+        "body": "A visual gift for the Dancer.",
+        "imageQuery": "Dance portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Dance portrait editorial.",
+        "layout": "archive",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/98cf04a5-37ad-4b77-b29a-a18e3ce05375/thumb/",
+          "fullUrl": "https://live.staticflickr.com/65535/53090451926_fedb7eb7b6_b.jpg",
+          "alt": "230702113156",
+          "creator": "jjes84",
+          "creatorUrl": "https://www.flickr.com/photos/37779177@N03",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/37779177@N03/53090451926",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"230702113156\" by jjes84 is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes systems that quietly hold the visible world together.",
+        "imageQuery": "Dance atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Dance atmospheric landscape.",
+        "layout": "asymmetric",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/7ab7d17d-87fa-4b97-b098-4af08c15b5a4/thumb/",
+          "fullUrl": "https://live.staticflickr.com/6077/6136799487_1ed6a43bc3_b.jpg",
+          "alt": "Jolly",
+          "creator": "jonas_foyn",
+          "creatorUrl": "https://www.flickr.com/photos/30588093@N06",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/30588093@N06/6136799487",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Jolly\" by jonas_foyn is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Dance archive detail",
+        "sourceQuery": "Dance history facts",
+        "caption": "Image direction: Dance archive detail.",
+        "layout": "overlap",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/a53cbd8b-66d8-41da-a438-8370e0a405dd/thumb/",
+          "fullUrl": "https://live.staticflickr.com/8651/16636519892_2b0b09d1f9_b.jpg",
+          "alt": "Kikuyu Boys Dressed for Initiation Dances, Kenya, ca.1905-ca.1940 (imp-cswc-GB-237-CSWC47-LS7-007)",
+          "creator": "Fæ",
+          "creatorUrl": "https://www.flickr.com/photos/50398299@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/50398299@N08/16636519892",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Kikuyu Boys Dressed for Initiation Dances, Kenya, ca.1905-ca.1940 (imp-cswc-GB-237-CSWC47-LS7-007)\" by Fæ is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "List of The Facts of Life episodes",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/List_of_The_Facts_of_Life_episodes"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Dance objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Dance objects close up.",
+        "layout": "split",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/50d436ef-1c9f-4b4f-b215-65512ac688af/thumb/",
+          "fullUrl": "https://upload.wikimedia.org/wikipedia/commons/4/43/Comets_and_Shooting_Stars_Dance_Over_Paranal.jpg",
+          "alt": "File:Comets and Shooting Stars Dance Over Paranal.jpg",
+          "creator": "ESO/G. Brammer",
+          "creatorUrl": "https://commons.wikimedia.org/w/index.php?curid=25076066",
+          "source": "wikimedia",
+          "sourceUrl": "https://commons.wikimedia.org/w/index.php?curid=25076066",
+          "license": "BY 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+          "attribution": "\"File:Comets and Shooting Stars Dance Over Paranal.jpg\" by ESO/G. Brammer is licensed under CC BY 4.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/4.0/."
+        }
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "grid"
+      }
+    ],
+    "id": "dancer-invisible-structures-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
+    "title": "Night Geometry",
+    "audience": "the Sailor",
+    "category": "Sea",
+    "era": "1970s",
+    "style": "Analogue scientific journal",
+    "layout": "grid",
+    "direction": "Analogue scientific journal interprets artificial light, shadow and structures revealed after dark with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Sailor, built around artificial light, shadow and structures revealed after dark. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 6 pages",
+    "palette": [
+      "#efe4cd",
+      "#df5537",
+      "#247c82",
+      "#172527"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "Night Geometry",
+        "body": "A visual gift for the Sailor.",
+        "imageQuery": "Sea portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Sea portrait editorial.",
+        "layout": "full",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/b66611a5-a129-40ea-8697-7a5b744283a6/thumb/",
+          "fullUrl": "https://live.staticflickr.com/6030/5992304036_ba791179eb_b.jpg",
+          "alt": "Freelance graphic illustrator, open for foreign clients",
+          "creator": "Graphic designer Rhea Cenizal",
+          "creatorUrl": "https://www.flickr.com/photos/30568200@N02",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/30568200@N02/5992304036",
+          "license": "BY-SA 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+          "attribution": "\"Freelance graphic illustrator, open for foreign clients\" by Graphic designer Rhea Cenizal is licensed under CC BY-SA 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes artificial light, shadow and structures revealed after dark.",
+        "imageQuery": "Sea atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Sea atmospheric landscape.",
+        "layout": "grid",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/f43b4adc-020d-4c09-8680-0c1df160c283/thumb/",
+          "fullUrl": "https://live.staticflickr.com/7269/7651364100_e28b600eb6_b.jpg",
+          "alt": "Barcelona, Spain",
+          "creator": "NASA Goddard Photo and Video",
+          "creatorUrl": "https://www.flickr.com/photos/24662369@N07",
+          "source": "nasa",
+          "sourceUrl": "https://www.flickr.com/photos/24662369@N07/7651364100",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Barcelona, Spain\" by NASA Goddard Photo and Video is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Sea archive detail",
+        "sourceQuery": "Sea history facts",
+        "caption": "Image direction: Sea archive detail.",
+        "layout": "minimal",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/31041c6b-5e1f-470a-a08f-0a2f62f5fd3e/thumb/",
+          "fullUrl": "https://live.staticflickr.com/7310/11456459585_266f42dc0e_b.jpg",
+          "alt": "Journal kept by Cape Reinga Lighthouse Keeper",
+          "creator": "Archives New Zealand",
+          "creatorUrl": "https://www.flickr.com/photos/35759981@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/35759981@N08/11456459585",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Journal kept by Cape Reinga Lighthouse Keeper\" by Archives New Zealand is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "List of people who disappeared mysteriously at sea",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/List_of_people_who_disappeared_mysteriously_at_sea"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Sea objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Sea objects close up.",
+        "layout": "split",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/21e5b84a-1e10-46d6-bb7b-dfa2e1f3c960/thumb/",
+          "fullUrl": "https://live.staticflickr.com/8338/8184863552_948516dc2e_b.jpg",
+          "alt": "Artist’s impression of the free-floating planet CFBDSIR J214947.2-040308.9",
+          "creator": "European Southern Observatory",
+          "creatorUrl": "https://www.flickr.com/photos/51207680@N04",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/51207680@N04/8184863552",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Artist’s impression of the free-floating planet CFBDSIR J214947.2-040308.9\" by European Southern Observatory is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "quote",
+        "title": "A pause",
+        "body": "One sentence receives an entire page and changes the rhythm.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "full"
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "overlap"
+      }
+    ],
+    "id": "sailor-night-geometry-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
     "title": "Invisible Structures",
     "audience": "the Engineer",
     "category": "Engineering",
