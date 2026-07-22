@@ -13,7 +13,12 @@ const date = process.env.BOOKLET_DATE || new Intl.DateTimeFormat('en-CA', {
 
 const requestedCount = clampInt(process.env.BOOKLET_COUNT, 1, 6, 3);
 const force = process.env.FORCE_GENERATE === 'true';
-const useAi = process.env.USE_AI !== 'false' && Boolean(process.env.OPENAI_API_KEY);
+const aiEnabled = process.env.USE_AI !== 'false';
+const openAiConfigured = Boolean(process.env.OPENAI_API_KEY);
+const geminiConfigured = Boolean(process.env.GEMINI_API_KEY);
+const openAiModel = process.env.OPENAI_MODEL || 'gpt-5-mini';
+const geminiModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+const aiProviderMode = normalizeAiProvider(process.env.AI_PROVIDER || 'auto', aiEnabled);
 const runId = force ? (process.env.BOOKLET_RUN_ID || `${Date.now()}`) : date;
 const alreadyToday = existing.filter(item => item.publishDate === date).length;
 const count = force ? requestedCount : Math.max(0, requestedCount - alreadyToday);
@@ -27,6 +32,9 @@ const customSubject = customTopic || subjectFromDescription(customDescription);
 const apiStats = {
   openaiSuccess: 0,
   openaiFailed: 0,
+  geminiSuccess: 0,
+  geminiFailed: 0,
+  localFallbacks: 0,
   unsplashSearches: 0,
   unsplashImages: 0,
   openverseSearches: 0,
@@ -44,6 +52,42 @@ if (hasCustomBrief) {
   console.log(`[Booklet brief] Manual mode — topic: "${customTopic || customSubject}", description: ${customDescription ? 'provided' : 'empty'}.`);
 } else {
   console.log('[Booklet brief] Automatic mode — topic and description will be selected by the generator.');
+}
+
+
+function normalizeAiProvider(value, enabled) {
+  if (!enabled) return 'local';
+  const supported = new Set(['auto', 'openai-first', 'gemini-first', 'openai-only', 'gemini-only', 'local']);
+  return supported.has(value) ? value : 'auto';
+}
+
+function aiProviderOrder(mode) {
+  const orders = {
+    auto: ['openai', 'gemini'],
+    'openai-first': ['openai', 'gemini'],
+    'gemini-first': ['gemini', 'openai'],
+    'openai-only': ['openai'],
+    'gemini-only': ['gemini'],
+    local: []
+  };
+  return orders[mode] || orders.auto;
+}
+
+function providerConfigured(provider) {
+  if (provider === 'openai') return openAiConfigured;
+  if (provider === 'gemini') return geminiConfigured;
+  return false;
+}
+
+function providerModel(provider) {
+  if (provider === 'openai') return openAiModel;
+  if (provider === 'gemini') return geminiModel;
+  return null;
+}
+
+function compactProviderError(error) {
+  const message = String(error?.message || error || 'Unknown provider error');
+  return message.replace(/\s+/g, ' ').slice(0, 1200);
 }
 
 const PAGE_TYPES = ['cover', 'full_bleed', 'editorial', 'facts', 'quote', 'timeline', 'collage', 'diagram', 'map', 'closing'];
@@ -1091,7 +1135,7 @@ function aiBrief(dna, pagePlan, index) {
   };
 }
 
-async function generateWithAi(dnas, pagePlans) {
+function buildAiPrompt(dnas, pagePlans) {
   const recent = existing.slice(0, 24).map(item => ({
     title: item.title,
     category: item.category,
@@ -1137,6 +1181,12 @@ ${JSON.stringify(briefs, null, 2)}
 RECENT WORK TO AVOID REPEATING:
 ${JSON.stringify(recent, null, 2)}`;
 
+  return prompt;
+}
+
+async function generateWithOpenAi(dnas, pagePlans) {
+  const prompt = buildAiPrompt(dnas, pagePlans);
+  console.log(`[OpenAI] START — model: ${openAiModel}`);
   const response = await fetch('https://api.openai.com/v1/responses', {
     method: 'POST',
     headers: {
@@ -1144,7 +1194,7 @@ ${JSON.stringify(recent, null, 2)}`;
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      model: process.env.OPENAI_MODEL || 'gpt-5-mini',
+      model: openAiModel,
       store: false,
       max_output_tokens: 20000,
       input: [
@@ -1169,11 +1219,147 @@ ${JSON.stringify(recent, null, 2)}`;
     })
   });
 
-  if (!response.ok) throw new Error(`OpenAI ${response.status}: ${await response.text()}`);
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`OpenAI ${response.status}: ${body}`);
+  }
   const json = await response.json();
   const text = json.output_text || json.output?.flatMap(item => item.content || []).find(part => part.type === 'output_text')?.text;
   if (!text) throw new Error('OpenAI response contained no output_text.');
-  return JSON.parse(text).booklets;
+  const parsed = JSON.parse(text);
+  if (!Array.isArray(parsed?.booklets)) throw new Error('OpenAI JSON did not contain a booklets array.');
+  console.log(`[OpenAI] OK — model: ${openAiModel}`);
+  return parsed.booklets;
+}
+
+async function requestGemini(prompt, schema, withSchema = true) {
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(geminiModel)}:generateContent`;
+  const generationConfig = {
+    maxOutputTokens: 20000
+  };
+
+  if (withSchema) {
+    generationConfig.responseFormat = {
+      text: {
+        mimeType: 'application/json',
+        schema
+      }
+    };
+  } else {
+    generationConfig.responseMimeType = 'application/json';
+  }
+
+  const strictSuffix = withSchema ? '' : '\n\nReturn only valid JSON. Do not use Markdown fences, commentary or explanatory text. The response must be directly parseable by JSON.parse().';
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'x-goog-api-key': process.env.GEMINI_API_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      systemInstruction: {
+        parts: [{
+          text: 'You are an unusually versatile editorial art director, copy editor and gift-book designer. Treat every brief as a separate visual universe and return structured JSON only.'
+        }]
+      },
+      contents: [{
+        role: 'user',
+        parts: [{ text: `${prompt}${strictSuffix}` }]
+      }],
+      generationConfig
+    })
+  });
+
+  const bodyText = await response.text();
+  if (!response.ok) throw new Error(`Gemini ${response.status}: ${bodyText}`);
+
+  let json;
+  try {
+    json = JSON.parse(bodyText);
+  } catch {
+    throw new Error(`Gemini returned a non-JSON API response: ${bodyText.slice(0, 500)}`);
+  }
+
+  const text = json.candidates?.[0]?.content?.parts?.map(part => part.text || '').join('').trim();
+  if (!text) {
+    const reason = json.candidates?.[0]?.finishReason || json.promptFeedback?.blockReason || 'empty response';
+    throw new Error(`Gemini response contained no text (${reason}).`);
+  }
+  return text;
+}
+
+async function generateWithGemini(dnas, pagePlans) {
+  const prompt = buildAiPrompt(dnas, pagePlans);
+  const schema = aiSchema(dnas.length);
+  console.log(`[Gemini] START — model: ${geminiModel}`);
+
+  let text;
+  try {
+    text = await requestGemini(prompt, schema, true);
+  } catch (schemaError) {
+    console.warn(`[Gemini] Structured output failed; retrying once without schema. ${compactProviderError(schemaError)}`);
+    text = await requestGemini(prompt, schema, false);
+  }
+
+  const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+  const parsed = JSON.parse(cleaned);
+  if (!Array.isArray(parsed?.booklets)) throw new Error('Gemini JSON did not contain a booklets array.');
+  if (parsed.booklets.length !== dnas.length) {
+    throw new Error(`Gemini returned ${parsed.booklets.length} booklets; expected ${dnas.length}.`);
+  }
+  console.log(`[Gemini] OK — model: ${geminiModel}`);
+  return parsed.booklets;
+}
+
+async function generateWithProviderFallback(dnas, pagePlans) {
+  const order = aiProviderOrder(aiProviderMode);
+  const attempted = [];
+  const skipped = [];
+
+  console.log(`[AI] Provider mode: ${aiProviderMode}`);
+  console.log(`[AI] Provider order: ${order.length ? `${order.join(' -> ')} -> local` : 'local'}`);
+
+  for (const provider of order) {
+    if (!providerConfigured(provider)) {
+      skipped.push(provider);
+      console.warn(`[${provider === 'openai' ? 'OpenAI' : 'Gemini'}] SKIPPED — API key is not configured.`);
+      continue;
+    }
+
+    attempted.push(provider);
+    try {
+      const booklets = provider === 'openai'
+        ? await generateWithOpenAi(dnas, pagePlans)
+        : await generateWithGemini(dnas, pagePlans);
+
+      if (provider === 'openai') apiStats.openaiSuccess += 1;
+      if (provider === 'gemini') apiStats.geminiSuccess += 1;
+
+      return {
+        booklets,
+        provider,
+        model: providerModel(provider),
+        fallbackFrom: attempted.slice(0, -1),
+        skipped
+      };
+    } catch (error) {
+      if (provider === 'openai') apiStats.openaiFailed += 1;
+      if (provider === 'gemini') apiStats.geminiFailed += 1;
+      console.error(`[${provider === 'openai' ? 'OpenAI' : 'Gemini'}] FAILED — ${compactProviderError(error)}`);
+      const next = order[order.indexOf(provider) + 1];
+      if (next) console.warn(`[AI] Trying next provider: ${next === 'openai' ? 'OpenAI' : 'Gemini'}`);
+    }
+  }
+
+  apiStats.localFallbacks += 1;
+  console.warn('[AI] All selected providers failed or were unavailable. Using local design-DNA fallback.');
+  return {
+    booklets: null,
+    provider: 'local-fallback',
+    model: null,
+    fallbackFrom: attempted,
+    skipped
+  };
 }
 
 function mergeAiBooklet(aiItem, dna, pagePlan, seed) {
@@ -1406,28 +1592,38 @@ for (let index = 0; index < count; index += 1) {
 }
 
 let generated;
-if (useAi) {
-  try {
-    const aiBooklets = await generateWithAi(dnas, pagePlans);
-    generated = dnas.map((dna, index) => mergeAiBooklet(aiBooklets[index], dna, pagePlans[index], `${runId}:merge:${index}`));
-    apiStats.openaiSuccess += 1;
-    console.log(`Generated ${generated.length} diverse concepts with OpenAI.`);
-  } catch (error) {
-    apiStats.openaiFailed += 1;
-    console.error(`AI generation failed; using local design-DNA fallback. ${error.message}`);
-    generated = dnas.map((dna, index) => fallbackConceptFromDna(dna, pagePlans[index], `${runId}:fallback:${index}`));
-  }
+let providerResult;
+
+if (aiProviderMode === 'local') {
+  apiStats.localFallbacks += 1;
+  providerResult = {
+    booklets: null,
+    provider: 'local-fallback',
+    model: null,
+    fallbackFrom: [],
+    skipped: []
+  };
+  console.log('[AI] Local mode selected; external text APIs will not be called.');
+} else {
+  providerResult = await generateWithProviderFallback(dnas, pagePlans);
+}
+
+if (providerResult.booklets) {
+  generated = dnas.map((dna, index) => mergeAiBooklet(providerResult.booklets[index], dna, pagePlans[index], `${runId}:merge:${index}`));
+  console.log(`Generated ${generated.length} diverse concepts with ${providerResult.provider}.`);
 } else {
   generated = dnas.map((dna, index) => fallbackConceptFromDna(dna, pagePlans[index], `${runId}:fallback:${index}`));
-  console.log('OpenAI disabled or key missing; using local design-DNA generator.');
 }
 
 const additions = [];
 for (let index = 0; index < generated.length; index += 1) {
   const normalized = normalizeBooklet(generated[index], index, additions);
   normalized.generationMeta = {
-    textProvider: useAi && apiStats.openaiSuccess ? 'openai' : 'local-fallback',
-    model: useAi && apiStats.openaiSuccess ? (process.env.OPENAI_MODEL || 'gpt-5-mini') : null,
+    textProvider: providerResult.provider,
+    model: providerResult.model,
+    fallbackFrom: providerResult.fallbackFrom,
+    skippedProviders: providerResult.skipped,
+    providerMode: aiProviderMode,
     generatedAt: new Date().toISOString()
   };
   additions.push(await enrichBooklet(normalized, index));
@@ -1442,8 +1638,15 @@ for (const item of additions) {
 }
 
 
+console.log('\n========== AI PROVIDER SUMMARY ==========');
+console.log(`Mode: ${aiProviderMode}`);
+console.log(`OpenAI configured: ${openAiConfigured}`);
+console.log(`Gemini configured: ${geminiConfigured}`);
+console.log(`OpenAI success/failed: ${apiStats.openaiSuccess}/${apiStats.openaiFailed}`);
+console.log(`Gemini success/failed: ${apiStats.geminiSuccess}/${apiStats.geminiFailed}`);
+console.log(`Local fallbacks: ${apiStats.localFallbacks}`);
+console.log('=========================================');
 console.log('\n========== V4 GENERATION SUMMARY ==========');
-console.log(`OpenAI: ${apiStats.openaiSuccess ? 'OK' : apiStats.openaiFailed ? 'FAILED / fallback used' : 'disabled'}`);
 console.log(`Unsplash searches/images: ${apiStats.unsplashSearches}/${apiStats.unsplashImages}`);
 console.log(`Openverse searches/images: ${apiStats.openverseSearches}/${apiStats.openverseImages}`);
 console.log(`Wikipedia sources: ${apiStats.wikipediaSuccess}`);
