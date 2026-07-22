@@ -33,6 +33,21 @@ on:
         options: ['-1', '0', '1', '2', '3', '4', '5']
 
 
+
+      max_fonts:
+        description: Maximum Google Fonts per booklet
+        required: true
+        default: '20'
+        type: choice
+        options: ['2', '4', '8', '12', '20']
+
+      image_provider:
+        description: Photo source
+        required: true
+        default: mixed
+        type: choice
+        options: [mixed, unsplash, openverse]
+
       topic:
         description: Booklet topic (leave empty for automatic selection)
         required: false
@@ -81,11 +96,12 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           OPENAI_MODEL: gpt-5-mini
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-          IMAGE_PROVIDER: mixed
+          IMAGE_PROVIDER: ${{ github.event_name == 'workflow_dispatch' && inputs.image_provider || 'mixed' }}
           BOOKLET_COUNT: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '3' }}
           FORCE_GENERATE: ${{ github.event_name == 'workflow_dispatch' && inputs.force_generate && 'true' || 'false' }}
           USE_AI: ${{ github.event_name == 'schedule' && 'true' || (inputs.use_ai && 'true' || 'false') }}
           CHAOS_LEVEL: ${{ github.event_name == 'workflow_dispatch' && inputs.chaos_level || '-1' }}
+          MAX_FONTS: ${{ github.event_name == 'workflow_dispatch' && inputs.max_fonts || '20' }}
           BOOKLET_TOPIC: ${{ github.event_name == 'workflow_dispatch' && inputs.topic || '' }}
           BOOKLET_DESCRIPTION: ${{ github.event_name == 'workflow_dispatch' && inputs.description || '' }}
           BOOKLET_RUN_ID: ${{ github.run_id }}
