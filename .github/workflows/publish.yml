@@ -111,7 +111,8 @@ jobs:
           OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
           GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           GEMINI_FALLBACK_MODEL: ${{ vars.GEMINI_FALLBACK_MODEL }}
-          GEMINI_MAX_ATTEMPTS: '3'
+          GEMINI_SECOND_FALLBACK_MODEL: ${{ vars.GEMINI_SECOND_FALLBACK_MODEL }}
+          GEMINI_MAX_ATTEMPTS: '4'
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           IMAGE_PROVIDER: ${{ github.event_name == 'workflow_dispatch' && inputs.image_provider || 'mixed' }}
           BOOKLET_COUNT: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '3' }}
