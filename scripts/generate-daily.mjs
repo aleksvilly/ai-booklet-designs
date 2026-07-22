@@ -17,8 +17,9 @@ const aiEnabled = process.env.USE_AI !== 'false';
 const openAiConfigured = Boolean(process.env.OPENAI_API_KEY);
 const geminiConfigured = Boolean(process.env.GEMINI_API_KEY);
 const openAiModel = process.env.OPENAI_MODEL || 'gpt-5-mini';
-const geminiModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+const geminiModel = process.env.GEMINI_MODEL || 'gemini-3.6-flash';
 const geminiFallbackModel = process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.5-flash-lite';
+const geminiSecondFallbackModel = process.env.GEMINI_SECOND_FALLBACK_MODEL || 'gemini-2.5-flash-lite';
 const geminiMaxAttempts = clampInt(process.env.GEMINI_MAX_ATTEMPTS, 1, 5, 3);
 const aiProviderMode = normalizeAiProvider(process.env.AI_PROVIDER || 'auto', aiEnabled);
 const runId = force ? (process.env.BOOKLET_RUN_ID || `${Date.now()}`) : date;
@@ -1270,12 +1271,12 @@ async function fetchGeminiOnce(prompt, schema, withSchema, model) {
   // For raw generateContent REST requests, structured JSON belongs directly
   // under generationConfig. Do not use responseFormat.text.mimeType here.
   if (withSchema) {
-    generationConfig.responseJsonSchema = schema;
+    generationConfig.responseSchema = schema;
   }
 
   const strictSuffix = withSchema
     ? ''
-    : '\n\nReturn only valid JSON. Do not use Markdown fences, commentary or explanatory text. The response must be directly parseable by JSON.parse().';
+    : '\n\nReturn only valid JSON. Do not use Markdown fences, commentary or explanatory text. The response must be directly parseable by JSON.parse(). The top-level value must be an object with exactly one main property named \"booklets\", whose value is an array.';
 
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -1318,6 +1319,34 @@ async function fetchGeminiOnce(prompt, schema, withSchema, model) {
   return text;
 }
 
+function extractGeminiBooklets(parsed) {
+  const candidates = [
+    parsed?.booklets,
+    parsed?.data?.booklets,
+    parsed?.result?.booklets,
+    parsed?.output?.booklets,
+    parsed?.items,
+    parsed?.results,
+    Array.isArray(parsed) ? parsed : null
+  ];
+
+  for (const candidate of candidates) {
+    if (Array.isArray(candidate) && candidate.every(item => item && typeof item === 'object')) {
+      return candidate;
+    }
+  }
+
+  if (parsed && typeof parsed === 'object' && Array.isArray(parsed.pages)) {
+    return [parsed];
+  }
+
+  if (parsed?.booklet && typeof parsed.booklet === 'object') {
+    return [parsed.booklet];
+  }
+
+  return null;
+}
+
 async function requestGemini(prompt, schema, withSchema = true, model = geminiModel) {
   let lastError;
 
@@ -1344,9 +1373,9 @@ async function requestGemini(prompt, schema, withSchema = true, model = geminiMo
 }
 
 async function generateWithGemini(dnas, pagePlans) {
-  const prompt = buildAiPrompt(dnas, pagePlans);
+  const prompt = `${buildAiPrompt(dnas, pagePlans)}\n\nOUTPUT CONTRACT: Return a top-level JSON object with a property named \"booklets\". The \"booklets\" value must be an array containing exactly ${dnas.length} booklet objects, in the same order as the design briefs.`;
   const schema = aiSchema(dnas.length);
-  const models = [...new Set([geminiModel, geminiFallbackModel].filter(Boolean))];
+  const models = [...new Set([geminiModel, geminiFallbackModel, geminiSecondFallbackModel].filter(Boolean))];
   let lastError;
 
   for (let modelIndex = 0; modelIndex < models.length; modelIndex += 1) {
@@ -1371,16 +1400,22 @@ async function generateWithGemini(dnas, pagePlans) {
 
       const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
       const parsed = JSON.parse(cleaned);
-      if (!Array.isArray(parsed?.booklets)) {
-        throw new Error('Gemini JSON did not contain a booklets array.');
+      const booklets = extractGeminiBooklets(parsed);
+
+      if (!booklets) {
+        const keys = parsed && typeof parsed === 'object' && !Array.isArray(parsed)
+          ? Object.keys(parsed).slice(0, 12).join(', ') || '(none)'
+          : Array.isArray(parsed) ? '[direct array]' : typeof parsed;
+        console.warn(`[Gemini] Unexpected JSON shape from ${model}; top-level: ${keys}; preview: ${cleaned.slice(0, 500)}`);
+        throw new Error('Gemini JSON did not contain a recognizable booklet collection.');
       }
-      if (parsed.booklets.length !== dnas.length) {
-        throw new Error(`Gemini returned ${parsed.booklets.length} booklets; expected ${dnas.length}.`);
+      if (booklets.length !== dnas.length) {
+        throw new Error(`Gemini returned ${booklets.length} booklets; expected ${dnas.length}.`);
       }
 
-      console.log(`[Gemini] OK — model: ${model}`);
+      console.log(`[Gemini] OK — model: ${model}; booklets: ${booklets.length}`);
       return {
-        booklets: parsed.booklets,
+        booklets,
         model
       };
     } catch (error) {
