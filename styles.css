@@ -281,3 +281,153 @@ footer { display: flex; justify-content: space-between; gap: 30px; padding: 28px
   .page-grid { display: block; }
   .book-page { min-height: 100vh; break-after: page; border: 0; }
 }
+
+/* V3: generated design DNA ------------------------------------------------ */
+.book-page {
+  --parallax-x: 0px;
+  --parallax-y: 0px;
+  --page-rotation: 0deg;
+  --image-position: center;
+}
+.book-page .page-image img {
+  object-position: var(--image-position);
+}
+.book-page.align-center .book-page-copy { text-align: center; margin-inline: auto; align-items: center; }
+.book-page.align-right .book-page-copy { text-align: right; margin-left: auto; align-items: flex-end; }
+
+/* Typography modes */
+.typeface-huge-serif h4 { font-family: "Playfair Display", Georgia, serif; font-size: clamp(54px, 8vw, 118px); font-weight: 600; line-height: .78; }
+.typeface-tiny-editorial h4 { max-width: 78%; font-size: clamp(23px, 3vw, 42px); line-height: 1.03; letter-spacing: -.02em; }
+.typeface-tiny-editorial .book-page-copy > p:not(.book-page-type) { font-size: 12px; max-width: 330px; }
+.typeface-clean-sans h4 { font-family: "DM Sans", Arial, sans-serif; }
+.typeface-mixed-serif-sans h4 { font-family: "Playfair Display", Georgia, serif; font-weight: 600; }
+.typeface-poster-bold h4 { font-family: Impact, "Arial Black", sans-serif; text-transform: uppercase; line-height: .78; letter-spacing: -.045em; }
+.typeface-typewriter h4,
+.typeface-typewriter .book-page-copy { font-family: "Courier New", monospace; letter-spacing: -.03em; }
+.typeface-condensed-headlines h4 { font-family: "Arial Narrow", "Roboto Condensed", sans-serif; font-stretch: condensed; text-transform: uppercase; line-height: .76; }
+.typeface-handwritten-accent h4 { font-family: "Comic Sans MS", "Bradley Hand", cursive; font-weight: 500; letter-spacing: -.045em; transform: rotate(var(--page-rotation)); }
+.typeface-tech-mono h4,
+.typeface-tech-mono .book-page-copy { font-family: "IBM Plex Mono", monospace; letter-spacing: -.055em; }
+.typeface-playful-rounded h4 { font-family: "Trebuchet MS", "Arial Rounded MT Bold", sans-serif; border-radius: 30px; letter-spacing: -.065em; }
+
+/* Background systems */
+.background-pure { background: #fff; }
+.background-textured { background-color: #eee8dc; background-image: radial-gradient(rgba(0,0,0,.12) .7px, transparent .7px); background-size: 6px 6px; }
+.background-noisy::before,
+.effect-grain-texture::before,
+.effect-film-grain::before,
+.effect-xerox-noise::before {
+  content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: .2;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.28'/%3E%3C/svg%3E");
+  mix-blend-mode: multiply;
+}
+.background-gradient { background: linear-gradient(135deg, var(--c1), var(--c2) 45%, var(--c3)); }
+.background-photo-based { background: var(--c4); color: var(--c1); }
+.background-grid-paper { background-color: #f7f3e9; background-image: linear-gradient(rgba(20,20,20,.11) 1px, transparent 1px), linear-gradient(90deg, rgba(20,20,20,.11) 1px, transparent 1px); background-size: 22px 22px; }
+.background-dark-field { background: #0b0c10; color: #f4f2e9; }
+.background-paper { background: #ece3cf; box-shadow: inset 0 0 80px rgba(99,67,25,.08); }
+.background-chrome { background: linear-gradient(135deg, #f7f9fc 0%, #7d8794 30%, #f7ffff 49%, #49505c 73%, #e7ecf2 100%); color: #0b0c10; }
+.background-transparent-layers { background: linear-gradient(120deg, color-mix(in srgb, var(--c2) 45%, transparent), color-mix(in srgb, var(--c3) 35%, transparent)), var(--c1); }
+
+/* Image treatments */
+.image-treatment-black-white-photo .page-image img { filter: grayscale(1) contrast(1.14); }
+.image-treatment-grainy-photo .page-image img { filter: contrast(1.08) saturate(.82); }
+.image-treatment-duotone-photo .page-image img { filter: grayscale(1) contrast(1.2) sepia(.25) hue-rotate(155deg) saturate(2.1); mix-blend-mode: multiply; }
+.image-treatment-archival-scan .page-image img { filter: grayscale(.75) sepia(.33) contrast(.9); }
+.image-treatment-posterized .page-image img { filter: contrast(1.55) saturate(1.5); }
+.image-treatment-blurred-dreamy .page-image img { filter: saturate(.8) blur(1.5px); transform: scale(1.035); }
+.image-treatment-halftone-photo .page-image::before { content:""; position:absolute; inset:0; z-index:2; background:radial-gradient(circle, rgba(0,0,0,.45) 1px, transparent 1.5px); background-size:7px 7px; mix-blend-mode:multiply; opacity:.45; }
+.image-treatment-chrome-reflection .page-image img { filter: contrast(1.15) saturate(.25) brightness(1.18); }
+.image-treatment-infrared-color .page-image img { filter: hue-rotate(255deg) saturate(2) contrast(1.15); }
+.image-treatment-xerox-copy .page-image img { filter: grayscale(1) contrast(2.2) brightness(1.12); }
+.image-treatment-cutout-collage .page-image { inset: 8% 7%; transform: rotate(var(--page-rotation)); box-shadow: 14px 16px 0 var(--c2); }
+
+/* Layout and effect vocabulary */
+.effect-micro-3d-layering .book-page-copy { transform: translate(-8px,-8px); text-shadow: 8px 8px 0 color-mix(in srgb, var(--c2) 60%, transparent); }
+.effect-micro-3d-layering .page-image { transform: translate(7px,7px); box-shadow: -14px -14px 0 color-mix(in srgb, var(--c3) 55%, transparent); }
+.effect-parallax-depth .page-image img { transform: translate(var(--parallax-x), var(--parallax-y)) scale(1.09); transition: transform .2s ease-out, opacity .2s ease; }
+.effect-text-behind-image .book-page-copy h4 { position: relative; z-index: 0; font-size: clamp(66px, 10vw, 138px); mix-blend-mode: difference; color: white; }
+.effect-text-behind-image .page-image { z-index: 2; clip-path: inset(18% 10% 17% 30%); }
+.effect-oversized-number .book-page-number { top: -5%; right: 2%; font-size: clamp(120px, 22vw, 300px); line-height: .8; opacity: .12; }
+.effect-inverted-section { background: var(--c4); color: var(--c1); }
+.effect-mirrored-layout .page-image img { transform: scaleX(-1); }
+.effect-tilted-photo .page-image { inset: 6%; transform: rotate(var(--page-rotation)); box-shadow: 0 25px 50px rgba(0,0,0,.25); }
+.effect-cutout-shadow .book-page-copy { filter: drop-shadow(11px 13px 0 color-mix(in srgb, var(--c2) 75%, transparent)); }
+.effect-glow-accent { box-shadow: inset 0 0 80px color-mix(in srgb, var(--c2) 40%, transparent); }
+.effect-glow-accent h4 { text-shadow: 0 0 18px var(--c2), 0 0 42px var(--c2); }
+.effect-gradient-overlay::after { content:""; position:absolute; inset:0; z-index:2; pointer-events:none; background:linear-gradient(135deg, color-mix(in srgb,var(--c2) 72%,transparent), transparent 50%, color-mix(in srgb,var(--c3) 68%,transparent)); mix-blend-mode:screen; }
+.effect-scribble-lines::after { content:"/////  ~~~~~  /////"; position:absolute; z-index:5; right:-3%; top:15%; font:700 38px/1 "Comic Sans MS", cursive; transform:rotate(18deg); opacity:.55; }
+.effect-frame-within-frame { border: 16px solid var(--c1); outline: 1px solid currentColor; outline-offset: -28px; }
+.effect-sticker-elements::after { content:"NEW / 2026"; position:absolute; z-index:5; right:18px; top:48px; padding:10px 13px; border-radius:999px; background:var(--c2); color:var(--c4); font:700 10px/1 "IBM Plex Mono",monospace; transform:rotate(11deg); box-shadow:4px 5px 0 var(--c4); }
+.effect-floating-caption small { align-self:flex-start; padding:10px 12px; background:#fff; color:#111; box-shadow:0 12px 35px rgba(0,0,0,.22); transform:rotate(var(--page-rotation)); }
+.effect-overlapping-panels .book-page-copy { padding:22px; background:color-mix(in srgb,var(--c1) 82%,transparent); backdrop-filter:blur(9px); box-shadow:20px 20px 0 color-mix(in srgb,var(--c2) 75%,transparent); }
+.effect-diagonal-flow { clip-path: polygon(0 0,100% 0,94% 100%,0 92%); }
+.effect-masked-image-shape .page-image { inset:8%; clip-path:ellipse(43% 48% at 60% 47%); }
+.effect-translucent-blocks .book-page-copy { padding:22px; background:rgba(255,255,255,.22); border:1px solid rgba(255,255,255,.45); backdrop-filter:blur(18px); }
+.effect-chrome-type h4 { color:transparent; background:linear-gradient(#fff,#6d7788 35%,#fff 52%,#333 80%,#fff); -webkit-background-clip:text; background-clip:text; filter:drop-shadow(3px 4px 0 rgba(0,0,0,.26)); }
+.effect-halftone::after { content:""; position:absolute; inset:0; z-index:2; pointer-events:none; background:radial-gradient(circle, currentColor .7px, transparent 1px); background-size:6px 6px; opacity:.16; }
+.effect-paper-cut .book-page-copy { padding:20px; background:var(--c1); box-shadow:9px 11px 0 var(--c2), 18px 22px 0 var(--c3); transform:rotate(var(--page-rotation)); }
+.effect-hard-shadow h4 { text-shadow:8px 9px 0 var(--c2); }
+.effect-soft-shadow h4 { text-shadow:0 18px 35px rgba(0,0,0,.22); }
+.effect-torn-edge { clip-path: polygon(0 1%,4% 0,9% 2%,15% 0,22% 1%,29% 0,37% 2%,44% 0,52% 1%,59% 0,68% 2%,75% 0,83% 1%,91% 0,100% 2%,99% 100%,0 98%); }
+.effect-tape-strips::before { content:""; position:absolute; z-index:6; width:120px; height:28px; left:38%; top:8px; background:rgba(236,220,170,.72); transform:rotate(-5deg); box-shadow:0 1px 2px rgba(0,0,0,.18); }
+.effect-hud-lines::after { content:"SCAN 004  /  LIVE  /  2026"; position:absolute; inset:18px; z-index:5; border:1px solid color-mix(in srgb,var(--c2) 70%,transparent); color:var(--c2); padding:12px; font:500 9px/1 "IBM Plex Mono",monospace; pointer-events:none; }
+.effect-data-scan::after { content:""; position:absolute; z-index:5; left:0; right:0; top:20%; height:2px; background:var(--c2); box-shadow:0 0 18px var(--c2); animation:data-scan 4s linear infinite; }
+@keyframes data-scan { to { transform:translateY(300px); } }
+.effect-pixel-grid::after { content:""; position:absolute; inset:0; z-index:2; pointer-events:none; background:linear-gradient(90deg,rgba(0,0,0,.14) 1px,transparent 1px),linear-gradient(rgba(0,0,0,.14) 1px,transparent 1px); background-size:12px 12px; }
+.effect-liquid-shapes { border-radius:46% 54% 67% 33% / 38% 31% 69% 62%; }
+.effect-registration-marks::after { content:"+       +\A\A\A+       +"; white-space:pre; position:absolute; inset:16px; z-index:5; font:700 22px/1 monospace; opacity:.45; pointer-events:none; }
+.effect-misregistration h4 { text-shadow:-4px 0 var(--c2),4px 0 var(--c3); }
+.effect-blurred-depth .page-image img { transform:scale(1.08); filter:blur(2px) saturate(.85); }
+.effect-impossible-scale h4 { font-size:clamp(88px,15vw,210px); transform:translateX(-8%); }
+.effect-floating-object .page-art { animation:float-object 5s ease-in-out infinite; box-shadow:20px 28px 45px rgba(0,0,0,.25); }
+@keyframes float-object { 50% { transform:translateY(-22px) rotate(7deg); } }
+.effect-pattern-layer::after { content:""; position:absolute; inset:0; z-index:2; pointer-events:none; background:repeating-linear-gradient(45deg,transparent 0 20px,currentColor 21px 22px); opacity:.12; }
+.effect-type-wave h4 { transform:skewY(-7deg) rotate(var(--page-rotation)); }
+.effect-speech-bubble .book-page-copy { padding:28px; border-radius:50%; background:#fff; color:#111; }
+.effect-empty-space .book-page-copy { max-width:42%; min-height:260px; justify-content:center; }
+.effect-empty-space h4 { font-size:clamp(24px,3vw,45px); line-height:1; }
+
+/* Style-family behavior on covers and detail heroes */
+.style-childlike-paper-cut .cover-title,
+.style-childlike-paper-cut .detail-title { font-family:"Trebuchet MS","Arial Rounded MT Bold",sans-serif; transform:rotate(-3deg); }
+.style-childlike-paper-cut .shape-a { border-radius:42% 58% 65% 35%; box-shadow:12px 15px 0 var(--c3); }
+.style-neo-tech-interface .cover,
+.style-neo-tech-interface.detail-hero { background:#0b0e15; color:#e9fffb; }
+.style-neo-tech-interface .cover::after,
+.style-neo-tech-interface.detail-hero::after { content:"SYSTEM / 2026"; position:absolute; right:20px; top:20px; font:500 9px/1 "IBM Plex Mono",monospace; color:var(--c2); }
+.style-black-white-noir .cover,
+.style-black-white-noir.detail-hero { filter:grayscale(1); }
+.style-post-punk-zine .cover-title,
+.style-grunge-90s .cover-title { font-family:Impact,"Arial Black",sans-serif; text-transform:uppercase; transform:rotate(-4deg); }
+.style-luxury-editorial .cover-title,
+.style-luxury-editorial .detail-title { font-family:"Playfair Display",serif; font-weight:500; }
+.style-minimal-poetic .cover-title { max-width:65%; font-size:clamp(28px,3.2vw,50px); line-height:.98; }
+.style-y2k-liquid .shape-a,
+.style-organic-futurism .shape-a { border-radius:44% 56% 61% 39% / 35% 31% 69% 65%; filter:blur(2px); }
+.style-comic-pop .cover-title { font-family:Impact,"Arial Black",sans-serif; text-transform:uppercase; text-shadow:7px 8px 0 var(--c3); }
+.style-scrapbook-memory .cover-title { font-family:"Courier New",monospace; transform:rotate(-3deg); }
+.style-scientific-archive .cover,
+.style-museum-clean .cover { background-image:linear-gradient(rgba(0,0,0,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.1) 1px,transparent 1px); background-size:24px 24px; }
+
+/* Rhythm */
+.rhythm-calm .page-grid,
+.rhythm-slow-luxury .page-grid { gap:36px; }
+.rhythm-staccato .book-page:nth-child(even) { min-height:330px; }
+.rhythm-staccato .book-page:nth-child(3n) { min-height:560px; }
+.rhythm-chaotic .book-page:nth-child(odd) { transform:rotate(-.7deg); }
+.rhythm-chaotic .book-page:nth-child(even) { transform:rotate(.65deg); }
+.rhythm-cinematic .book-page:nth-child(3n) { grid-column:span 2; min-height:650px; }
+
+@media (max-width:700px) {
+  .rhythm-cinematic .book-page:nth-child(3n) { grid-column:auto; min-height:460px; }
+  .effect-text-behind-image .page-image { clip-path:inset(24% 5% 15% 20%); }
+  .effect-impossible-scale h4 { font-size:clamp(70px,22vw,125px); }
+  .effect-empty-space .book-page-copy { max-width:75%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .effect-floating-object .page-art,
+  .effect-data-scan::after { animation:none; }
+  .effect-parallax-depth .page-image img { transform:scale(1.04); }
+}

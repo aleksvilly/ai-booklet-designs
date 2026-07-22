@@ -18,6 +18,27 @@ function safeUrl(value = '') {
   try { const url = new URL(value); return ['http:', 'https:'].includes(url.protocol) ? url.href : '#'; }
   catch { return '#'; }
 }
+function safeClass(value = '') {
+  return String(value).toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
+}
+function safeRotation(value) {
+  const number = Number(value);
+  return Number.isFinite(number) ? Math.max(-12, Math.min(12, number)) : 0;
+}
+function safeImagePosition(value = 'center') {
+  const allowed = new Set(['center', 'center top', 'center bottom', 'left center', 'right center']);
+  return allowed.has(value) ? value : 'center';
+}
+function designClasses(item) {
+  const dna = item.designDna || {};
+  return [
+    `style-${safeClass(dna.styleFamily || item.layout || 'editorial')}`,
+    `color-${safeClass(dna.colorMode || 'default')}`,
+    `archetype-${safeClass(dna.archetype || 'booklet')}`,
+    `rhythm-${safeClass(dna.visualRhythm || 'balanced')}`,
+    `shape-${safeClass(dna.shapeLanguage || 'mixed')}`
+  ].join(' ');
+}
 function isPublished(item) { return new Date(`${item.publishDate}T00:00:00`) <= today; }
 function visibleBooklets() {
   return allBooklets.filter(isPublished).filter(item => activeFilter === 'All' || item.category === activeFilter)
@@ -60,6 +81,7 @@ function renderCards() {
   items.forEach((item, index) => {
     const card = template.content.firstElementChild.cloneNode(true);
     card.dataset.layout = item.layout;
+    card.classList.add(...designClasses(item).split(' '));
     applyPalette(card, item.palette);
     card.querySelector('.cover-kicker').textContent = `${item.era} / ${item.style}`;
     card.querySelector('.cover-title').textContent = coverTitle(item.title);
@@ -99,8 +121,17 @@ function sourceMarkup(page) {
 function pageMarkup(page, index) {
   const hasImage = safeUrl(page.image?.url || '') !== '#';
   const imageClass = hasImage ? ' has-image' : '';
+  const generatedClasses = [
+    `effect-${safeClass(page.effect || 'none')}`,
+    `typeface-${safeClass(page.typography || 'clean-sans')}`,
+    `background-${safeClass(page.background || 'pure')}`,
+    `image-treatment-${safeClass(page.imageTreatment || 'clean-photo')}`,
+    `align-${safeClass(page.textAlign || 'left')}`,
+    `module-${safeClass(page.module || page.type || 'editorial')}`
+  ].join(' ');
+  const style = `--page-rotation:${safeRotation(page.rotation)}deg;--image-position:${safeImagePosition(page.imagePosition)}`;
 
-  return `<article class="book-page${imageClass} type-${escapeHtml(page.type || 'editorial')} layout-${escapeHtml(page.layout || 'minimal')}">
+  return `<article style="${style}" class="book-page${imageClass} ${generatedClasses} type-${escapeHtml(page.type || 'editorial')} layout-${escapeHtml(page.layout || 'minimal')}">
     <span class="book-page-number">${String(index + 1).padStart(2, '0')}</span>
     ${imageMarkup(page)}
     <div class="book-page-copy">
@@ -115,13 +146,14 @@ function pageMarkup(page, index) {
 
 function detailHtml(item) {
   const pages = pagesFor(item);
-  return `<section class="detail-hero" style="--c1:${item.palette[0]};--c2:${item.palette[1]};--c3:${item.palette[2]};--c4:${item.palette[3]}">
+  const classes = designClasses(item);
+  return `<section class="detail-hero ${classes}" style="--c1:${item.palette[0]};--c2:${item.palette[1]};--c3:${item.palette[2]};--c4:${item.palette[3]}">
       <div class="detail-cover"><span class="detail-shape-a"></span><span class="detail-shape-b"></span><p class="eyebrow">For ${escapeHtml(item.audience)}</p><h2 class="detail-title">${escapeHtml(coverTitle(item.title))}</h2></div>
       <div class="detail-meta"><p class="eyebrow">Concept ${escapeHtml(item.publishDate)}</p><p class="detail-description">${escapeHtml(item.description)}</p>
         <div class="detail-facts"><div><span>Era</span><strong>${escapeHtml(item.era)}</strong></div><div><span>Direction</span><strong>${escapeHtml(item.style)}</strong></div><div><span>Format</span><strong>${escapeHtml(item.format)}</strong></div><div><span>Preview</span><strong>${pages.length} pages</strong></div></div>
       </div>
     </section>
-    <section class="spread-section" style="--c1:${item.palette[0]};--c2:${item.palette[1]};--c3:${item.palette[2]};--c4:${item.palette[3]}">
+    <section class="spread-section ${classes}" style="--c1:${item.palette[0]};--c2:${item.palette[1]};--c3:${item.palette[2]};--c4:${item.palette[3]}">
       <div class="spread-heading"><h3>Booklet preview</h3><p>${escapeHtml(item.direction)} Images keep creator, source and licence records. Facts include a source suggestion for verification.</p></div>
       <div class="page-grid">${pages.map(pageMarkup).join('')}</div>
       <div class="detail-actions"><button type="button" data-action="copy">Copy share link</button><button type="button" data-action="print">Print / save PDF</button><button type="button" data-action="close">Back to collection</button></div>
@@ -164,13 +196,45 @@ function loadDialogImages(root) {
   });
 }
 
+
+function activateGeneratedEffects(root) {
+  const observer = 'IntersectionObserver' in window
+    ? new IntersectionObserver(entries => {
+        entries.forEach(entry => entry.target.classList.toggle('in-view', entry.isIntersecting));
+      }, { root: dialog, threshold: 0.18 })
+    : null;
+
+  root.querySelectorAll('.book-page').forEach(page => observer?.observe(page));
+
+  root.querySelectorAll('.effect-parallax-depth').forEach(page => {
+    const image = page.querySelector('.page-image img');
+    if (!image || !window.matchMedia('(pointer:fine)').matches) return;
+
+    page.addEventListener('pointermove', event => {
+      const rect = page.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width - 0.5) * 14;
+      const y = ((event.clientY - rect.top) / rect.height - 0.5) * 14;
+      image.style.setProperty('--parallax-x', `${x}px`);
+      image.style.setProperty('--parallax-y', `${y}px`);
+    });
+
+    page.addEventListener('pointerleave', () => {
+      image.style.setProperty('--parallax-x', '0px');
+      image.style.setProperty('--parallax-y', '0px');
+    });
+  });
+}
+
 function openBooklet(item, updateUrl = true) {
   dialogContent.innerHTML = detailHtml(item);
   if (updateUrl) { const url = new URL(window.location.href); url.searchParams.set('booklet', item.id); history.pushState({ booklet: item.id }, '', url); }
   dialog.showModal();
 
   // Assign image src values only after the modal is visible.
-  requestAnimationFrame(() => loadDialogImages(dialogContent));
+  requestAnimationFrame(() => {
+    loadDialogImages(dialogContent);
+    activateGeneratedEffects(dialogContent);
+  });
 
   dialogContent.querySelector('[data-action="close"]').addEventListener('click', closeDialog);
   dialogContent.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
