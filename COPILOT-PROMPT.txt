@@ -1,0 +1,28 @@
+Update the AI booklet project so manual GitHub Actions runs have two optional text inputs:
+
+1. topic — "Booklet topic (leave empty for automatic selection)"
+2. description — "Approximate description or creative brief (leave empty for automatic generation)"
+
+Required behavior:
+- When both fields are empty, preserve the current fully automatic random topic selection.
+- When topic is filled, use it as the primary booklet subject for every booklet generated in that manual run.
+- When description is filled, include it as mandatory creative direction in both OpenAI generation and the local design-DNA fallback.
+- When topic is empty but description is filled, derive a concise subject from the first sentence / first 12 words of the description.
+- Keep styles, page layouts, effects, page count, secondary mixes and chaos controlled by the existing generator.
+- Scheduled runs must always keep automatic behavior because no manual inputs exist.
+- The local fallback must honor the custom topic/description even when OpenAI fails with 429 insufficient_quota.
+- Do not expose or store API keys.
+
+Files to update:
+- .github/workflows/publish.yml
+- scripts/generate-daily.mjs
+
+Workflow env variables:
+BOOKLET_TOPIC: ${{ github.event_name == 'workflow_dispatch' && inputs.topic || '' }}
+BOOKLET_DESCRIPTION: ${{ github.event_name == 'workflow_dispatch' && inputs.description || '' }}
+
+Add clear logs:
+- Manual mode: show topic and whether a description was provided.
+- Automatic mode: state that the generator selected the topic itself.
+
+Do not change the existing 6–16 page rule.
