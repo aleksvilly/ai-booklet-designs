@@ -1,5 +1,124 @@
 [
   {
+    "title": "Night Geometry",
+    "audience": "the Traveller",
+    "category": "Travel",
+    "era": "2000s",
+    "style": "Early-web maximalism",
+    "layout": "radical",
+    "direction": "Early-web maximalism interprets artificial light, shadow and structures revealed after dark with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Traveller, built around artificial light, shadow and structures revealed after dark. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 4 pages",
+    "palette": [
+      "#f1e6cc",
+      "#ef6b40",
+      "#1f8993",
+      "#21312e"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "Night Geometry",
+        "body": "A visual gift for the Traveller.",
+        "imageQuery": "Travel portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Travel portrait editorial.",
+        "layout": "archive",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/09bfd92d-46c9-447d-9010-40b1db29272b/thumb/",
+          "fullUrl": "https://live.staticflickr.com/5600/15429835715_03ce44ace6_b.jpg",
+          "alt": "_MG_2892",
+          "creator": "mariadelajuana",
+          "creatorUrl": "https://www.flickr.com/photos/72933117@N07",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/72933117@N07/15429835715",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"_MG_2892\" by mariadelajuana is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes artificial light, shadow and structures revealed after dark.",
+        "imageQuery": "Travel atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Travel atmospheric landscape.",
+        "layout": "minimal",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/e50d4c34-c1f9-4228-bd99-5195c884355b/thumb/",
+          "fullUrl": "https://live.staticflickr.com/5177/5405938454_786f6fc6f0_b.jpg",
+          "alt": "Major Winter Storm Takes Aim at Central U.S.",
+          "creator": "NASA Goddard Photo and Video",
+          "creatorUrl": "https://www.flickr.com/photos/24662369@N07",
+          "source": "nasa",
+          "sourceUrl": "https://www.flickr.com/photos/24662369@N07/5405938454",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Major Winter Storm Takes Aim at Central U.S.\" by NASA Goddard Photo and Video is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Travel archive detail",
+        "sourceQuery": "Travel history facts",
+        "caption": "Image direction: Travel archive detail.",
+        "layout": "archive",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/2b17da3d-03c2-45ad-b251-6f70678a820f/thumb/",
+          "fullUrl": "https://live.staticflickr.com/6202/6105853481_ba2f61920e_b.jpg",
+          "alt": "NASA Watching Atlantic Tropics: Katia, Tropical Storm Lee and System 94L [detail view]",
+          "creator": "NASA Goddard Photo and Video",
+          "creatorUrl": "https://www.flickr.com/photos/24662369@N07",
+          "source": "nasa",
+          "sourceUrl": "https://www.flickr.com/photos/24662369@N07/6105853481",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"NASA Watching Atlantic Tropics: Katia, Tropical Storm Lee and System 94L [detail view]\" by NASA Goddard Photo and Video is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "Alternate history",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Alternate_history"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Travel objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Travel objects close up.",
+        "layout": "split",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/5ccdfe17-edc6-40f5-8450-6aa7b589509f/thumb/",
+          "fullUrl": "https://live.staticflickr.com/5223/5642382405_cd932eca22_b.jpg",
+          "alt": "Atlas Drop 2011, Soroti, Uganda, April 2011",
+          "creator": "US Army Africa",
+          "creatorUrl": "https://www.flickr.com/photos/36281822@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/36281822@N08/5642382405",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Atlas Drop 2011, Soroti, Uganda, April 2011\" by US Army Africa is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "asymmetric"
+      }
+    ],
+    "id": "traveller-night-geometry-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
     "title": "Weather for One Person",
     "audience": "the Architect",
     "category": "Architecture",
