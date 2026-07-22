@@ -1,0 +1,108 @@
+ Add a stronger image fallback pipeline to the current AI Booklet generator.
+
+Inspect the current implementation before editing.
+Do not remove existing OpenAI / Gemini / local fallback logic.
+Do not remove existing page types, spreads, print mode, font logic, or custom topic fields.
+
+Goal:
+When the generator needs images, it must no longer rely on one long literal search query.
+Instead it should try several levels of fallback and several providers.
+
+Files:
+- scripts/generate-daily.mjs
+- scripts/image-fallback-helpers.mjs (new file)
+- optionally package.json only if the project needs it, but prefer plain fetch and no new dependencies.
+
+What to add:
+
+1. Create a new helper file `scripts/image-fallback-helpers.mjs`.
+It should export:
+- ABSTRACT_IMAGE_FALLBACKS
+- PROVIDER_ORDER
+- PAGE_IMAGE_STRATEGY
+- simplifyTopic()
+- detectMood()
+- buildMoodQueries()
+- buildVisualSubstitutes()
+- buildQueryChain()
+- buildGridQueryPool()
+- fetchUnsplash()
+- fetchPexels()
+- fetchPixabay()
+- fetchOpenverse()
+- fetchWikimedia()
+- searchProvider()
+- findBestImage()
+- findGridImages()
+- buildDecorativeFallbackPageArt()
+
+2. Providers
+Support:
+- Unsplash using `UNSPLASH_ACCESS_KEY`
+- Pexels using `PEXELS_API_KEY`
+- Pixabay using `PIXABAY_API_KEY`
+- Openverse with no key
+- Wikimedia Commons with no key
+
+3. Query logic
+For a page query like:
+`coffee rituals blurred dreamy imaginary-local editorial photography`
+The system should try:
+- exact query
+- simplified topic
+- core nouns
+- visual substitutes
+- mood-based atmospheric queries
+- abstract fallback queries
+
+4. Use different strategies per page type:
+- hero-photo-page -> exact then atmospheric
+- dense-grid-page / contact-sheet-page -> pooled search with many related queries
+- archival-page / timeline-page -> archive-first
+- quote-page / technical-diagram-page -> decorative fallback is acceptable
+
+5. Update generate-daily.mjs:
+- import helper functions
+- replace old single-image search logic
+- when a page expects one image, call `findBestImage()`
+- when a page expects many images, call `findGridImages()` and save to `page.images`
+- if no image is found, set `page.pageArt = buildDecorativeFallbackPageArt(...)`
+- preserve existing `page.image` structure
+
+6. Image provider mode
+Preserve the existing IMAGE_PROVIDER env var if present.
+If there is already a provider selector like `unsplash`, `openverse`, or `mixed`, adapt it so that:
+- unsplash -> providers limited to unsplash
+- openverse -> providers limited to openverse + wikimedia
+- mixed -> general provider order
+If there is no such logic, create it.
+
+7. Logging
+At the end print a summary such as:
+
+========== IMAGE PIPELINE SUMMARY ==========
+Unsplash searches/images: 12/8
+Pexels searches/images: 5/4
+Pixabay searches/images: 4/2
+Openverse searches/images: 8/6
+Wikimedia searches/images: 3/1
+Single-image fallbacks: 2
+Grid-image fallbacks: 1
+Decorative page-art fallbacks: 3
+==========================================
+
+Never log secrets.
+
+8. Acceptance criteria
+- Literal queries may fail without breaking generation.
+- The pipeline simplifies queries automatically.
+- If exact search fails, atmospheric or abstract images may still be used.
+- Grid pages can gather many images from a pool of related queries.
+- If all providers fail, the page receives `pageArt` metadata instead of a broken image.
+- Existing booklet rendering continues to work.
+
+After editing:
+- run `node --check scripts/generate-daily.mjs`
+- run `node --check scripts/image-fallback-helpers.mjs`
+- do not overwrite `data/booklets.json`
+- show a concise diff summary

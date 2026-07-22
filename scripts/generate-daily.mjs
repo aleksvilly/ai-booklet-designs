@@ -1,5 +1,12 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { createHash } from 'node:crypto';
+import {
+  findBestImage,
+  findGridImages,
+  buildDecorativeFallbackPageArt,
+  detectMood,
+  imageStats
+} from './image-fallback-helpers.mjs';
 
 const fileUrl = new URL('../data/booklets.json', import.meta.url);
 const existing = JSON.parse(await readFile(fileUrl, 'utf8'));
@@ -1665,14 +1672,25 @@ async function enrichBooklet(booklet, bookletIndex) {
   let usedImages = 0;
   const imageBudget = imageBudgetFor(booklet.designDna || {});
   const sharedSpreadImages = new Map();
-  const provider = process.env.IMAGE_PROVIDER || 'mixed';
+  const envProvider = process.env.IMAGE_PROVIDER || 'mixed';
+
+  const mood = detectMood({
+    mood: booklet.designDna?.mood,
+    styleFamily: booklet.designDna?.styleFamily,
+    colorMode: booklet.designDna?.colorMode
+  });
+
+  const isArchiveCategory = /archive|history|museum/i.test(booklet.category || '');
+  let providerMode = isArchiveCategory ? 'archive' : 'general';
+  if (envProvider === 'unsplash') providerMode = 'modern';
+  else if (envProvider === 'openverse') providerMode = 'archive';
 
   for (let pageIndex = 0; pageIndex < booklet.pages.length; pageIndex += 1) {
     const page = booklet.pages[pageIndex];
     const requested = Math.max(0, Math.min(20, Number(page.imageCount || (page.imageQuery ? 1 : 0))));
     const available = Math.max(0, imageBudget - usedImages);
     const desired = Math.min(requested, available);
-    const seed = `${runId}-${bookletIndex}-${pageIndex}-${page.imageQuery}`;
+    const topic = page.imageQuery || booklet.title || '';
 
     if (page.spreadId && sharedSpreadImages.has(page.spreadId)) {
       const shared = sharedSpreadImages.get(page.spreadId);
@@ -1680,14 +1698,66 @@ async function enrichBooklet(booklet, bookletIndex) {
       page.images = shared;
     } else if (page.imageQuery && desired > 0) {
       try {
-        const images = await fetchGallery(provider, page.imageQuery, desired, seed);
-        page.images = images;
-        page.image = images[0] || null;
-        usedImages += images.length;
-        if (page.spreadId && images.length) sharedSpreadImages.set(page.spreadId, images);
+        if (desired > 1) {
+          const gridResult = await findGridImages({
+            topic,
+            category: booklet.category,
+            mood,
+            styleFamily: booklet.designDna?.styleFamily,
+            providerMode,
+            desiredCount: desired
+          });
+
+          if (gridResult.images?.length) {
+            page.images = gridResult.images;
+            page.image = gridResult.images[0] || null;
+            usedImages += gridResult.images.length;
+            if (page.spreadId) sharedSpreadImages.set(page.spreadId, gridResult.images);
+          } else {
+            imageStats.gridImageFallbacks += 1;
+            imageStats.decorativePageArtFallbacks += 1;
+            page.image = null;
+            page.images = [];
+            page.pageArt = buildDecorativeFallbackPageArt({
+              mood,
+              styleFamily: booklet.designDna?.styleFamily
+            });
+          }
+        } else {
+          const imageResult = await findBestImage({
+            topic,
+            category: booklet.category,
+            mood,
+            styleFamily: booklet.designDna?.styleFamily,
+            pageType: page.type,
+            providerMode
+          });
+
+          if (imageResult.image) {
+            page.image = imageResult.image;
+            page.images = [imageResult.image];
+            usedImages += 1;
+            if (page.spreadId) sharedSpreadImages.set(page.spreadId, [imageResult.image]);
+          } else {
+            imageStats.singleImageFallbacks += 1;
+            imageStats.decorativePageArtFallbacks += 1;
+            page.image = null;
+            page.images = [];
+            page.pageArt = buildDecorativeFallbackPageArt({
+              mood,
+              styleFamily: booklet.designDna?.styleFamily
+            });
+          }
+        }
       } catch (error) {
         apiStats.imageFailures += 1;
         console.warn(`Image search failed for "${page.imageQuery}": ${error.message}`);
+        page.image = null;
+        page.images = [];
+        page.pageArt = buildDecorativeFallbackPageArt({
+          mood,
+          styleFamily: booklet.designDna?.styleFamily
+        });
       }
     }
 
@@ -1699,7 +1769,7 @@ async function enrichBooklet(booklet, bookletIndex) {
 
   booklet.generationMeta = {
     ...(booklet.generationMeta || {}),
-    imageProviders: [...new Set(booklet.pages.flatMap(page => (page.images || (page.image ? [page.image] : [])).map(image => image?.source)).filter(Boolean))],
+    imageProviders: [...new Set(booklet.pages.flatMap(page => (page.images || (page.image ? [page.image] : [])).map(image => image?.provider || image?.source)).filter(Boolean))],
     fontProvider: booklet.designDna?.fontProvider || 'system',
     fontCount: booklet.designDna?.fontCount || 0,
     totalImages: booklet.pages.reduce((sum, page) => sum + (page.images?.length || (page.image ? 1 : 0)), 0)
@@ -1773,10 +1843,15 @@ console.log(`OpenAI success/failed: ${apiStats.openaiSuccess}/${apiStats.openaiF
 console.log(`Gemini success/failed: ${apiStats.geminiSuccess}/${apiStats.geminiFailed}`);
 console.log(`Local fallbacks: ${apiStats.localFallbacks}`);
 console.log('=========================================');
-console.log('\n========== V4 GENERATION SUMMARY ==========');
-console.log(`Unsplash searches/images: ${apiStats.unsplashSearches}/${apiStats.unsplashImages}`);
-console.log(`Openverse searches/images: ${apiStats.openverseSearches}/${apiStats.openverseImages}`);
+console.log('\n========== IMAGE PIPELINE SUMMARY ==========');
+console.log(`Unsplash searches/images: ${imageStats.unsplashSearches}/${imageStats.unsplashImages}`);
+console.log(`Pexels searches/images: ${imageStats.pexelsSearches}/${imageStats.pexelsImages}`);
+console.log(`Pixabay searches/images: ${imageStats.pixabaySearches}/${imageStats.pixabayImages}`);
+console.log(`Openverse searches/images: ${imageStats.openverseSearches}/${imageStats.openverseImages}`);
+console.log(`Wikimedia searches/images: ${imageStats.wikimediaSearches}/${imageStats.wikimediaImages}`);
+console.log(`Single-image fallbacks: ${imageStats.singleImageFallbacks}`);
+console.log(`Grid-image fallbacks: ${imageStats.gridImageFallbacks}`);
+console.log(`Decorative page-art fallbacks: ${imageStats.decorativePageArtFallbacks}`);
 console.log(`Wikipedia sources: ${apiStats.wikipediaSuccess}`);
 console.log(`Image failures: ${apiStats.imageFailures}`);
-console.log('Google Fonts: CSS2 API is loaded lazily by app.js when a booklet opens.');
 console.log('===========================================\n');
