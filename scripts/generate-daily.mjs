@@ -18,10 +18,20 @@ const runId = force ? (process.env.BOOKLET_RUN_ID || `${Date.now()}`) : date;
 const alreadyToday = existing.filter(item => item.publishDate === date).length;
 const count = force ? requestedCount : Math.max(0, requestedCount - alreadyToday);
 const configuredChaos = clampInt(process.env.CHAOS_LEVEL, 0, 5, -1);
+const customTopic = cleanInput(process.env.BOOKLET_TOPIC, 140);
+const customDescription = cleanInput(process.env.BOOKLET_DESCRIPTION, 800);
+const hasCustomBrief = Boolean(customTopic || customDescription);
+const customSubject = customTopic || subjectFromDescription(customDescription);
 
 if (count === 0) {
   console.log(`${requestedCount} concepts already exist for ${date}. Use force_generate to create more today.`);
   process.exit(0);
+}
+
+if (hasCustomBrief) {
+  console.log(`[Booklet brief] Manual mode — topic: "${customTopic || customSubject}", description: ${customDescription ? 'provided' : 'empty'}.`);
+} else {
+  console.log('[Booklet brief] Automatic mode — topic and description will be selected by the generator.');
 }
 
 const PAGE_TYPES = ['cover', 'full_bleed', 'editorial', 'facts', 'quote', 'timeline', 'collage', 'diagram', 'map', 'closing'];
@@ -323,6 +333,28 @@ function titleCase(value) {
   return String(value).replace(/\b\w/g, char => char.toUpperCase());
 }
 
+function cleanInput(value, maxLength = 500) {
+  return String(value || '')
+    .replace(/[\u0000-\u001f\u007f]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxLength);
+}
+
+function subjectFromDescription(value) {
+  const cleaned = cleanInput(value, 300);
+  if (!cleaned) return '';
+
+  const firstSentence = cleaned.split(/[.!?\n]/)[0].trim() || cleaned;
+  return firstSentence.split(/\s+/).slice(0, 12).join(' ').slice(0, 120);
+}
+
+function truncateText(value, maxLength = 280) {
+  const cleaned = cleanInput(value, maxLength + 1);
+  if (cleaned.length <= maxLength) return cleaned;
+  return `${cleaned.slice(0, Math.max(0, maxLength - 1)).trimEnd()}…`;
+}
+
 function chooseExperimentalLevel(seed, slot) {
   if (configuredChaos >= 0) return configuredChaos;
 
@@ -407,15 +439,20 @@ function pageCountFor(archetype, seed) {
 }
 
 function buildDesignDna(seed, slot) {
-  const category = weightedPick(CATEGORIES, seed, 'category');
+  const randomCategory = weightedPick(CATEGORIES, seed, 'category');
   const experimentalLevel = chooseExperimentalLevel(seed, slot);
   const logicMode = chooseLogicMode(experimentalLevel, seed, slot);
   const styleFamily = chooseStyleFamily(experimentalLevel, seed);
   const era = chooseEra(styleFamily, seed);
-  const subject = pick(category.subjects, seed, 'subject');
-  const audience = pick(category.audiences, seed, 'audience');
+  const subject = customSubject || pick(randomCategory.subjects, seed, 'subject');
+  const audience = pick(randomCategory.audiences, seed, 'audience');
+  const category = hasCustomBrief
+    ? { id: 'custom', label: 'Custom brief' }
+    : randomCategory;
 
-  const secondaryCategory = logicMode === 'coherent' ? null : pick(CATEGORIES.filter(item => item.id !== category.id), seed, 'secondary-category');
+  const secondaryCategory = logicMode === 'coherent'
+    ? null
+    : pick(CATEGORIES.filter(item => item.id !== randomCategory.id), seed, 'secondary-category');
   const secondarySubject = secondaryCategory ? pick(secondaryCategory.subjects, seed, 'secondary-subject') : '';
 
   const surpriseCount = logicMode === 'coherent' ? (experimentalLevel >= 4 ? 1 : 0) : logicMode === 'remix' ? 1 : Math.min(3, 1 + Math.floor(hashFloat(seed, 'surprise-count') * 3));
@@ -445,6 +482,9 @@ function buildDesignDna(seed, slot) {
     categoryId: category.id,
     audience,
     subject,
+    customTopic,
+    customDescription,
+    isCustomBrief: hasCustomBrief,
     secondaryCategory: secondaryCategory?.label || '',
     secondarySubject,
     era,
@@ -604,7 +644,11 @@ function makeTitle(dna, seed) {
 function sentencePool(dna) {
   const mix = dna.secondarySubject ? ` It deliberately collides with ${dna.secondarySubject}` : '';
   const surprise = dna.surpriseElements.length ? ` Unexpected motifs such as ${dna.surpriseElements.join(', ')} appear without needing to behave logically` : '';
+  const requestedBrief = dna.customDescription
+    ? `Creative brief: ${truncateText(dna.customDescription, 260)}`
+    : '';
   return [
+    requestedBrief,
     `This page treats ${dna.subject} as a visual character rather than a conventional topic.${mix}.`,
     `The composition follows a ${dna.visualRhythm} rhythm, using ${dna.typographyMode.replaceAll('-', ' ')} and ${dna.imageTreatment.replaceAll('-', ' ')}.`,
     `The copy is intentionally ${dna.contentMode}, while the layout changes scale and silence from one page to the next.`,
@@ -613,7 +657,7 @@ function sentencePool(dna) {
     `Instead of repeating one grid, the booklet moves between image, pause, archive, diagram and oversized type.`,
     `This is designed as a gift for ${dna.audience}, with room for a name, date or private memory.`,
     `The page should feel printed as ${dna.printFeel.replaceAll('-', ' ')}, even when viewed on a screen.`
-  ];
+  ].filter(Boolean);
 }
 
 function bodyForDensity(dna, module, seed, index) {
@@ -718,7 +762,9 @@ function fallbackConceptFromDna(dna, pagePlan, seed) {
     style: dna.style,
     layout: bookletLayoutFromDna(dna),
     direction: `${dna.style} with ${dna.layoutSystem.replaceAll('-', ' ')}, ${dna.colorMode.replaceAll('-', ' ')} color, and a ${dna.visualRhythm} rhythm.${mixText}${surpriseText}`,
-    description: `A ${dna.archetype.replaceAll('-', ' ')} about ${dna.subject}, designed for ${dna.audience}. The sequence deliberately varies image scale, text volume, typography, negative space and page effects instead of reskinning one template.`,
+    description: dna.customDescription
+      ? truncateText(dna.customDescription, 700)
+      : `A ${dna.archetype.replaceAll('-', ' ')} about ${dna.subject}, designed for ${dna.audience}. The sequence deliberately varies image scale, text volume, typography, negative space and page effects instead of reskinning one template.`,
     format: `A5 / ${dna.pageCount} pages / ${dna.printFeel.replaceAll('-', ' ')}`,
     palette: dna.palette,
     designDna: dna,
@@ -771,6 +817,8 @@ function aiBrief(dna, pagePlan, index) {
     audience: dna.audience,
     category: dna.category,
     subject: dna.subject,
+    customTopic: dna.customTopic,
+    customDescription: dna.customDescription,
     secondarySubject: dna.secondarySubject,
     surpriseElements: dna.surpriseElements,
     era: dna.era,
@@ -822,6 +870,8 @@ Rules:
 - Keep copy concise enough to fit an A5 page.
 - For factual, timeline, map, archive and diagram pages, provide a useful sourceQuery for Wikipedia verification. Do not invent precise claims that cannot be checked.
 - imageQuery must work for Openverse or Unsplash search.
+- If customTopic or customDescription is present, treat it as mandatory user direction. Do not replace it with another primary topic.
+- If only customDescription is present, infer the most useful subject from that description while preserving its intent.
 - If the brief is absurd, combine the subjects confidently instead of apologizing.
 - Do not imitate one living designer or copy a particular published layout.
 - Do not reuse title patterns, sentence structures or page wording across the booklets.
