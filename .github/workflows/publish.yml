@@ -20,10 +20,23 @@ on:
         type: boolean
 
       use_ai:
-        description: Use OpenAI when OPENAI_API_KEY is configured
+        description: Use external AI providers
         required: true
         default: true
         type: boolean
+
+      ai_provider:
+        description: AI provider and fallback order
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - openai-first
+          - gemini-first
+          - openai-only
+          - gemini-only
+          - local
 
       chaos_level:
         description: Design chaos (-1 auto, 0 safe, 5 wild)
@@ -94,12 +107,15 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          OPENAI_MODEL: gpt-5-mini
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENAI_MODEL: ${{ vars.OPENAI_MODEL }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
           UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
           IMAGE_PROVIDER: ${{ github.event_name == 'workflow_dispatch' && inputs.image_provider || 'mixed' }}
           BOOKLET_COUNT: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '3' }}
           FORCE_GENERATE: ${{ github.event_name == 'workflow_dispatch' && inputs.force_generate && 'true' || 'false' }}
           USE_AI: ${{ github.event_name == 'schedule' && 'true' || (inputs.use_ai && 'true' || 'false') }}
+          AI_PROVIDER: ${{ github.event_name == 'schedule' && 'auto' || (!inputs.use_ai && 'local' || inputs.ai_provider) }}
           CHAOS_LEVEL: ${{ github.event_name == 'workflow_dispatch' && inputs.chaos_level || '-1' }}
           MAX_FONTS: ${{ github.event_name == 'workflow_dispatch' && inputs.max_fonts || '20' }}
           BOOKLET_TOPIC: ${{ github.event_name == 'workflow_dispatch' && inputs.topic || '' }}
