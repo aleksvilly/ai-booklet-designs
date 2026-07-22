@@ -18,6 +18,8 @@ const openAiConfigured = Boolean(process.env.OPENAI_API_KEY);
 const geminiConfigured = Boolean(process.env.GEMINI_API_KEY);
 const openAiModel = process.env.OPENAI_MODEL || 'gpt-5-mini';
 const geminiModel = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
+const geminiFallbackModel = process.env.GEMINI_FALLBACK_MODEL || 'gemini-3.5-flash-lite';
+const geminiMaxAttempts = clampInt(process.env.GEMINI_MAX_ATTEMPTS, 1, 5, 3);
 const aiProviderMode = normalizeAiProvider(process.env.AI_PROVIDER || 'auto', aiEnabled);
 const runId = force ? (process.env.BOOKLET_RUN_ID || `${Date.now()}`) : date;
 const alreadyToday = existing.filter(item => item.publishDate === date).length;
@@ -1232,24 +1234,49 @@ async function generateWithOpenAi(dnas, pagePlans) {
   return parsed.booklets;
 }
 
-async function requestGemini(prompt, schema, withSchema = true) {
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(geminiModel)}:generateContent`;
+class GeminiHttpError extends Error {
+  constructor(status, body, model) {
+    super(`Gemini ${status}: ${body}`);
+    this.name = 'GeminiHttpError';
+    this.status = status;
+    this.model = model;
+    this.body = body;
+  }
+}
+
+function wait(milliseconds) {
+  return new Promise(resolve => setTimeout(resolve, milliseconds));
+}
+
+function isTransientGeminiError(error) {
+  const status = Number(error?.status || 0);
+  return status === 429 || status === 500 || status === 502 || status === 503 || status === 504 ||
+    error?.name === 'TypeError' || /fetch failed|network|timeout|temporar/i.test(String(error?.message || ''));
+}
+
+function isGeminiSchemaError(error) {
+  const status = Number(error?.status || 0);
+  const message = String(error?.message || '');
+  return status === 400 && /schema|response[_ ]?format|response[_ ]?json|response[_ ]?mime|invalid_argument/i.test(message);
+}
+
+async function fetchGeminiOnce(prompt, schema, withSchema, model) {
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`;
   const generationConfig = {
-    maxOutputTokens: 20000
+    maxOutputTokens: 20000,
+    responseMimeType: 'application/json'
   };
 
+  // For raw generateContent REST requests, structured JSON belongs directly
+  // under generationConfig. Do not use responseFormat.text.mimeType here.
   if (withSchema) {
-    generationConfig.responseFormat = {
-      text: {
-        mimeType: 'application/json',
-        schema
-      }
-    };
-  } else {
-    generationConfig.responseMimeType = 'application/json';
+    generationConfig.responseJsonSchema = schema;
   }
 
-  const strictSuffix = withSchema ? '' : '\n\nReturn only valid JSON. Do not use Markdown fences, commentary or explanatory text. The response must be directly parseable by JSON.parse().';
+  const strictSuffix = withSchema
+    ? ''
+    : '\n\nReturn only valid JSON. Do not use Markdown fences, commentary or explanatory text. The response must be directly parseable by JSON.parse().';
+
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
@@ -1271,7 +1298,9 @@ async function requestGemini(prompt, schema, withSchema = true) {
   });
 
   const bodyText = await response.text();
-  if (!response.ok) throw new Error(`Gemini ${response.status}: ${bodyText}`);
+  if (!response.ok) {
+    throw new GeminiHttpError(response.status, bodyText, model);
+  }
 
   let json;
   try {
@@ -1285,30 +1314,86 @@ async function requestGemini(prompt, schema, withSchema = true) {
     const reason = json.candidates?.[0]?.finishReason || json.promptFeedback?.blockReason || 'empty response';
     throw new Error(`Gemini response contained no text (${reason}).`);
   }
+
   return text;
+}
+
+async function requestGemini(prompt, schema, withSchema = true, model = geminiModel) {
+  let lastError;
+
+  for (let attempt = 1; attempt <= geminiMaxAttempts; attempt += 1) {
+    try {
+      return await fetchGeminiOnce(prompt, schema, withSchema, model);
+    } catch (error) {
+      lastError = error;
+
+      if (!isTransientGeminiError(error) || attempt >= geminiMaxAttempts) {
+        throw error;
+      }
+
+      const delay = 1000 * (2 ** (attempt - 1));
+      console.warn(
+        `[Gemini] Temporary error on ${model} (attempt ${attempt}/${geminiMaxAttempts}): ` +
+        `${compactProviderError(error)}. Retrying in ${delay} ms.`
+      );
+      await wait(delay);
+    }
+  }
+
+  throw lastError;
 }
 
 async function generateWithGemini(dnas, pagePlans) {
   const prompt = buildAiPrompt(dnas, pagePlans);
   const schema = aiSchema(dnas.length);
-  console.log(`[Gemini] START — model: ${geminiModel}`);
+  const models = [...new Set([geminiModel, geminiFallbackModel].filter(Boolean))];
+  let lastError;
 
-  let text;
-  try {
-    text = await requestGemini(prompt, schema, true);
-  } catch (schemaError) {
-    console.warn(`[Gemini] Structured output failed; retrying once without schema. ${compactProviderError(schemaError)}`);
-    text = await requestGemini(prompt, schema, false);
+  for (let modelIndex = 0; modelIndex < models.length; modelIndex += 1) {
+    const model = models[modelIndex];
+    console.log(`[Gemini] START — model: ${model}`);
+
+    try {
+      let text;
+      try {
+        text = await requestGemini(prompt, schema, true, model);
+      } catch (schemaError) {
+        if (!isGeminiSchemaError(schemaError)) {
+          throw schemaError;
+        }
+
+        console.warn(
+          `[Gemini] Structured output schema was rejected by ${model}; ` +
+          `retrying once without schema. ${compactProviderError(schemaError)}`
+        );
+        text = await requestGemini(prompt, schema, false, model);
+      }
+
+      const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
+      const parsed = JSON.parse(cleaned);
+      if (!Array.isArray(parsed?.booklets)) {
+        throw new Error('Gemini JSON did not contain a booklets array.');
+      }
+      if (parsed.booklets.length !== dnas.length) {
+        throw new Error(`Gemini returned ${parsed.booklets.length} booklets; expected ${dnas.length}.`);
+      }
+
+      console.log(`[Gemini] OK — model: ${model}`);
+      return {
+        booklets: parsed.booklets,
+        model
+      };
+    } catch (error) {
+      lastError = error;
+      const nextModel = models[modelIndex + 1];
+      console.warn(`[Gemini] MODEL FAILED — ${model}: ${compactProviderError(error)}`);
+      if (nextModel) {
+        console.warn(`[Gemini] Trying fallback model: ${nextModel}`);
+      }
+    }
   }
 
-  const cleaned = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/i, '').trim();
-  const parsed = JSON.parse(cleaned);
-  if (!Array.isArray(parsed?.booklets)) throw new Error('Gemini JSON did not contain a booklets array.');
-  if (parsed.booklets.length !== dnas.length) {
-    throw new Error(`Gemini returned ${parsed.booklets.length} booklets; expected ${dnas.length}.`);
-  }
-  console.log(`[Gemini] OK — model: ${geminiModel}`);
-  return parsed.booklets;
+  throw lastError || new Error('All Gemini models failed.');
 }
 
 async function generateWithProviderFallback(dnas, pagePlans) {
@@ -1328,9 +1413,16 @@ async function generateWithProviderFallback(dnas, pagePlans) {
 
     attempted.push(provider);
     try {
-      const booklets = provider === 'openai'
-        ? await generateWithOpenAi(dnas, pagePlans)
-        : await generateWithGemini(dnas, pagePlans);
+      let booklets;
+      let actualModel = providerModel(provider);
+
+      if (provider === 'openai') {
+        booklets = await generateWithOpenAi(dnas, pagePlans);
+      } else {
+        const geminiResult = await generateWithGemini(dnas, pagePlans);
+        booklets = geminiResult.booklets;
+        actualModel = geminiResult.model;
+      }
 
       if (provider === 'openai') apiStats.openaiSuccess += 1;
       if (provider === 'gemini') apiStats.geminiSuccess += 1;
@@ -1338,7 +1430,7 @@ async function generateWithProviderFallback(dnas, pagePlans) {
       return {
         booklets,
         provider,
-        model: providerModel(provider),
+        model: actualModel,
         fallbackFrom: attempted.slice(0, -1),
         skipped
       };
