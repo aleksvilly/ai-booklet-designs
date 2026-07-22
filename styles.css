@@ -847,3 +847,24 @@ footer { display: flex; justify-content: space-between; gap: 30px; padding: 28px
   .gallery-image figcaption small { display:none; }
   .cover-collage-chaos .cover-media img { border-width:3px; }
 }
+
+/* V4 desktop spread placement fix -----------------------------------------
+   Legacy V2 page-type rules used grid-column/grid-row spans. A V4 page is
+   already placed inside a fixed two-column physical spread, so those spans
+   must never control the spread grid. */
+.print-spread > .book-page {
+  grid-column: auto !important;
+  grid-row: auto !important;
+}
+
+@media (min-width: 901px) {
+  .print-spread > .book-page:first-child {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+  }
+
+  .print-spread > .book-page:nth-child(2) {
+    grid-column: 2 !important;
+    grid-row: 1 !important;
+  }
+}
