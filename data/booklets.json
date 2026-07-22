@@ -1,5 +1,449 @@
 [
   {
+    "title": "Invisible Structures",
+    "audience": "the Engineer",
+    "category": "Engineering",
+    "era": "1990s",
+    "style": "Rave flyer system",
+    "layout": "grid",
+    "direction": "Rave flyer system interprets systems that quietly hold the visible world together with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Engineer, built around systems that quietly hold the visible world together. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 4 pages",
+    "palette": [
+      "#e9dfca",
+      "#b84155",
+      "#657a49",
+      "#262219"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "Invisible Structures",
+        "body": "A visual gift for the Engineer.",
+        "imageQuery": "Engineering portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Engineering portrait editorial.",
+        "layout": "vertical",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/e72a558f-f329-4116-90f4-c8c3dfeb39fb/thumb/",
+          "fullUrl": "https://live.staticflickr.com/3859/14505573605_b3e5e862cc_b.jpg",
+          "alt": "eCYBERMISSION team photos",
+          "creator": "U.S. Army Combat Capabilities Development Command",
+          "creatorUrl": "https://www.flickr.com/photos/34402227@N03",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/34402227@N03/14505573605",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"eCYBERMISSION team photos\" by U.S. Army Combat Capabilities Development Command is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes systems that quietly hold the visible world together.",
+        "imageQuery": "Engineering atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Engineering atmospheric landscape.",
+        "layout": "full",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/b7538be6-848a-48dd-a552-32548f55197b/thumb/",
+          "fullUrl": "https://live.staticflickr.com/7147/13991856092_9f6b788219_b.jpg",
+          "alt": "Ballooning in the constant sun of the South Pole summer",
+          "creator": "NASA Goddard Photo and Video",
+          "creatorUrl": "https://www.flickr.com/photos/24662369@N07",
+          "source": "nasa",
+          "sourceUrl": "https://www.flickr.com/photos/24662369@N07/13991856092",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Ballooning in the constant sun of the South Pole summer\" by NASA Goddard Photo and Video is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Engineering archive detail",
+        "sourceQuery": "Engineering history facts",
+        "caption": "Image direction: Engineering archive detail.",
+        "layout": "full",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/477790ed-1ebd-4eca-8961-fd0dcd4d58de/thumb/",
+          "fullUrl": "https://live.staticflickr.com/4122/4889804924_c22287617a_b.jpg",
+          "alt": "WPBF TV 25 Coverage of Hayley Crowell's Barefoot Mailman Research (Full Text)",
+          "creator": "chescrowel",
+          "creatorUrl": "https://www.flickr.com/photos/53003768@N06",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/53003768@N06/4889804924",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"WPBF TV 25 Coverage of Hayley Crowell's Barefoot Mailman Research (Full Text)\" by chescrowel is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "History of electrical engineering",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/History_of_electrical_engineering"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Engineering objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Engineering objects close up.",
+        "layout": "archive",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/751d481b-1b63-422a-9d16-991e51e7570c/thumb/",
+          "fullUrl": "https://live.staticflickr.com/2673/4144313822_f94c17003f_b.jpg",
+          "alt": "WFPC2 and Hubble engineering model",
+          "creator": "HubbleColor {Zolt}",
+          "creatorUrl": "https://www.flickr.com/photos/8572247@N03",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/8572247@N03/4144313822",
+          "license": "PDM 1.0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "attribution": "\"WFPC2 and Hubble engineering model\" by HubbleColor {Zolt} is marked with Public Domain Mark 1.0. To view the terms, visit https://creativecommons.org/publicdomain/mark/1.0/."
+        }
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "overlap"
+      }
+    ],
+    "id": "engineer-invisible-structures-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
+    "title": "A Small History of Wonder",
+    "audience": "the Collector",
+    "category": "Collecting",
+    "era": "2020–2024",
+    "style": "Layered maximalist collage",
+    "layout": "editorial",
+    "direction": "Layered maximalist collage interprets facts, discoveries and objects that change how a person sees the world with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Collector, built around facts, discoveries and objects that change how a person sees the world. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 10 pages",
+    "palette": [
+      "#efe4cd",
+      "#df5537",
+      "#247c82",
+      "#172527"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "A Small History of Wonder",
+        "body": "A visual gift for the Collector.",
+        "imageQuery": "Collecting portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting portrait editorial.",
+        "layout": "grid",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/9f9bc6b9-bc3c-47b3-b450-bc9d4f8086a8/thumb/",
+          "fullUrl": "https://live.staticflickr.com/8491/8367805896_ca824ed0b8_b.jpg",
+          "alt": "Dr Martens 'How to Wear' campaign",
+          "creator": "University of Salford",
+          "creatorUrl": "https://www.flickr.com/photos/32104790@N02",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/32104790@N02/8367805896",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Dr Martens 'How to Wear' campaign\" by University of Salford is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes facts, discoveries and objects that change how a person sees the world.",
+        "imageQuery": "Collecting atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting atmospheric landscape.",
+        "layout": "minimal",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/872eca18-3653-438a-82eb-6cc6313354c8/thumb/",
+          "fullUrl": "https://live.staticflickr.com/5441/9215683971_a969e4189b_b.jpg",
+          "alt": "Daytime Dynamo Rocket Launch",
+          "creator": "NASA Goddard Photo and Video",
+          "creatorUrl": "https://www.flickr.com/photos/24662369@N07",
+          "source": "nasa",
+          "sourceUrl": "https://www.flickr.com/photos/24662369@N07/9215683971",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Daytime Dynamo Rocket Launch\" by NASA Goddard Photo and Video is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Collecting archive detail",
+        "sourceQuery": "Collecting history facts",
+        "caption": "Image direction: Collecting archive detail.",
+        "layout": "split",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/c0a35b93-e72b-42b8-9c3a-5381e1ffa997/thumb/",
+          "fullUrl": "https://live.staticflickr.com/65535/51592093713_04e7772103_b.jpg",
+          "alt": "Snowflake",
+          "creator": "Alexey Kljatov",
+          "creatorUrl": "https://www.flickr.com/photos/53601471@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/53601471@N08/51592093713",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Snowflake\" by Alexey Kljatov is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "Coin collecting",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Coin_collecting"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Collecting objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting objects close up.",
+        "layout": "grid",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/7ae589d6-d9cd-4bb5-801d-a2003a51c72a/thumb/",
+          "fullUrl": "https://live.staticflickr.com/5606/15644582060_dcb0cec5c1_b.jpg",
+          "alt": "North Point Bench Trail",
+          "creator": "Bold Frontiers",
+          "creatorUrl": "https://www.flickr.com/photos/82955120@N05",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/82955120@N05/15644582060",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"North Point Bench Trail\" by Bold Frontiers is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "quote",
+        "title": "A pause",
+        "body": "One sentence receives an entire page and changes the rhythm.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "minimal"
+      },
+      {
+        "type": "collage",
+        "title": "Memory in fragments",
+        "body": "Documents, photographs and abstract forms overlap without copying one reference layout.",
+        "imageQuery": "Collecting vintage archive",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting vintage archive.",
+        "layout": "archive"
+      },
+      {
+        "type": "timeline",
+        "title": "Then and now",
+        "body": "A compact timeline connects the history of the subject with the present.",
+        "imageQuery": "Collecting historical photograph",
+        "sourceQuery": "Collecting history facts",
+        "caption": "Image direction: Collecting historical photograph.",
+        "layout": "split",
+        "source": {
+          "title": "Coin collecting",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Coin_collecting"
+        }
+      },
+      {
+        "type": "diagram",
+        "title": "How it works",
+        "body": "A simple visual explanation turns complexity into a memorable page.",
+        "imageQuery": "Collecting technical diagram",
+        "sourceQuery": "Collecting history facts",
+        "caption": "Image direction: Collecting technical diagram.",
+        "layout": "overlap",
+        "source": {
+          "title": "Coin collecting",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Coin_collecting"
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "The central image",
+        "body": "The largest composition crosses the fold and becomes the emotional centre.",
+        "imageQuery": "Collecting cinematic dramatic",
+        "sourceQuery": "",
+        "caption": "Image direction: Collecting cinematic dramatic.",
+        "layout": "archive"
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "minimal"
+      }
+    ],
+    "id": "collector-a-small-history-of-wonder-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
+    "title": "Invisible Structures",
+    "audience": "the Dreamer",
+    "category": "Abstract",
+    "era": "1960s",
+    "style": "Swiss international editorial",
+    "layout": "grid",
+    "direction": "Swiss international editorial interprets systems that quietly hold the visible world together with a deliberately varied sequence of image, fact, pause and typographic pages.",
+    "description": "A personal gift-booklet for the Dreamer, built around systems that quietly hold the visible world together. References are mixed across several sources so the result feels original rather than like a reskinned template.",
+    "format": "A5 / 8 pages",
+    "palette": [
+      "#e9e3ff",
+      "#ff784f",
+      "#3944bc",
+      "#161423"
+    ],
+    "pages": [
+      {
+        "type": "cover",
+        "title": "Invisible Structures",
+        "body": "A visual gift for the Dreamer.",
+        "imageQuery": "Abstract portrait editorial",
+        "sourceQuery": "",
+        "caption": "Image direction: Abstract portrait editorial.",
+        "layout": "grid",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/1abb66d5-fcb3-4a04-92ab-01c4e65321d4/thumb/",
+          "fullUrl": "https://live.staticflickr.com/65535/49894794571_9e41566a84_b.jpg",
+          "alt": "Charity Plamondon / 'Off White'",
+          "creator": "Real Charity Plamondon",
+          "creatorUrl": "https://www.flickr.com/photos/188313234@N02",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/188313234@N02/49894794571",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Charity Plamondon / 'Off White'\" by Real Charity Plamondon is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "full_bleed",
+        "title": "Enter the world",
+        "body": "One image establishes systems that quietly hold the visible world together.",
+        "imageQuery": "Abstract atmospheric landscape",
+        "sourceQuery": "",
+        "caption": "Image direction: Abstract atmospheric landscape.",
+        "layout": "asymmetric",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/9e3ea2f1-68af-4c4b-8cd4-3e07bfd519ee/thumb/",
+          "fullUrl": "https://live.staticflickr.com/3623/4557497219_da74c0f4e0_b.jpg",
+          "alt": "Open-cell and closed-cell clouds off Peru",
+          "creator": "NASA Goddard Photo and Video",
+          "creatorUrl": "https://www.flickr.com/photos/24662369@N07",
+          "source": "nasa",
+          "sourceUrl": "https://www.flickr.com/photos/24662369@N07/4557497219",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"Open-cell and closed-cell clouds off Peru\" by NASA Goddard Photo and Video is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "facts",
+        "title": "Three things worth knowing",
+        "body": "Short verified facts make the booklet useful as well as beautiful.",
+        "imageQuery": "Abstract archive detail",
+        "sourceQuery": "Abstract history facts",
+        "caption": "Image direction: Abstract archive detail.",
+        "layout": "overlap",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/eebf9e89-216a-4012-9a83-babd06a4e9d7/thumb/",
+          "fullUrl": "https://live.staticflickr.com/8675/16579722831_3f1508d444_b.jpg",
+          "alt": "(Elevations of) 1st and 2nd floors, south, east, west, north (elevations), details of frame, door, and hall to closet (GGUSC-BlackerR-5353)",
+          "creator": "Fæ",
+          "creatorUrl": "https://www.flickr.com/photos/50398299@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/50398299@N08/16579722831",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"(Elevations of) 1st and 2nd floors, south, east, west, north (elevations), details of frame, door, and hall to closet (GGUSC-BlackerR-5353)\" by Fæ is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        },
+        "source": {
+          "title": "Abstraction",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Abstraction"
+        }
+      },
+      {
+        "type": "editorial",
+        "title": "Objects and traces",
+        "body": "Tools, surfaces and small details reveal the person behind the subject.",
+        "imageQuery": "Abstract objects close up",
+        "sourceQuery": "",
+        "caption": "Image direction: Abstract objects close up.",
+        "layout": "split",
+        "image": {
+          "url": "https://api.openverse.org/v1/images/b07b9cfe-323d-449c-8172-334934ec2dca/thumb/",
+          "fullUrl": "https://live.staticflickr.com/8102/8616072379_0b9d9864f5_b.jpg",
+          "alt": "The Big Egg Hunt 2013 - Covent Garden, London",
+          "creator": "Karen Roe",
+          "creatorUrl": "https://www.flickr.com/photos/28752865@N08",
+          "source": "flickr",
+          "sourceUrl": "https://www.flickr.com/photos/28752865@N08/8616072379",
+          "license": "BY 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by/2.0/",
+          "attribution": "\"The Big Egg Hunt 2013 - Covent Garden, London\" by Karen Roe is licensed under CC BY 2.0. To view a copy of this license, visit https://creativecommons.org/licenses/by/2.0/."
+        }
+      },
+      {
+        "type": "quote",
+        "title": "A pause",
+        "body": "One sentence receives an entire page and changes the rhythm.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "grid"
+      },
+      {
+        "type": "collage",
+        "title": "Memory in fragments",
+        "body": "Documents, photographs and abstract forms overlap without copying one reference layout.",
+        "imageQuery": "Abstract vintage archive",
+        "sourceQuery": "",
+        "caption": "Image direction: Abstract vintage archive.",
+        "layout": "minimal"
+      },
+      {
+        "type": "timeline",
+        "title": "Then and now",
+        "body": "A compact timeline connects the history of the subject with the present.",
+        "imageQuery": "Abstract historical photograph",
+        "sourceQuery": "Abstract history facts",
+        "caption": "Image direction: Abstract historical photograph.",
+        "layout": "asymmetric",
+        "source": {
+          "title": "Abstraction",
+          "provider": "Wikipedia",
+          "url": "https://en.wikipedia.org/wiki/Abstraction"
+        }
+      },
+      {
+        "type": "closing",
+        "title": "Continue beyond the page",
+        "body": "The ending stays open and feels written for one person.",
+        "imageQuery": "",
+        "sourceQuery": "",
+        "caption": "",
+        "layout": "minimal"
+      }
+    ],
+    "id": "dreamer-invisible-structures-2026-07-22",
+    "publishDate": "2026-07-22"
+  },
+  {
     "id": "dreamer-the-shape-of-waiting-2026-07-21",
     "title": "The Shape of Waiting",
     "audience": "the Dreamer",
