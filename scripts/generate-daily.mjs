@@ -375,17 +375,35 @@ function choosePalette(mode, seed) {
   return pick(matches.length ? matches : PALETTES, seed, 'palette').colors;
 }
 
+const PAGE_COUNT_OPTIONS = [
+  { value: 6, weight: 10 },
+  { value: 8, weight: 22 },
+  { value: 10, weight: 26 },
+  { value: 12, weight: 24 },
+  { value: 14, weight: 12 },
+  { value: 16, weight: 6 }
+];
+
 function pageCountFor(archetype, seed) {
-  const pools = {
-    'poster-book': [4, 6, 8],
-    'children-storybook': [6, 8, 10, 12],
-    'museum-brochure': [8, 10, 12, 14],
-    'fact-book': [8, 10, 12, 14, 16],
-    'visual-diary': [6, 8, 10, 12],
-    'futurist-dossier': [6, 8, 10, 12],
-    default: [4, 6, 8, 10, 12, 14]
+  // Every booklet now has at least 6 and at most 16 pages.
+  // Most concepts land between 8 and 12 pages, while archetype modifiers
+  // gently favor shorter or longer formats without allowing 4-page results.
+  const archetypeWeights = {
+    'poster-book': { 6: 2.2, 8: 1.7, 10: 0.9, 12: 0.45, 14: 0.2, 16: 0.1 },
+    'children-storybook': { 6: 1.2, 8: 1.5, 10: 1.5, 12: 1.2, 14: 0.55, 16: 0.3 },
+    'museum-brochure': { 6: 0.35, 8: 1.0, 10: 1.35, 12: 1.5, 14: 1.1, 16: 0.65 },
+    'fact-book': { 6: 0.2, 8: 0.75, 10: 1.15, 12: 1.5, 14: 1.45, 16: 1.15 },
+    'visual-diary': { 6: 1.0, 8: 1.35, 10: 1.35, 12: 1.0, 14: 0.55, 16: 0.3 },
+    'futurist-dossier': { 6: 0.7, 8: 1.15, 10: 1.4, 12: 1.25, 14: 0.75, 16: 0.45 }
   };
-  return pick(pools[archetype] || pools.default, seed, 'page-count');
+
+  const modifiers = archetypeWeights[archetype] || {};
+  const options = PAGE_COUNT_OPTIONS.map(option => ({
+    ...option,
+    weight: option.weight * (modifiers[option.value] ?? 1)
+  }));
+
+  return weightedPick(options, seed, 'page-count').value;
 }
 
 function buildDesignDna(seed, slot) {
@@ -732,7 +750,7 @@ function aiSchema(itemCount) {
       title: { type: 'string' },
       direction: { type: 'string' },
       description: { type: 'string' },
-      pages: { type: 'array', minItems: 4, maxItems: 16, items: page }
+      pages: { type: 'array', minItems: 6, maxItems: 16, items: page }
     },
     required: ['title', 'direction', 'description', 'pages']
   };
@@ -773,6 +791,7 @@ function aiBrief(dna, pagePlan, index) {
     effects: dna.effects,
     experimentalLevel: dna.experimentalLevel,
     logicMode: dna.logicMode,
+    pageCount: dna.pageCount,
     pagePlan: pagePlan.map(page => ({ module: page.module, type: page.type, layout: page.layout }))
   };
 }
@@ -806,6 +825,10 @@ Rules:
 - If the brief is absurd, combine the subjects confidently instead of apologizing.
 - Do not imitate one living designer or copy a particular published layout.
 - Do not reuse title patterns, sentence structures or page wording across the booklets.
+- Each booklet must contain exactly the number of pages specified by its pageCount and pagePlan.
+- Never return fewer than 6 pages or more than 16 pages.
+- The cover and closing page are included in the page count.
+- Every additional page must have a distinct purpose; never pad the booklet with repetitive generic copy.
 
 DESIGN BRIEFS:
 ${JSON.stringify(briefs, null, 2)}
@@ -891,7 +914,7 @@ function normalizeBooklet(item, index, additions) {
   const base = `${slug(item.audience.replace(/^the /i, ''))}-${slug(item.title)}-${date}`;
   const id = uniqueId(base, additions);
   const palette = Array.isArray(item.palette) && item.palette.length === 4 ? item.palette : PALETTES[index % PALETTES.length].colors;
-  const pages = Array.isArray(item.pages) && item.pages.length >= 4 ? item.pages.slice(0, 16) : [];
+  const pages = Array.isArray(item.pages) && item.pages.length >= 6 ? item.pages.slice(0, 16) : [];
   return { ...item, id, publishDate: date, palette, pages };
 }
 
