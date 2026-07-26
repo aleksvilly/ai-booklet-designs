@@ -13,12 +13,187 @@ const contactForm = document.querySelector('#contact-form');
 const contactFormStatus = document.querySelector('#contact-form-status');
 const generationForm = document.querySelector('#generation-form');
 const generationFormStatus = document.querySelector('#generation-form-status');
+const requestHistoryButton = document.querySelector('#request-history-button');
+const requestHistoryCount = document.querySelector('#request-history-count');
+const requestDialog = document.querySelector('#request-status-dialog');
+const requestDialogClose = document.querySelector('#request-dialog-close');
+const requestHistorySelect = document.querySelector('#request-history-select');
+const requestStatusBadge = document.querySelector('#request-status-badge');
+const requestStatusTitle = document.querySelector('#request-status-title');
+const requestStatusCopy = document.querySelector('#request-status-copy');
+const requestTimerNode = document.querySelector('#request-timer');
+const requestGif = document.querySelector('#request-waiting-gif');
+const gifChangeButton = document.querySelector('#gif-change-button');
+const requestCheckButton = document.querySelector('#request-check-button');
+const requestViewButton = document.querySelector('#request-view-button');
+const requestIssueLink = document.querySelector('#request-issue-link');
 
 let allBooklets = [];
 let activeFilter = 'All';
 const loadedFontRequests = new Set();
 const today = new Date();
 today.setHours(23, 59, 59, 999);
+
+const requestStorageKey = 'ai-booklet-generation-requests-v1';
+const githubIssuesApi = 'https://api.github.com/repos/aleksvilly/ai-booklet-designs/issues?state=all&labels=booklet-request&per_page=100';
+const waitingGifs = [
+  'https://media.giphy.com/media/13HgwGsXF0aiGY/giphy.gif',
+  'https://media.giphy.com/media/LmNwrBhejkK9EFP504/giphy.gif',
+  'https://media.giphy.com/media/f3iwJFOVOwuy7K6FFw/giphy.gif',
+  'https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif'
+];
+let generationRequests = loadGenerationRequests();
+let activeRequestId = generationRequests[0]?.id || '';
+let requestTimerInterval;
+let requestStatusInterval;
+
+function loadGenerationRequests() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(requestStorageKey) || '[]');
+    return Array.isArray(stored) ? stored.slice(0, 20) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveGenerationRequests() {
+  localStorage.setItem(requestStorageKey, JSON.stringify(generationRequests.slice(0, 20)));
+  updateRequestHistoryButton();
+}
+
+function updateRequestHistoryButton() {
+  requestHistoryButton.hidden = generationRequests.length === 0;
+  requestHistoryCount.textContent = String(generationRequests.length);
+}
+
+function activeRequest() {
+  return generationRequests.find(request => request.id === activeRequestId) || generationRequests[0];
+}
+
+function updateStoredRequest(id, patch) {
+  const index = generationRequests.findIndex(request => request.id === id);
+  if (index < 0) return;
+  generationRequests[index] = { ...generationRequests[index], ...patch };
+  saveGenerationRequests();
+}
+
+function elapsedLabel(request) {
+  const start = new Date(request.submittedAt).getTime();
+  const end = request.finishedAt ? new Date(request.finishedAt).getTime() : Date.now();
+  const seconds = Math.max(0, Math.floor((end - start) / 1000));
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remaining = seconds % 60;
+  return hours > 0
+    ? `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(remaining).padStart(2, '0')}`
+    : `${String(minutes).padStart(2, '0')}:${String(remaining).padStart(2, '0')}`;
+}
+
+function statusCopy(request) {
+  if (request.status === 'finished') return 'Your booklet is ready and published.';
+  if (request.status === 'processing') return 'GitHub accepted the request and is generating the booklet now.';
+  if (request.status === 'error') return request.error || 'Status could not be checked. Please try again.';
+  return 'The request is in the public queue. GitHub checks for new requests every five minutes.';
+}
+
+function populateRequestHistory() {
+  requestHistorySelect.innerHTML = generationRequests.map(request => {
+    const topic = request.topic || 'Random topic';
+    const date = new Date(request.submittedAt).toLocaleString();
+    return `<option value="${escapeHtml(request.id)}" ${request.id === activeRequestId ? 'selected' : ''}>${escapeHtml(topic)} · ${escapeHtml(date)}</option>`;
+  }).join('');
+}
+
+function renderRequestDialog() {
+  const request = activeRequest();
+  if (!request) return;
+  activeRequestId = request.id;
+  const status = request.status || 'queued';
+  const gifIndex = Number(request.gifIndex || 0) % waitingGifs.length;
+
+  populateRequestHistory();
+  requestStatusTitle.textContent = request.topic || 'Random topic';
+  requestStatusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  requestStatusBadge.dataset.status = status;
+  requestStatusCopy.textContent = statusCopy(request);
+  requestTimerNode.textContent = elapsedLabel(request);
+  requestGif.src = waitingGifs[gifIndex];
+
+  requestViewButton.hidden = status !== 'finished';
+  requestViewButton.href = request.resultUrl || './';
+  requestIssueLink.hidden = !request.issueUrl;
+  requestIssueLink.href = request.issueUrl || '#';
+}
+
+function startRequestTimers() {
+  clearInterval(requestTimerInterval);
+  clearInterval(requestStatusInterval);
+  requestTimerInterval = setInterval(() => {
+    const request = activeRequest();
+    if (request) requestTimerNode.textContent = elapsedLabel(request);
+  }, 1000);
+  requestStatusInterval = setInterval(() => {
+    if (requestDialog.open && activeRequest()?.status !== 'finished') checkActiveRequestStatus(false);
+  }, 90000);
+}
+
+function openRequestDialog(id = generationRequests[0]?.id, blurForm = false) {
+  if (!id) return;
+  activeRequestId = id;
+  if (blurForm) generationForm.classList.add('is-request-active');
+  renderRequestDialog();
+  if (!requestDialog.open) requestDialog.showModal();
+  startRequestTimers();
+  checkActiveRequestStatus(false);
+}
+
+function closeRequestDialog() {
+  requestDialog.close();
+  generationForm.classList.remove('is-request-active');
+  clearInterval(requestTimerInterval);
+  clearInterval(requestStatusInterval);
+}
+
+async function checkActiveRequestStatus(showFeedback = true) {
+  const request = activeRequest();
+  if (!request) return;
+  const originalLabel = requestCheckButton.textContent;
+  requestCheckButton.disabled = true;
+  requestCheckButton.textContent = 'Checking…';
+
+  try {
+    const response = await fetch(githubIssuesApi, {
+      cache: 'no-store',
+      headers: { Accept: 'application/vnd.github+json' }
+    });
+    if (!response.ok) throw new Error(`GitHub returned ${response.status}`);
+    const issues = await response.json();
+    const marker = `<!-- ntfy-id: ${request.id} -->`;
+    const issue = issues.find(item => String(item.body || '').includes(marker));
+
+    if (!issue) {
+      updateStoredRequest(request.id, { status: 'queued', error: '' });
+    } else {
+      const labels = (issue.labels || []).map(label => typeof label === 'string' ? label : label.name);
+      const finished = labels.includes('finished') || issue.state === 'closed';
+      const resultMatch = String(issue.body || '').match(/^result_url:\s*(\S+)/mi);
+      updateStoredRequest(request.id, {
+        status: finished ? 'finished' : 'processing',
+        issueUrl: issue.html_url,
+        resultUrl: resultMatch?.[1] || (finished ? './' : ''),
+        finishedAt: finished ? (request.finishedAt || new Date().toISOString()) : '',
+        error: ''
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    if (showFeedback) updateStoredRequest(request.id, { status: 'error', error: 'GitHub status is temporarily unavailable.' });
+  } finally {
+    requestCheckButton.disabled = false;
+    requestCheckButton.textContent = originalLabel;
+    renderRequestDialog();
+  }
+}
 
 function applyTheme(theme, persist = true) {
   const isDark = theme === 'dark';
@@ -65,6 +240,7 @@ async function sendPrivateForm(event, formStatus, successMessage) {
   formStatus.textContent = '';
 
   try {
+    const submittedAt = new Date().toISOString();
     const response = await fetch(form.action, {
       method: 'POST',
       body: formData,
@@ -103,14 +279,33 @@ async function sendQueueForm(event, formStatus, successMessage) {
         ...formData,
         _gotcha: undefined,
         source: window.location.href,
-        submitted_at: new Date().toISOString()
+        submitted_at: submittedAt
       }),
       headers: { 'Content-Type': 'text/plain;charset=UTF-8' }
     });
 
     if (!response.ok) throw new Error(`Queue returned ${response.status}`);
+    const queueMessage = await response.json();
+    if (!queueMessage.id) throw new Error('Queue did not return a request ID');
+
+    const request = {
+      id: queueMessage.id,
+      submittedAt,
+      topic: String(formData.topic || '').trim(),
+      style: String(formData.style || 'auto'),
+      status: 'queued',
+      gifIndex: Math.floor(Math.random() * waitingGifs.length),
+      issueUrl: '',
+      resultUrl: '',
+      finishedAt: '',
+      error: ''
+    };
+    generationRequests = [request, ...generationRequests.filter(item => item.id !== request.id)].slice(0, 20);
+    activeRequestId = request.id;
+    saveGenerationRequests();
     form.reset();
     formStatus.textContent = successMessage;
+    openRequestDialog(request.id, true);
   } catch (error) {
     console.error(error);
     formStatus.textContent = 'The request could not be sent. Please try again.';
@@ -131,6 +326,48 @@ generationForm.addEventListener('submit', event => {
     'Request queued — GitHub will start generation automatically.'
   );
 });
+
+requestHistoryButton.addEventListener('click', () => openRequestDialog());
+requestDialogClose.addEventListener('click', closeRequestDialog);
+requestDialog.addEventListener('click', event => {
+  const rect = requestDialog.getBoundingClientRect();
+  const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
+  if (outside) closeRequestDialog();
+});
+requestHistorySelect.addEventListener('change', event => {
+  activeRequestId = event.target.value;
+  renderRequestDialog();
+  checkActiveRequestStatus(false);
+});
+gifChangeButton.addEventListener('click', () => {
+  const request = activeRequest();
+  if (!request) return;
+  updateStoredRequest(request.id, {
+    gifIndex: (Number(request.gifIndex || 0) + 1) % waitingGifs.length,
+    gifFailures: 0
+  });
+  renderRequestDialog();
+});
+requestCheckButton.addEventListener('click', () => checkActiveRequestStatus(true));
+requestGif.addEventListener('error', () => {
+  const request = activeRequest();
+  if (!request) return;
+
+  const gifFailures = Number(request.gifFailures || 0) + 1;
+  if (gifFailures >= waitingGifs.length) {
+    requestGif.removeAttribute('src');
+    requestGif.alt = 'Waiting for booklet generation';
+    return;
+  }
+
+  updateStoredRequest(request.id, {
+    gifIndex: (Number(request.gifIndex || 0) + 1) % waitingGifs.length,
+    gifFailures
+  });
+  renderRequestDialog();
+});
+
+updateRequestHistoryButton();
 
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>'"]/g, char => ({
