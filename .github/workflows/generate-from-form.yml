@@ -114,16 +114,6 @@ jobs:
             const styleNote = customStyle ? `Custom visual direction: ${customStyle}.` : '';
             const description = clean([styleNote, rawDescription].filter(Boolean).join(' '), 800);
 
-            if (!topic) {
-              await github.rest.issues.createComment({
-                ...context.repo,
-                issue_number: issueNumber,
-                body: 'The request could not be generated because the topic field was empty.'
-              });
-              core.setFailed('Missing topic.');
-              return;
-            }
-
             const inputs = {
               count: allowedCounts.has(field('count', 2)) ? field('count', 2) : '1',
               force_generate: 'true',
@@ -161,5 +151,7 @@ jobs:
             await github.rest.issues.createComment({
               ...context.repo,
               issue_number: issueNumber,
-              body: `Generation accepted: ${inputs.count} booklet(s) about **${topic}**. The collection will update after the workflow finishes.`
+              body: topic
+                ? `Generation accepted: ${inputs.count} booklet(s) about **${topic}**. The collection will update after the workflow finishes.`
+                : `Generation accepted: ${inputs.count} booklet(s) with a randomly selected topic. The collection will update after the workflow finishes.`
             });
