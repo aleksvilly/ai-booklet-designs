@@ -55,6 +55,29 @@ if (typeof globalThis.fetch !== 'function') {
   };
 }
 
+export function cleanImageMetadataText(value, fallback = '', maxLength = 300) {
+  const clean = input => String(input || '')
+    .replace(/&#x([0-9a-f]+);/gi, (_, code) => String.fromCodePoint(Number.parseInt(code, 16)))
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number.parseInt(code, 10)))
+    .replace(/&(amp|lt|gt|quot|apos|nbsp);/gi, entity => ({
+      '&amp;': '&',
+      '&lt;': '<',
+      '&gt;': '>',
+      '&quot;': '"',
+      '&apos;': "'",
+      '&nbsp;': ' '
+    })[entity.toLowerCase()])
+    .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/[\u0000-\u001f\u007f]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, maxLength);
+
+  return clean(value) || clean(fallback);
+}
+
 export const ABSTRACT_IMAGE_FALLBACKS = {
   minimal: [
     'minimal gradient background',
@@ -473,18 +496,18 @@ export async function fetchOpenverse(query) {
   });
 
   const results = (data.results || []).map(item => ({
-    provider: item.source || item.provider || 'Openverse',
+    provider: cleanImageMetadataText(item.source || item.provider, 'Openverse', 80),
     url: item.url || item.thumbnail,
     fullUrl: item.url || item.thumbnail,
     thumb: item.thumbnail,
-    alt: item.title || query,
-    creator: item.creator || 'Unknown',
+    alt: cleanImageMetadataText(item.title, query, 300),
+    creator: cleanImageMetadataText(item.creator, 'Unknown', 180),
     creatorUrl: item.creator_url || item.foreign_landing_url || '',
-    source: item.source || item.provider || 'Openverse',
+    source: cleanImageMetadataText(item.source || item.provider, 'Openverse', 80),
     sourceUrl: item.foreign_landing_url || item.url || '',
-    license: item.license ? `${item.license.toUpperCase()}${item.license_version ? ` ${item.license_version}` : ''}` : 'Open license',
+    license: cleanImageMetadataText(item.license ? `${item.license.toUpperCase()}${item.license_version ? ` ${item.license_version}` : ''}` : '', 'Open license', 80),
     licenseUrl: item.license_url || item.foreign_landing_url || '',
-    attribution: item.attribution || ''
+    attribution: cleanImageMetadataText(item.attribution, '', 300)
   })).filter(item => item.url);
 
   imageStats.openverseImages += results.length;
@@ -519,14 +542,14 @@ export async function fetchWikimedia(query) {
       url: info?.url,
       fullUrl: info?.url,
       thumb: info?.thumburl || info?.url,
-      alt: meta.ObjectName?.value || page.title || query,
-      creator: meta.Artist?.value?.replace(/<[^>]+>/g, '') || 'Unknown',
+      alt: cleanImageMetadataText(meta.ObjectName?.value || page.title, query, 300),
+      creator: cleanImageMetadataText(meta.Artist?.value, 'Unknown', 180),
       creatorUrl: page.fullurl || '',
       source: 'Wikimedia Commons',
       sourceUrl: page.fullurl || info?.descriptionurl || '',
-      license: meta.LicenseShortName?.value || 'Open license',
+      license: cleanImageMetadataText(meta.LicenseShortName?.value, 'Open license', 80),
       licenseUrl: page.fullurl || '',
-      attribution: page.title || ''
+      attribution: cleanImageMetadataText(page.title, '', 300)
     };
   }).filter(item => item.url);
 
