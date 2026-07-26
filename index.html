@@ -4,8 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="An evolving collection of gift booklet concepts for different people, professions and passions.">
-  <meta name="theme-color" content="#111111">
+  <meta name="theme-color" content="#f3f0e8" id="theme-color">
   <title>AI Booklet Designs</title>
+  <script>
+    (() => {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
@@ -17,10 +24,16 @@
       <span class="brand-mark">AB</span>
       <span>AI Booklet Designs</span>
     </a>
-    <div class="header-meta">
-      <span id="published-count">— published</span>
-      <span class="live-dot" aria-hidden="true"></span>
-      <span>print-ready experiments</span>
+    <div class="header-tools">
+      <div class="header-meta">
+        <span id="published-count">— published</span>
+        <span class="live-dot" aria-hidden="true"></span>
+        <span>print-ready experiments</span>
+      </div>
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+        <span class="theme-toggle-icon" aria-hidden="true"></span>
+        <span class="theme-toggle-label">Dark</span>
+      </button>
     </div>
   </header>
 

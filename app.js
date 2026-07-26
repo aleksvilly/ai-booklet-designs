@@ -5,12 +5,29 @@ const dialog = document.querySelector('#booklet-dialog');
 const dialogContent = document.querySelector('#dialog-content');
 const countNode = document.querySelector('#published-count');
 const emptyState = document.querySelector('#empty-state');
+const themeToggle = document.querySelector('#theme-toggle');
+const themeColor = document.querySelector('#theme-color');
 
 let allBooklets = [];
 let activeFilter = 'All';
 const loadedFontRequests = new Set();
 const today = new Date();
 today.setHours(23, 59, 59, 999);
+
+function applyTheme(theme, persist = true) {
+  const isDark = theme === 'dark';
+  document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+  themeToggle.setAttribute('aria-pressed', String(isDark));
+  themeToggle.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} theme`);
+  themeToggle.querySelector('.theme-toggle-label').textContent = isDark ? 'Light' : 'Dark';
+  themeColor.content = isDark ? '#121211' : '#f3f0e8';
+  if (persist) localStorage.setItem('theme', isDark ? 'dark' : 'light');
+}
+
+applyTheme(document.documentElement.dataset.theme, false);
+themeToggle.addEventListener('click', () => {
+  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+});
 
 function escapeHtml(value = '') {
   return String(value).replace(/[&<>'"]/g, char => ({
