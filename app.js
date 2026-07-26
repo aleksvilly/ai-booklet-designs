@@ -647,7 +647,7 @@ function imageCredit(image, compact = false) {
   if (compact) {
     return `<a href="${creatorUrl}" target="_blank" rel="noopener">${creator}</a> / <a href="${sourceUrl}" target="_blank" rel="noopener">${source}</a>`;
   }
-  return `© <a href="${creatorUrl}" target="_blank" rel="noopener">${creator}</a> · <a href="${sourceUrl}" target="_blank" rel="noopener">${source}</a> · <a href="${licenseUrl}" target="_blank[...]
+  return `© <a href="${creatorUrl}" target="_blank" rel="noopener">${creator}</a> · <a href="${sourceUrl}" target="_blank" rel="noopener">${source}</a> · <a href="${licenseUrl}" target="_blank" rel="noopener">${license}</a>`;
 }
 
 function createCardCoverMedia(cover, item, page, index) {
@@ -892,7 +892,7 @@ function coverVisualMarkup(item, page) {
   const images = imagesForPage(page).slice(0, 20);
   if (!images.length) return '<span class="detail-cover-art detail-cover-art-a"></span><span class="detail-cover-art detail-cover-art-b"></span>';
   return `<div class="detail-cover-media detail-cover-media-${images.length}">
-    ${images.map((image, index) => `<figure><img data-src="${escapeHtml(safeUrl(image.url))}" alt="${escapeHtml(image.alt || item.title)}" decoding="async"><figcaption>${imageCredit(image, true)}[...]
+    ${images.map((image, index) => `<figure><img data-src="${escapeHtml(safeUrl(image.url))}" alt="${escapeHtml(image.alt || item.title)}" decoding="async"><figcaption>${imageCredit(image, true)}</figcaption></figure>`).join('')}
   </div>`;
 }
 
@@ -902,7 +902,7 @@ function detailHtml(item) {
   const dna = item.designDna || {};
   const classes = designClasses(item);
   const palette = item.palette || ['#f2eee4', '#ed5d40', '#234fde', '#151515'];
-  const style = `--c1:${palette[0]};--c2:${palette[1]};--c3:${palette[2]};--c4:${palette[3]};--font-cover:${fontStack(dna.fontPalette?.[0] || 'Playfair Display')};--font-body:${fontStack(dna.font[...]
+  const style = `--c1:${palette[0]};--c2:${palette[1]};--c3:${palette[2]};--c4:${palette[3]};--font-cover:${fontStack(dna.fontPalette?.[0] || 'Playfair Display')};--font-body:${fontStack(dna.fontPalette?.[1] || 'DM Sans')}`;
 
   return `<section class="detail-hero ${classes}" style="${escapeHtml(style)}">
       <div class="detail-cover cover-${safeClass(dna.coverArchetype || 'type-only')}">
