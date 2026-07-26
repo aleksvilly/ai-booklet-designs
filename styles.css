@@ -145,7 +145,7 @@ main { overflow: hidden; }
 
 .request-status-dialog {
   width: min(980px, calc(100vw - 32px));
-  max-height: calc(100vh - 32px);
+  max-height: calc(100dvh - 24px);
   padding: 0;
   border: 1px solid var(--line);
   background: var(--paper);
@@ -154,12 +154,12 @@ main { overflow: hidden; }
 }
 .request-status-dialog::backdrop { background: rgba(10,10,9,.72); backdrop-filter: blur(9px); }
 .request-dialog-close { position: absolute; z-index: 3; top: 12px; right: 12px; display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid rgba(255,255,255,.35); border-radius: 50%; background: rgba(0,0,0,.35); color: #fff; cursor: pointer; font-size: 25px; }
-.request-dialog-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(340px, .95fr); min-height: 580px; }
-.request-waiting-visual { position: relative; min-height: 520px; overflow: hidden; background: #111; }
-.request-waiting-visual img { width: 100%; height: 100%; min-height: 520px; object-fit: cover; display: block; }
+.request-dialog-grid { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(340px, .95fr); min-height: 520px; }
+.request-waiting-visual { position: relative; min-height: 480px; overflow: hidden; background: #111; }
+.request-waiting-visual img { width: 100%; height: 100%; min-height: 480px; object-fit: cover; display: block; }
 .request-waiting-visual::after { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.55)); }
 .gif-change-button { position: absolute; z-index: 2; left: 20px; bottom: 20px; min-height: 42px; padding: 0 15px; border: 1px solid rgba(255,255,255,.55); background: rgba(0,0,0,.45); color: #fff; cursor: pointer; backdrop-filter: blur(8px); }
-.request-progress-panel { display: flex; flex-direction: column; padding: clamp(34px, 5vw, 64px); }
+.request-progress-panel { display: flex; flex-direction: column; padding: clamp(28px, 4vw, 48px); }
 .request-progress-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
 .request-progress-heading .eyebrow { margin: 8px 0 0; }
 .request-status-badge { padding: 8px 10px; border: 1px solid var(--line); font: 500 9px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .07em; }
@@ -167,17 +167,29 @@ main { overflow: hidden; }
 .request-status-badge[data-status="processing"] { background: #fff0b8; color: #644900; }
 .request-status-badge[data-status="finished"] { background: #d8f6dd; color: #176928; }
 .request-status-badge[data-status="error"] { background: #ffe0dc; color: #8c2c22; }
-.request-progress-panel h2 { margin: 35px 0 28px; font-size: clamp(42px, 5vw, 72px); overflow-wrap: anywhere; }
+.request-progress-panel h2 { margin: 24px 0 20px; font-size: clamp(36px, 4.4vw, 62px); overflow-wrap: anywhere; }
 .request-history-select-label { display: grid; gap: 8px; }
 .request-history-select-label span, .request-timer-block span { color: var(--muted); font: 500 9px/1.2 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .09em; }
 .request-history-select-label select { width: 100%; min-height: 44px; padding: 9px 10px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); }
-.request-timer-block { display: grid; gap: 7px; margin-top: 28px; }
-.request-timer-block strong { font: 500 clamp(35px, 5vw, 62px)/1 "IBM Plex Mono", monospace; letter-spacing: -.05em; }
-.request-status-copy { min-height: 48px; margin: 25px 0; color: var(--muted); line-height: 1.5; }
+.request-timer-block { display: grid; gap: 7px; margin-top: 18px; }
+.request-timer-block strong { font: 500 clamp(32px, 4.5vw, 52px)/1 "IBM Plex Mono", monospace; letter-spacing: -.05em; }
+.request-status-copy { min-height: 42px; margin: 17px 0; color: var(--muted); line-height: 1.45; }
 .request-progress-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: auto; }
 .request-progress-actions button { cursor: pointer; }
 .request-progress-actions button:disabled { cursor: wait; opacity: .55; }
 .request-issue-link { margin-left: 4px; text-decoration: none; }
+
+@media (max-height: 720px) and (min-width: 761px) {
+  .request-status-dialog { max-height: calc(100dvh - 12px); }
+  .request-dialog-grid { min-height: 0; height: calc(100dvh - 14px); max-height: 620px; }
+  .request-waiting-visual, .request-waiting-visual img { min-height: 0; height: 100%; }
+  .request-progress-panel { padding: 22px 28px; overflow-y: auto; }
+  .request-progress-panel h2 { margin: 15px 0 13px; font-size: clamp(30px, 4vw, 44px); }
+  .request-history-select-label select { min-height: 40px; }
+  .request-timer-block { margin-top: 13px; }
+  .request-timer-block strong { font-size: 34px; }
+  .request-status-copy { min-height: 0; margin: 12px 0; font-size: 13px; }
+}
 
 .manifesto {
   display: grid;
@@ -406,13 +418,23 @@ footer a { text-underline-offset: 3px; }
   .detail-meta { padding-top: 40px; }
   .spread-grid { grid-template-columns: 1fr; }
   .spread:nth-child(3) { grid-column: span 1; }
-  .request-status-dialog { width: calc(100vw - 18px); max-height: calc(100vh - 18px); }
-  .request-dialog-grid { grid-template-columns: 1fr; }
-  .request-waiting-visual, .request-waiting-visual img { min-height: 250px; height: 250px; }
-  .request-progress-panel { padding: 28px 20px 32px; }
-  .request-progress-panel h2 { margin: 24px 0; font-size: 42px; }
+  .request-status-dialog { width: calc(100vw - 10px); height: calc(100dvh - 10px); max-height: calc(100dvh - 10px); }
+  .request-dialog-grid { display: flex; height: 100%; min-height: 0; flex-direction: column; }
+  .request-waiting-visual { flex: 0 0 clamp(125px, 23dvh, 175px); min-height: 0; }
+  .request-waiting-visual img { min-height: 0; height: 100%; }
+  .gif-change-button { left: 12px; bottom: 12px; min-height: 36px; padding: 0 11px; font-size: 11px; }
+  .request-dialog-close { top: 8px; right: 8px; width: 34px; height: 34px; }
+  .request-progress-panel { flex: 1; min-height: 0; padding: 16px 15px 18px; overflow-y: auto; }
+  .request-progress-heading .eyebrow { margin-top: 5px; }
+  .request-status-badge { padding: 7px 8px; }
+  .request-progress-panel h2 { margin: 10px 0 11px; font-size: clamp(27px, 9vw, 36px); }
+  .request-history-select-label { gap: 5px; }
+  .request-history-select-label select { min-height: 38px; padding: 7px 8px; }
+  .request-timer-block { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin-top: 11px; }
+  .request-timer-block strong { font-size: 29px; }
+  .request-status-copy { min-height: 0; margin: 10px 0 12px; font-size: 12px; line-height: 1.35; }
   .request-progress-actions { align-items: stretch; flex-direction: column; }
-  .request-progress-actions .primary-button, .request-progress-actions .secondary-button { justify-content: center; }
+  .request-progress-actions .primary-button, .request-progress-actions .secondary-button { justify-content: center; min-height: 40px; padding-top: 9px; padding-bottom: 9px; }
   .request-issue-link { align-self: flex-start; margin: 5px 0 0; }
 }
 
