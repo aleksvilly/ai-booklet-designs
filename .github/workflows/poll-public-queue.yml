@@ -94,7 +94,7 @@ jobs:
               if (recentGenerations >= 3) continue;
 
               const topic = clean(data.topic, 140);
-              if (!topic) continue;
+              const issueTopic = topic || 'Random topic';
 
               const allowedChaos = new Set(['-1', '0', '1', '2', '3', '4', '5']);
               const allowedFonts = new Set(['2', '4', '8', '12', '20']);
@@ -116,7 +116,7 @@ jobs:
 
               const issue = await github.rest.issues.create({
                 ...context.repo,
-                title: `[BOOKLET REQUEST] ${topic}`,
+                title: `[BOOKLET REQUEST] ${issueTopic}`,
                 labels: ['booklet-request', 'processing'],
                 body: [
                   '## Automatic public booklet request',
@@ -164,7 +164,7 @@ jobs:
               await github.rest.issues.createComment({
                 ...context.repo,
                 issue_number: issueNumber,
-                body: 'Request accepted from the public queue. Generation has started automatically.'
+                body: `Request accepted from the public queue. Generation has started automatically with ${topic ? `the topic **${topic}**` : 'a randomly selected topic'}.`
               });
 
               processedIds.add(event.id);
