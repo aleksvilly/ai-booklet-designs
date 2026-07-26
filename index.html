@@ -27,7 +27,7 @@
     <nav class="site-nav" id="site-nav" aria-label="Main navigation">
       <a href="./">Home</a>
       <a href="#collection">Collection</a>
-      <a href="#request">Generate</a>
+      <a href="#generate">Generate</a>
       <a href="#contact">Contacts</a>
     </nav>
     <div class="header-tools">
@@ -49,14 +49,108 @@
   </header>
 
   <main>
-    <section class="hero">
-      <p class="eyebrow">A growing gift-booklet laboratory</p>
-      <h1>Designed for a person,<br><em>not for everyone.</em></h1>
-      <p class="hero-copy">Each concept receives a different cover system, printable A5 spreads, radically variable grids, open-source imagery and a Google Fonts palette that may contain up to twenty typefaces.</p>
-      <div class="hero-actions">
-        <a class="primary-button" href="#collection">Explore the collection</a>
-        <button class="text-button" id="surprise-button" type="button">Surprise me ↗</button>
+    <section class="hero" id="generate">
+      <div class="hero-intro">
+        <p class="eyebrow">A growing gift-booklet laboratory</p>
+        <h1>Describe it.<br><em>We generate it.</em></h1>
+        <p class="hero-copy">Choose a visual system, set the chaos level and send a topic. The brief goes straight into the automated booklet workflow.</p>
+        <div class="hero-actions">
+          <a class="primary-button" href="#collection">Explore the collection</a>
+          <button class="text-button" id="surprise-button" type="button">Surprise me ↗</button>
+        </div>
       </div>
+      <form class="request-form hero-generator" id="generation-form" action="https://github.com/aleksvilly/ai-booklet-designs/issues/new" method="get">
+        <div class="generator-heading">
+          <div>
+            <p class="eyebrow">Generate now</p>
+            <h2>Build a booklet batch</h2>
+          </div>
+          <span class="automation-badge"><i aria-hidden="true"></i> Automatic</span>
+        </div>
+
+        <input type="hidden" name="request_type" value="booklet_generation">
+
+        <div class="request-fields">
+          <label class="field-wide">
+            <span>Booklet topic</span>
+            <input name="topic" type="text" maxlength="140" placeholder="Annual impact of a youth organisation" required>
+          </label>
+          <label>
+            <span>Style</span>
+            <select name="style" required>
+              <option value="auto">Automatic mix</option>
+              <option value="civic-nonprofit">Non-profit impact</option>
+              <option value="eu-institutional">EU institutional</option>
+              <option value="public-department">Public department</option>
+              <option value="pan-european-newsroom">European newsroom</option>
+              <option value="custom">My own style</option>
+            </select>
+          </label>
+          <label>
+            <span>Booklets</span>
+            <select name="count">
+              <option value="1">1</option>
+              <option value="3" selected>3</option>
+              <option value="6">6</option>
+            </select>
+          </label>
+          <label>
+            <span>Design chaos</span>
+            <select name="chaos_level">
+              <option value="-1" selected>Auto balance</option>
+              <option value="0">0 — safe</option>
+              <option value="1">1 — restrained</option>
+              <option value="2">2 — expressive</option>
+              <option value="3">3 — experimental</option>
+              <option value="4">4 — wild</option>
+              <option value="5">5 — maximum</option>
+            </select>
+          </label>
+          <label>
+            <span>Maximum fonts</span>
+            <select name="max_fonts">
+              <option value="2">2</option>
+              <option value="4">4</option>
+              <option value="8">8</option>
+              <option value="12">12</option>
+              <option value="20" selected>20</option>
+            </select>
+          </label>
+        </div>
+
+        <details class="generator-advanced">
+          <summary>Advanced direction</summary>
+          <div class="request-fields">
+            <label class="field-wide">
+              <span>Custom style or references</span>
+              <input name="custom_style" type="text" maxlength="180" placeholder="Describe one or several visual styles">
+            </label>
+            <label>
+              <span>AI preference</span>
+              <select name="ai_provider">
+                <option value="auto" selected>Automatic</option>
+                <option value="openai-first">OpenAI first</option>
+                <option value="gemini-first">Gemini first</option>
+                <option value="local">No external AI</option>
+              </select>
+            </label>
+            <label>
+              <span>Font names</span>
+              <input name="custom_fonts" type="text" maxlength="240" placeholder="Inter, Spectral…">
+            </label>
+            <label class="field-wide">
+              <span>Description</span>
+              <textarea name="description" rows="4" maxlength="1200" placeholder="Audience, purpose, mood, important facts and anything to avoid"></textarea>
+            </label>
+          </div>
+        </details>
+
+        <div class="contact-form-footer">
+          <button class="primary-button contact-submit" type="submit">Create & generate via GitHub ↗</button>
+          <p class="form-status" id="generation-form-status" role="status" aria-live="polite"></p>
+        </div>
+        <p class="generator-note">Free public queue. GitHub will ask you to sign in and confirm the request once. <a href="https://github.com/aleksvilly/ai-booklet-designs/issues?q=is%3Aissue+label%3Abooklet-request" target="_blank" rel="noopener">View request statuses ↗</a></p>
+      </form>
     </section>
 
     <section class="manifesto" aria-label="Design method">
@@ -75,102 +169,6 @@
       </div>
       <div class="booklet-grid" id="booklet-grid" aria-live="polite"></div>
       <p class="empty-state" id="empty-state" hidden>No concepts match this filter yet.</p>
-    </section>
-
-    <section class="request-section" id="request">
-      <div class="request-intro">
-        <p class="eyebrow">Open creative brief</p>
-        <h2>Request a<br>booklet batch</h2>
-        <p>Choose a direction and send a generation brief. Requests are reviewed before generation, so public submissions cannot spend API credits automatically.</p>
-        <div class="style-notes">
-          <span>Non-profit impact</span>
-          <span>European institutional</span>
-          <span>Public department</span>
-          <span>Pan-European newsroom</span>
-        </div>
-      </div>
-      <form class="request-form" id="generation-form" action="https://formspree.io/f/meeyvjjd" method="post">
-        <input type="hidden" name="_subject" value="New booklet generation request">
-        <input type="hidden" name="request_type" value="booklet_generation">
-        <input class="form-honeypot" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
-
-        <div class="request-fields">
-          <label class="field-wide">
-            <span>Style</span>
-            <select name="style" required>
-              <option value="auto">Automatic mix</option>
-              <option value="civic-nonprofit">Human-centred non-profit impact</option>
-              <option value="eu-institutional">European institutional clarity</option>
-              <option value="public-department">Public department report system</option>
-              <option value="pan-european-newsroom">Pan-European broadcast editorial</option>
-              <option value="custom">My own style</option>
-            </select>
-          </label>
-          <label class="field-wide">
-            <span>Custom style or references</span>
-            <input name="custom_style" type="text" maxlength="180" placeholder="Optional: describe one or several styles">
-          </label>
-          <label>
-            <span>Number of booklets</span>
-            <select name="count">
-              <option value="1">1</option>
-              <option value="3" selected>3</option>
-              <option value="6">6</option>
-            </select>
-          </label>
-          <label>
-            <span>Design chaos</span>
-            <select name="chaos_level">
-              <option value="-1" selected>Auto balance</option>
-              <option value="0">0 — safe</option>
-              <option value="1">1 — restrained</option>
-              <option value="2">2 — expressive</option>
-              <option value="3">3 — experimental</option>
-              <option value="4">4 — wild</option>
-              <option value="5">5 — maximum chaos</option>
-            </select>
-          </label>
-          <label>
-            <span>Maximum fonts</span>
-            <select name="max_fonts">
-              <option value="2">2</option>
-              <option value="4">4</option>
-              <option value="8">8</option>
-              <option value="12">12</option>
-              <option value="20" selected>20</option>
-            </select>
-          </label>
-          <label>
-            <span>AI preference</span>
-            <select name="ai_provider">
-              <option value="auto" selected>Automatic</option>
-              <option value="openai-first">OpenAI first</option>
-              <option value="gemini-first">Gemini first</option>
-              <option value="local">No external AI</option>
-            </select>
-          </label>
-          <label class="field-wide">
-            <span>Font names</span>
-            <input name="custom_fonts" type="text" maxlength="240" placeholder="Optional: Inter, Spectral, IBM Plex Mono…">
-          </label>
-          <label class="field-wide">
-            <span>Booklet topic</span>
-            <input name="topic" type="text" maxlength="140" placeholder="For example: annual impact of a youth organisation" required>
-          </label>
-          <label class="field-wide">
-            <span>Description</span>
-            <textarea name="description" rows="6" maxlength="1200" placeholder="Audience, purpose, preferred mood, important facts and anything to avoid" required></textarea>
-          </label>
-          <label class="field-wide">
-            <span>Your email</span>
-            <input name="reply_to" type="email" autocomplete="email" maxlength="120" placeholder="So we can reply about the request" required>
-          </label>
-        </div>
-        <div class="contact-form-footer">
-          <button class="primary-button contact-submit" type="submit">Send generation request</button>
-          <p class="form-status" id="generation-form-status" role="status" aria-live="polite"></p>
-        </div>
-      </form>
     </section>
 
     <section class="contact-section" id="contact">
