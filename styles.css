@@ -227,7 +227,14 @@ h2 { margin: 0; font-size: clamp(42px, 5vw, 78px); line-height: .95; letter-spac
 .filter-button { border: 1px solid var(--line); padding: 10px 13px; background: transparent; cursor: pointer; font-size: 13px; }
 .filter-button:hover, .filter-button.active { background: var(--ink); color: var(--paper); }
 
-.booklet-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 4vw, 56px) clamp(16px, 2.3vw, 38px); }
+.booklet-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(24px, 4vw, 56px) clamp(16px, 2.3vw, 38px); scroll-margin-top: 110px; }
+.pagination { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 8px; min-height: 44px; margin-top: clamp(42px, 6vw, 82px); }
+.pagination:empty { display: none; }
+.pagination button { display: inline-grid; place-items: center; min-width: 42px; min-height: 42px; padding: 9px 13px; border: 1px solid var(--line); background: transparent; color: var(--ink); cursor: pointer; font: 500 11px/1 "IBM Plex Mono", monospace; letter-spacing: .025em; transition: background .18s ease, color .18s ease, border-color .18s ease, transform .18s ease; }
+.pagination button:hover:not(:disabled) { border-color: var(--ink); background: var(--ink); color: var(--paper); transform: translateY(-2px); }
+.pagination button:focus-visible { outline: 2px solid #e34234; outline-offset: 3px; }
+.pagination button:disabled, .pagination button[aria-current="page"] { border-color: var(--ink); background: var(--ink); color: var(--paper); cursor: default; }
+.pagination span { display: inline-grid; place-items: center; min-width: 26px; min-height: 42px; color: var(--muted); font: 500 12px/1 "IBM Plex Mono", monospace; }
 .booklet-card { min-width: 0; }
 .cover {
   position: relative;
@@ -424,6 +431,9 @@ footer a { text-underline-offset: 3px; }
   .filters { justify-content: flex-start; overflow-x: auto; width: calc(100vw - 40px); flex-wrap: nowrap; padding-bottom: 6px; }
   .filter-button { white-space: nowrap; }
   .booklet-grid { grid-template-columns: 1fr; gap: 42px; }
+  .pagination { gap: 5px; margin-top: 38px; }
+  .pagination button { min-width: 36px; min-height: 38px; padding: 8px 10px; font-size: 10px; }
+  .pagination span { min-width: 18px; min-height: 38px; }
   .cover-title { font-size: 58px; }
   footer { flex-direction: column; }
   .contact-section { gap: 42px; }
