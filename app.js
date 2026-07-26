@@ -88,35 +88,11 @@ contactForm.addEventListener('submit', event => {
 });
 
 generationForm.addEventListener('submit', event => {
-  event.preventDefault();
-  const formData = new FormData(generationForm);
-  const topic = String(formData.get('topic') || '').trim();
-  const title = `[BOOKLET REQUEST] ${topic.slice(0, 100)}`;
-  const publicFields = [
-    ['request_type', 'booklet_generation'],
-    ['topic', topic],
-    ['style', formData.get('style')],
-    ['custom_style', formData.get('custom_style')],
-    ['count', formData.get('count')],
-    ['chaos_level', formData.get('chaos_level')],
-    ['max_fonts', formData.get('max_fonts')],
-    ['ai_provider', formData.get('ai_provider')],
-    ['custom_fonts', formData.get('custom_fonts')],
-    ['description', formData.get('description')]
-  ];
-  const body = [
-    '## Public booklet generation request',
-    '',
-    ...publicFields.map(([name, value]) => `${name}: ${String(value || '').replace(/\s+/g, ' ').trim()}`),
-    '',
-    '_Created from the AI Booklet Designs website._'
-  ].join('\n');
-  const url = new URL(generationForm.action);
-  url.searchParams.set('title', title);
-  url.searchParams.set('body', body);
-
-  generationFormStatus.textContent = 'Opening GitHub — press “Submit new issue” to start.';
-  window.location.href = url.href;
+  sendForm(
+    event,
+    generationFormStatus,
+    'Request saved — thank you. It will be reviewed before publication.'
+  );
 });
 
 function escapeHtml(value = '') {
