@@ -53,7 +53,7 @@
       <div class="hero-intro">
         <p class="eyebrow">A growing gift-booklet laboratory</p>
         <h1>Describe it.<br><em>We generate it.</em></h1>
-        <p class="hero-copy">Choose a visual system, set the chaos level and send a topic. The brief enters a public queue and GitHub starts generation automatically.</p>
+        <p class="hero-copy">Choose an editorial profile, visual language and page complexity. The brief enters a public queue and GitHub starts generation automatically.</p>
         <div class="hero-actions">
           <a class="primary-button" href="#collection">Explore the collection</a>
           <a class="secondary-button" href="#generation-form">Request a booklet</a>
@@ -79,50 +79,76 @@
             <input name="topic" type="text" maxlength="140" placeholder="Optional — leave empty for a random topic">
           </label>
           <label>
-            <span>Style</span>
+            <span>Editorial profile</span>
             <select name="style" required>
-              <option value="auto">Automatic mix</option>
-              <option value="civic-nonprofit">Non-profit impact</option>
-              <option value="eu-institutional">EU institutional</option>
-              <option value="public-department">Public department</option>
+              <option value="auto">Automatic / no brand profile</option>
+              <option value="civic-nonprofit">NGO / non-profit impact</option>
+              <option value="eu-institutional">EU institutional clarity</option>
+              <option value="public-department">Public department report</option>
               <option value="pan-european-newsroom">European newsroom</option>
+              <option value="euronews-inspired">Euronews-inspired newsroom</option>
+              <option value="dw-inspired">DW-inspired public media</option>
               <option value="custom">My own style</option>
             </select>
-          </label>
-          <div class="request-static-field">
-            <span>Booklets</span>
-            <strong>1</strong>
-          </div>
-          <label>
-            <span>Design chaos</span>
-            <select name="chaos_level">
-              <option value="-1" selected>Auto balance</option>
-              <option value="0">0 — safe</option>
-              <option value="1">1 — restrained</option>
-              <option value="2">2 — expressive</option>
-              <option value="3">3 — experimental</option>
-              <option value="4">4 — wild</option>
-              <option value="5">5 — maximum</option>
-            </select>
+            <small class="field-hint">Profile sets colour, typography and editorial tone—not the amount of visual experimentation.</small>
           </label>
           <label>
-            <span>Maximum fonts</span>
-            <select name="max_fonts">
-              <option value="2">2</option>
-              <option value="4">4</option>
-              <option value="8">8</option>
-              <option value="12">12</option>
-              <option value="20" selected>20</option>
+            <span>Visual language</span>
+            <select name="visual_mode">
+              <option value="auto" selected>Automatic</option>
+              <option value="minimal">Minimal editorial</option>
+              <option value="abstract">Abstract / experimental</option>
+              <option value="mixed">Mix minimal + abstract</option>
             </select>
+          </label>
+          <label class="range-field">
+            <span>Page complexity <output data-range-output="layout_complexity">2</output> / 5</span>
+            <input name="layout_complexity" type="range" min="1" max="5" value="2">
+            <small class="field-hint">1 gives more title + subtitle pages and breathing room; 5 allows dense grids and collage spreads.</small>
+          </label>
+          <label class="range-field">
+            <span>Effects intensity <output data-range-output="effect_level">2</output> / 5</span>
+            <input name="effect_level" type="range" min="0" max="5" value="2">
+            <small class="field-hint">Controls how many treatments appear independently from design chaos.</small>
           </label>
         </div>
 
         <details class="generator-advanced">
           <summary>Advanced direction</summary>
           <div class="request-fields">
+            <fieldset class="effect-picker field-wide">
+              <legend>Preferred effects (optional, combine freely)</legend>
+              <label><input name="effects" type="checkbox" value="blur"> Blur</label>
+              <label><input name="effects" type="checkbox" value="monochrome"> Black &amp; white</label>
+              <label><input name="effects" type="checkbox" value="invert"> Inverted</label>
+              <label><input name="effects" type="checkbox" value="grain"> Grain</label>
+              <label><input name="effects" type="checkbox" value="halftone"> Halftone</label>
+            </fieldset>
             <label class="field-wide">
               <span>Custom style or references</span>
               <input name="custom_style" type="text" maxlength="180" placeholder="Describe one or several visual styles">
+            </label>
+            <label>
+              <span>Design chaos</span>
+              <select name="chaos_level">
+                <option value="-1" selected>Auto balance</option>
+                <option value="0">0 — safe</option>
+                <option value="1">1 — restrained</option>
+                <option value="2">2 — expressive</option>
+                <option value="3">3 — experimental</option>
+                <option value="4">4 — wild</option>
+                <option value="5">5 — maximum</option>
+              </select>
+            </label>
+            <label>
+              <span>Maximum fonts</span>
+              <select name="max_fonts">
+                <option value="2">2</option>
+                <option value="4" selected>4</option>
+                <option value="8">8</option>
+                <option value="12">12</option>
+                <option value="20">20</option>
+              </select>
             </label>
             <label>
               <span>AI preference</span>

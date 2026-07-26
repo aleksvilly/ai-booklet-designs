@@ -348,6 +348,18 @@ siteNav.addEventListener('click', event => {
   if (event.target.closest('a')) setMenu(false);
 });
 
+function syncRangeOutputs() {
+  document.querySelectorAll('[data-range-output]').forEach(output => {
+    const input = generationForm.elements[output.dataset.rangeOutput];
+    if (input) output.value = input.value;
+  });
+}
+
+generationForm.addEventListener('input', event => {
+  if (event.target.matches('input[type="range"]')) syncRangeOutputs();
+});
+syncRangeOutputs();
+
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') setMenu(false);
 });
@@ -385,7 +397,9 @@ async function sendPrivateForm(event, formStatus, successMessage) {
 async function sendQueueForm(event, formStatus, successMessage) {
   event.preventDefault();
   const form = event.currentTarget;
-  const formData = Object.fromEntries(new FormData(form).entries());
+  const rawFormData = new FormData(form);
+  const formData = Object.fromEntries(rawFormData.entries());
+  formData.effects = rawFormData.getAll('effects').join(',');
   const submitButton = form.querySelector('button[type="submit"]');
   const originalLabel = submitButton.textContent;
 
@@ -428,6 +442,7 @@ async function sendQueueForm(event, formStatus, successMessage) {
     activeRequestId = request.id;
     saveGenerationRequests();
     form.reset();
+    syncRangeOutputs();
     formStatus.textContent = successMessage;
     openRequestDialog(request.id, true);
   } catch (error) {
@@ -1035,10 +1050,14 @@ function openBooklet(item, updateUrl = true) {
   applyPalette(dialogContent, item.palette);
   setFontVariables(dialogContent, item, pagesFor(item)[0]);
 
+  const url = new URL(window.location.href);
+  const hadPageParameter = url.searchParams.has('page');
+  url.searchParams.delete('page');
   if (updateUrl) {
-    const url = new URL(window.location.href);
     url.searchParams.set('booklet', item.id);
-    history.pushState({ booklet: item.id }, '', url);
+    history.pushState({ booklet: item.id, collectionPage: currentPage }, '', url);
+  } else if (hadPageParameter) {
+    history.replaceState({ ...(history.state || {}), booklet: item.id, collectionPage: currentPage }, '', url);
   }
 
   // Reset before and after showModal(). Some browsers restore the old native
@@ -1074,7 +1093,9 @@ function closeDialog() {
   resetDialogScroll();
   const url = new URL(window.location.href);
   url.searchParams.delete('booklet');
-  history.pushState({}, '', url);
+  if (currentPage > 1) url.searchParams.set('page', String(currentPage));
+  else url.searchParams.delete('page');
+  history.pushState({ page: currentPage }, '', url);
 }
 
 document.querySelector('#dialog-close').addEventListener('click', closeDialog);
@@ -1085,6 +1106,13 @@ dialog.addEventListener('click', event => {
 });
 window.addEventListener('popstate', () => {
   const url = new URL(window.location.href);
+  const id = url.searchParams.get('booklet');
+  if (id) {
+    const item = allBooklets.find(booklet => booklet.id === id);
+    if (item) openBooklet(item, false);
+    return;
+  }
+
   const totalPages = Math.ceil(visibleBooklets().length / itemsPerPage);
   const requestedPage = pageFromUrl(totalPages);
   if (requestedPage !== currentPage) {
@@ -1094,13 +1122,7 @@ window.addEventListener('popstate', () => {
     grid.scrollIntoView({ behavior: 'auto', block: 'start' });
   }
 
-  const id = url.searchParams.get('booklet');
-  if (!id) {
-    if (dialog.open) dialog.close();
-    return;
-  }
-  const item = allBooklets.find(booklet => booklet.id === id);
-  if (item) openBooklet(item, false);
+  if (dialog.open) dialog.close();
 });
 document.querySelector('#surprise-button').addEventListener('click', () => {
   const items = allBooklets.filter(isPublished);

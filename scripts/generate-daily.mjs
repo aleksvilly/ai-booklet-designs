@@ -36,6 +36,15 @@ const count = force ? requestedCount : Math.max(0, requestedCount - alreadyToday
 const configuredChaos = clampInt(process.env.CHAOS_LEVEL, 0, 5, -1);
 const configuredFontLimit = clampInt(process.env.MAX_FONTS, 2, 20, 20);
 const configuredStyleId = cleanInput(process.env.BOOKLET_STYLE, 80);
+const configuredVisualMode = ['auto', 'minimal', 'abstract', 'mixed'].includes(process.env.VISUAL_MODE)
+  ? process.env.VISUAL_MODE
+  : 'auto';
+const configuredLayoutComplexity = clampInt(process.env.LAYOUT_COMPLEXITY, 1, 5, 2);
+const configuredEffectLevel = clampInt(process.env.EFFECT_LEVEL, 0, 5, 2);
+const configuredEffectTokens = cleanInput(process.env.BOOKLET_EFFECTS, 160)
+  .split(',')
+  .map(effect => cleanInput(effect, 30))
+  .filter(effect => ['blur', 'monochrome', 'invert', 'grain', 'halftone'].includes(effect));
 const configuredFonts = cleanInput(process.env.BOOKLET_FONTS, 500)
   .split(',')
   .map(font => cleanInput(font, 80))
@@ -238,6 +247,8 @@ const STYLE_FAMILIES = [
   { id: 'eu-institutional', label: 'European institutional clarity', weight: 7, eras: ['2010s', '2020–2024', '2026'], layouts: ['grid', 'minimal', 'vertical'], typography: ['clean-sans', 'tiny-editorial', 'tech-mono'], colors: ['one-accent', 'muted', 'duotone'], effects: ['data-scan', 'map-grid', 'oversized-number'] },
   { id: 'public-department', label: 'Public department report system', weight: 7, eras: ['2010s', '2020–2024', '2026'], layouts: ['grid', 'split', 'archive'], typography: ['clean-sans', 'condensed-headlines', 'tiny-editorial'], colors: ['muted', 'one-accent', 'black-white'], effects: ['caption-rule', 'registration-marks', 'frame-within-frame'] },
   { id: 'pan-european-newsroom', label: 'Pan-European broadcast editorial', weight: 6, eras: ['2020–2024', '2025', '2026'], layouts: ['grid', 'split', 'full'], typography: ['clean-sans', 'condensed-headlines', 'tech-mono'], colors: ['high-contrast', 'one-accent', 'dark-tech'], effects: ['data-scan', 'map-grid', 'diagonal-flow'] },
+  { id: 'euronews-inspired', label: 'Euronews-inspired circular newsroom', weight: 5, eras: ['2020–2024', '2025', '2026'], layouts: ['grid', 'split', 'full'], typography: ['clean-sans', 'condensed-headlines'], colors: ['one-accent', 'high-contrast', 'duotone'], effects: ['floating-caption', 'oversized-number', 'diagonal-flow'] },
+  { id: 'dw-inspired', label: 'DW-inspired public media geometry', weight: 5, eras: ['2020–2024', '2025', '2026'], layouts: ['grid', 'split', 'vertical'], typography: ['clean-sans', 'condensed-headlines', 'tiny-editorial'], colors: ['one-accent', 'black-white', 'high-contrast'], effects: ['frame-within-frame', 'map-grid', 'caption-rule'] },
   { id: 'swiss-modernism', label: 'Swiss modernism', weight: 7, eras: ['1960s', '2010s', '2026'], layouts: ['grid', 'minimal', 'split'], typography: ['clean-sans', 'condensed-headlines', 'tiny-editorial'], colors: ['one-accent', 'black-white', 'high-contrast'], effects: ['oversized-number', 'frame-within-frame', 'diagonal-flow'] },
   { id: 'psychedelic-70s', label: '1970s psychedelic editorial', weight: 5, eras: ['1970s'], layouts: ['overlap', 'full', 'asymmetric'], typography: ['huge-serif', 'playful-rounded', 'mixed-serif-sans'], colors: ['neon', 'warm-analog', 'full-color'], effects: ['liquid-shapes', 'grain-texture', 'text-behind-image'] },
   { id: 'scientific-archive', label: 'Analogue scientific archive', weight: 6, eras: ['1960s', '1970s', '2026'], layouts: ['archive', 'grid', 'vertical'], typography: ['tech-mono', 'tiny-editorial', 'typewriter'], colors: ['muted', 'black-white', 'duotone'], effects: ['diagram-overlay', 'registration-marks', 'paper-fold'] },
@@ -349,6 +360,15 @@ const EFFECTS = [
   'liquid-shapes', 'film-grain', 'registration-marks', 'misregistration', 'blurred-depth',
   'impossible-scale', 'floating-object', 'pattern-layer', 'type-wave', 'speech-bubble', 'empty-space'
 ];
+
+const EFFECT_TOKEN_MAP = {
+  blur: 'blurred-depth',
+  invert: 'inverted-section',
+  grain: 'film-grain',
+  halftone: 'halftone'
+};
+const MINIMAL_STYLE_IDS = new Set(['civic-nonprofit', 'eu-institutional', 'public-department', 'dw-inspired', 'swiss-modernism', 'luxury-editorial', 'museum-clean', 'documentary-clean', 'minimal-poetic']);
+const ABSTRACT_STYLE_IDS = new Set(['psychedelic-70s', 'memphis-play', 'soft-3d-surreal', 'organic-futurism', 'surreal-absurd', 'cinematic-color-field', 'glassmorphism-editorial', 'kinetic-type']);
 
 const SURPRISE_ELEMENTS = [
   'potatoes', 'clouds', 'fish', 'mirrors', 'plastic toys', 'industrial pipes', 'old maps', 'birds',
@@ -556,6 +576,11 @@ function chooseStyleFamily(level, seed) {
     if (level <= 1 && safeStyle) weight *= 2.2;
     if (level <= 1 && experimentalStyle) weight *= 0.25;
     if (level >= 4 && experimentalStyle) weight *= 2.1;
+    if (configuredVisualMode === 'minimal') weight *= MINIMAL_STYLE_IDS.has(style.id) ? 3.2 : 0.12;
+    if (configuredVisualMode === 'abstract') weight *= ABSTRACT_STYLE_IDS.has(style.id) ? 3.2 : 0.18;
+    if (configuredVisualMode === 'mixed') {
+      weight *= MINIMAL_STYLE_IDS.has(style.id) || ABSTRACT_STYLE_IDS.has(style.id) ? 1.4 : 0.75;
+    }
     return { ...style, weight };
   });
   return weightedPick(weighted, seed, 'style-family');
@@ -650,7 +675,8 @@ function chooseCoverArchetype(dnaLike, seed) {
   const style = dnaLike.styleFamily;
   const archetype = dnaLike.archetype;
   let pool = COVER_ARCHETYPES;
-  if (archetype === 'children-storybook') pool = ['children-cutout', 'collage-chaos', 'poster-grid', 'full-photo'];
+  if (configuredLayoutComplexity <= 2 || configuredVisualMode === 'minimal') pool = ['type-only', 'negative-space', 'classic-book', 'luxury-minimal', 'split-object'];
+  else if (archetype === 'children-storybook') pool = ['children-cutout', 'collage-chaos', 'poster-grid', 'full-photo'];
   else if (archetype === 'poster-book') pool = ['type-only', 'kinetic-type', 'poster-grid', 'collage-chaos'];
   else if (['museum-brochure', 'archive-booklet'].includes(archetype)) pool = ['black-white-archive', 'classic-book', 'contact-sheet', 'data-cover'];
   else if (style === 'neo-tech-interface') pool = ['neo-tech', 'data-cover', 'split-object'];
@@ -707,21 +733,64 @@ function buildDesignDna(seed, slot) {
   const surpriseElements = pickUnique(SURPRISE_ELEMENTS, surpriseCount, seed, 'surprise-elements');
 
   const archetype = pick(ARCHETYPES, seed, 'archetype');
-  const colorMode = pick(styleFamily.colors.length ? styleFamily.colors : COLOR_MODES, seed, 'color-mode');
+  const minimalMode = configuredVisualMode === 'minimal';
+  const abstractMode = configuredVisualMode === 'abstract';
+  const monochromeRequested = configuredEffectTokens.includes('monochrome');
+  const invertedRequested = configuredEffectTokens.includes('invert');
+  const colorMode = monochromeRequested
+    ? 'black-white'
+    : invertedRequested
+      ? 'inverted'
+      : pick(styleFamily.colors.length ? styleFamily.colors : COLOR_MODES, seed, 'color-mode');
   const typographyMode = pick(styleFamily.typography.length ? styleFamily.typography : TYPOGRAPHY_MODES, seed, 'typography-mode');
-  const layoutSystem = pick(LAYOUT_SYSTEMS, seed, 'layout-system');
-  const imageTreatment = pick(IMAGE_TREATMENTS, seed, 'image-treatment');
-  const textDensity = pick(TEXT_DENSITIES, seed, 'text-density');
-  const imageDensity = pick(IMAGE_DENSITIES, seed, 'image-density');
-  const shapeLanguage = pick(SHAPE_LANGUAGES, seed, 'shape-language');
-  const backgroundStyle = pick(BACKGROUND_STYLES, seed, 'background-style');
-  const visualRhythm = pick(VISUAL_RHYTHMS, seed, 'visual-rhythm');
+  const layoutPools = {
+    1: ['white-space-minimal', 'single-hero-image', 'vertical-rhythm'],
+    2: ['white-space-minimal', 'single-hero-image', 'split-layout', 'strict-grid', 'vertical-rhythm'],
+    3: ['split-layout', 'strict-grid', 'poster-layout', 'asymmetric-modern', 'vertical-rhythm', 'full-bleed'],
+    4: ['strict-grid', 'poster-layout', 'image-heavy-magazine', 'asymmetric-modern', 'layered-overlap', 'framed-gallery'],
+    5: LAYOUT_SYSTEMS
+  };
+  const layoutSystem = pick(
+    minimalMode ? layoutPools[Math.min(2, configuredLayoutComplexity)] : abstractMode ? layoutPools[Math.max(4, configuredLayoutComplexity)] : layoutPools[configuredLayoutComplexity],
+    seed,
+    'layout-system'
+  );
+  const imageTreatment = monochromeRequested
+    ? 'black-white-photo'
+    : pick(
+        minimalMode
+          ? ['clean-photo', 'black-white-photo', 'archival-scan']
+          : abstractMode
+            ? ['blurred-dreamy', 'duotone-photo', 'posterized', 'cutout-collage', 'infrared-color']
+            : IMAGE_TREATMENTS,
+        seed,
+        'image-treatment'
+      );
+  const textDensity = pick({
+    1: ['very-low', 'very-low', 'low'],
+    2: ['very-low', 'low', 'low', 'medium'],
+    3: ['low', 'medium', 'variable'],
+    4: ['medium', 'high', 'variable'],
+    5: TEXT_DENSITIES
+  }[configuredLayoutComplexity], seed, 'text-density');
+  const imageDensity = pick({
+    1: ['very-low', 'low'],
+    2: ['very-low', 'low', 'balanced'],
+    3: ['low', 'balanced', 'high'],
+    4: ['balanced', 'high', 'maximal'],
+    5: IMAGE_DENSITIES
+  }[configuredLayoutComplexity], seed, 'image-density');
+  const shapeLanguage = pick(minimalMode ? ['geometric', 'rectilinear', 'technical'] : abstractMode ? ['organic', 'mixed', 'liquid', 'cut-paper', 'hand-drawn'] : SHAPE_LANGUAGES, seed, 'shape-language');
+  const backgroundStyle = pick(minimalMode ? ['pure', 'paper', 'grid-paper'] : abstractMode ? ['gradient', 'photo-based', 'transparent-layers', 'textured', 'noisy'] : BACKGROUND_STYLES, seed, 'background-style');
+  const visualRhythm = pick(minimalMode ? ['calm', 'slow-luxury', 'balanced'] : abstractMode ? ['dynamic', 'staccato', 'cinematic', 'chaotic'] : VISUAL_RHYTHMS, seed, 'visual-rhythm');
   const printFeel = pick(PRINT_FEELS, seed, 'print-feel');
   const contentMode = pick(CONTENT_MODES, seed, 'content-mode');
   const referenceCulture = pick(REFERENCE_CULTURES, seed, 'reference-culture');
   const effectPool = [...new Set([...styleFamily.effects, ...EFFECTS])];
-  const effectCount = Math.max(1, Math.min(5, experimentalLevel + (hashFloat(seed, 'effect-bonus') > 0.66 ? 1 : 0)));
-  const effects = pickUnique(effectPool, effectCount, seed, 'effects');
+  const preferredEffects = [...new Set(configuredEffectTokens.map(token => EFFECT_TOKEN_MAP[token]).filter(Boolean))];
+  const effectCount = configuredEffectLevel;
+  const extraEffects = pickUnique(effectPool.filter(effect => !preferredEffects.includes(effect)), Math.max(0, effectCount - preferredEffects.length), seed, 'effects');
+  const effects = effectCount === 0 ? ['none'] : [...preferredEffects.slice(0, effectCount), ...extraEffects].slice(0, effectCount);
   const pageCount = pageCountFor(archetype, seed);
   const fontPalette = chooseFontPalette(typographyMode, experimentalLevel, seed);
   const fontStrategy = chooseFontStrategy(fontPalette.length, seed);
@@ -741,6 +810,10 @@ function buildDesignDna(seed, slot) {
     era,
     styleFamily: styleFamily.id,
     style: styleFamily.label,
+    visualMode: configuredVisualMode,
+    layoutComplexity: configuredLayoutComplexity,
+    effectLevel: configuredEffectLevel,
+    effectPreferences: configuredEffectTokens,
     archetype,
     colorMode,
     typographyMode,
@@ -831,26 +904,51 @@ function choosePageModule(pool, used, seed, index) {
   return pick(candidates.length ? candidates : pool, seed, `page-module:${index}`);
 }
 
+const SIMPLE_PAGE_MODULES = [
+  'chapter_divider',
+  'quote_page',
+  'white_page',
+  'black_page',
+  'empty_breath',
+  'typographic_poster',
+  'giant_fact',
+  'dedication_page'
+];
+
 function buildPagePlan(dna, seed) {
   const plan = [{ module: 'cover' }];
   const bodyForbidden = new Set(['cover', 'closing', 'panorama_left', 'panorama_right', 'split_feature_left', 'split_feature_right', 'quote_spread_left', 'quote_spread_right']);
-  const basePool = (ARCHETYPE_MODULES[dna.archetype] || ARCHETYPE_MODULES['editorial-magazine']).filter(module => !bodyForbidden.has(module));
-  const extraPool = Object.keys(PAGE_MODULES).filter(module => !bodyForbidden.has(module));
+  const maxImagesForComplexity = { 1: 1, 2: 3, 3: 6, 4: 12, 5: 20 }[dna.layoutComplexity];
+  const basePool = (ARCHETYPE_MODULES[dna.archetype] || ARCHETYPE_MODULES['editorial-magazine']).filter(module =>
+    !bodyForbidden.has(module) &&
+    (PAGE_MODULES[module].imageCount || 0) <= maxImagesForComplexity
+  );
+  const extraPool = Object.keys(PAGE_MODULES).filter(module =>
+    !bodyForbidden.has(module) &&
+    (PAGE_MODULES[module].imageCount || 0) <= maxImagesForComplexity
+  );
   const mixedPool = [...new Set([...basePool, ...pickUnique(extraPool, 14, seed, 'extra-modules')])];
-  const desiredSpreadPairs = dna.pageCount >= 14 ? 3 : dna.pageCount >= 10 ? 2 : 1;
+  const desiredSpreadPairs = dna.layoutComplexity <= 1
+    ? 0
+    : dna.layoutComplexity === 2
+      ? 1
+      : dna.pageCount >= 14 ? 3 : dna.pageCount >= 10 ? 2 : 1;
+  const bodyPageCount = Math.max(0, dna.pageCount - 2);
+  const simpleTarget = Math.min(bodyPageCount, Math.ceil(bodyPageCount * ({ 1: 0.62, 2: 0.42, 3: 0.24, 4: 0.12, 5: 0.05 }[dna.layoutComplexity])));
   let spreadPairs = 0;
 
-  if (dna.pageCount >= 8 && hashFloat(seed, 'divider') > 0.44) plan.push({ module: 'chapter_divider' });
+  if (dna.pageCount >= 8 && dna.layoutComplexity <= 3) plan.push({ module: 'chapter_divider' });
+  else if (dna.pageCount >= 8 && hashFloat(seed, 'divider') > 0.44) plan.push({ module: 'chapter_divider' });
 
   const denseGalleryChance = dna.imageDensity === 'maximal' ? 0.92 : dna.imageDensity === 'high' ? 0.72 : dna.pageCount >= 12 ? 0.48 : 0.24;
-  if (plan.length < dna.pageCount - 2 && hashFloat(seed, 'dense-gallery') < denseGalleryChance) {
+  if (dna.layoutComplexity >= 4 && plan.length < dna.pageCount - 2 && hashFloat(seed, 'dense-gallery') < denseGalleryChance) {
     plan.push({ module: pick(['photo_grid_9', 'photo_grid_12', 'contact_sheet_20', 'catalog_labels'], seed, 'dense-gallery-module') });
   }
 
   while (plan.length < dna.pageCount - 1) {
     const remaining = dna.pageCount - 1 - plan.length;
     const canAddSpread = remaining >= 2 && spreadPairs < desiredSpreadPairs;
-    const spreadChance = 0.18 + dna.experimentalLevel * 0.055;
+    const spreadChance = dna.layoutComplexity <= 2 ? 0.08 : 0.12 + dna.layoutComplexity * 0.045 + dna.experimentalLevel * 0.025;
 
     if (canAddSpread && hashFloat(seed, `spread:${plan.length}`) < spreadChance) {
       const kind = pick(['panorama', 'split-feature', 'quote-spread'], seed, `spread-kind:${plan.length}`);
@@ -867,7 +965,12 @@ function buildPagePlan(dna, seed) {
     }
 
     const usedModules = plan.map(entry => entry.module);
-    plan.push({ module: choosePageModule(mixedPool, usedModules, seed, plan.length) });
+    const simpleSoFar = plan.filter(entry => SIMPLE_PAGE_MODULES.includes(entry.module)).length;
+    const needsSimplePage = simpleSoFar < simpleTarget;
+    const simpleChance = { 1: 0.78, 2: 0.58, 3: 0.30, 4: 0.14, 5: 0.06 }[dna.layoutComplexity];
+    const useSimplePool = needsSimplePage || hashFloat(seed, `simple-page:${plan.length}`) < simpleChance;
+    const pool = useSimplePool ? SIMPLE_PAGE_MODULES : mixedPool;
+    plan.push({ module: choosePageModule(pool, usedModules, seed, plan.length) });
   }
 
   plan.push({ module: 'closing' });
@@ -875,17 +978,22 @@ function buildPagePlan(dna, seed) {
   return plan.slice(0, dna.pageCount).map((entry, index) => {
     const module = entry.module;
     const config = PAGE_MODULES[module];
-    const layout = pick(config.layouts, seed, `module-layout:${index}`);
+    const isSimplePage = SIMPLE_PAGE_MODULES.includes(module);
+    const calmLayouts = config.layouts.filter(layout => ['minimal', 'vertical', 'split', 'full', 'poster'].includes(layout));
+    const layout = pick(isSimplePage && dna.layoutComplexity <= 2 && calmLayouts.length ? calmLayouts : config.layouts, seed, `module-layout:${index}`);
     const effect = pick(dna.effects, seed, `page-effect:${index}`);
-    const typography = hashFloat(seed, `page-typography-bias:${index}`) < 0.52 ? dna.typographyMode : pick(TYPOGRAPHY_MODES, seed, `page-typography:${index}`);
-    const background = hashFloat(seed, `page-background-bias:${index}`) < 0.58 ? dna.backgroundStyle : pick(BACKGROUND_STYLES, seed, `page-background:${index}`);
-    const imageTreatment = hashFloat(seed, `page-image-bias:${index}`) < 0.66 ? dna.imageTreatment : pick(IMAGE_TREATMENTS, seed, `page-image:${index}`);
-    const textAlign = pick(['left', 'left', 'center', 'right'], seed, `text-align:${index}`);
-    const rotation = Number(((hashFloat(seed, `rotation:${index}`) - 0.5) * (dna.experimentalLevel * 2.8)).toFixed(2));
+    const axisBias = dna.layoutComplexity <= 2 ? 0.88 : 0.52;
+    const typography = hashFloat(seed, `page-typography-bias:${index}`) < axisBias ? dna.typographyMode : pick(TYPOGRAPHY_MODES, seed, `page-typography:${index}`);
+    const background = hashFloat(seed, `page-background-bias:${index}`) < axisBias ? dna.backgroundStyle : pick(BACKGROUND_STYLES, seed, `page-background:${index}`);
+    const imageTreatment = hashFloat(seed, `page-image-bias:${index}`) < Math.max(0.66, axisBias) ? dna.imageTreatment : pick(IMAGE_TREATMENTS, seed, `page-image:${index}`);
+    const textAlign = isSimplePage ? pick(['left', 'left', 'center'], seed, `text-align:${index}`) : pick(['left', 'left', 'center', 'right'], seed, `text-align:${index}`);
+    const rotationScale = dna.layoutComplexity <= 2 ? 0 : dna.experimentalLevel * (dna.layoutComplexity - 1) * 0.7;
+    const rotation = Number(((hashFloat(seed, `rotation:${index}`) - 0.5) * rotationScale).toFixed(2));
     const imagePosition = pick(['center', 'center top', 'center bottom', 'left center', 'right center'], seed, `image-position:${index}`);
     const fontFamily = dna.fontPalette[index % dna.fontPalette.length] || dna.fontPalette[0] || 'DM Sans';
     let imageCount = config.imageCount || 0;
     if (index === 0) imageCount = coverImageCount(dna.coverArchetype);
+    if (isSimplePage && dna.layoutComplexity <= 2) imageCount = Math.min(imageCount, 1);
     if (index !== 0 && config.image === 'optional' && hashFloat(seed, `optional-image:${index}`) < 0.38) imageCount = 0;
 
     return {
@@ -904,9 +1012,9 @@ function buildPagePlan(dna, seed) {
       imagePosition,
       fontFamily,
       fontWeight: pick([300, 400, 500, 600, 700, 800, 900], seed, `font-weight:${index}`),
-      headlineScale: headlineScaleFor(module, seed, index),
-      bodyScale: bodyScaleFor(module, seed, index),
-      textColumns: textColumnsFor(module, seed, index),
+      headlineScale: isSimplePage && dna.layoutComplexity <= 2 ? pick(['large', 'huge', 'extreme'], seed, `simple-headline:${index}`) : headlineScaleFor(module, seed, index),
+      bodyScale: isSimplePage && dna.layoutComplexity <= 2 ? pick(['small', 'normal'], seed, `simple-body:${index}`) : bodyScaleFor(module, seed, index),
+      textColumns: isSimplePage && dna.layoutComplexity <= 2 ? 1 : textColumnsFor(module, seed, index),
       spreadId: entry.spreadId || '',
       spreadRole: entry.spreadRole || '',
       spreadKind: entry.spreadKind || ''
@@ -959,7 +1067,7 @@ function bodyForDensity(dna, module, seed, index) {
   const sentenceCount = { 'very-low': 1, low: 2, medium: 3, high: 5 }[density] || 2;
   const pool = sentencePool(dna);
   const selected = pickUnique(pool, sentenceCount, seed, `body:${module}:${index}`);
-  if (['quote_page', 'empty_breath', 'black_page'].includes(module)) return selected[0].split('.')[0] + '.';
+  if (SIMPLE_PAGE_MODULES.includes(module)) return selected[0].split('.')[0] + '.';
   if (module === 'list_page') return selected.map((sentence, itemIndex) => `${itemIndex + 1}. ${sentence}`).join(' ');
   return selected.join(' ');
 }
@@ -1146,6 +1254,10 @@ function aiBrief(dna, pagePlan, index) {
     surpriseElements: dna.surpriseElements,
     era: dna.era,
     style: dna.style,
+    visualMode: dna.visualMode,
+    layoutComplexity: dna.layoutComplexity,
+    effectLevel: dna.effectLevel,
+    effectPreferences: dna.effectPreferences,
     archetype: dna.archetype,
     colorMode: dna.colorMode,
     typographyMode: dna.typographyMode,
@@ -1167,7 +1279,7 @@ function aiBrief(dna, pagePlan, index) {
     fontPalette: dna.fontPalette,
     fontStrategy: dna.fontStrategy,
     printMode: dna.printMode,
-    pagePlan: pagePlan.map(page => ({ module: page.module, type: page.type, layout: page.layout, imageCount: page.imageCount, fontFamily: page.fontFamily, headlineScale: page.headlineScale, spreadId: page.spreadId, spreadRole: page.spreadRole }))
+    pagePlan: pagePlan.map(page => ({ module: page.module, type: page.type, layout: page.layout, imageCount: page.imageCount, fontFamily: page.fontFamily, headlineScale: page.headlineScale, bodyScale: page.bodyScale, spreadId: page.spreadId, spreadRole: page.spreadRole }))
   };
 }
 
@@ -1193,6 +1305,8 @@ Follow each numbered design brief and its pagePlan. The pagePlan order is mandat
 Rules:
 - Do not fall back to a generic art-magazine template.
 - Vary text length strongly: some pages may contain one short line, others a compact paragraph or factual list.
+- Treat chapter_divider, quote_page, white_page, black_page, empty_breath, typographic_poster, giant_fact and dedication_page as deliberate simple pages: one strong heading plus a short subtitle or micro-description is enough.
+- Respect layoutComplexity. Levels 1–2 must feel spacious and simple; do not turn their quiet pages into dense reports.
 - Vary page rhythm strongly: image-only feeling, tiny captions, huge type, archive, data, pause, collage and narrative pages should feel different.
 - Keep copy concise enough to fit an A5 page, but vary volume radically from one-line pages to dense multi-column reference pages.
 - Respect contact-sheet and gallery modules: they may contain 4, 6, 9, 12 or 20 photographs with tiny labels.

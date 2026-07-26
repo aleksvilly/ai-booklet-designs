@@ -62,9 +62,36 @@ on:
         options: [mixed, unsplash, openverse]
 
       style:
-        description: Style ID (auto, civic-nonprofit, eu-institutional, public-department, pan-european-newsroom, or another generator ID)
+        description: Editorial profile ID
         required: false
         default: auto
+        type: string
+
+      visual_mode:
+        description: Visual language
+        required: true
+        default: auto
+        type: choice
+        options: [auto, minimal, abstract, mixed]
+
+      layout_complexity:
+        description: Page complexity (1 spacious, 5 dense)
+        required: true
+        default: '2'
+        type: choice
+        options: ['1', '2', '3', '4', '5']
+
+      effect_level:
+        description: Effects intensity
+        required: true
+        default: '2'
+        type: choice
+        options: ['0', '1', '2', '3', '4', '5']
+
+      effects:
+        description: Optional comma-separated effect preferences
+        required: false
+        default: ''
         type: string
 
       fonts:
@@ -141,6 +168,10 @@ jobs:
           CHAOS_LEVEL: ${{ github.event_name == 'workflow_dispatch' && inputs.chaos_level || '-1' }}
           MAX_FONTS: ${{ github.event_name == 'workflow_dispatch' && inputs.max_fonts || '20' }}
           BOOKLET_STYLE: ${{ github.event_name == 'workflow_dispatch' && inputs.style != 'auto' && inputs.style || '' }}
+          VISUAL_MODE: ${{ github.event_name == 'workflow_dispatch' && inputs.visual_mode || 'auto' }}
+          LAYOUT_COMPLEXITY: ${{ github.event_name == 'workflow_dispatch' && inputs.layout_complexity || '2' }}
+          EFFECT_LEVEL: ${{ github.event_name == 'workflow_dispatch' && inputs.effect_level || '2' }}
+          BOOKLET_EFFECTS: ${{ github.event_name == 'workflow_dispatch' && inputs.effects || '' }}
           BOOKLET_FONTS: ${{ github.event_name == 'workflow_dispatch' && inputs.fonts || '' }}
           BOOKLET_TOPIC: ${{ github.event_name == 'workflow_dispatch' && inputs.topic || '' }}
           BOOKLET_DESCRIPTION: ${{ github.event_name == 'workflow_dispatch' && inputs.description || '' }}

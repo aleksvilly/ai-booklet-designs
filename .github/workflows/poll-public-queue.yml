@@ -103,16 +103,27 @@ jobs:
               const allowedChaos = new Set(['-1', '0', '1', '2', '3', '4', '5']);
               const allowedFonts = new Set(['2', '4', '8', '12', '20']);
               const allowedProviders = new Set(['auto', 'openai-first', 'gemini-first', 'local']);
+              const allowedVisualModes = new Set(['auto', 'minimal', 'abstract', 'mixed']);
+              const allowedComplexity = new Set(['1', '2', '3', '4', '5']);
+              const allowedEffectLevels = new Set(['0', '1', '2', '3', '4', '5']);
+              const allowedEffectTokens = new Set(['blur', 'monochrome', 'invert', 'grain', 'halftone']);
               const allowedStyles = new Set([
                 'auto',
                 'civic-nonprofit',
                 'eu-institutional',
                 'public-department',
-                'pan-european-newsroom'
+                'pan-european-newsroom',
+                'euronews-inspired',
+                'dw-inspired'
               ]);
 
               const selectedStyle = clean(data.style, 80) || 'auto';
               const customStyle = clean(data.custom_style, 180);
+              const effects = clean(data.effects, 160)
+                .split(',')
+                .map(value => clean(value, 30))
+                .filter(value => allowedEffectTokens.has(value))
+                .join(',');
               const description = clean([
                 customStyle ? `Custom visual direction: ${customStyle}.` : '',
                 clean(data.description, 700)
@@ -128,6 +139,10 @@ jobs:
                   `topic: ${topic}`,
                   `style: ${allowedStyles.has(selectedStyle) ? selectedStyle : 'auto'}`,
                   `custom_style: ${customStyle}`,
+                  `visual_mode: ${allowedVisualModes.has(clean(data.visual_mode, 20)) ? clean(data.visual_mode, 20) : 'auto'}`,
+                  `layout_complexity: ${allowedComplexity.has(clean(data.layout_complexity, 2)) ? clean(data.layout_complexity, 2) : '2'}`,
+                  `effect_level: ${allowedEffectLevels.has(clean(data.effect_level, 2)) ? clean(data.effect_level, 2) : '2'}`,
+                  `effects: ${effects}`,
                   `count: 1`,
                   `chaos_level: ${allowedChaos.has(clean(data.chaos_level, 2)) ? clean(data.chaos_level, 2) : '-1'}`,
                   `max_fonts: ${allowedFonts.has(clean(data.max_fonts, 2)) ? clean(data.max_fonts, 2) : '20'}`,
@@ -158,6 +173,10 @@ jobs:
                   max_fonts: allowedFonts.has(clean(data.max_fonts, 2)) ? clean(data.max_fonts, 2) : '20',
                   image_provider: 'mixed',
                   style: allowedStyles.has(selectedStyle) ? selectedStyle : 'auto',
+                  visual_mode: allowedVisualModes.has(clean(data.visual_mode, 20)) ? clean(data.visual_mode, 20) : 'auto',
+                  layout_complexity: allowedComplexity.has(clean(data.layout_complexity, 2)) ? clean(data.layout_complexity, 2) : '2',
+                  effect_level: allowedEffectLevels.has(clean(data.effect_level, 2)) ? clean(data.effect_level, 2) : '2',
+                  effects,
                   fonts: clean(data.custom_fonts, 240),
                   topic,
                   description,
