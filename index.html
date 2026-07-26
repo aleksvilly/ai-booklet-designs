@@ -217,6 +217,7 @@
     <div class="request-dialog-grid">
       <div class="request-waiting-visual">
         <img id="request-waiting-gif" alt="Animated waiting scene">
+        <strong class="request-visual-state" id="request-visual-state">Waiting in queue</strong>
         <button class="gif-change-button" id="gif-change-button" type="button">Change GIF ↻</button>
       </div>
       <div class="request-progress-panel">
@@ -229,14 +230,20 @@
           <span>Saved requests</span>
           <select id="request-history-select"></select>
         </label>
+        <ol class="request-steps" id="request-steps" aria-label="Booklet generation progress">
+          <li><i aria-hidden="true">✓</i><span>Sent &amp; queued</span></li>
+          <li><i aria-hidden="true">✓</i><span>Preparing</span></li>
+          <li><i aria-hidden="true">✓</i><span>Ready</span></li>
+          <li><i aria-hidden="true">✓</i><span>Published</span></li>
+        </ol>
         <div class="request-timer-block">
-          <span>Elapsed time</span>
+          <span id="request-timer-label">Elapsed time</span>
           <strong id="request-timer">00:00</strong>
         </div>
         <p class="request-status-copy" id="request-status-copy">The public queue has accepted your request.</p>
         <div class="request-progress-actions">
           <button class="secondary-button" id="request-check-button" type="button">Check status</button>
-          <a class="primary-button" id="request-view-button" href="./" hidden>View booklet ↗</a>
+          <a class="primary-button" id="request-view-button" aria-disabled="true">Booklet is being prepared…</a>
           <a class="text-button request-issue-link" id="request-issue-link" href="#" target="_blank" rel="noopener" hidden>Open GitHub status ↗</a>
         </div>
       </div>
