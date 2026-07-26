@@ -10,7 +10,9 @@ permissions:
 
 jobs:
   dispatch-generation:
-    if: startsWith(github.event.issue.title, '[BOOKLET REQUEST]')
+    if: >-
+      startsWith(github.event.issue.title, '[BOOKLET REQUEST]') &&
+      contains(github.event.issue.labels.*.name, 'formspree')
     runs-on: ubuntu-latest
 
     steps:
