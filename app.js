@@ -11,6 +11,8 @@ const menuToggle = document.querySelector('#menu-toggle');
 const siteNav = document.querySelector('#site-nav');
 const contactForm = document.querySelector('#contact-form');
 const contactFormStatus = document.querySelector('#contact-form-status');
+const generationForm = document.querySelector('#generation-form');
+const generationFormStatus = document.querySelector('#generation-form-status');
 
 let allBooklets = [];
 let activeFilter = 'All';
@@ -51,40 +53,42 @@ document.addEventListener('keydown', event => {
   if (event.key === 'Escape') setMenu(false);
 });
 
-contactForm.addEventListener('submit', async event => {
+async function sendForm(event, formStatus, successMessage) {
   event.preventDefault();
-  const formData = new FormData(contactForm);
-  const name = String(formData.get('name') || '').trim();
-  const contact = String(formData.get('contact') || '').trim();
-  const message = String(formData.get('message') || '').trim();
-  const submitButton = contactForm.querySelector('button[type="submit"]');
-
-  if (!name || !contact || !message) {
-    contactFormStatus.textContent = 'Please complete all fields.';
-    return;
-  }
+  const form = event.currentTarget;
+  const formData = new FormData(form);
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalLabel = submitButton.textContent;
 
   submitButton.disabled = true;
   submitButton.textContent = 'Sending…';
-  contactFormStatus.textContent = '';
+  formStatus.textContent = '';
 
   try {
-    const response = await fetch(contactForm.action, {
+    const response = await fetch(form.action, {
       method: 'POST',
       body: formData,
       headers: { Accept: 'application/json' }
     });
 
     if (!response.ok) throw new Error(`Formspree returned ${response.status}`);
-    contactForm.reset();
-    contactFormStatus.textContent = 'Thank you — your message has been sent.';
+    form.reset();
+    formStatus.textContent = successMessage;
   } catch (error) {
     console.error(error);
-    contactFormStatus.textContent = 'The message could not be sent. Please try again.';
+    formStatus.textContent = 'The request could not be sent. Please try again.';
   } finally {
     submitButton.disabled = false;
-    submitButton.textContent = 'Send message';
+    submitButton.textContent = originalLabel;
   }
+}
+
+contactForm.addEventListener('submit', event => {
+  sendForm(event, contactFormStatus, 'Thank you — your message has been sent.');
+});
+
+generationForm.addEventListener('submit', event => {
+  sendForm(event, generationFormStatus, 'Your generation request has been received for review.');
 });
 
 function escapeHtml(value = '') {
