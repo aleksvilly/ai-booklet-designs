@@ -61,6 +61,18 @@ on:
         type: choice
         options: [mixed, unsplash, openverse]
 
+      style:
+        description: Style ID (auto, civic-nonprofit, eu-institutional, public-department, pan-european-newsroom, or another generator ID)
+        required: false
+        default: auto
+        type: string
+
+      fonts:
+        description: Optional comma-separated Google Font families
+        required: false
+        default: ''
+        type: string
+
       topic:
         description: Booklet topic (leave empty for automatic selection)
         required: false
@@ -121,6 +133,8 @@ jobs:
           AI_PROVIDER: ${{ github.event_name == 'schedule' && 'auto' || (!inputs.use_ai && 'local' || inputs.ai_provider) }}
           CHAOS_LEVEL: ${{ github.event_name == 'workflow_dispatch' && inputs.chaos_level || '-1' }}
           MAX_FONTS: ${{ github.event_name == 'workflow_dispatch' && inputs.max_fonts || '20' }}
+          BOOKLET_STYLE: ${{ github.event_name == 'workflow_dispatch' && inputs.style != 'auto' && inputs.style || '' }}
+          BOOKLET_FONTS: ${{ github.event_name == 'workflow_dispatch' && inputs.fonts || '' }}
           BOOKLET_TOPIC: ${{ github.event_name == 'workflow_dispatch' && inputs.topic || '' }}
           BOOKLET_DESCRIPTION: ${{ github.event_name == 'workflow_dispatch' && inputs.description || '' }}
           BOOKLET_RUN_ID: ${{ github.run_id }}
