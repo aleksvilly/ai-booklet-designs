@@ -87,10 +87,12 @@ html[data-theme="dark"] .theme-toggle-icon {
 
 main { overflow: hidden; }
 .hero {
-  min-height: 74vh;
+  min-height: calc(100vh - 72px);
   display: grid;
-  align-content: center;
-  padding: clamp(72px, 10vw, 150px) clamp(20px, 8vw, 130px);
+  grid-template-columns: minmax(0, 1.05fr) minmax(430px, .75fr);
+  align-items: center;
+  gap: clamp(46px, 7vw, 112px);
+  padding: clamp(58px, 7vw, 105px) clamp(20px, 5vw, 82px);
   position: relative;
 }
 .hero::after {
@@ -106,12 +108,31 @@ main { overflow: hidden; }
   pointer-events: none;
 }
 .eyebrow { margin: 0 0 20px; font: 500 11px/1.2 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .12em; }
-.hero h1 { margin: 0; max-width: 1000px; font-size: clamp(54px, 9.4vw, 150px); line-height: .88; letter-spacing: -.07em; font-weight: 600; }
+.hero-intro, .hero-generator { position: relative; z-index: 1; }
+.hero h1 { margin: 0; max-width: 850px; font-size: clamp(52px, 6.8vw, 108px); line-height: .88; letter-spacing: -.07em; font-weight: 600; }
 .hero h1 em { font-family: "Playfair Display", serif; font-weight: 600; }
 .hero-copy { max-width: 610px; margin: 40px 0 0; font-size: clamp(17px, 2vw, 23px); line-height: 1.45; color: var(--muted); }
 .hero-actions { display: flex; align-items: center; gap: 28px; margin-top: 38px; }
 .primary-button { display: inline-flex; align-items: center; min-height: 50px; padding: 0 22px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 600; }
 .text-button { border: 0; border-bottom: 1px solid currentColor; padding: 4px 0; background: none; cursor: pointer; }
+.hero-generator {
+  padding: clamp(24px, 3vw, 42px);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 92%, var(--white));
+  box-shadow: 18px 18px 0 color-mix(in srgb, var(--ink) 8%, transparent);
+}
+.generator-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.generator-heading .eyebrow { margin-bottom: 8px; }
+.generator-heading h2 { font-size: clamp(31px, 3vw, 46px); }
+.automation-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line); font: 500 9px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .07em; white-space: nowrap; }
+.automation-badge i { width: 7px; height: 7px; border-radius: 50%; background: #1eaa59; box-shadow: 0 0 0 4px rgba(30,170,89,.12); }
+.hero-generator .request-fields { gap: 15px; margin-bottom: 18px; }
+.hero-generator textarea { min-height: 100px; }
+.generator-advanced { margin: 0 0 22px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.generator-advanced summary { padding: 15px 0; cursor: pointer; font: 500 11px/1.2 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
+.generator-advanced[open] summary { margin-bottom: 17px; border-bottom: 1px solid var(--line); }
+.generator-note { margin: 16px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.generator-note a { text-underline-offset: 3px; }
 
 .manifesto {
   display: grid;
@@ -284,6 +305,7 @@ footer a { text-underline-offset: 3px; }
   .manifesto article:last-child { border-bottom: 0; }
   .manifesto strong { margin-top: 30px; }
   .booklet-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero { grid-template-columns: 1fr; }
   .detail-hero { grid-template-columns: 1fr; }
   .detail-meta { border-left: 0; border-top: 1px solid color-mix(in srgb, var(--c4) 25%, transparent); }
   .contact-section { grid-template-columns: 1fr; }
@@ -320,8 +342,11 @@ footer a { text-underline-offset: 3px; }
   .site-nav a::after { display: none; }
   .theme-toggle-label { display: none; }
   .theme-toggle { width: 36px; padding: 0; justify-content: center; }
-  .hero { min-height: 80vh; }
+  .hero { min-height: auto; padding-top: 55px; padding-bottom: 72px; }
   .hero-actions { align-items: flex-start; flex-direction: column; gap: 18px; }
+  .hero-generator { padding: 22px 18px; box-shadow: 9px 9px 0 color-mix(in srgb, var(--ink) 8%, transparent); }
+  .generator-heading { display: grid; }
+  .automation-badge { justify-self: start; }
   .section-heading { align-items: flex-start; flex-direction: column; }
   .filters { justify-content: flex-start; overflow-x: auto; width: calc(100vw - 40px); flex-wrap: nowrap; padding-bottom: 6px; }
   .filter-button { white-space: nowrap; }
