@@ -12,7 +12,7 @@ jobs:
   dispatch-generation:
     if: >-
       startsWith(github.event.issue.title, '[BOOKLET REQUEST]') &&
-      contains(github.event.issue.labels.*.name, 'formspree')
+      contains(github.event.issue.labels.*.name, 'booklet-request')
     runs-on: ubuntu-latest
 
     steps:
