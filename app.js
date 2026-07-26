@@ -91,7 +91,7 @@ generationForm.addEventListener('submit', event => {
   sendForm(
     event,
     generationFormStatus,
-    'Request saved — thank you. It will be reviewed before publication.'
+    'Request accepted — generation will start automatically.'
   );
 });
 
