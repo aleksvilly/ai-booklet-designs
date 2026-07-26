@@ -7,9 +7,10 @@ const countNode = document.querySelector('#published-count');
 const emptyState = document.querySelector('#empty-state');
 const themeToggle = document.querySelector('#theme-toggle');
 const themeColor = document.querySelector('#theme-color');
+const menuToggle = document.querySelector('#menu-toggle');
+const siteNav = document.querySelector('#site-nav');
 const contactForm = document.querySelector('#contact-form');
 const contactFormStatus = document.querySelector('#contact-form-status');
-const contactStorageKey = 'booklet-contact-messages';
 
 let allBooklets = [];
 let activeFilter = 'All';
@@ -32,37 +33,58 @@ themeToggle.addEventListener('click', () => {
   applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
 });
 
-function storedMessages() {
-  try {
-    const messages = JSON.parse(localStorage.getItem(contactStorageKey) || '[]');
-    return Array.isArray(messages) ? messages : [];
-  } catch {
-    return [];
-  }
+function setMenu(open) {
+  siteNav.classList.toggle('is-open', open);
+  menuToggle.setAttribute('aria-expanded', String(open));
+  menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
 }
 
-contactForm.addEventListener('submit', event => {
+menuToggle.addEventListener('click', () => {
+  setMenu(!siteNav.classList.contains('is-open'));
+});
+
+siteNav.addEventListener('click', event => {
+  if (event.target.closest('a')) setMenu(false);
+});
+
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') setMenu(false);
+});
+
+contactForm.addEventListener('submit', async event => {
   event.preventDefault();
   const formData = new FormData(contactForm);
-  const message = {
-    id: crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`,
-    name: String(formData.get('name') || '').trim(),
-    contact: String(formData.get('contact') || '').trim(),
-    message: String(formData.get('message') || '').trim(),
-    createdAt: new Date().toISOString(),
-    read: false
-  };
+  const name = String(formData.get('name') || '').trim();
+  const contact = String(formData.get('contact') || '').trim();
+  const message = String(formData.get('message') || '').trim();
+  const submitButton = contactForm.querySelector('button[type="submit"]');
 
-  if (!message.name || !message.contact || !message.message) {
+  if (!name || !contact || !message) {
     contactFormStatus.textContent = 'Please complete all fields.';
     return;
   }
 
-  const messages = storedMessages();
-  messages.unshift(message);
-  localStorage.setItem(contactStorageKey, JSON.stringify(messages.slice(0, 100)));
-  contactForm.reset();
-  contactFormStatus.textContent = 'Message saved. Open the demo inbox to view it.';
+  submitButton.disabled = true;
+  submitButton.textContent = 'Sending…';
+  contactFormStatus.textContent = '';
+
+  try {
+    const response = await fetch(contactForm.action, {
+      method: 'POST',
+      body: formData,
+      headers: { Accept: 'application/json' }
+    });
+
+    if (!response.ok) throw new Error(`Formspree returned ${response.status}`);
+    contactForm.reset();
+    contactFormStatus.textContent = 'Thank you — your message has been sent.';
+  } catch (error) {
+    console.error(error);
+    contactFormStatus.textContent = 'The message could not be sent. Please try again.';
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = 'Send message';
+  }
 });
 
 function escapeHtml(value = '') {
