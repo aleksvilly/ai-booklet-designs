@@ -2,8 +2,11 @@ name: Poll public request queue
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '2-57/5 * * * *'
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/poll-public-queue.yml'
 
 permissions:
   actions: write
@@ -53,8 +56,9 @@ jobs:
 
             const processedIds = new Set();
             for (const issue of existingIssues) {
-              const match = String(issue.body || '').match(/<!-- ntfy-id: ([a-zA-Z0-9_-]+) -->/);
-              if (match) processedIds.add(match[1]);
+              for (const match of String(issue.body || '').matchAll(/<!-- ntfy-id: ([a-zA-Z0-9_-]+) -->/g)) {
+                processedIds.add(match[1]);
+              }
             }
 
             const labels = [
