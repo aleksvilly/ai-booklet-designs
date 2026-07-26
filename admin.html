@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f0e8" id="theme-color">
+  <title>Demo Inbox — AI Booklet Designs</title>
+  <script>
+    (() => {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="admin-page">
+    <header class="admin-header">
+      <div>
+        <p class="eyebrow">Browser storage / demo</p>
+        <h1>Contact inbox</h1>
+      </div>
+      <a class="admin-back" href="./#contact">← Back to website</a>
+    </header>
+
+    <p class="admin-note">This is a prototype, not a secure admin panel. It shows only messages submitted in this browser on this device. Do not use it for real customer data.</p>
+
+    <div class="inbox-toolbar">
+      <p id="message-count">0 messages</p>
+      <button id="clear-messages" type="button">Clear all</button>
+    </div>
+    <section class="message-list" id="message-list" aria-live="polite"></section>
+  </main>
+
+  <script type="module" src="./admin.js"></script>
+</body>
+</html>
