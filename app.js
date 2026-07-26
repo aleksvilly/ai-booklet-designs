@@ -5,6 +5,7 @@ const dialog = document.querySelector('#booklet-dialog');
 const dialogContent = document.querySelector('#dialog-content');
 const countNode = document.querySelector('#published-count');
 const emptyState = document.querySelector('#empty-state');
+const paginationNode = document.querySelector('#pagination');
 const themeToggle = document.querySelector('#theme-toggle');
 const themeColor = document.querySelector('#theme-color');
 const menuToggle = document.querySelector('#menu-toggle');
@@ -33,6 +34,8 @@ const requestIssueLink = document.querySelector('#request-issue-link');
 
 let allBooklets = [];
 let activeFilter = 'All';
+let currentPage = 1;
+const itemsPerPage = 9;
 const loadedFontRequests = new Set();
 const today = new Date();
 today.setHours(23, 59, 59, 999);
@@ -644,7 +647,7 @@ function imageCredit(image, compact = false) {
   if (compact) {
     return `<a href="${creatorUrl}" target="_blank" rel="noopener">${creator}</a> / <a href="${sourceUrl}" target="_blank" rel="noopener">${source}</a>`;
   }
-  return `© <a href="${creatorUrl}" target="_blank" rel="noopener">${creator}</a> · <a href="${sourceUrl}" target="_blank" rel="noopener">${source}</a> · <a href="${licenseUrl}" target="_blank" rel="noopener">${license}</a>`;
+  return `© <a href="${creatorUrl}" target="_blank" rel="noopener">${creator}</a> · <a href="${sourceUrl}" target="_blank" rel="noopener">${source}</a> · <a href="${licenseUrl}" target="_blank[...]
 }
 
 function createCardCoverMedia(cover, item, page, index) {
@@ -682,22 +685,95 @@ function renderFilters() {
     button.textContent = category;
     button.addEventListener('click', () => {
       activeFilter = category;
+      currentPage = 1;
       renderFilters();
       renderCards();
+      renderPagination();
     });
     filtersNode.append(button);
   }
 }
 
+function renderPagination() {
+  const items = visibleBooklets();
+  const totalPages = Math.ceil(items.length / itemsPerPage);
+  paginationNode.innerHTML = '';
+
+  if (totalPages <= 1) return;
+
+  const createButton = (text, page, disabled = false) => {
+    const button = document.createElement('button');
+    button.textContent = text;
+    button.disabled = disabled;
+    button.setAttribute('aria-current', page === currentPage ? 'page' : 'false');
+    if (!disabled) {
+      button.addEventListener('click', () => {
+        currentPage = page;
+        renderCards();
+        renderPagination();
+        grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+    return button;
+  };
+
+  if (currentPage > 1) {
+    paginationNode.append(createButton('← Previous', currentPage - 1));
+  }
+
+  const maxVisible = 5;
+  let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+  let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+  if (endPage - startPage + 1 < maxVisible) {
+    startPage = Math.max(1, endPage - maxVisible + 1);
+  }
+
+  if (startPage > 1) {
+    paginationNode.append(createButton('1', 1));
+    if (startPage > 2) {
+      const dots = document.createElement('span');
+      dots.textContent = '…';
+      dots.style.padding = '0 8px';
+      paginationNode.append(dots);
+    }
+  }
+
+  for (let page = startPage; page <= endPage; page += 1) {
+    paginationNode.append(createButton(String(page), page, page === currentPage));
+  }
+
+  if (endPage < totalPages) {
+    if (endPage < totalPages - 1) {
+      const dots = document.createElement('span');
+      dots.textContent = '…';
+      dots.style.padding = '0 8px';
+      paginationNode.append(dots);
+    }
+    paginationNode.append(createButton(String(totalPages), totalPages));
+  }
+
+  if (currentPage < totalPages) {
+    paginationNode.append(createButton('Next →', currentPage + 1));
+  }
+}
+
 function renderCards() {
   const items = visibleBooklets();
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const pageItems = items.slice(startIndex, endIndex);
+  
   grid.innerHTML = '';
   emptyState.hidden = items.length > 0;
 
-  const collectionFonts = items.slice(0, 18).flatMap(item => fontsFor(item).slice(0, 2));
+  if (pageItems.length === 0) {
+    return;
+  }
+
+  const collectionFonts = pageItems.slice(0, 18).flatMap(item => fontsFor(item).slice(0, 2));
   loadGoogleFonts(collectionFonts, 'collection');
 
-  items.forEach((item, index) => {
+  pageItems.forEach((item, index) => {
     const pages = pagesFor(item);
     const firstPage = pages[0] || {};
     const dna = item.designDna || {};
@@ -713,7 +789,7 @@ function renderCards() {
 
     card.querySelector('.cover-kicker').textContent = `${item.era} / ${item.style}`;
     card.querySelector('.cover-title').textContent = coverTitle(item.title);
-    card.querySelector('.cover-number').textContent = String(index + 1).padStart(2, '0');
+    card.querySelector('.cover-number').textContent = String(startIndex + index + 1).padStart(2, '0');
     card.querySelector('.card-audience').textContent = `For ${item.audience} · ${pages.length} print pages · ${dna.fontCount || fontsFor(item).length || 2} fonts`;
     card.querySelector('.card-title').textContent = item.title;
     card.querySelector('.card-direction').textContent = item.direction;
@@ -816,7 +892,7 @@ function coverVisualMarkup(item, page) {
   const images = imagesForPage(page).slice(0, 20);
   if (!images.length) return '<span class="detail-cover-art detail-cover-art-a"></span><span class="detail-cover-art detail-cover-art-b"></span>';
   return `<div class="detail-cover-media detail-cover-media-${images.length}">
-    ${images.map((image, index) => `<figure><img data-src="${escapeHtml(safeUrl(image.url))}" alt="${escapeHtml(image.alt || item.title)}" decoding="async"><figcaption>${imageCredit(image, true)}</figcaption></figure>`).join('')}
+    ${images.map((image, index) => `<figure><img data-src="${escapeHtml(safeUrl(image.url))}" alt="${escapeHtml(image.alt || item.title)}" decoding="async"><figcaption>${imageCredit(image, true)}[...]
   </div>`;
 }
 
@@ -826,7 +902,7 @@ function detailHtml(item) {
   const dna = item.designDna || {};
   const classes = designClasses(item);
   const palette = item.palette || ['#f2eee4', '#ed5d40', '#234fde', '#151515'];
-  const style = `--c1:${palette[0]};--c2:${palette[1]};--c3:${palette[2]};--c4:${palette[3]};--font-cover:${fontStack(dna.fontPalette?.[0] || 'Playfair Display')};--font-body:${fontStack(dna.fontPalette?.[1] || 'DM Sans')}`;
+  const style = `--c1:${palette[0]};--c2:${palette[1]};--c3:${palette[2]};--c4:${palette[3]};--font-cover:${fontStack(dna.fontPalette?.[0] || 'Playfair Display')};--font-body:${fontStack(dna.font[...]
 
   return `<section class="detail-hero ${classes}" style="${escapeHtml(style)}">
       <div class="detail-cover cover-${safeClass(dna.coverArchetype || 'type-only')}">
@@ -1008,6 +1084,7 @@ async function init() {
   countNode.textContent = `${allBooklets.filter(isPublished).length} published`;
   renderFilters();
   renderCards();
+  renderPagination();
 
   const requestedId = new URL(window.location.href).searchParams.get('booklet');
   const requested = allBooklets.find(item => item.id === requestedId && isPublished(item));
