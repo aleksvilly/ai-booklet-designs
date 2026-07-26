@@ -34,6 +34,12 @@ const alreadyToday = existing.filter(item => item.publishDate === date).length;
 const count = force ? requestedCount : Math.max(0, requestedCount - alreadyToday);
 const configuredChaos = clampInt(process.env.CHAOS_LEVEL, 0, 5, -1);
 const configuredFontLimit = clampInt(process.env.MAX_FONTS, 2, 20, 20);
+const configuredStyleId = cleanInput(process.env.BOOKLET_STYLE, 80);
+const configuredFonts = cleanInput(process.env.BOOKLET_FONTS, 500)
+  .split(',')
+  .map(font => cleanInput(font, 80))
+  .filter(Boolean)
+  .slice(0, configuredFontLimit);
 const customTopic = cleanInput(process.env.BOOKLET_TOPIC, 140);
 const customDescription = cleanInput(process.env.BOOKLET_DESCRIPTION, 800);
 const hasCustomBrief = Boolean(customTopic || customDescription);
@@ -213,10 +219,24 @@ const CATEGORIES = [
     id: 'countries', label: 'Countries', weight: 7,
     audiences: ['the Traveller', 'the Expat', 'the Culture Lover', 'the Student'],
     subjects: ['Latvia through textures', 'Japan after rain', 'Italy through roadside signs', 'Iceland without landscapes', 'France through cinema objects', 'Estonia in winter light', 'Armenia through stone and fruit']
+  },
+  {
+    id: 'nonprofit', label: 'Non-profit & Community', weight: 8,
+    audiences: ['a Community Organisation', 'a Foundation', 'a Charity', 'a Volunteer Network', 'an Advocacy Group'],
+    subjects: ['an annual impact story', 'volunteer voices', 'one community changing a city', 'a transparent donor report', 'a public-awareness campaign', 'a field project told through people']
+  },
+  {
+    id: 'public-service', label: 'Public Service', weight: 7,
+    audiences: ['a Municipal Department', 'a Public Agency', 'a Cultural Department', 'an EU Programme', 'a Policy Team'],
+    subjects: ['a citizen-friendly annual report', 'public services explained visually', 'a department strategy in plain language', 'an EU-funded project story', 'open data for everyday people', 'a cross-border programme overview']
   }
 ];
 
 const STYLE_FAMILIES = [
+  { id: 'civic-nonprofit', label: 'Human-centred non-profit impact', weight: 8, eras: ['2010s', '2020–2024', '2026'], layouts: ['split', 'grid', 'minimal'], typography: ['clean-sans', 'mixed-serif-sans', 'tiny-editorial'], colors: ['one-accent', 'earthy', 'full-color'], effects: ['caption-rule', 'frame-within-frame', 'organic-border'] },
+  { id: 'eu-institutional', label: 'European institutional clarity', weight: 7, eras: ['2010s', '2020–2024', '2026'], layouts: ['grid', 'minimal', 'vertical'], typography: ['clean-sans', 'tiny-editorial', 'tech-mono'], colors: ['one-accent', 'muted', 'duotone'], effects: ['data-scan', 'map-grid', 'oversized-number'] },
+  { id: 'public-department', label: 'Public department report system', weight: 7, eras: ['2010s', '2020–2024', '2026'], layouts: ['grid', 'split', 'archive'], typography: ['clean-sans', 'condensed-headlines', 'tiny-editorial'], colors: ['muted', 'one-accent', 'black-white'], effects: ['caption-rule', 'registration-marks', 'frame-within-frame'] },
+  { id: 'pan-european-newsroom', label: 'Pan-European broadcast editorial', weight: 6, eras: ['2020–2024', '2025', '2026'], layouts: ['grid', 'split', 'full'], typography: ['clean-sans', 'condensed-headlines', 'tech-mono'], colors: ['high-contrast', 'one-accent', 'dark-tech'], effects: ['data-scan', 'map-grid', 'diagonal-flow'] },
   { id: 'swiss-modernism', label: 'Swiss modernism', weight: 7, eras: ['1960s', '2010s', '2026'], layouts: ['grid', 'minimal', 'split'], typography: ['clean-sans', 'condensed-headlines', 'tiny-editorial'], colors: ['one-accent', 'black-white', 'high-contrast'], effects: ['oversized-number', 'frame-within-frame', 'diagonal-flow'] },
   { id: 'psychedelic-70s', label: '1970s psychedelic editorial', weight: 5, eras: ['1970s'], layouts: ['overlap', 'full', 'asymmetric'], typography: ['huge-serif', 'playful-rounded', 'mixed-serif-sans'], colors: ['neon', 'warm-analog', 'full-color'], effects: ['liquid-shapes', 'grain-texture', 'text-behind-image'] },
   { id: 'scientific-archive', label: 'Analogue scientific archive', weight: 6, eras: ['1960s', '1970s', '2026'], layouts: ['archive', 'grid', 'vertical'], typography: ['tech-mono', 'tiny-editorial', 'typewriter'], colors: ['muted', 'black-white', 'duotone'], effects: ['diagram-overlay', 'registration-marks', 'paper-fold'] },
@@ -525,9 +545,12 @@ function chooseLogicMode(level, seed, slot) {
 }
 
 function chooseStyleFamily(level, seed) {
+  const configured = STYLE_FAMILIES.find(style => style.id === configuredStyleId);
+  if (configured) return configured;
+
   const weighted = STYLE_FAMILIES.map(style => {
     const experimentalStyle = ['surreal-absurd', 'early-web-maximalism', 'kinetic-type', 'post-punk-zine', 'neo-brutalism', 'soft-3d-surreal'].includes(style.id);
-    const safeStyle = ['documentary-clean', 'museum-clean', 'minimal-poetic', 'luxury-editorial', 'swiss-modernism'].includes(style.id);
+    const safeStyle = ['documentary-clean', 'museum-clean', 'minimal-poetic', 'luxury-editorial', 'swiss-modernism', 'civic-nonprofit', 'eu-institutional', 'public-department'].includes(style.id);
     let weight = style.weight;
     if (level <= 1 && safeStyle) weight *= 2.2;
     if (level <= 1 && experimentalStyle) weight *= 0.25;
@@ -603,6 +626,8 @@ function fontCountFor(level, seed) {
 }
 
 function chooseFontPalette(typographyMode, level, seed) {
+  if (configuredFonts.length) return configuredFonts;
+
   const preferred = preferredFontCategories(typographyMode);
   const count = fontCountFor(level, seed);
   const preferredFonts = FONT_LIBRARY.filter(font => preferred.includes(font.category));
@@ -1043,7 +1068,7 @@ function fallbackPages(dna, pagePlan, title, seed) {
 function bookletLayoutFromDna(dna) {
   if (['neo-brutalism', 'post-punk-zine', 'grunge-90s', 'early-web-maximalism', 'kinetic-type'].includes(dna.styleFamily)) return 'radical';
   if (['black-white-noir', 'soft-3d-surreal', 'cinematic-color-field', 'organic-futurism'].includes(dna.styleFamily)) return 'cinematic';
-  if (['swiss-modernism', 'scientific-archive', 'museum-clean', 'neo-tech-interface', 'documentary-clean'].includes(dna.styleFamily)) return 'grid';
+  if (['swiss-modernism', 'scientific-archive', 'museum-clean', 'neo-tech-interface', 'documentary-clean', 'civic-nonprofit', 'eu-institutional', 'public-department', 'pan-european-newsroom'].includes(dna.styleFamily)) return 'grid';
   return 'editorial';
 }
 
