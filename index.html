@@ -82,15 +82,52 @@
             <span>Editorial profile</span>
             <select name="style" required>
               <option value="auto">Automatic / no brand profile</option>
-              <option value="civic-nonprofit">NGO / non-profit impact</option>
-              <option value="eu-institutional">EU institutional clarity</option>
-              <option value="public-department">Public department report</option>
-              <option value="pan-european-newsroom">European newsroom</option>
-              <option value="euronews-inspired">Euronews-inspired newsroom</option>
-              <option value="dw-inspired">DW-inspired public media</option>
+              <optgroup label="Public &amp; non-profit">
+                <option value="civic-nonprofit">NGO / non-profit impact</option>
+                <option value="eu-institutional">EU institutional clarity</option>
+                <option value="public-department">Public department report</option>
+              </optgroup>
+              <optgroup label="News &amp; media">
+                <option value="pan-european-newsroom">European newsroom</option>
+                <option value="euronews-inspired">Euronews-inspired newsroom</option>
+                <option value="dw-inspired">DW-inspired public media</option>
+                <option value="documentary-clean">Clean documentary report</option>
+              </optgroup>
+              <optgroup label="Science &amp; knowledge">
+                <option value="scientific-journal">Scientific journal</option>
+                <option value="encyclopedia-reference">Encyclopedia / reference book</option>
+                <option value="national-geographic-inspired">National Geographic-inspired expedition</option>
+                <option value="discovery-inspired">Discovery-inspired documentary</option>
+                <option value="scientific-archive">Scientific archive</option>
+                <option value="museum-clean">Museum catalogue</option>
+              </optgroup>
+              <optgroup label="Entertainment &amp; culture">
+                <option value="gaming-editorial">Games / gaming editorial</option>
+                <option value="cinematic-magazine">Films / cinematic magazine</option>
+                <option value="music-culture">Music culture</option>
+                <option value="sports-broadcast">Sports broadcast</option>
+                <option value="comic-pop">Comic / pop culture</option>
+              </optgroup>
+              <optgroup label="Social &amp; digital">
+                <option value="tiktok-inspired">TikTok-inspired vertical culture</option>
+                <option value="instagram-inspired">Instagram-inspired visual feed</option>
+                <option value="facebook-inspired">Facebook-inspired community story</option>
+                <option value="youtube-inspired">YouTube-inspired video editorial</option>
+                <option value="early-web-maximalism">Early-web maximalism</option>
+                <option value="y2k-liquid">Y2K liquid digital</option>
+              </optgroup>
+              <optgroup label="Art &amp; design">
+                <option value="swiss-modernism">Swiss modernism</option>
+                <option value="minimal-poetic">Poetic minimalism</option>
+                <option value="luxury-editorial">Luxury editorial</option>
+                <option value="neo-brutalism">Neo-brutalism</option>
+                <option value="psychedelic-70s">1970s psychedelic</option>
+                <option value="post-punk-zine">Post-punk zine</option>
+                <option value="risograph-craft">Risograph craft</option>
+                <option value="surreal-absurd">Surreal / absurd</option>
+              </optgroup>
               <option value="custom">My own style</option>
             </select>
-            <small class="field-hint">Profile sets colour, typography and editorial tone—not the amount of visual experimentation.</small>
           </label>
           <label>
             <span>Visual language</span>
@@ -117,12 +154,26 @@
           <summary>Advanced direction</summary>
           <div class="request-fields">
             <fieldset class="effect-picker field-wide">
-              <legend>Preferred effects (optional, combine freely)</legend>
+              <legend>Preferred effects (optional — intensity controls how many are used)</legend>
               <label><input name="effects" type="checkbox" value="blur"> Blur</label>
               <label><input name="effects" type="checkbox" value="monochrome"> Black &amp; white</label>
               <label><input name="effects" type="checkbox" value="invert"> Inverted</label>
               <label><input name="effects" type="checkbox" value="grain"> Grain</label>
               <label><input name="effects" type="checkbox" value="halftone"> Halftone</label>
+              <label><input name="effects" type="checkbox" value="glow"> Glow</label>
+              <label><input name="effects" type="checkbox" value="duotone"> Duotone</label>
+              <label><input name="effects" type="checkbox" value="glitch"> Digital glitch</label>
+              <label><input name="effects" type="checkbox" value="chrome"> Chrome</label>
+              <label><input name="effects" type="checkbox" value="parallax"> Parallax depth</label>
+              <label><input name="effects" type="checkbox" value="3d"> Micro 3D</label>
+              <label><input name="effects" type="checkbox" value="paper-cut"> Paper cut</label>
+              <label><input name="effects" type="checkbox" value="torn"> Torn paper</label>
+              <label><input name="effects" type="checkbox" value="collage"> Layered collage</label>
+              <label><input name="effects" type="checkbox" value="shadow"> Soft shadow</label>
+              <label><input name="effects" type="checkbox" value="liquid"> Liquid shapes</label>
+              <label><input name="effects" type="checkbox" value="type-wave"> Type wave</label>
+              <label><input name="effects" type="checkbox" value="scan"> Data scan</label>
+              <label><input name="effects" type="checkbox" value="frame"> Editorial frame</label>
             </fieldset>
             <label class="field-wide">
               <span>Custom style or references</span>

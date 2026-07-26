@@ -102,7 +102,11 @@ jobs:
             const allowedVisualModes = new Set(['auto', 'minimal', 'abstract', 'mixed']);
             const allowedComplexity = new Set(['1', '2', '3', '4', '5']);
             const allowedEffectLevels = new Set(['0', '1', '2', '3', '4', '5']);
-            const allowedEffectTokens = new Set(['blur', 'monochrome', 'invert', 'grain', 'halftone']);
+            const allowedEffectTokens = new Set([
+              'blur', 'monochrome', 'invert', 'grain', 'halftone', 'glow', 'duotone',
+              'glitch', 'chrome', 'parallax', '3d', 'paper-cut', 'torn', 'collage',
+              'shadow', 'liquid', 'type-wave', 'scan', 'frame'
+            ]);
             const allowedStyles = new Set([
               'auto',
               'civic-nonprofit',
@@ -110,13 +114,39 @@ jobs:
               'public-department',
               'pan-european-newsroom',
               'euronews-inspired',
-              'dw-inspired'
+              'dw-inspired',
+              'documentary-clean',
+              'scientific-journal',
+              'encyclopedia-reference',
+              'national-geographic-inspired',
+              'discovery-inspired',
+              'scientific-archive',
+              'museum-clean',
+              'gaming-editorial',
+              'cinematic-magazine',
+              'music-culture',
+              'sports-broadcast',
+              'comic-pop',
+              'tiktok-inspired',
+              'instagram-inspired',
+              'facebook-inspired',
+              'youtube-inspired',
+              'early-web-maximalism',
+              'y2k-liquid',
+              'swiss-modernism',
+              'minimal-poetic',
+              'luxury-editorial',
+              'neo-brutalism',
+              'psychedelic-70s',
+              'post-punk-zine',
+              'risograph-craft',
+              'surreal-absurd'
             ]);
 
             const selectedStyle = field('style', 80) || 'auto';
             const customStyle = field('custom_style', 180);
             const topic = field('topic', 140);
-            const effects = field('effects', 160)
+            const effects = field('effects', 320)
               .split(',')
               .map(value => clean(value, 30))
               .filter(value => allowedEffectTokens.has(value))

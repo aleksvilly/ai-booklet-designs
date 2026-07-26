@@ -175,6 +175,11 @@ main { overflow: hidden; }
   cursor: pointer;
   font-size: 12px;
 }
+.effect-picker label:has(input:checked) {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
 .request-form .effect-picker input[type="checkbox"] {
   width: 15px;
   min-height: 15px;

@@ -41,10 +41,14 @@ const configuredVisualMode = ['auto', 'minimal', 'abstract', 'mixed'].includes(p
   : 'auto';
 const configuredLayoutComplexity = clampInt(process.env.LAYOUT_COMPLEXITY, 1, 5, 2);
 const configuredEffectLevel = clampInt(process.env.EFFECT_LEVEL, 0, 5, 2);
-const configuredEffectTokens = cleanInput(process.env.BOOKLET_EFFECTS, 160)
+const configuredEffectTokens = cleanInput(process.env.BOOKLET_EFFECTS, 320)
   .split(',')
   .map(effect => cleanInput(effect, 30))
-  .filter(effect => ['blur', 'monochrome', 'invert', 'grain', 'halftone'].includes(effect));
+  .filter(effect => [
+    'blur', 'monochrome', 'invert', 'grain', 'halftone', 'glow', 'duotone',
+    'glitch', 'chrome', 'parallax', '3d', 'paper-cut', 'torn', 'collage',
+    'shadow', 'liquid', 'type-wave', 'scan', 'frame'
+  ].includes(effect));
 const configuredFonts = cleanInput(process.env.BOOKLET_FONTS, 500)
   .split(',')
   .map(font => cleanInput(font, 80))
@@ -249,6 +253,18 @@ const STYLE_FAMILIES = [
   { id: 'pan-european-newsroom', label: 'Pan-European broadcast editorial', weight: 6, eras: ['2020–2024', '2025', '2026'], layouts: ['grid', 'split', 'full'], typography: ['clean-sans', 'condensed-headlines', 'tech-mono'], colors: ['high-contrast', 'one-accent', 'dark-tech'], effects: ['data-scan', 'map-grid', 'diagonal-flow'] },
   { id: 'euronews-inspired', label: 'Euronews-inspired circular newsroom', weight: 5, eras: ['2020–2024', '2025', '2026'], layouts: ['grid', 'split', 'full'], typography: ['clean-sans', 'condensed-headlines'], colors: ['one-accent', 'high-contrast', 'duotone'], effects: ['floating-caption', 'oversized-number', 'diagonal-flow'] },
   { id: 'dw-inspired', label: 'DW-inspired public media geometry', weight: 5, eras: ['2020–2024', '2025', '2026'], layouts: ['grid', 'split', 'vertical'], typography: ['clean-sans', 'condensed-headlines', 'tiny-editorial'], colors: ['one-accent', 'black-white', 'high-contrast'], effects: ['frame-within-frame', 'map-grid', 'caption-rule'] },
+  { id: 'scientific-journal', label: 'Peer-reviewed scientific journal', weight: 6, eras: ['1960s', '2010s', '2026'], layouts: ['grid', 'archive', 'minimal'], typography: ['tiny-editorial', 'tech-mono', 'mixed-serif-sans'], colors: ['black-white', 'muted', 'one-accent'], effects: ['diagram-overlay', 'registration-marks', 'caption-rule'] },
+  { id: 'encyclopedia-reference', label: 'Illustrated encyclopedia reference', weight: 6, eras: ['1960s', '1980s', '2026'], layouts: ['archive', 'grid', 'vertical'], typography: ['tiny-editorial', 'mixed-serif-sans', 'clean-sans'], colors: ['muted', 'one-accent', 'duotone'], effects: ['frame-within-frame', 'oversized-number', 'map-grid'] },
+  { id: 'national-geographic-inspired', label: 'National Geographic-inspired expedition editorial', weight: 5, eras: ['1970s', '2010s', '2026'], layouts: ['full', 'grid', 'split'], typography: ['huge-serif', 'condensed-headlines', 'tiny-editorial'], colors: ['earthy', 'full-color', 'one-accent'], effects: ['caption-rule', 'frame-within-frame', 'film-grain'] },
+  { id: 'discovery-inspired', label: 'Discovery-inspired documentary system', weight: 5, eras: ['1990s', '2010s', '2026'], layouts: ['full', 'cinematic', 'grid'], typography: ['clean-sans', 'condensed-headlines', 'tech-mono'], colors: ['dark-tech', 'full-color', 'one-accent'], effects: ['data-scan', 'map-grid', 'gradient-overlay'] },
+  { id: 'gaming-editorial', label: 'Games and interactive culture editorial', weight: 6, eras: ['2000s', '2020–2024', '2026'], layouts: ['grid', 'full', 'radical'], typography: ['tech-mono', 'poster-bold', 'condensed-headlines'], colors: ['dark-tech', 'neon', 'high-contrast'], effects: ['pixel-grid', 'glow-accent', 'data-scan'] },
+  { id: 'cinematic-magazine', label: 'Cinematic film magazine', weight: 6, eras: ['1960s', '1990s', '2026'], layouts: ['cinematic', 'full', 'split'], typography: ['huge-serif', 'condensed-headlines', 'tiny-editorial'], colors: ['black-white', 'dreamy', 'full-color'], effects: ['film-grain', 'gradient-overlay', 'text-behind-image'] },
+  { id: 'music-culture', label: 'Music culture and album editorial', weight: 6, eras: ['1970s', '1990s', '2026'], layouts: ['poster', 'overlap', 'grid'], typography: ['poster-bold', 'huge-serif', 'condensed-headlines'], colors: ['duotone', 'neon', 'full-color'], effects: ['type-wave', 'grain-texture', 'diagonal-flow'] },
+  { id: 'sports-broadcast', label: 'Sports broadcast editorial', weight: 5, eras: ['1990s', '2020–2024', '2026'], layouts: ['grid', 'split', 'full'], typography: ['condensed-headlines', 'clean-sans', 'poster-bold'], colors: ['high-contrast', 'one-accent', 'full-color'], effects: ['data-scan', 'oversized-number', 'diagonal-flow'] },
+  { id: 'tiktok-inspired', label: 'TikTok-inspired vertical visual culture', weight: 4, eras: ['2020–2024', '2025', '2026'], layouts: ['vertical', 'full', 'overlap'], typography: ['poster-bold', 'playful-rounded', 'clean-sans'], colors: ['neon', 'full-color', 'high-contrast'], effects: ['sticker-elements', 'type-wave', 'glow-accent'] },
+  { id: 'instagram-inspired', label: 'Instagram-inspired visual feed', weight: 4, eras: ['2010s', '2020–2024', '2026'], layouts: ['grid', 'full', 'minimal'], typography: ['clean-sans', 'huge-serif', 'tiny-editorial'], colors: ['pastel', 'dreamy', 'full-color'], effects: ['gradient-overlay', 'floating-caption', 'soft-shadow'] },
+  { id: 'facebook-inspired', label: 'Facebook-inspired community storytelling', weight: 4, eras: ['2010s', '2020–2024', '2026'], layouts: ['grid', 'split', 'vertical'], typography: ['clean-sans', 'mixed-serif-sans', 'tiny-editorial'], colors: ['one-accent', 'muted', 'full-color'], effects: ['frame-within-frame', 'caption-rule', 'floating-caption'] },
+  { id: 'youtube-inspired', label: 'YouTube-inspired video editorial', weight: 4, eras: ['2010s', '2020–2024', '2026'], layouts: ['full', 'split', 'poster'], typography: ['poster-bold', 'condensed-headlines', 'clean-sans'], colors: ['high-contrast', 'neon', 'one-accent'], effects: ['oversized-number', 'glow-accent', 'text-behind-image'] },
   { id: 'swiss-modernism', label: 'Swiss modernism', weight: 7, eras: ['1960s', '2010s', '2026'], layouts: ['grid', 'minimal', 'split'], typography: ['clean-sans', 'condensed-headlines', 'tiny-editorial'], colors: ['one-accent', 'black-white', 'high-contrast'], effects: ['oversized-number', 'frame-within-frame', 'diagonal-flow'] },
   { id: 'psychedelic-70s', label: '1970s psychedelic editorial', weight: 5, eras: ['1970s'], layouts: ['overlap', 'full', 'asymmetric'], typography: ['huge-serif', 'playful-rounded', 'mixed-serif-sans'], colors: ['neon', 'warm-analog', 'full-color'], effects: ['liquid-shapes', 'grain-texture', 'text-behind-image'] },
   { id: 'scientific-archive', label: 'Analogue scientific archive', weight: 6, eras: ['1960s', '1970s', '2026'], layouts: ['archive', 'grid', 'vertical'], typography: ['tech-mono', 'tiny-editorial', 'typewriter'], colors: ['muted', 'black-white', 'duotone'], effects: ['diagram-overlay', 'registration-marks', 'paper-fold'] },
@@ -365,10 +381,24 @@ const EFFECT_TOKEN_MAP = {
   blur: 'blurred-depth',
   invert: 'inverted-section',
   grain: 'film-grain',
-  halftone: 'halftone'
+  halftone: 'halftone',
+  glow: 'glow-accent',
+  duotone: 'gradient-overlay',
+  glitch: 'pixel-grid',
+  chrome: 'chrome-type',
+  parallax: 'parallax-depth',
+  '3d': 'micro-3d-layering',
+  'paper-cut': 'paper-cut',
+  torn: 'torn-edge',
+  collage: 'overlapping-panels',
+  shadow: 'soft-shadow',
+  liquid: 'liquid-shapes',
+  'type-wave': 'type-wave',
+  scan: 'data-scan',
+  frame: 'frame-within-frame'
 };
-const MINIMAL_STYLE_IDS = new Set(['civic-nonprofit', 'eu-institutional', 'public-department', 'dw-inspired', 'swiss-modernism', 'luxury-editorial', 'museum-clean', 'documentary-clean', 'minimal-poetic']);
-const ABSTRACT_STYLE_IDS = new Set(['psychedelic-70s', 'memphis-play', 'soft-3d-surreal', 'organic-futurism', 'surreal-absurd', 'cinematic-color-field', 'glassmorphism-editorial', 'kinetic-type']);
+const MINIMAL_STYLE_IDS = new Set(['civic-nonprofit', 'eu-institutional', 'public-department', 'dw-inspired', 'scientific-journal', 'encyclopedia-reference', 'facebook-inspired', 'swiss-modernism', 'luxury-editorial', 'museum-clean', 'documentary-clean', 'minimal-poetic']);
+const ABSTRACT_STYLE_IDS = new Set(['gaming-editorial', 'tiktok-inspired', 'instagram-inspired', 'psychedelic-70s', 'memphis-play', 'soft-3d-surreal', 'organic-futurism', 'surreal-absurd', 'cinematic-color-field', 'glassmorphism-editorial', 'kinetic-type']);
 
 const SURPRISE_ELEMENTS = [
   'potatoes', 'clouds', 'fish', 'mirrors', 'plastic toys', 'industrial pipes', 'old maps', 'birds',
@@ -737,11 +767,14 @@ function buildDesignDna(seed, slot) {
   const abstractMode = configuredVisualMode === 'abstract';
   const monochromeRequested = configuredEffectTokens.includes('monochrome');
   const invertedRequested = configuredEffectTokens.includes('invert');
+  const duotoneRequested = configuredEffectTokens.includes('duotone');
   const colorMode = monochromeRequested
     ? 'black-white'
     : invertedRequested
       ? 'inverted'
-      : pick(styleFamily.colors.length ? styleFamily.colors : COLOR_MODES, seed, 'color-mode');
+      : duotoneRequested
+        ? 'duotone'
+        : pick(styleFamily.colors.length ? styleFamily.colors : COLOR_MODES, seed, 'color-mode');
   const typographyMode = pick(styleFamily.typography.length ? styleFamily.typography : TYPOGRAPHY_MODES, seed, 'typography-mode');
   const layoutPools = {
     1: ['white-space-minimal', 'single-hero-image', 'vertical-rhythm'],
@@ -757,15 +790,17 @@ function buildDesignDna(seed, slot) {
   );
   const imageTreatment = monochromeRequested
     ? 'black-white-photo'
-    : pick(
-        minimalMode
-          ? ['clean-photo', 'black-white-photo', 'archival-scan']
-          : abstractMode
-            ? ['blurred-dreamy', 'duotone-photo', 'posterized', 'cutout-collage', 'infrared-color']
-            : IMAGE_TREATMENTS,
-        seed,
-        'image-treatment'
-      );
+    : duotoneRequested
+      ? 'duotone-photo'
+      : pick(
+          minimalMode
+            ? ['clean-photo', 'black-white-photo', 'archival-scan']
+            : abstractMode
+              ? ['blurred-dreamy', 'duotone-photo', 'posterized', 'cutout-collage', 'infrared-color']
+              : IMAGE_TREATMENTS,
+          seed,
+          'image-treatment'
+        );
   const textDensity = pick({
     1: ['very-low', 'very-low', 'low'],
     2: ['very-low', 'low', 'low', 'medium'],
@@ -810,6 +845,7 @@ function buildDesignDna(seed, slot) {
     era,
     styleFamily: styleFamily.id,
     style: styleFamily.label,
+    preferredLayouts: styleFamily.layouts,
     visualMode: configuredVisualMode,
     layoutComplexity: configuredLayoutComplexity,
     effectLevel: configuredEffectLevel,
@@ -980,7 +1016,13 @@ function buildPagePlan(dna, seed) {
     const config = PAGE_MODULES[module];
     const isSimplePage = SIMPLE_PAGE_MODULES.includes(module);
     const calmLayouts = config.layouts.filter(layout => ['minimal', 'vertical', 'split', 'full', 'poster'].includes(layout));
-    const layout = pick(isSimplePage && dna.layoutComplexity <= 2 && calmLayouts.length ? calmLayouts : config.layouts, seed, `module-layout:${index}`);
+    const profileLayouts = config.layouts.filter(layout => dna.preferredLayouts.includes(layout));
+    const layoutPool = isSimplePage && dna.layoutComplexity <= 2 && calmLayouts.length
+      ? calmLayouts
+      : profileLayouts.length && hashFloat(seed, `profile-layout:${index}`) < 0.74
+        ? profileLayouts
+        : config.layouts;
+    const layout = pick(layoutPool, seed, `module-layout:${index}`);
     const effect = pick(dna.effects, seed, `page-effect:${index}`);
     const axisBias = dna.layoutComplexity <= 2 ? 0.88 : 0.52;
     const typography = hashFloat(seed, `page-typography-bias:${index}`) < axisBias ? dna.typographyMode : pick(TYPOGRAPHY_MODES, seed, `page-typography:${index}`);
@@ -1254,6 +1296,7 @@ function aiBrief(dna, pagePlan, index) {
     surpriseElements: dna.surpriseElements,
     era: dna.era,
     style: dna.style,
+    preferredLayouts: dna.preferredLayouts,
     visualMode: dna.visualMode,
     layoutComplexity: dna.layoutComplexity,
     effectLevel: dna.effectLevel,
