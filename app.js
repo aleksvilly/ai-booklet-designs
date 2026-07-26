@@ -53,7 +53,7 @@ document.addEventListener('keydown', event => {
   if (event.key === 'Escape') setMenu(false);
 });
 
-async function sendForm(event, formStatus, successMessage) {
+async function sendPrivateForm(event, formStatus, successMessage) {
   event.preventDefault();
   const form = event.currentTarget;
   const formData = new FormData(form);
@@ -71,7 +71,44 @@ async function sendForm(event, formStatus, successMessage) {
       headers: { Accept: 'application/json' }
     });
 
-    if (!response.ok) throw new Error(`Formspree returned ${response.status}`);
+    if (!response.ok) throw new Error(`Contact form returned ${response.status}`);
+    form.reset();
+    formStatus.textContent = successMessage;
+  } catch (error) {
+    console.error(error);
+    formStatus.textContent = 'The request could not be sent. Please try again.';
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = originalLabel;
+  }
+}
+
+async function sendQueueForm(event, formStatus, successMessage) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const formData = Object.fromEntries(new FormData(form).entries());
+  const submitButton = form.querySelector('button[type="submit"]');
+  const originalLabel = submitButton.textContent;
+
+  if (formData._gotcha) return;
+
+  submitButton.disabled = true;
+  submitButton.textContent = 'Queueing…';
+  formStatus.textContent = '';
+
+  try {
+    const response = await fetch(form.action, {
+      method: 'POST',
+      body: JSON.stringify({
+        ...formData,
+        _gotcha: undefined,
+        source: window.location.href,
+        submitted_at: new Date().toISOString()
+      }),
+      headers: { 'Content-Type': 'text/plain;charset=UTF-8' }
+    });
+
+    if (!response.ok) throw new Error(`Queue returned ${response.status}`);
     form.reset();
     formStatus.textContent = successMessage;
   } catch (error) {
@@ -84,14 +121,14 @@ async function sendForm(event, formStatus, successMessage) {
 }
 
 contactForm.addEventListener('submit', event => {
-  sendForm(event, contactFormStatus, 'Thank you — your message has been sent.');
+  sendPrivateForm(event, contactFormStatus, 'Thank you — your message has been sent.');
 });
 
 generationForm.addEventListener('submit', event => {
-  sendForm(
+  sendQueueForm(
     event,
     generationFormStatus,
-    'Request saved — thank you. Automatic generation is not active yet.'
+    'Request queued — GitHub will start generation automatically.'
   );
 });
 
