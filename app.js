@@ -7,6 +7,9 @@ const countNode = document.querySelector('#published-count');
 const emptyState = document.querySelector('#empty-state');
 const themeToggle = document.querySelector('#theme-toggle');
 const themeColor = document.querySelector('#theme-color');
+const contactForm = document.querySelector('#contact-form');
+const contactFormStatus = document.querySelector('#contact-form-status');
+const contactStorageKey = 'booklet-contact-messages';
 
 let allBooklets = [];
 let activeFilter = 'All';
@@ -27,6 +30,39 @@ function applyTheme(theme, persist = true) {
 applyTheme(document.documentElement.dataset.theme, false);
 themeToggle.addEventListener('click', () => {
   applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+});
+
+function storedMessages() {
+  try {
+    const messages = JSON.parse(localStorage.getItem(contactStorageKey) || '[]');
+    return Array.isArray(messages) ? messages : [];
+  } catch {
+    return [];
+  }
+}
+
+contactForm.addEventListener('submit', event => {
+  event.preventDefault();
+  const formData = new FormData(contactForm);
+  const message = {
+    id: crypto.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    name: String(formData.get('name') || '').trim(),
+    contact: String(formData.get('contact') || '').trim(),
+    message: String(formData.get('message') || '').trim(),
+    createdAt: new Date().toISOString(),
+    read: false
+  };
+
+  if (!message.name || !message.contact || !message.message) {
+    contactFormStatus.textContent = 'Please complete all fields.';
+    return;
+  }
+
+  const messages = storedMessages();
+  messages.unshift(message);
+  localStorage.setItem(contactStorageKey, JSON.stringify(messages.slice(0, 100)));
+  contactForm.reset();
+  contactFormStatus.textContent = 'Message saved. Open the demo inbox to view it.';
 });
 
 function escapeHtml(value = '') {
