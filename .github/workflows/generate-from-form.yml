@@ -78,9 +78,9 @@ jobs:
             function field(name, maxLength = 800) {
               const key = escapeRegex(name);
               const patterns = [
-                new RegExp(`(?:^|\\n)\\s*(?:[-+]\\s*)?(?:\\*\\*|__)?${key}(?:\\*\\*|__)?\\s*[:=]\\s*([^\\n]+)`, 'i'),
-                new RegExp(`(?:^|\\n)\\s*\\|\\s*${key}\\s*\\|\\s*([^|\\n]+)`, 'i'),
-                new RegExp(`(?:^|\\n)\\s*#{1,6}\\s*${key}\\s*\\n\\s*([^\\n]+)`, 'i')
+                new RegExp(`(?:^|\\n)[ \\t]*(?:[-+][ \\t]*)?(?:\\*\\*|__)?${key}(?:\\*\\*|__)?[ \\t]*[:=][ \\t]*([^\\n]+)`, 'i'),
+                new RegExp(`(?:^|\\n)[ \\t]*\\|[ \\t]*${key}[ \\t]*\\|[ \\t]*([^|\\n]+)`, 'i'),
+                new RegExp(`(?:^|\\n)[ \\t]*#{1,6}[ \\t]*${key}[ \\t]*\\n[ \\t]*([^\\n]+)`, 'i')
               ];
               for (const pattern of patterns) {
                 const match = body.match(pattern);
