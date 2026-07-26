@@ -149,6 +149,9 @@
           <p class="form-status" id="generation-form-status" role="status" aria-live="polite"></p>
         </div>
         <p class="generator-note">No account required. The public queue is checked every five minutes; accepted requests are published automatically.</p>
+        <button class="request-history-button" id="request-history-button" type="button" hidden>
+          Request history <span id="request-history-count">0</span>
+        </button>
       </form>
     </section>
 
@@ -207,6 +210,37 @@
   <dialog class="booklet-dialog" id="booklet-dialog">
     <button class="dialog-close" id="dialog-close" type="button" aria-label="Close">×</button>
     <div id="dialog-content"></div>
+  </dialog>
+
+  <dialog class="request-status-dialog" id="request-status-dialog">
+    <button class="request-dialog-close" id="request-dialog-close" type="button" aria-label="Close request status">×</button>
+    <div class="request-dialog-grid">
+      <div class="request-waiting-visual">
+        <img id="request-waiting-gif" alt="Animated waiting scene">
+        <button class="gif-change-button" id="gif-change-button" type="button">Change GIF ↻</button>
+      </div>
+      <div class="request-progress-panel">
+        <div class="request-progress-heading">
+          <p class="eyebrow">Generation request</p>
+          <span class="request-status-badge" id="request-status-badge">Queued</span>
+        </div>
+        <h2 id="request-status-title">Random topic</h2>
+        <label class="request-history-select-label">
+          <span>Saved requests</span>
+          <select id="request-history-select"></select>
+        </label>
+        <div class="request-timer-block">
+          <span>Elapsed time</span>
+          <strong id="request-timer">00:00</strong>
+        </div>
+        <p class="request-status-copy" id="request-status-copy">The public queue has accepted your request.</p>
+        <div class="request-progress-actions">
+          <button class="secondary-button" id="request-check-button" type="button">Check status</button>
+          <a class="primary-button" id="request-view-button" href="./" hidden>View booklet ↗</a>
+          <a class="text-button request-issue-link" id="request-issue-link" href="#" target="_blank" rel="noopener" hidden>Open GitHub status ↗</a>
+        </div>
+      </div>
+    </div>
   </dialog>
 
   <template id="booklet-card-template">
