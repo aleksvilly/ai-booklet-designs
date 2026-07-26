@@ -1,0 +1,172 @@
+name: Poll public request queue
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  issues: write
+
+concurrency:
+  group: public-request-queue
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Read ntfy queue and dispatch requests
+        uses: actions/github-script@v7
+        env:
+          QUEUE_URL: https://ntfy.sh/ai-booklet-8bcc753d24dacb6d280ae36b
+        with:
+          script: |
+            const clean = (value, maxLength = 800) => String(value || '')
+              .replace(/[\u0000-\u001f\u007f]/g, ' ')
+              .replace(/\s+/g, ' ')
+              .trim()
+              .slice(0, maxLength);
+
+            const response = await fetch(`${process.env.QUEUE_URL}/json?poll=1&since=12h`);
+            if (!response.ok) {
+              core.setFailed(`Queue returned ${response.status}`);
+              return;
+            }
+
+            const events = (await response.text())
+              .split('\n')
+              .filter(Boolean)
+              .map(line => JSON.parse(line))
+              .filter(event => event.event === 'message')
+              .sort((a, b) => a.time - b.time);
+
+            const existingIssues = await github.paginate(github.rest.issues.listForRepo, {
+              ...context.repo,
+              state: 'all',
+              sort: 'created',
+              direction: 'desc',
+              per_page: 100
+            });
+
+            const processedIds = new Set();
+            for (const issue of existingIssues) {
+              const match = String(issue.body || '').match(/<!-- ntfy-id: ([a-zA-Z0-9_-]+) -->/);
+              if (match) processedIds.add(match[1]);
+            }
+
+            const labels = [
+              { name: 'booklet-request', color: '7057ff', description: 'Public booklet generation request' },
+              { name: 'pending', color: 'd4c5f9', description: 'Waiting for processing' },
+              { name: 'processing', color: 'fbca04', description: 'Generation is running' },
+              { name: 'finished', color: '0e8a16', description: 'Generation finished' }
+            ];
+
+            for (const label of labels) {
+              try {
+                await github.rest.issues.createLabel({ ...context.repo, ...label });
+              } catch (error) {
+                if (error.status !== 422) throw error;
+              }
+            }
+
+            const oneHourAgo = Date.now() - 60 * 60 * 1000;
+            let recentGenerations = existingIssues.filter(issue =>
+              issue.labels?.some(label => label.name === 'booklet-request') &&
+              new Date(issue.created_at).getTime() >= oneHourAgo
+            ).length;
+
+            for (const event of events) {
+              if (processedIds.has(event.id)) continue;
+
+              let data;
+              try {
+                data = JSON.parse(event.message);
+              } catch {
+                continue;
+              }
+
+              const requestType = clean(data.request_type, 40);
+
+              if (requestType !== 'booklet_generation') continue;
+              if (recentGenerations >= 3) continue;
+
+              const topic = clean(data.topic, 140);
+              if (!topic) continue;
+
+              const allowedChaos = new Set(['-1', '0', '1', '2', '3', '4', '5']);
+              const allowedFonts = new Set(['2', '4', '8', '12', '20']);
+              const allowedProviders = new Set(['auto', 'openai-first', 'gemini-first', 'local']);
+              const allowedStyles = new Set([
+                'auto',
+                'civic-nonprofit',
+                'eu-institutional',
+                'public-department',
+                'pan-european-newsroom'
+              ]);
+
+              const selectedStyle = clean(data.style, 80) || 'auto';
+              const customStyle = clean(data.custom_style, 180);
+              const description = clean([
+                customStyle ? `Custom visual direction: ${customStyle}.` : '',
+                clean(data.description, 700)
+              ].filter(Boolean).join(' '), 800);
+
+              const issue = await github.rest.issues.create({
+                ...context.repo,
+                title: `[BOOKLET REQUEST] ${topic}`,
+                labels: ['booklet-request', 'processing'],
+                body: [
+                  '## Automatic public booklet request',
+                  '',
+                  `topic: ${topic}`,
+                  `style: ${allowedStyles.has(selectedStyle) ? selectedStyle : 'auto'}`,
+                  `custom_style: ${customStyle}`,
+                  `count: 1`,
+                  `chaos_level: ${allowedChaos.has(clean(data.chaos_level, 2)) ? clean(data.chaos_level, 2) : '-1'}`,
+                  `max_fonts: ${allowedFonts.has(clean(data.max_fonts, 2)) ? clean(data.max_fonts, 2) : '20'}`,
+                  `ai_provider: ${allowedProviders.has(clean(data.ai_provider, 30)) ? clean(data.ai_provider, 30) : 'auto'}`,
+                  `custom_fonts: ${clean(data.custom_fonts, 240)}`,
+                  `description: ${description}`,
+                  `submitted_at: ${clean(data.submitted_at, 40)}`,
+                  '',
+                  `<!-- ntfy-id: ${event.id} -->`
+                ].join('\n')
+              });
+
+              const issueNumber = issue.data.number;
+              const provider = allowedProviders.has(clean(data.ai_provider, 30))
+                ? clean(data.ai_provider, 30)
+                : 'auto';
+
+              await github.rest.actions.createWorkflowDispatch({
+                ...context.repo,
+                workflow_id: 'publish.yml',
+                ref: 'main',
+                inputs: {
+                  count: '1',
+                  force_generate: 'true',
+                  use_ai: provider === 'local' ? 'false' : 'true',
+                  ai_provider: provider,
+                  chaos_level: allowedChaos.has(clean(data.chaos_level, 2)) ? clean(data.chaos_level, 2) : '-1',
+                  max_fonts: allowedFonts.has(clean(data.max_fonts, 2)) ? clean(data.max_fonts, 2) : '20',
+                  image_provider: 'mixed',
+                  style: allowedStyles.has(selectedStyle) ? selectedStyle : 'auto',
+                  fonts: clean(data.custom_fonts, 240),
+                  topic,
+                  description,
+                  request_issue: String(issueNumber)
+                }
+              });
+
+              await github.rest.issues.createComment({
+                ...context.repo,
+                issue_number: issueNumber,
+                body: 'Request accepted from the public queue. Generation has started automatically.'
+              });
+
+              processedIds.add(event.id);
+              recentGenerations += 1;
+            }
