@@ -65,11 +65,37 @@
       <div class="booklet-grid" id="booklet-grid" aria-live="polite"></div>
       <p class="empty-state" id="empty-state" hidden>No concepts match this filter yet.</p>
     </section>
+
+    <section class="contact-section" id="contact">
+      <div class="contact-intro">
+        <p class="eyebrow">Start a conversation</p>
+        <h2>Have a booklet<br>idea?</h2>
+        <p>Tell us who the booklet is for and what makes that person unique. This demo stores your message in this browser only.</p>
+      </div>
+      <form class="contact-form" id="contact-form">
+        <label>
+          <span>Your name</span>
+          <input name="name" type="text" autocomplete="name" maxlength="80" required>
+        </label>
+        <label>
+          <span>Email or phone</span>
+          <input name="contact" type="text" autocomplete="email" maxlength="120" required>
+        </label>
+        <label>
+          <span>Your message</span>
+          <textarea name="message" rows="6" maxlength="1200" required></textarea>
+        </label>
+        <div class="contact-form-footer">
+          <button class="primary-button contact-submit" type="submit">Send message</button>
+          <p class="form-status" id="contact-form-status" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </section>
   </main>
 
   <footer>
     <p>Experimental editorial concepts. Source and licence records belong to each finished booklet.</p>
-    <p>Updated automatically through GitHub Actions.</p>
+    <p>Updated automatically through GitHub Actions. <a href="./admin.html">Demo inbox</a></p>
   </footer>
 
   <dialog class="booklet-dialog" id="booklet-dialog">
