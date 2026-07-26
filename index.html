@@ -24,12 +24,22 @@
       <span class="brand-mark">AB</span>
       <span>AI Booklet Designs</span>
     </a>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+      <a href="./">Home</a>
+      <a href="#collection">Collection</a>
+      <a href="#contact">Contacts</a>
+    </nav>
     <div class="header-tools">
       <div class="header-meta">
         <span id="published-count">— published</span>
         <span class="live-dot" aria-hidden="true"></span>
         <span>print-ready experiments</span>
       </div>
+      <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-controls="site-nav" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
       <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
         <span class="theme-toggle-icon" aria-hidden="true"></span>
         <span class="theme-toggle-label">Dark</span>
@@ -70,9 +80,11 @@
       <div class="contact-intro">
         <p class="eyebrow">Start a conversation</p>
         <h2>Have a booklet<br>idea?</h2>
-        <p>Tell us who the booklet is for and what makes that person unique. This demo stores your message in this browser only.</p>
+        <p>Tell us who the booklet is for and what makes that person unique. Your message will be delivered directly to us.</p>
       </div>
-      <form class="contact-form" id="contact-form">
+      <form class="contact-form" id="contact-form" action="https://formspree.io/f/meeyvjjd" method="post">
+        <input type="hidden" name="_subject" value="New AI Booklet Designs enquiry">
+        <input class="form-honeypot" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
         <label>
           <span>Your name</span>
           <input name="name" type="text" autocomplete="name" maxlength="80" required>
@@ -95,7 +107,7 @@
 
   <footer>
     <p>Experimental editorial concepts. Source and licence records belong to each finished booklet.</p>
-    <p>Updated automatically through GitHub Actions. <a href="./admin.html">Demo inbox</a></p>
+    <p><a href="#contact">Contact us</a> · Updated automatically through GitHub Actions.</p>
   </footer>
 
   <dialog class="booklet-dialog" id="booklet-dialog">
