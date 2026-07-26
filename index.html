@@ -53,7 +53,7 @@
       <div class="hero-intro">
         <p class="eyebrow">A growing gift-booklet laboratory</p>
         <h1>Describe it.<br><em>We generate it.</em></h1>
-        <p class="hero-copy">Choose a visual system, set the chaos level and send a topic. The brief is saved for review and can then be published through the booklet workflow.</p>
+        <p class="hero-copy">Choose a visual system, set the chaos level and send a topic. The brief is saved, queued and sent into the booklet workflow automatically.</p>
         <div class="hero-actions">
           <a class="primary-button" href="#collection">Explore the collection</a>
           <a class="secondary-button" href="#generation-form">Request a booklet</a>
@@ -66,10 +66,12 @@
             <p class="eyebrow">Generate now</p>
             <h2>Request a booklet</h2>
           </div>
-          <span class="automation-badge"><i aria-hidden="true"></i> Open request</span>
+          <span class="automation-badge"><i aria-hidden="true"></i> Automatic</span>
         </div>
 
         <input type="hidden" name="_subject" value="New booklet request from the website">
+        <input type="hidden" name="subject" value="[BOOKLET REQUEST] Anonymous website brief">
+        <input type="hidden" name="tags" value="formspree">
         <input type="hidden" name="request_type" value="booklet_generation">
         <input type="hidden" name="count" value="1">
         <input class="form-honeypot" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
@@ -149,7 +151,7 @@
           <button class="primary-button contact-submit" type="submit">Send booklet request ↗</button>
           <p class="form-status" id="generation-form-status" role="status" aria-live="polite"></p>
         </div>
-        <p class="generator-note">No account required. The request is saved privately in Formspree; publication starts only after manual review.</p>
+        <p class="generator-note">No account required. Formspree saves the request, GitHub queues it and publishes the result automatically.</p>
       </form>
     </section>
 
