@@ -686,12 +686,28 @@ function renderFilters() {
     button.addEventListener('click', () => {
       activeFilter = category;
       currentPage = 1;
+      updatePageUrl(currentPage, true);
       renderFilters();
       renderCards();
       renderPagination();
     });
     filtersNode.append(button);
   }
+}
+
+function pageFromUrl(totalPages = 1) {
+  const value = Number.parseInt(new URL(window.location.href).searchParams.get('page'), 10);
+  if (!Number.isInteger(value) || value < 1) return 1;
+  return Math.min(value, Math.max(1, totalPages));
+}
+
+function updatePageUrl(page, replace = false) {
+  const url = new URL(window.location.href);
+  if (page <= 1) url.searchParams.delete('page');
+  else url.searchParams.set('page', String(page));
+
+  const state = { ...(history.state || {}), page };
+  history[replace ? 'replaceState' : 'pushState'](state, '', url);
 }
 
 function renderPagination() {
@@ -709,6 +725,7 @@ function renderPagination() {
     if (!disabled) {
       button.addEventListener('click', () => {
         currentPage = page;
+        updatePageUrl(currentPage);
         renderCards();
         renderPagination();
         grid.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -1067,8 +1084,21 @@ dialog.addEventListener('click', event => {
   if (outside) closeDialog();
 });
 window.addEventListener('popstate', () => {
-  const id = new URL(window.location.href).searchParams.get('booklet');
-  if (!id) return dialog.close();
+  const url = new URL(window.location.href);
+  const totalPages = Math.ceil(visibleBooklets().length / itemsPerPage);
+  const requestedPage = pageFromUrl(totalPages);
+  if (requestedPage !== currentPage) {
+    currentPage = requestedPage;
+    renderCards();
+    renderPagination();
+    grid.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }
+
+  const id = url.searchParams.get('booklet');
+  if (!id) {
+    if (dialog.open) dialog.close();
+    return;
+  }
   const item = allBooklets.find(booklet => booklet.id === id);
   if (item) openBooklet(item, false);
 });
@@ -1082,6 +1112,9 @@ async function init() {
   if (!response.ok) throw new Error(`Failed to load booklets: ${response.status}`);
   allBooklets = await response.json();
   countNode.textContent = `${allBooklets.filter(isPublished).length} published`;
+  const totalPages = Math.ceil(visibleBooklets().length / itemsPerPage);
+  currentPage = pageFromUrl(totalPages);
+  updatePageUrl(currentPage, true);
   renderFilters();
   renderCards();
   renderPagination();
