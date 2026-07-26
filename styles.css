@@ -627,6 +627,202 @@ footer a { text-underline-offset: 3px; }
   .page-image img { min-width: 100%; min-height: 100%; }
 }
 
+/* Euronews-inspired profile contract
+   The selected profile keeps a recognisable newsroom system even when the
+   generator varies page modules: Inter, blue/white hierarchy, circles,
+   modular horizontal bands and only restrained diagonal movement. */
+.style-euronews-inspired {
+  --euronews-blue: #0172f0;
+  --euronews-blue-dark: #002e44;
+  --euronews-blue-soft: #aec1c9;
+  --euronews-ink: #1a1b1b;
+  --euronews-paper: #fff;
+}
+
+.style-euronews-inspired .cover,
+.style-euronews-inspired.detail-hero,
+.style-euronews-inspired .book-page {
+  font-family: "Inter", Arial, sans-serif;
+}
+
+.style-euronews-inspired .cover {
+  background: var(--euronews-paper);
+  color: var(--euronews-blue-dark);
+}
+
+.style-euronews-inspired .cover::after,
+.style-euronews-inspired.detail-hero::after {
+  content: "euronews • next";
+  position: absolute;
+  z-index: 6;
+  top: 20px;
+  right: 20px;
+  padding: 8px 13px;
+  border-radius: 999px;
+  background: var(--euronews-blue-dark);
+  color: #fff;
+  font: 700 9px/1 "Inter", Arial, sans-serif;
+  letter-spacing: .04em;
+  text-transform: lowercase;
+}
+
+.style-euronews-inspired .cover-kicker,
+.style-euronews-inspired .cover-number,
+.style-euronews-inspired .detail-kicker,
+.style-euronews-inspired .book-page-type,
+.style-euronews-inspired .book-page-number {
+  font-family: "Inter", Arial, sans-serif;
+  font-weight: 700;
+}
+
+.style-euronews-inspired .cover-title,
+.style-euronews-inspired .detail-title,
+.style-euronews-inspired .book-page-copy,
+.style-euronews-inspired .book-page-copy h4 {
+  font-family: "Inter", Arial, sans-serif !important;
+}
+
+.style-euronews-inspired .cover-title,
+.style-euronews-inspired .detail-title {
+  font-style: normal;
+  font-weight: 800;
+  letter-spacing: -.06em;
+}
+
+.style-euronews-inspired .shape-a {
+  width: 56%;
+  right: -12%;
+  top: 10%;
+  border-radius: 50%;
+  background: var(--euronews-blue);
+  mix-blend-mode: normal;
+}
+
+.style-euronews-inspired .shape-b {
+  width: 70%;
+  height: 19%;
+  left: -18%;
+  bottom: 17%;
+  border-radius: 0 999px 999px 0;
+  background: var(--euronews-blue-soft);
+  transform: rotate(-3deg);
+}
+
+.style-euronews-inspired .shape-c {
+  width: 50%;
+  height: 8%;
+  right: 4%;
+  bottom: 8%;
+  border-radius: 999px 0 0 999px;
+  background: var(--euronews-blue-dark);
+  transform: rotate(-3deg);
+}
+
+.style-euronews-inspired.detail-hero {
+  background: var(--euronews-paper);
+  color: var(--euronews-blue-dark);
+}
+
+.style-euronews-inspired .detail-shape-a {
+  width: 54%;
+  right: -13%;
+  top: -9%;
+  border-radius: 50%;
+  background: var(--euronews-blue);
+  mix-blend-mode: normal;
+}
+
+.style-euronews-inspired .detail-shape-b {
+  width: 68%;
+  height: 22%;
+  left: -14%;
+  bottom: 13%;
+  border-radius: 0 999px 999px 0;
+  background: var(--euronews-blue-soft);
+  transform: rotate(-3deg);
+}
+
+.style-euronews-inspired .book-page {
+  --c1: var(--euronews-paper);
+  --c2: var(--euronews-blue);
+  --c3: var(--euronews-blue-soft);
+  --c4: var(--euronews-blue-dark);
+  background: var(--euronews-paper);
+  color: var(--euronews-blue-dark);
+}
+
+.style-euronews-inspired .book-page::before {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: clamp(90px, 24%, 180px);
+  aspect-ratio: 1;
+  right: -7%;
+  top: -8%;
+  border: clamp(14px, 2.2vw, 28px) solid var(--euronews-blue);
+  border-radius: 50%;
+  opacity: .95;
+  pointer-events: none;
+}
+
+.style-euronews-inspired .print-spread:nth-child(3n + 2) .book-page:first-child,
+.style-euronews-inspired .module-black_page {
+  background: var(--euronews-blue-dark);
+  color: #fff;
+}
+
+.style-euronews-inspired .print-spread:nth-child(3n + 3) .book-page:last-child {
+  background: var(--euronews-blue);
+  color: #fff;
+}
+
+.style-euronews-inspired .page-image {
+  clip-path: polygon(0 3%, 100% 0, 100% 97%, 0 100%);
+}
+
+.style-euronews-inspired .book-page-copy {
+  padding-left: clamp(0px, 2.5vw, 28px);
+  border-left: 5px solid var(--euronews-blue);
+}
+
+.style-euronews-inspired .book-page-copy h4 {
+  font-weight: 800;
+  letter-spacing: -.055em;
+}
+
+.style-euronews-inspired .effect-diagonal-flow .book-page-copy,
+.style-euronews-inspired .effect-floating-caption .book-page-copy {
+  transform: rotate(-1.5deg);
+}
+
+/* Old generated data may contain effects that were never appropriate for
+   this profile. Neutralise them visually without deleting the booklet. */
+.style-euronews-inspired .effect-chrome-type h4 {
+  color: inherit;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  filter: none;
+  text-shadow: none;
+}
+
+.style-euronews-inspired .effect-scribble-lines::after {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .style-euronews-inspired .cover::after,
+  .style-euronews-inspired.detail-hero::after {
+    top: 14px;
+    right: 14px;
+    padding: 7px 10px;
+  }
+
+  .style-euronews-inspired .book-page-copy {
+    padding-left: 14px;
+    border-left-width: 4px;
+  }
+}
+
 @media print {
   body > header, body > main, body > footer, .dialog-close, .detail-actions { display: none !important; }
   .booklet-dialog { display: block !important; position: static; width: 100%; max-height: none; box-shadow: none; }
@@ -1227,4 +1423,17 @@ footer a { text-underline-offset: 3px; }
     grid-column: 2 !important;
     grid-row: 1 !important;
   }
+}
+
+/* Keep profile colours above legacy module-level !important rules. */
+.style-euronews-inspired .module-black_page {
+  background: var(--euronews-blue-dark) !important;
+  color: #fff !important;
+}
+
+.style-euronews-inspired .module-empty_breath,
+.style-euronews-inspired .module-archive_page,
+.style-euronews-inspired .module-newspaper_page {
+  background: var(--euronews-paper) !important;
+  color: var(--euronews-blue-dark) !important;
 }
