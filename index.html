@@ -53,22 +53,26 @@
       <div class="hero-intro">
         <p class="eyebrow">A growing gift-booklet laboratory</p>
         <h1>Describe it.<br><em>We generate it.</em></h1>
-        <p class="hero-copy">Choose a visual system, set the chaos level and send a topic. The brief goes straight into the automated booklet workflow.</p>
+        <p class="hero-copy">Choose a visual system, set the chaos level and send a topic. The brief is saved for review and can then be published through the booklet workflow.</p>
         <div class="hero-actions">
           <a class="primary-button" href="#collection">Explore the collection</a>
+          <a class="secondary-button" href="#generation-form">Request a booklet</a>
           <button class="text-button" id="surprise-button" type="button">Surprise me ↗</button>
         </div>
       </div>
-      <form class="request-form hero-generator" id="generation-form" action="https://github.com/aleksvilly/ai-booklet-designs/issues/new" method="get">
+      <form class="request-form hero-generator" id="generation-form" action="https://formspree.io/f/meeyvjjd" method="post">
         <div class="generator-heading">
           <div>
             <p class="eyebrow">Generate now</p>
-            <h2>Build a booklet batch</h2>
+            <h2>Request a booklet</h2>
           </div>
-          <span class="automation-badge"><i aria-hidden="true"></i> Automatic</span>
+          <span class="automation-badge"><i aria-hidden="true"></i> Open request</span>
         </div>
 
+        <input type="hidden" name="_subject" value="New booklet request from the website">
         <input type="hidden" name="request_type" value="booklet_generation">
+        <input type="hidden" name="count" value="1">
+        <input class="form-honeypot" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
 
         <div class="request-fields">
           <label class="field-wide">
@@ -86,14 +90,10 @@
               <option value="custom">My own style</option>
             </select>
           </label>
-          <label>
+          <div class="request-static-field">
             <span>Booklets</span>
-            <select name="count">
-              <option value="1">1</option>
-              <option value="3" selected>3</option>
-              <option value="6">6</option>
-            </select>
-          </label>
+            <strong>1</strong>
+          </div>
           <label>
             <span>Design chaos</span>
             <select name="chaos_level">
@@ -146,10 +146,10 @@
         </details>
 
         <div class="contact-form-footer">
-          <button class="primary-button contact-submit" type="submit">Create & generate via GitHub ↗</button>
+          <button class="primary-button contact-submit" type="submit">Send booklet request ↗</button>
           <p class="form-status" id="generation-form-status" role="status" aria-live="polite"></p>
         </div>
-        <p class="generator-note">Free public queue. GitHub will ask you to sign in and confirm the request once. <a href="https://github.com/aleksvilly/ai-booklet-designs/issues?q=is%3Aissue+label%3Abooklet-request" target="_blank" rel="noopener">View request statuses ↗</a></p>
+        <p class="generator-note">No account required. The request is saved privately in Formspree; publication starts only after manual review.</p>
       </form>
     </section>
 
