@@ -4,6 +4,7 @@ import {
   findBestImage,
   findGridImages,
   buildDecorativeFallbackPageArt,
+  cleanImageMetadataText,
   detectMood,
   imageStats
 } from './image-fallback-helpers.mjs';
@@ -1583,14 +1584,14 @@ function mapOpenverseImage(item, query) {
   return {
     url: item.thumbnail,
     fullUrl: item.url || item.thumbnail,
-    alt: item.title || query,
-    creator: item.creator || 'Unknown creator',
+    alt: cleanImageMetadataText(item.title, query, 300),
+    creator: cleanImageMetadataText(item.creator, 'Unknown creator', 180),
     creatorUrl: item.creator_url || item.foreign_landing_url,
-    source: item.source || item.provider || 'Openverse',
+    source: cleanImageMetadataText(item.source || item.provider, 'Openverse', 80),
     sourceUrl: item.foreign_landing_url,
-    license: item.license ? `${item.license.toUpperCase()}${item.license_version ? ` ${item.license_version}` : ''}` : 'See source',
+    license: cleanImageMetadataText(item.license ? `${item.license.toUpperCase()}${item.license_version ? ` ${item.license_version}` : ''}` : '', 'See source', 80),
     licenseUrl: item.license_url || item.foreign_landing_url,
-    attribution: item.attribution || ''
+    attribution: cleanImageMetadataText(item.attribution, '', 300)
   };
 }
 
