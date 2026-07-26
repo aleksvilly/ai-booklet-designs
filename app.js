@@ -240,7 +240,6 @@ async function sendPrivateForm(event, formStatus, successMessage) {
   formStatus.textContent = '';
 
   try {
-    const submittedAt = new Date().toISOString();
     const response = await fetch(form.action, {
       method: 'POST',
       body: formData,
@@ -271,6 +270,7 @@ async function sendQueueForm(event, formStatus, successMessage) {
   submitButton.disabled = true;
   submitButton.textContent = 'Queueing…';
   formStatus.textContent = '';
+  const submittedAt = new Date().toISOString();
 
   try {
     const response = await fetch(form.action, {
