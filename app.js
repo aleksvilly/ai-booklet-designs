@@ -36,11 +36,20 @@ today.setHours(23, 59, 59, 999);
 
 const requestStorageKey = 'ai-booklet-generation-requests-v1';
 const githubIssuesApi = 'https://api.github.com/repos/aleksvilly/ai-booklet-designs/issues?state=all&labels=booklet-request&per_page=100';
+const queueJsonApi = 'https://ntfy.sh/ai-booklet-8bcc753d24dacb6d280ae36b/json?poll=1&since=12h';
 const waitingGifs = [
   'https://media.giphy.com/media/13HgwGsXF0aiGY/giphy.gif',
   'https://media.giphy.com/media/LmNwrBhejkK9EFP504/giphy.gif',
   'https://media.giphy.com/media/f3iwJFOVOwuy7K6FFw/giphy.gif',
-  'https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif'
+  'https://media.giphy.com/media/3oKIPnAiaMCws8nOsE/giphy.gif',
+  'https://media.giphy.com/media/26BRuo6sLetdllPAQ/giphy.gif',
+  'https://media.giphy.com/media/l0HlBO7eyXzSZkJri/giphy.gif',
+  'https://media.giphy.com/media/3o7TKtnuHOHHUjR38Y/giphy.gif',
+  'https://media.giphy.com/media/VbnUQpnihPSIgIXuZv/giphy.gif',
+  'https://media.giphy.com/media/JIX9t2j0ZTN9S/giphy.gif',
+  'https://media.giphy.com/media/QBd2kLB5qDmysEXre9/giphy.gif',
+  'https://media.giphy.com/media/5Zesu5VPNGJlm/giphy.gif',
+  'https://media.giphy.com/media/tXL4FHPSnVJ0A/giphy.gif'
 ];
 let generationRequests = loadGenerationRequests();
 let activeRequestId = generationRequests[0]?.id || '';
@@ -89,11 +98,81 @@ function elapsedLabel(request) {
     : `${String(minutes).padStart(2, '0')}:${String(remaining).padStart(2, '0')}`;
 }
 
+function nextQueueCheckTime(from = Date.now()) {
+  const date = new Date(from);
+  const secondsIntoCycle = ((((date.getUTCMinutes() - 2) % 5) + 5) % 5) * 60
+    + date.getUTCSeconds()
+    + date.getUTCMilliseconds() / 1000;
+  return from + (300 - secondsIntoCycle) * 1000;
+}
+
+function estimateQueueWaitMinutes(issues, position) {
+  if (!position) return null;
+
+  const now = Date.now();
+  let checkTime = nextQueueCheckTime(now);
+  const releases = issues
+    .filter(issue => new Date(issue.created_at).getTime() >= now - 60 * 60 * 1000)
+    .map(issue => new Date(issue.created_at).getTime() + 60 * 60 * 1000)
+    .filter(time => time > now)
+    .sort((a, b) => a - b);
+
+  for (let place = 1; place <= position; place += 1) {
+    while (releases[0] <= checkTime) releases.shift();
+    if (releases.length >= 3) {
+      checkTime = nextQueueCheckTime(releases.shift() + 1000);
+      while (releases[0] <= checkTime) releases.shift();
+    }
+    releases.push(checkTime + 60 * 60 * 1000);
+    releases.sort((a, b) => a - b);
+  }
+
+  return Math.max(1, Math.ceil((checkTime - now) / 60000));
+}
+
+async function queueDetails(requestId, issues) {
+  const response = await fetch(queueJsonApi, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`Queue returned ${response.status}`);
+
+  const processedIds = new Set();
+  issues.forEach(issue => {
+    for (const match of String(issue.body || '').matchAll(/<!-- ntfy-id: ([a-zA-Z0-9_-]+) -->/g)) {
+      processedIds.add(match[1]);
+    }
+  });
+
+  const events = (await response.text())
+    .split('\n')
+    .filter(Boolean)
+    .map(line => JSON.parse(line))
+    .filter(event => {
+      if (event.event !== 'message' || processedIds.has(event.id)) return false;
+      try {
+        return JSON.parse(event.message).request_type === 'booklet_generation';
+      } catch {
+        return false;
+      }
+    })
+    .sort((a, b) => a.time - b.time);
+
+  const position = events.findIndex(event => event.id === requestId) + 1;
+  return {
+    queuePosition: position || null,
+    estimatedWaitMinutes: estimateQueueWaitMinutes(issues, position)
+  };
+}
+
 function statusCopy(request) {
   if (request.status === 'finished') return 'Your booklet is ready and published.';
   if (request.status === 'processing') return 'GitHub accepted the request and is generating the booklet now.';
   if (request.status === 'error') return request.error || 'Status could not be checked. Please try again.';
-  return 'The request is in the public queue. GitHub checks for new requests every five minutes.';
+  if (request.queuePosition) {
+    const estimate = request.estimatedWaitMinutes
+      ? ` Estimated start: about ${request.estimatedWaitMinutes} min.`
+      : '';
+    return `Queue position: ${request.queuePosition}.${estimate} GitHub may delay scheduled runs.`;
+  }
+  return 'The request is saved in the public queue and is waiting for GitHub to collect it.';
 }
 
 function populateRequestHistory() {
@@ -172,7 +251,13 @@ async function checkActiveRequestStatus(showFeedback = true) {
     const issue = issues.find(item => String(item.body || '').includes(marker));
 
     if (!issue) {
-      updateStoredRequest(request.id, { status: 'queued', error: '' });
+      let details = {};
+      try {
+        details = await queueDetails(request.id, issues);
+      } catch (queueError) {
+        console.warn(queueError);
+      }
+      updateStoredRequest(request.id, { status: 'queued', error: '', ...details });
     } else {
       const labels = (issue.labels || []).map(label => typeof label === 'string' ? label : label.name);
       const finished = labels.includes('finished') || issue.state === 'closed';
@@ -182,6 +267,8 @@ async function checkActiveRequestStatus(showFeedback = true) {
         issueUrl: issue.html_url,
         resultUrl: resultMatch?.[1] || (finished ? './' : ''),
         finishedAt: finished ? (request.finishedAt || new Date().toISOString()) : '',
+        queuePosition: null,
+        estimatedWaitMinutes: null,
         error: ''
       });
     }
