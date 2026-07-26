@@ -188,7 +188,16 @@ jobs:
           PAGE_URL: ${{ steps.deployment.outputs.page_url }}
         with:
           script: |
+            const fs = require('fs');
+            const path = require('path');
             const issueNumber = Number(process.env.REQUEST_ISSUE);
+            const dataPath = path.join(process.env.GITHUB_WORKSPACE, 'data', 'booklets.json');
+            const booklets = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+            const newestBookletId = booklets[0]?.id || '';
+            const resultUrl = newestBookletId
+              ? `${process.env.PAGE_URL}?booklet=${encodeURIComponent(newestBookletId)}`
+              : process.env.PAGE_URL;
+
             for (const label of ['pending', 'processing']) {
               try {
                 await github.rest.issues.removeLabel({
@@ -208,7 +217,17 @@ jobs:
             await github.rest.issues.createComment({
               ...context.repo,
               issue_number: issueNumber,
-              body: `Generation finished and published: ${process.env.PAGE_URL}`
+              body: `Generation finished and published: ${resultUrl}`
+            });
+            const currentIssue = await github.rest.issues.get({
+              ...context.repo,
+              issue_number: issueNumber
+            });
+            const currentBody = String(currentIssue.data.body || '').replace(/^result_url:\s*\S+\s*$/mi, '').trim();
+            await github.rest.issues.update({
+              ...context.repo,
+              issue_number: issueNumber,
+              body: `${currentBody}\n\nresult_url: ${resultUrl}`
             });
             await github.rest.issues.update({
               ...context.repo,
