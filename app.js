@@ -22,7 +22,10 @@ const requestStatusBadge = document.querySelector('#request-status-badge');
 const requestStatusTitle = document.querySelector('#request-status-title');
 const requestStatusCopy = document.querySelector('#request-status-copy');
 const requestTimerNode = document.querySelector('#request-timer');
+const requestTimerLabel = document.querySelector('#request-timer-label');
+const requestSteps = [...document.querySelectorAll('#request-steps li')];
 const requestGif = document.querySelector('#request-waiting-gif');
+const requestVisualState = document.querySelector('#request-visual-state');
 const gifChangeButton = document.querySelector('#gif-change-button');
 const requestCheckButton = document.querySelector('#request-check-button');
 const requestViewButton = document.querySelector('#request-view-button');
@@ -163,8 +166,8 @@ async function queueDetails(requestId, issues) {
 }
 
 function statusCopy(request) {
-  if (request.status === 'finished') return 'Your booklet is ready and published.';
-  if (request.status === 'processing') return 'GitHub accepted the request and is generating the booklet now.';
+  if (request.status === 'finished') return 'Your booklet is ready and published. Open it below.';
+  if (request.status === 'processing') return 'The booklet is being designed and published. This usually takes a few minutes.';
   if (request.status === 'error') return request.error || 'Status could not be checked. Please try again.';
   if (request.queuePosition) {
     const estimate = request.estimatedWaitMinutes
@@ -188,18 +191,49 @@ function renderRequestDialog() {
   if (!request) return;
   activeRequestId = request.id;
   const status = request.status || 'queued';
+  const finished = status === 'finished';
   const gifIndex = Number(request.gifIndex || 0) % waitingGifs.length;
+  const completedSteps = finished ? 4 : status === 'processing' ? 1 : 1;
+  const currentStep = finished ? -1 : status === 'processing' ? 1 : 0;
 
   populateRequestHistory();
+  requestDialog.dataset.status = status;
+  requestDialog.querySelector('.request-waiting-visual').dataset.status = status;
   requestStatusTitle.textContent = request.topic || 'Random topic';
-  requestStatusBadge.textContent = status.charAt(0).toUpperCase() + status.slice(1);
+  requestStatusBadge.textContent = finished ? 'Published' : status.charAt(0).toUpperCase() + status.slice(1);
   requestStatusBadge.dataset.status = status;
   requestStatusCopy.textContent = statusCopy(request);
   requestTimerNode.textContent = elapsedLabel(request);
+  requestTimerLabel.textContent = finished ? 'Total time' : 'Elapsed time';
+  requestTimerNode.closest('.request-timer-block').classList.toggle('is-finished', finished);
   requestGif.src = waitingGifs[gifIndex];
+  requestVisualState.textContent = finished
+    ? 'Published ✓'
+    : status === 'processing'
+      ? 'Building booklet…'
+      : 'Waiting in queue';
+  gifChangeButton.hidden = finished;
 
-  requestViewButton.hidden = status !== 'finished';
-  requestViewButton.href = request.resultUrl || './';
+  requestSteps.forEach((step, index) => {
+    step.dataset.state = index < completedSteps
+      ? 'done'
+      : index === currentStep
+        ? 'current'
+        : 'upcoming';
+  });
+
+  requestCheckButton.classList.toggle('is-complete', finished);
+  requestCheckButton.disabled = finished;
+  requestCheckButton.textContent = finished ? '✓ Ready' : 'Check status';
+
+  requestViewButton.setAttribute('aria-disabled', String(!finished));
+  requestViewButton.tabIndex = finished ? 0 : -1;
+  requestViewButton.textContent = finished ? 'View booklet ↗' : 'Booklet is being prepared…';
+  if (finished) {
+    requestViewButton.href = request.resultUrl || './';
+  } else {
+    requestViewButton.removeAttribute('href');
+  }
   requestIssueLink.hidden = !request.issueUrl;
   requestIssueLink.href = request.issueUrl || '#';
 }
@@ -209,7 +243,7 @@ function startRequestTimers() {
   clearInterval(requestStatusInterval);
   requestTimerInterval = setInterval(() => {
     const request = activeRequest();
-    if (request) requestTimerNode.textContent = elapsedLabel(request);
+    if (request && request.status !== 'finished') requestTimerNode.textContent = elapsedLabel(request);
   }, 1000);
   requestStatusInterval = setInterval(() => {
     if (requestDialog.open && activeRequest()?.status !== 'finished') checkActiveRequestStatus(false);
@@ -266,7 +300,7 @@ async function checkActiveRequestStatus(showFeedback = true) {
         status: finished ? 'finished' : 'processing',
         issueUrl: issue.html_url,
         resultUrl: resultMatch?.[1] || (finished ? './' : ''),
-        finishedAt: finished ? (request.finishedAt || new Date().toISOString()) : '',
+        finishedAt: finished ? (issue.closed_at || issue.updated_at || request.finishedAt || new Date().toISOString()) : '',
         queuePosition: null,
         estimatedWaitMinutes: null,
         error: ''
@@ -436,6 +470,9 @@ gifChangeButton.addEventListener('click', () => {
   renderRequestDialog();
 });
 requestCheckButton.addEventListener('click', () => checkActiveRequestStatus(true));
+requestViewButton.addEventListener('click', event => {
+  if (requestViewButton.getAttribute('aria-disabled') === 'true') event.preventDefault();
+});
 requestGif.addEventListener('error', () => {
   const request = activeRequest();
   if (!request) return;
