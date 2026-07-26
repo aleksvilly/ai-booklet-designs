@@ -114,6 +114,8 @@ main { overflow: hidden; }
 .hero-copy { max-width: 610px; margin: 40px 0 0; font-size: clamp(17px, 2vw, 23px); line-height: 1.45; color: var(--muted); }
 .hero-actions { display: flex; align-items: center; gap: 28px; margin-top: 38px; }
 .primary-button { display: inline-flex; align-items: center; min-height: 50px; padding: 0 22px; background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 600; }
+.secondary-button { display: inline-flex; align-items: center; min-height: 50px; padding: 0 22px; border: 1px solid var(--ink); color: var(--ink); text-decoration: none; font-weight: 600; }
+.secondary-button:hover { background: var(--ink); color: var(--paper); }
 .text-button { border: 0; border-bottom: 1px solid currentColor; padding: 4px 0; background: none; cursor: pointer; }
 .hero-generator {
   padding: clamp(24px, 3vw, 42px);
@@ -127,6 +129,9 @@ main { overflow: hidden; }
 .automation-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid var(--line); font: 500 9px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .07em; white-space: nowrap; }
 .automation-badge i { width: 7px; height: 7px; border-radius: 50%; background: #1eaa59; box-shadow: 0 0 0 4px rgba(30,170,89,.12); }
 .hero-generator .request-fields { gap: 15px; margin-bottom: 18px; }
+.request-static-field { display: grid; gap: 9px; align-content: start; }
+.request-static-field span { font: 500 10px/1.2 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; }
+.request-static-field strong { display: flex; align-items: center; min-height: 49px; padding: 12px 13px; border: 1px solid var(--line); background: var(--paper); font-size: 15px; }
 .hero-generator textarea { min-height: 100px; }
 .generator-advanced { margin: 0 0 22px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .generator-advanced summary { padding: 15px 0; cursor: pointer; font: 500 11px/1.2 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
