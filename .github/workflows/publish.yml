@@ -202,7 +202,7 @@ jobs:
       - name: Prepare static site
         run: |
           mkdir -p _site
-          cp index.html styles.css app.js _site/
+          cp index.html styles.css app.js privacy.html _site/
           touch _site/.nojekyll
           cp robots.txt sitemap.xml _site/
           cp -R data _site/data
