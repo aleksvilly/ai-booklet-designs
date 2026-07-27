@@ -130,19 +130,13 @@ export function bindStyleSlider(selectNode) {
   if (!selectNode || selectNode.dataset.sliderBound === 'true') return;
   selectNode.dataset.sliderBound = 'true';
 
+  selectNode.style.display = 'none';
+
   const container = document.createElement('div');
   container.className = 'style-slider-wrapper';
-  container.style.margin = '8px 0';
-  container.style.padding = '10px 12px';
-  container.style.border = '1px solid var(--line)';
-  container.style.borderRadius = '10px';
-  container.style.background = 'color-mix(in srgb, var(--ink) 4%, var(--paper))';
 
   const badge = document.createElement('div');
   badge.className = 'style-slider-badge';
-  badge.style.font = '600 12px/1.3 var(--font-accent, monospace)';
-  badge.style.marginBottom = '6px';
-  badge.style.color = 'var(--c2, var(--ink))';
 
   const slider = document.createElement('input');
   slider.type = 'range';
@@ -150,8 +144,6 @@ export function bindStyleSlider(selectNode) {
   slider.min = '0';
   slider.max = String(Math.max(0, selectNode.options.length - 1));
   slider.value = String(Math.max(0, selectNode.selectedIndex));
-  slider.style.width = '100%';
-  slider.style.cursor = 'pointer';
 
   function update() {
     const option = selectNode.options[selectNode.selectedIndex];
