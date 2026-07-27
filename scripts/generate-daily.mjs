@@ -8,9 +8,19 @@ import {
   detectMood,
   imageStats
 } from './image-fallback-helpers.mjs';
+import {
+  effectTokenMapFromCatalog,
+  findCatalogStyle,
+  findTopicByPath,
+  loadDesignCatalog,
+  profileContractsFromCatalog,
+  styleFamiliesFromCatalog
+} from './catalog-registry.mjs';
 
 const fileUrl = new URL('../data/booklets.json', import.meta.url);
 const existing = JSON.parse(await readFile(fileUrl, 'utf8'));
+const designCatalog = await loadDesignCatalog();
+const catalogEffectIds = new Set((designCatalog.effects?.items || []).map(item => item.id));
 
 const date = process.env.BOOKLET_DATE || new Intl.DateTimeFormat('en-CA', {
   timeZone: 'Europe/Riga',
@@ -44,20 +54,18 @@ const configuredEffectLevel = clampInt(process.env.EFFECT_LEVEL, 0, 5, 2);
 const configuredEffectTokens = cleanInput(process.env.BOOKLET_EFFECTS, 320)
   .split(',')
   .map(effect => cleanInput(effect, 30))
-  .filter(effect => [
-    'blur', 'monochrome', 'invert', 'grain', 'halftone', 'glow', 'duotone',
-    'glitch', 'chrome', 'parallax', '3d', 'paper-cut', 'torn', 'collage',
-    'shadow', 'liquid', 'type-wave', 'scan', 'frame'
-  ].includes(effect));
+  .filter(effect => catalogEffectIds.has(effect));
 const configuredFonts = cleanInput(process.env.BOOKLET_FONTS, 500)
   .split(',')
   .map(font => cleanInput(font, 80))
   .filter(Boolean)
   .slice(0, configuredFontLimit);
 const customTopic = cleanInput(process.env.BOOKLET_TOPIC, 140);
+const configuredTopicPath = cleanInput(process.env.BOOKLET_TOPIC_PATH, 320);
+const catalogTopic = findTopicByPath(designCatalog.topics, configuredTopicPath);
 const customDescription = cleanInput(process.env.BOOKLET_DESCRIPTION, 800);
-const hasCustomBrief = Boolean(customTopic || customDescription);
-const customSubject = customTopic || subjectFromDescription(customDescription);
+const hasCustomBrief = Boolean(customTopic || catalogTopic || customDescription);
+const customSubject = customTopic || catalogTopic?.prompt || subjectFromDescription(customDescription);
 
 const apiStats = {
   openaiSuccess: 0,
@@ -253,7 +261,7 @@ const CATEGORIES = [
   }
 ];
 
-const STYLE_FAMILIES = [
+const LEGACY_STYLE_FAMILIES = [
   { id: 'civic-nonprofit', label: 'Human-centred non-profit impact', weight: 8, eras: ['2010s', '2020–2024', '2026'], layouts: ['split', 'grid', 'minimal'], typography: ['clean-sans', 'mixed-serif-sans', 'tiny-editorial'], colors: ['one-accent', 'earthy', 'full-color'], effects: ['caption-rule', 'frame-within-frame', 'organic-border'] },
   { id: 'eu-institutional', label: 'European institutional clarity', weight: 7, eras: ['2010s', '2020–2024', '2026'], layouts: ['grid', 'minimal', 'vertical'], typography: ['clean-sans', 'tiny-editorial', 'tech-mono'], colors: ['one-accent', 'muted', 'duotone'], effects: ['data-scan', 'map-grid', 'oversized-number'] },
   { id: 'public-department', label: 'Public department report system', weight: 7, eras: ['2010s', '2020–2024', '2026'], layouts: ['grid', 'split', 'archive'], typography: ['clean-sans', 'condensed-headlines', 'tiny-editorial'], colors: ['muted', 'one-accent', 'black-white'], effects: ['caption-rule', 'registration-marks', 'frame-within-frame'] },
@@ -301,6 +309,14 @@ const STYLE_FAMILIES = [
   { id: 'scrapbook-memory', label: 'Scrapbook memory collage', weight: 7, eras: ['1970s', '1990s', '2026'], layouts: ['archive', 'overlap', 'asymmetric'], typography: ['handwritten-accent', 'typewriter', 'mixed-serif-sans'], colors: ['warm-analog', 'muted', 'full-color'], effects: ['tape-strips', 'torn-edge', 'tilted-photo'] },
   { id: 'eco-editorial', label: 'Ecological counterculture editorial', weight: 6, eras: ['1970s', '2026'], layouts: ['archive', 'split', 'asymmetric'], typography: ['huge-serif', 'typewriter', 'clean-sans'], colors: ['earthy', 'warm-analog', 'duotone'], effects: ['grain-texture', 'organic-border', 'paper-fold'] }
 ];
+
+const catalogStyleFamilies = styleFamiliesFromCatalog(designCatalog.styles);
+const catalogStyleIds = new Set(catalogStyleFamilies.map(style => style.id));
+const STYLE_FAMILIES = [
+  ...LEGACY_STYLE_FAMILIES.filter(style => !catalogStyleIds.has(style.id)),
+  ...catalogStyleFamilies
+];
+const CATALOG_PROFILE_CONTRACTS = profileContractsFromCatalog(designCatalog.styles);
 
 const ERAS = ['1960s', '1970s', '1980s', '1990s', '2000s', '2010s', '2020–2024', '2025', '2026'];
 const ARCHETYPES = ['gift-booklet', 'editorial-magazine', 'museum-brochure', 'art-zine', 'travel-guide', 'personal-tribute', 'fact-book', 'visual-diary', 'poster-book', 'archive-booklet', 'children-storybook', 'futurist-dossier'];
@@ -374,7 +390,7 @@ const VISUAL_RHYTHMS = ['calm', 'balanced', 'dynamic', 'staccato', 'cinematic', 
 const PRINT_FEELS = ['matte-book', 'glossy-magazine', 'newspaper', 'risograph', 'xerox-zine', 'museum-catalogue', 'screen-only', 'folded-poster'];
 const CONTENT_MODES = ['factual', 'emotional', 'mixed', 'conceptual', 'playful', 'documentary', 'poetic'];
 const REFERENCE_CULTURES = ['Nordic', 'Japanese', 'Italian', 'French', 'Baltic', 'Soviet-modernist', 'Latin American', 'West African', 'Mediterranean', 'global-digital', 'imaginary-local'];
-const EFFECTS = [
+const LEGACY_EFFECTS = [
   'micro-3d-layering', 'parallax-depth', 'text-behind-image', 'oversized-number', 'inverted-section',
   'mirrored-layout', 'tilted-photo', 'cutout-shadow', 'glow-accent', 'gradient-overlay', 'grain-texture',
   'scribble-lines', 'frame-within-frame', 'sticker-elements', 'floating-caption', 'overlapping-panels',
@@ -383,8 +399,14 @@ const EFFECTS = [
   'liquid-shapes', 'film-grain', 'registration-marks', 'misregistration', 'blurred-depth',
   'impossible-scale', 'floating-object', 'pattern-layer', 'type-wave', 'speech-bubble', 'empty-space'
 ];
+const EFFECTS = [...new Set([
+  ...LEGACY_EFFECTS,
+  ...(designCatalog.effects?.items || [])
+    .map(item => item.generatorToken)
+    .filter(token => token && !token.startsWith('color:'))
+])];
 
-const EFFECT_TOKEN_MAP = {
+const LEGACY_EFFECT_TOKEN_MAP = {
   blur: 'blurred-depth',
   invert: 'inverted-section',
   grain: 'film-grain',
@@ -403,6 +425,10 @@ const EFFECT_TOKEN_MAP = {
   'type-wave': 'type-wave',
   scan: 'data-scan',
   frame: 'frame-within-frame'
+};
+const EFFECT_TOKEN_MAP = {
+  ...LEGACY_EFFECT_TOKEN_MAP,
+  ...effectTokenMapFromCatalog(designCatalog.effects)
 };
 
 // A selected editorial profile is a design contract, not a loose keyword.
@@ -780,8 +806,16 @@ function buildDesignDna(seed, slot) {
   const experimentalLevel = chooseExperimentalLevel(seed, slot);
   const logicMode = chooseLogicMode(experimentalLevel, seed, slot);
   const styleFamily = chooseStyleFamily(experimentalLevel, seed);
-  const profileLocked = Boolean(configuredStyleId && styleFamily.id === configuredStyleId);
-  const profileContract = profileLocked ? PROFILE_CONTRACTS[styleFamily.id] : null;
+  const catalogStyle = findCatalogStyle(designCatalog.styles, styleFamily.id);
+  const lockUntilChaos = catalogStyle?.lockUntilChaos ?? 5;
+  const profileLocked = Boolean(
+    configuredStyleId &&
+    styleFamily.id === configuredStyleId &&
+    (configuredChaos < 0 || configuredChaos < lockUntilChaos)
+  );
+  const profileContract = profileLocked
+    ? CATALOG_PROFILE_CONTRACTS[styleFamily.id] || PROFILE_CONTRACTS[styleFamily.id]
+    : null;
   const era = chooseEra(styleFamily, seed);
   const subject = customSubject || pick(randomCategory.subjects, seed, 'subject');
   const audience = pick(randomCategory.audiences, seed, 'audience');
@@ -876,6 +910,8 @@ function buildDesignDna(seed, slot) {
     audience,
     subject,
     customTopic,
+    topicPath: catalogTopic?.path || '',
+    topicNodeId: catalogTopic?.id || '',
     customDescription,
     isCustomBrief: hasCustomBrief,
     secondaryCategory: secondaryCategory?.label || '',

@@ -45,6 +45,14 @@ const contactForm = document.querySelector('#contact-form');
 const contactFormStatus = document.querySelector('#contact-form-status');
 const generationForm = document.querySelector('#generation-form');
 const generationFormStatus = document.querySelector('#generation-form-status');
+const bookletTopicInput = document.querySelector('#booklet-topic');
+const topicPathInput = document.querySelector('#topic-path');
+const topicWheel = document.querySelector('#topic-wheel');
+const topicPathPreview = document.querySelector('#topic-path-preview');
+const topicCatalogSearch = document.querySelector('#topic-catalog-search');
+const topicSearchResults = document.querySelector('#topic-search-results');
+const styleProfileSelect = document.querySelector('#style-profile-select');
+const effectPicker = document.querySelector('#effect-picker');
 const requestHistoryButton = document.querySelector('#request-history-button');
 const requestHistoryCount = document.querySelector('#request-history-count');
 const requestDialog = document.querySelector('#request-status-dialog');
@@ -100,6 +108,8 @@ let editorParameterIndex = 0;
 let editorCompactMode = localStorage.getItem(editorCompactStorageKey) === null
   ? window.matchMedia('(max-width: 900px)').matches
   : localStorage.getItem(editorCompactStorageKey) === 'true';
+let generatorCatalog = null;
+let settingTopicFromCatalog = false;
 const editorParameters = [
   { key: 'profile', label: 'Editorial profile', control: editorProfile },
   { key: 'visualMode', label: 'Visual language', control: editorVisualMode },
@@ -413,6 +423,185 @@ generationForm.addEventListener('input', event => {
 });
 syncRangeOutputs();
 
+function catalogLabel(item) {
+  return item?.labels?.en || item?.label || item?.id || '';
+}
+
+function flattenTopicCatalog(nodes, parents = []) {
+  return (nodes || []).flatMap(node => {
+    const path = [...parents, node];
+    return [
+      { node, path },
+      ...flattenTopicCatalog(node.children, path)
+    ];
+  });
+}
+
+function setCatalogTopic(path) {
+  const selected = path.at(-1);
+  if (!selected) {
+    topicPathInput.value = '';
+    topicPathPreview.textContent = 'Choose any level. The deepest selection becomes the booklet topic.';
+    return;
+  }
+
+  const labels = path.map(catalogLabel);
+  topicPathInput.value = path.map(node => node.id).join('/');
+  settingTopicFromCatalog = true;
+  bookletTopicInput.value = selected.prompt || labels.join(' — ');
+  settingTopicFromCatalog = false;
+  topicPathPreview.innerHTML = `<strong>${escapeHtml(labels.join(' → '))}</strong> · selected automatically`;
+}
+
+function renderTopicWheel(selectedIds = []) {
+  if (!generatorCatalog?.topics) return;
+  topicWheel.innerHTML = '';
+
+  let nodes = generatorCatalog.topics.groups || [];
+  const selectedPath = [];
+
+  for (let depth = 0; nodes.length; depth += 1) {
+    const wrapper = document.createElement('label');
+    const title = document.createElement('span');
+    const select = document.createElement('select');
+    const selectedId = selectedIds[depth] || '';
+
+    title.textContent = depth === 0 ? 'Category' : depth === 1 ? 'Topic' : `Subtopic ${depth - 1}`;
+    select.dataset.topicDepth = String(depth);
+    select.append(new Option(depth === 0 ? 'Choose a category…' : 'Choose this level…', ''));
+
+    [...nodes]
+      .sort((a, b) => catalogLabel(a).localeCompare(catalogLabel(b)))
+      .forEach(node => select.append(new Option(catalogLabel(node), node.id)));
+
+    if (nodes.some(node => node.id === selectedId)) select.value = selectedId;
+    wrapper.append(title, select);
+    topicWheel.append(wrapper);
+
+    select.addEventListener('change', () => {
+      const prefix = [...topicWheel.querySelectorAll('select')]
+        .slice(0, depth)
+        .map(control => control.value)
+        .filter(Boolean);
+      renderTopicWheel(select.value ? [...prefix, select.value] : prefix);
+    });
+
+    const selected = nodes.find(node => node.id === select.value);
+    if (!selected) break;
+    selectedPath.push(selected);
+    nodes = selected.children || [];
+  }
+
+  setCatalogTopic(selectedPath);
+}
+
+function renderTopicSearch(query) {
+  const normalized = String(query || '').trim().toLocaleLowerCase();
+  topicSearchResults.innerHTML = '';
+  topicSearchResults.hidden = normalized.length < 2;
+  if (normalized.length < 2 || !generatorCatalog?.topics) return;
+
+  const matches = flattenTopicCatalog(generatorCatalog.topics.groups)
+    .filter(({ node, path }) => {
+      const searchable = [
+        ...path.flatMap(item => Object.values(item.labels || {})),
+        ...(node.aliases || []),
+        node.prompt || ''
+      ].join(' ').toLocaleLowerCase();
+      return searchable.includes(normalized);
+    })
+    .slice(0, 12);
+
+  if (!matches.length) {
+    const empty = document.createElement('p');
+    empty.className = 'topic-path-preview';
+    empty.textContent = 'No catalog match — keep your own text in the topic field.';
+    topicSearchResults.append(empty);
+    return;
+  }
+
+  for (const { path } of matches) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.textContent = path.map(catalogLabel).join(' → ');
+    button.addEventListener('click', () => {
+      renderTopicWheel(path.map(node => node.id));
+      topicCatalogSearch.value = '';
+      topicSearchResults.hidden = true;
+    });
+    topicSearchResults.append(button);
+  }
+}
+
+function appendCatalogStyles(styleCatalog) {
+  const groupLabels = new Map((styleCatalog.groups || []).map(group => [group.id, catalogLabel(group)]));
+  const existing = new Set([...styleProfileSelect.options].map(option => option.value));
+
+  for (const style of styleCatalog.items || []) {
+    if (!style.id || existing.has(style.id)) continue;
+    const label = groupLabels.get(style.groupId) || 'Catalog styles';
+    let group = [...styleProfileSelect.querySelectorAll('optgroup')]
+      .find(node => node.label === label);
+    if (!group) {
+      group = document.createElement('optgroup');
+      group.label = label;
+      styleProfileSelect.insertBefore(group, styleProfileSelect.lastElementChild);
+    }
+    group.append(new Option(catalogLabel(style), style.id));
+    existing.add(style.id);
+  }
+}
+
+function renderCatalogEffects(effectCatalog) {
+  const legend = effectPicker.querySelector('legend');
+  const checked = new Set(
+    [...effectPicker.querySelectorAll('input:checked')].map(input => input.value)
+  );
+  effectPicker.replaceChildren(legend);
+
+  const groupLabels = new Map((effectCatalog.groups || []).map(group => [group.id, catalogLabel(group)]));
+  for (const effect of effectCatalog.items || []) {
+    const label = document.createElement('label');
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.name = 'effects';
+    input.value = effect.id;
+    input.checked = checked.has(effect.id);
+    label.title = groupLabels.get(effect.groupId) || '';
+    label.append(input, document.createTextNode(catalogLabel(effect)));
+    effectPicker.append(label);
+  }
+}
+
+async function loadGeneratorCatalogs() {
+  const [topicsResponse, stylesResponse, effectsResponse] = await Promise.all([
+    fetch('./data/catalog/topics.json', { cache: 'no-store' }),
+    fetch('./data/catalog/styles.json', { cache: 'no-store' }),
+    fetch('./data/catalog/effects.json', { cache: 'no-store' })
+  ]);
+
+  if (![topicsResponse, stylesResponse, effectsResponse].every(response => response.ok)) {
+    throw new Error('One or more generator catalogs could not be loaded.');
+  }
+
+  generatorCatalog = {
+    topics: await topicsResponse.json(),
+    styles: await stylesResponse.json(),
+    effects: await effectsResponse.json()
+  };
+
+  renderTopicWheel();
+  appendCatalogStyles(generatorCatalog.styles);
+  renderCatalogEffects(generatorCatalog.effects);
+}
+
+topicCatalogSearch.addEventListener('input', event => renderTopicSearch(event.target.value));
+bookletTopicInput.addEventListener('input', () => {
+  if (settingTopicFromCatalog || !topicPathInput.value) return;
+  topicPathInput.value = '';
+  topicPathPreview.textContent = 'Custom topic entered. The catalog path was cleared.';
+});
+
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') setMenu(false);
 });
@@ -495,6 +684,8 @@ async function sendQueueForm(event, formStatus, successMessage) {
     activeRequestId = request.id;
     saveGenerationRequests();
     form.reset();
+    renderTopicWheel();
+    topicSearchResults.hidden = true;
     syncRangeOutputs();
     formStatus.textContent = successMessage;
     openRequestDialog(request.id, true);
@@ -1634,6 +1825,7 @@ document.querySelector('#surprise-button').addEventListener('click', () => {
 });
 
 async function init() {
+  await loadGeneratorCatalogs().catch(error => console.warn(error));
   const response = await fetch('./data/booklets.json', { cache: 'no-store' });
   if (!response.ok) throw new Error(`Failed to load booklets: ${response.status}`);
   allBooklets = await response.json();

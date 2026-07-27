@@ -1,0 +1,242 @@
+{
+  "schemaVersion": 1,
+  "defaultLocale": "en",
+  "updatedAt": "2026-07-27",
+  "groups": [
+    {
+      "id": "arts-culture",
+      "labels": { "en": "Arts & culture", "ru": "Искусство и культура" },
+      "aliases": ["art", "culture", "искусство", "культура"],
+      "children": [
+        {
+          "id": "cinema",
+          "labels": { "en": "Cinema", "ru": "Кино" },
+          "recommendedStyleIds": ["cinematic-magazine", "black-white-noir"],
+          "children": [
+            { "id": "film-history", "labels": { "en": "Film history", "ru": "История кино" } },
+            { "id": "directors", "labels": { "en": "Directors", "ru": "Режиссёры" } },
+            { "id": "genres", "labels": { "en": "Genres", "ru": "Жанры" } },
+            { "id": "production", "labels": { "en": "Film production", "ru": "Производство кино" } }
+          ]
+        },
+        {
+          "id": "music",
+          "labels": { "en": "Music", "ru": "Музыка" },
+          "recommendedStyleIds": ["music-culture", "post-punk-zine"],
+          "children": [
+            { "id": "artists", "labels": { "en": "Artists", "ru": "Исполнители" } },
+            { "id": "genres", "labels": { "en": "Genres", "ru": "Жанры" } },
+            { "id": "instruments", "labels": { "en": "Instruments", "ru": "Инструменты" } },
+            { "id": "live-events", "labels": { "en": "Concerts & festivals", "ru": "Концерты и фестивали" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "knowledge",
+      "labels": { "en": "Knowledge", "ru": "Знания" },
+      "aliases": ["education", "science", "образование", "наука"],
+      "children": [
+        {
+          "id": "science",
+          "labels": { "en": "Science", "ru": "Наука" },
+          "recommendedStyleIds": ["scientific-journal", "scientific-archive"],
+          "children": [
+            { "id": "space", "labels": { "en": "Space", "ru": "Космос" } },
+            { "id": "biology", "labels": { "en": "Biology", "ru": "Биология" } },
+            { "id": "physics", "labels": { "en": "Physics", "ru": "Физика" } },
+            { "id": "experiments", "labels": { "en": "Experiments", "ru": "Эксперименты" } }
+          ]
+        },
+        {
+          "id": "encyclopedia",
+          "labels": { "en": "Encyclopedia", "ru": "Энциклопедия" },
+          "recommendedStyleIds": ["encyclopedia-reference", "museum-clean"],
+          "children": [
+            { "id": "people", "labels": { "en": "People", "ru": "Люди" } },
+            { "id": "places", "labels": { "en": "Places", "ru": "Места" } },
+            { "id": "objects", "labels": { "en": "Objects", "ru": "Объекты" } },
+            { "id": "how-it-works", "labels": { "en": "How it works", "ru": "Как это работает" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nature-world",
+      "labels": { "en": "Nature & world", "ru": "Природа и мир" },
+      "aliases": ["nature", "earth", "природа", "земля"],
+      "children": [
+        {
+          "id": "wildlife",
+          "labels": { "en": "Wildlife", "ru": "Дикая природа" },
+          "recommendedStyleIds": ["national-geographic-inspired", "discovery-inspired"],
+          "children": [
+            { "id": "animals", "labels": { "en": "Animals", "ru": "Животные" } },
+            { "id": "oceans", "labels": { "en": "Oceans", "ru": "Океаны" } },
+            { "id": "forests", "labels": { "en": "Forests", "ru": "Леса" } },
+            { "id": "expeditions", "labels": { "en": "Expeditions", "ru": "Экспедиции" } }
+          ]
+        },
+        {
+          "id": "places",
+          "labels": { "en": "Countries & places", "ru": "Страны и места" },
+          "recommendedStyleIds": ["documentary-clean", "local-folk-future"],
+          "children": [
+            { "id": "cities", "labels": { "en": "Cities", "ru": "Города" } },
+            { "id": "countries", "labels": { "en": "Countries", "ru": "Страны" } },
+            { "id": "routes", "labels": { "en": "Routes", "ru": "Маршруты" } },
+            { "id": "local-culture", "labels": { "en": "Local culture", "ru": "Местная культура" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "occasions",
+      "labels": { "en": "Occasions", "ru": "События и праздники" },
+      "aliases": ["party", "holiday", "праздник", "событие"],
+      "children": [
+        {
+          "id": "birthday",
+          "labels": { "en": "Birthday", "ru": "День рождения" },
+          "recommendedStyleIds": ["kids-party-pop", "childlike-paper-cut"],
+          "children": [
+            { "id": "children", "labels": { "en": "Children's party", "ru": "Детский праздник" } },
+            { "id": "milestone", "labels": { "en": "Milestone birthday", "ru": "Юбилей" } },
+            { "id": "friends", "labels": { "en": "For a friend", "ru": "Для друга" } },
+            { "id": "family", "labels": { "en": "Family story", "ru": "Семейная история" } }
+          ]
+        },
+        {
+          "id": "wedding",
+          "labels": { "en": "Wedding", "ru": "Свадьба" },
+          "recommendedStyleIds": ["wedding-editorial", "luxury-editorial"],
+          "children": [
+            { "id": "invitation", "labels": { "en": "Invitation", "ru": "Приглашение" } },
+            { "id": "couple-story", "labels": { "en": "Couple story", "ru": "История пары" } },
+            { "id": "programme", "labels": { "en": "Event programme", "ru": "Программа события" } },
+            { "id": "photo-booklet", "labels": { "en": "Photo booklet", "ru": "Фотобуклет" } }
+          ]
+        },
+        {
+          "id": "halloween",
+          "labels": { "en": "Halloween", "ru": "Хеллоуин" },
+          "recommendedStyleIds": ["halloween-noir", "comic-pop"],
+          "children": [
+            { "id": "party", "labels": { "en": "Party", "ru": "Вечеринка" } },
+            { "id": "costumes", "labels": { "en": "Costumes", "ru": "Костюмы" } },
+            { "id": "stories", "labels": { "en": "Scary stories", "ru": "Страшные истории" } },
+            { "id": "games", "labels": { "en": "Games", "ru": "Игры" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "society",
+      "labels": { "en": "Society", "ru": "Общество" },
+      "aliases": ["politics", "media", "общество", "политика"],
+      "children": [
+        {
+          "id": "politics",
+          "labels": { "en": "Politics", "ru": "Политика" },
+          "recommendedStyleIds": ["euronews-inspired", "eu-institutional"],
+          "children": [
+            { "id": "elections", "labels": { "en": "Elections", "ru": "Выборы" } },
+            { "id": "institutions", "labels": { "en": "Institutions", "ru": "Институты" } },
+            { "id": "technology", "labels": { "en": "Politics & technology", "ru": "Политика и технологии" } },
+            { "id": "public-policy", "labels": { "en": "Public policy", "ru": "Государственная политика" } }
+          ]
+        },
+        {
+          "id": "community",
+          "labels": { "en": "Community & non-profit", "ru": "Сообщество и НКО" },
+          "recommendedStyleIds": ["civic-nonprofit", "public-department"],
+          "children": [
+            { "id": "impact", "labels": { "en": "Impact report", "ru": "Отчёт о результатах" } },
+            { "id": "volunteers", "labels": { "en": "Volunteers", "ru": "Волонтёры" } },
+            { "id": "campaign", "labels": { "en": "Campaign", "ru": "Кампания" } },
+            { "id": "event", "labels": { "en": "Community event", "ru": "Общественное мероприятие" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sports",
+      "labels": { "en": "Sports", "ru": "Спорт" },
+      "aliases": ["sport", "athletics", "спорт", "атлетика"],
+      "children": [
+        {
+          "id": "tennis",
+          "labels": { "en": "Tennis", "ru": "Теннис" },
+          "recommendedStyleIds": ["sports-broadcast", "encyclopedia-reference"],
+          "children": [
+            {
+              "id": "equipment",
+              "labels": { "en": "Equipment", "ru": "Экипировка" },
+              "prompt": "Tennis equipment: rackets, strings, balls, shoes and how their design affects play"
+            },
+            {
+              "id": "athletes",
+              "labels": { "en": "Athletes", "ru": "Спортсмены" },
+              "prompt": "Tennis athletes, playing styles, careers and defining matches"
+            },
+            {
+              "id": "competitions",
+              "labels": { "en": "Competitions", "ru": "Соревнования" },
+              "prompt": "Tennis competitions: Grand Slams, tours, formats and famous venues"
+            },
+            {
+              "id": "results",
+              "labels": { "en": "Results & records", "ru": "Результаты и рекорды" },
+              "prompt": "Tennis results, records and the numbers that changed the sport"
+            },
+            {
+              "id": "rules",
+              "labels": { "en": "Rules", "ru": "Правила" },
+              "prompt": "A visual guide to tennis rules, scoring, court geometry and match formats"
+            }
+          ]
+        },
+        {
+          "id": "football",
+          "labels": { "en": "Football", "ru": "Футбол" },
+          "recommendedStyleIds": ["sports-broadcast", "documentary-clean"],
+          "children": [
+            { "id": "clubs", "labels": { "en": "Clubs", "ru": "Клубы" } },
+            { "id": "players", "labels": { "en": "Players", "ru": "Игроки" } },
+            { "id": "tactics", "labels": { "en": "Tactics", "ru": "Тактика" } },
+            { "id": "history", "labels": { "en": "History", "ru": "История" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "technology",
+      "labels": { "en": "Technology", "ru": "Технологии" },
+      "aliases": ["tech", "digital", "технологии", "цифровой"],
+      "children": [
+        {
+          "id": "artificial-intelligence",
+          "labels": { "en": "Artificial intelligence", "ru": "Искусственный интеллект" },
+          "recommendedStyleIds": ["neo-tech-interface", "scientific-journal"],
+          "children": [
+            { "id": "how-it-works", "labels": { "en": "How AI works", "ru": "Как работает AI" } },
+            { "id": "society", "labels": { "en": "AI & society", "ru": "AI и общество" } },
+            { "id": "creative-tools", "labels": { "en": "Creative tools", "ru": "Творческие инструменты" } },
+            { "id": "future", "labels": { "en": "Future scenarios", "ru": "Сценарии будущего" } }
+          ]
+        },
+        {
+          "id": "games",
+          "labels": { "en": "Games", "ru": "Игры" },
+          "recommendedStyleIds": ["gaming-editorial", "y2k-liquid"],
+          "children": [
+            { "id": "game-history", "labels": { "en": "Game history", "ru": "История игр" } },
+            { "id": "worlds", "labels": { "en": "Game worlds", "ru": "Игровые миры" } },
+            { "id": "characters", "labels": { "en": "Characters", "ru": "Персонажи" } },
+            { "id": "design", "labels": { "en": "Game design", "ru": "Геймдизайн" } }
+          ]
+        }
+      ]
+    }
+  ]
+}

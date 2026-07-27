@@ -139,6 +139,80 @@ main { overflow: hidden; }
 .generator-note { margin: 16px 0 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
 .generator-note a { text-underline-offset: 3px; }
 .field-hint { color: var(--muted); font-size: 11px; line-height: 1.35; }
+.topic-explorer {
+  margin-top: -4px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--paper) 95%, var(--ink));
+}
+.topic-explorer summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 12px 13px;
+  cursor: pointer;
+  list-style: none;
+  font: 500 10px/1.2 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.topic-explorer summary::-webkit-details-marker { display: none; }
+.topic-explorer summary::after { content: "+"; margin-left: auto; font-size: 17px; }
+.topic-explorer[open] summary::after { content: "−"; }
+.topic-explorer summary small {
+  color: var(--muted);
+  font: 500 9px/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: .03em;
+  text-transform: none;
+}
+.topic-explorer-panel {
+  display: grid;
+  gap: 13px;
+  padding: 14px;
+  border-top: 1px solid var(--line);
+}
+.topic-search-label { max-width: none; }
+.topic-wheel {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+.topic-wheel label { min-width: 0; }
+.topic-wheel label > span {
+  color: var(--muted);
+  font-size: 8px;
+}
+.topic-wheel select {
+  min-width: 0;
+  appearance: auto;
+}
+.topic-path-preview {
+  margin: 0;
+  color: var(--muted);
+  font: 500 10px/1.45 "IBM Plex Mono", monospace;
+}
+.topic-path-preview strong { color: var(--ink); }
+.topic-search-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+.topic-search-results button {
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+  font-size: 12px;
+}
+.topic-search-results button:hover,
+.topic-search-results button:focus-visible {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
 .range-field output { float: right; color: var(--ink); font: inherit; }
 .request-form .range-field input[type="range"] {
   min-height: 24px;
@@ -505,6 +579,10 @@ footer a { text-underline-offset: 3px; }
   .request-section { gap: 42px; }
   .request-fields { grid-template-columns: 1fr; }
   .request-form .field-wide { grid-column: auto; }
+  .topic-explorer summary { align-items: flex-start; flex-direction: column; gap: 5px; padding-right: 38px; position: relative; }
+  .topic-explorer summary::after { position: absolute; top: 9px; right: 13px; }
+  .topic-wheel { grid-template-columns: 1fr; }
+  .topic-search-results { grid-template-columns: 1fr; }
   .detail-cover { min-height: 520px; }
   .detail-meta { padding-top: 40px; }
   .spread-grid { grid-template-columns: 1fr; }

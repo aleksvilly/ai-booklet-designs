@@ -21,12 +21,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout catalog
+        uses: actions/checkout@v4
+
       - name: Read ntfy queue and dispatch requests
         uses: actions/github-script@v7
         env:
           QUEUE_URL: https://ntfy.sh/ai-booklet-8bcc753d24dacb6d280ae36b
         with:
           script: |
+            const fs = require('fs');
+            const styleCatalog = JSON.parse(fs.readFileSync('data/catalog/styles.json', 'utf8'));
+            const effectCatalog = JSON.parse(fs.readFileSync('data/catalog/effects.json', 'utf8'));
             const clean = (value, maxLength = 800) => String(value || '')
               .replace(/[\u0000-\u001f\u007f]/g, ' ')
               .replace(/\s+/g, ' ')
@@ -109,7 +115,8 @@ jobs:
               const allowedEffectTokens = new Set([
                 'blur', 'monochrome', 'invert', 'grain', 'halftone', 'glow', 'duotone',
                 'glitch', 'chrome', 'parallax', '3d', 'paper-cut', 'torn', 'collage',
-                'shadow', 'liquid', 'type-wave', 'scan', 'frame'
+                'shadow', 'liquid', 'type-wave', 'scan', 'frame',
+                ...effectCatalog.items.map(item => item.id)
               ]);
               const allowedStyles = new Set([
                 'auto',
@@ -144,10 +151,12 @@ jobs:
                 'psychedelic-70s',
                 'post-punk-zine',
                 'risograph-craft',
-                'surreal-absurd'
+                'surreal-absurd',
+                ...styleCatalog.items.map(item => item.id)
               ]);
 
               const selectedStyle = clean(data.style, 80) || 'auto';
+              const topicPath = clean(data.topic_path, 320);
               const customStyle = clean(data.custom_style, 180);
               const effects = clean(data.effects, 320)
                 .split(',')
@@ -167,6 +176,7 @@ jobs:
                   '## Automatic public booklet request',
                   '',
                   `topic: ${topic}`,
+                  `topic_path: ${topicPath}`,
                   `style: ${allowedStyles.has(selectedStyle) ? selectedStyle : 'auto'}`,
                   `custom_style: ${customStyle}`,
                   `visual_mode: ${allowedVisualModes.has(clean(data.visual_mode, 20)) ? clean(data.visual_mode, 20) : 'auto'}`,
@@ -209,6 +219,7 @@ jobs:
                   effects,
                   fonts: clean(data.custom_fonts, 240),
                   topic,
+                  topic_path: topicPath,
                   description,
                   request_issue: String(issueNumber)
                 }

@@ -16,10 +16,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout catalog
+        uses: actions/checkout@v4
+
       - name: Validate brief and start generator
         uses: actions/github-script@v7
         with:
           script: |
+            const fs = require('fs');
+            const styleCatalog = JSON.parse(fs.readFileSync('data/catalog/styles.json', 'utf8'));
+            const effectCatalog = JSON.parse(fs.readFileSync('data/catalog/effects.json', 'utf8'));
             const body = context.payload.issue.body || '';
             const issueNumber = context.payload.issue.number;
             const oneHourAgo = Date.now() - 60 * 60 * 1000;
@@ -105,7 +111,8 @@ jobs:
             const allowedEffectTokens = new Set([
               'blur', 'monochrome', 'invert', 'grain', 'halftone', 'glow', 'duotone',
               'glitch', 'chrome', 'parallax', '3d', 'paper-cut', 'torn', 'collage',
-              'shadow', 'liquid', 'type-wave', 'scan', 'frame'
+              'shadow', 'liquid', 'type-wave', 'scan', 'frame',
+              ...effectCatalog.items.map(item => item.id)
             ]);
             const allowedStyles = new Set([
               'auto',
@@ -140,12 +147,14 @@ jobs:
               'psychedelic-70s',
               'post-punk-zine',
               'risograph-craft',
-              'surreal-absurd'
+              'surreal-absurd',
+              ...styleCatalog.items.map(item => item.id)
             ]);
 
             const selectedStyle = field('style', 80) || 'auto';
             const customStyle = field('custom_style', 180);
             const topic = field('topic', 140);
+            const topicPath = field('topic_path', 320);
             const effects = field('effects', 320)
               .split(',')
               .map(value => clean(value, 30))
@@ -170,6 +179,7 @@ jobs:
               effects,
               fonts: field('custom_fonts', 240),
               topic,
+              topic_path: topicPath,
               description
             };
 

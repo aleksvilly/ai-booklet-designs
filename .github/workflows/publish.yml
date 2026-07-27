@@ -106,6 +106,12 @@ on:
         default: ''
         type: string
 
+      topic_path:
+        description: Optional slash-separated topic catalog path
+        required: false
+        default: ''
+        type: string
+
       description:
         description: Approximate description or creative brief (leave empty for automatic generation)
         required: false
@@ -174,6 +180,7 @@ jobs:
           BOOKLET_EFFECTS: ${{ github.event_name == 'workflow_dispatch' && inputs.effects || '' }}
           BOOKLET_FONTS: ${{ github.event_name == 'workflow_dispatch' && inputs.fonts || '' }}
           BOOKLET_TOPIC: ${{ github.event_name == 'workflow_dispatch' && inputs.topic || '' }}
+          BOOKLET_TOPIC_PATH: ${{ github.event_name == 'workflow_dispatch' && inputs.topic_path || '' }}
           BOOKLET_DESCRIPTION: ${{ github.event_name == 'workflow_dispatch' && inputs.description || '' }}
           BOOKLET_RUN_ID: ${{ github.run_id }}
         run: npm run generate

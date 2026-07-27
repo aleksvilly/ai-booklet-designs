@@ -76,11 +76,27 @@
         <div class="request-fields">
           <label class="field-wide">
             <span>Booklet topic</span>
-            <input name="topic" type="text" maxlength="140" placeholder="Optional — leave empty for a random topic">
+            <input id="booklet-topic" name="topic" type="text" maxlength="140" placeholder="Optional — type anything or browse the topic encyclopedia">
           </label>
+          <input id="topic-path" name="topic_path" type="hidden" value="">
+          <details class="topic-explorer field-wide" id="topic-explorer">
+            <summary>
+              <span>Browse topic encyclopedia</span>
+              <small>Category → topic → subtopic</small>
+            </summary>
+            <div class="topic-explorer-panel">
+              <label class="topic-search-label">
+                <span>Find a topic</span>
+                <input id="topic-catalog-search" type="search" placeholder="Try tennis, wedding, AI…" autocomplete="off">
+              </label>
+              <div class="topic-wheel" id="topic-wheel" aria-label="Topic path"></div>
+              <p class="topic-path-preview" id="topic-path-preview">Choose any level. The deepest selection becomes the booklet topic.</p>
+              <div class="topic-search-results" id="topic-search-results" hidden></div>
+            </div>
+          </details>
           <label>
             <span>Editorial profile</span>
-            <select name="style" required>
+            <select id="style-profile-select" name="style" required>
               <option value="auto">Automatic / no brand profile</option>
               <optgroup label="Public &amp; non-profit">
                 <option value="civic-nonprofit">NGO / non-profit impact</option>
@@ -153,7 +169,7 @@
         <details class="generator-advanced">
           <summary>Advanced direction</summary>
           <div class="request-fields">
-            <fieldset class="effect-picker field-wide">
+            <fieldset class="effect-picker field-wide" id="effect-picker">
               <legend>Preferred effects (optional — intensity controls how many are used)</legend>
               <label><input name="effects" type="checkbox" value="blur"> Blur</label>
               <label><input name="effects" type="checkbox" value="monochrome"> Black &amp; white</label>

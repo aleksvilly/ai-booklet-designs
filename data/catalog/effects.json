@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-27",
+  "groups": [
+    { "id": "photo", "labels": { "en": "Photo", "ru": "Фото" } },
+    { "id": "print", "labels": { "en": "Print", "ru": "Печать" } },
+    { "id": "digital", "labels": { "en": "Digital", "ru": "Цифровые" } },
+    { "id": "depth", "labels": { "en": "Depth & layers", "ru": "Глубина и слои" } },
+    { "id": "composition", "labels": { "en": "Composition", "ru": "Композиция" } }
+  ],
+  "items": [
+    { "id": "blur", "groupId": "photo", "labels": { "en": "Blur", "ru": "Блюр" }, "generatorToken": "blurred-depth", "minIntensity": 1 },
+    { "id": "monochrome", "groupId": "photo", "labels": { "en": "Black & white", "ru": "Чёрно-белое" }, "generatorToken": "color:black-white", "minIntensity": 1 },
+    { "id": "invert", "groupId": "photo", "labels": { "en": "Inverted", "ru": "Инверсия" }, "generatorToken": "inverted-section", "minIntensity": 1 },
+    { "id": "duotone", "groupId": "photo", "labels": { "en": "Duotone", "ru": "Дуотон" }, "generatorToken": "gradient-overlay", "minIntensity": 1 },
+    { "id": "grain", "groupId": "print", "labels": { "en": "Grain", "ru": "Зерно" }, "generatorToken": "film-grain", "minIntensity": 1 },
+    { "id": "halftone", "groupId": "print", "labels": { "en": "Halftone", "ru": "Полутона" }, "generatorToken": "halftone", "minIntensity": 2 },
+    { "id": "paper-cut", "groupId": "print", "labels": { "en": "Paper cut", "ru": "Бумажная аппликация" }, "generatorToken": "paper-cut", "minIntensity": 2 },
+    { "id": "torn", "groupId": "print", "labels": { "en": "Torn paper", "ru": "Рваная бумага" }, "generatorToken": "torn-edge", "minIntensity": 2 },
+    { "id": "glitch", "groupId": "digital", "labels": { "en": "Digital glitch", "ru": "Цифровой глитч" }, "generatorToken": "pixel-grid", "minIntensity": 3 },
+    { "id": "chrome", "groupId": "digital", "labels": { "en": "Chrome", "ru": "Хром" }, "generatorToken": "chrome-type", "minIntensity": 3 },
+    { "id": "scan", "groupId": "digital", "labels": { "en": "Data scan", "ru": "Скан данных" }, "generatorToken": "data-scan", "minIntensity": 2 },
+    { "id": "glow", "groupId": "digital", "labels": { "en": "Glow", "ru": "Свечение" }, "generatorToken": "glow-accent", "minIntensity": 2 },
+    { "id": "parallax", "groupId": "depth", "labels": { "en": "Parallax depth", "ru": "Параллакс" }, "generatorToken": "parallax-depth", "minIntensity": 2 },
+    { "id": "3d", "groupId": "depth", "labels": { "en": "Micro 3D", "ru": "Микро-3D" }, "generatorToken": "micro-3d-layering", "minIntensity": 2 },
+    { "id": "shadow", "groupId": "depth", "labels": { "en": "Soft shadow", "ru": "Мягкая тень" }, "generatorToken": "soft-shadow", "minIntensity": 1 },
+    { "id": "collage", "groupId": "depth", "labels": { "en": "Layered collage", "ru": "Слоёный коллаж" }, "generatorToken": "overlapping-panels", "minIntensity": 2 },
+    { "id": "liquid", "groupId": "composition", "labels": { "en": "Liquid shapes", "ru": "Жидкие формы" }, "generatorToken": "liquid-shapes", "minIntensity": 2 },
+    { "id": "type-wave", "groupId": "composition", "labels": { "en": "Type wave", "ru": "Волна текста" }, "generatorToken": "type-wave", "minIntensity": 2 },
+    { "id": "frame", "groupId": "composition", "labels": { "en": "Editorial frame", "ru": "Редакционная рамка" }, "generatorToken": "frame-within-frame", "minIntensity": 1 },
+    { "id": "oversized-number", "groupId": "composition", "labels": { "en": "Oversized number", "ru": "Огромные цифры" }, "generatorToken": "oversized-number", "minIntensity": 1 }
+  ]
+}

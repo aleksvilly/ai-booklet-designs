@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "generate": "node scripts/generate-daily.mjs",
+    "test:catalog": "node scripts/catalog-smoke.mjs",
     "serve": "python3 -m http.server 8080"
   },
   "dependencies": {

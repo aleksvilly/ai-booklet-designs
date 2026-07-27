@@ -99,6 +99,17 @@ Browser
   - Production collection and generated content.
   - New generated booklets are prepended, not substituted for old booklets.
   - Treat this as valuable user data.
+- `data/catalog/topics.json`
+  - Recursive, multilingual topic encyclopedia.
+  - Topic paths may have any depth and use stable slash-separated IDs.
+- `data/catalog/styles.json`
+  - Extensible style families, topic affinities, provenance, generator pools,
+    strict profile contracts, and the chaos level at which mixing is allowed.
+- `data/catalog/effects.json`
+  - Public effect IDs, labels, groups, intensity hints, and internal Design DNA
+    tokens.
+- `docs/CATALOG-ROADMAP.md`
+  - Checklist of finished, active, next, and later catalog/editor work.
 
 ### Generator
 
@@ -107,6 +118,11 @@ Browser
   - Builds Design DNA, page plans, text, typography, layout, image queries,
     sources, and generation metadata.
   - Supports OpenAI, Gemini, and local fallback generation.
+- `scripts/catalog-registry.mjs`
+  - Loads the shared JSON catalogs for Node-based generation.
+  - Converts catalog style/effect records into existing Design DNA structures.
+- `scripts/catalog-smoke.mjs`
+  - Validates IDs, references and required fields with `npm run test:catalog`.
 - `scripts/image-fallback-helpers.mjs`
   - Image-provider fallback system.
   - Supports Unsplash, Pexels, Pixabay, Openverse, Wikimedia, and decorative
@@ -154,6 +170,8 @@ Current public request fields:
 - `request_type=booklet_generation`
 - `count=1`
 - `topic` — optional; an empty topic intentionally means random selection
+- `topic_path` — optional stable catalog path such as
+  `sports/tennis/equipment`; an empty value means free text or random
 - `style`
 - `chaos_level`
 - `max_fonts`
@@ -305,6 +323,7 @@ Important environment variables:
 - `BOOKLET_STYLE`
 - `BOOKLET_FONTS`
 - `BOOKLET_TOPIC` — empty means random
+- `BOOKLET_TOPIC_PATH` — optional slash-separated catalog path
 - `BOOKLET_DESCRIPTION`
 - `BOOKLET_RUN_ID`
 - `BOOKLET_DATE`
@@ -378,6 +397,44 @@ The generation form intentionally contains no email or phone field.
 - Mobile navigation must remain accessible through the burger button.
 - Direct booklet links using `?booklet=<id>` must continue to work.
 - Print styles for booklet spreads must not be broken by site-level UI changes.
+
+## Extensible catalog architecture
+
+Treat `data/catalog/*.json` as the portable source of truth for new topics,
+styles and effects. The current generator still contains legacy arrays during
+the migration, but catalog records override matching legacy style IDs and may
+introduce completely new IDs without editing the generator.
+
+Catalog rules:
+
+1. IDs are permanent, lowercase and URL-safe. Translate labels, never IDs.
+2. Topic trees are recursive. Never hard-code a maximum depth in stored data.
+3. `topic_path` is slash-separated IDs. `topic` remains the human-readable
+   prompt and preserves compatibility with old requests.
+4. A selected style is a contract at chaos 0–4. Chaos 5 may deliberately break
+   and remix it. A style can override this boundary with `lockUntilChaos`.
+5. Topic affinity recommends styles but must not silently replace an explicit
+   user style.
+6. Effect `id` is the browser/workflow/API value. `generatorToken` is the
+   internal renderer/generator value.
+7. New browser choices must come from the catalogs where possible. Keep HTML
+   fallbacks so the form remains usable if a catalog fetch fails.
+8. Imported styles must record provenance and licence information. Recreate
+   visual grammar with project-native tokens; do not commit proprietary brand
+   assets or unlicensed source code.
+9. Run `npm run test:catalog` after every catalog change.
+10. Update `docs/CATALOG-ROADMAP.md` when a catalog/editor milestone is finished
+    or a new follow-up is discovered.
+
+Current UI behaviour:
+
+- The topic explorer uses cascading native selects. On iOS these open as the
+  native vertical wheel picker.
+- Selecting any depth immediately fills the normal `topic` field and stores the
+  stable `topic_path`.
+- Users may overwrite the generated topic text; doing so clears `topic_path`.
+- The editor remains a separate parameter system with the inheritance chain
+  booklet → spread → page.
 
 ## Deployment behaviour
 

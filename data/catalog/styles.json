@@ -1,0 +1,196 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-07-27",
+  "groups": [
+    { "id": "editorial-media", "labels": { "en": "Editorial & media", "ru": "Редакционные и медиа" } },
+    { "id": "knowledge", "labels": { "en": "Science & knowledge", "ru": "Наука и знания" } },
+    { "id": "entertainment", "labels": { "en": "Entertainment & sport", "ru": "Развлечения и спорт" } },
+    { "id": "occasions", "labels": { "en": "Celebrations & occasions", "ru": "Праздники и события" } }
+  ],
+  "items": [
+    {
+      "id": "euronews-inspired",
+      "groupId": "editorial-media",
+      "labels": { "en": "Euronews-inspired newsroom", "ru": "В стиле Euronews" },
+      "topicAffinity": ["society/politics", "society", "technology/artificial-intelligence/society"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "inspired", "url": "https://www.euronews.com/" },
+      "generator": {
+        "weight": 5,
+        "eras": ["2020–2024", "2025", "2026"],
+        "layouts": ["grid", "split", "full"],
+        "typography": ["clean-sans", "condensed-headlines"],
+        "colors": ["one-accent", "high-contrast", "duotone"],
+        "effects": ["floating-caption", "oversized-number", "diagonal-flow"]
+      },
+      "contract": {
+        "archetypes": ["editorial-magazine", "fact-book"],
+        "palette": ["#ffffff", "#0172f0", "#aec1c9", "#002e44"],
+        "typography": ["clean-sans"],
+        "fonts": ["Inter"],
+        "layouts": ["grid", "split", "full", "minimal"],
+        "layoutSystems": ["strict-grid", "split-layout", "white-space-minimal", "single-hero-image"],
+        "imageTreatments": ["clean-photo", "photo-with-text-overlay"],
+        "shapeLanguages": ["geometric"],
+        "backgrounds": ["pure", "dark-field"],
+        "rhythms": ["balanced", "dynamic", "calm"],
+        "effects": ["floating-caption", "oversized-number", "diagonal-flow", "frame-within-frame"],
+        "covers": ["magazine", "split-object", "negative-space", "full-photo"]
+      }
+    },
+    {
+      "id": "encyclopedia-reference",
+      "groupId": "knowledge",
+      "labels": { "en": "Illustrated encyclopedia", "ru": "Иллюстрированная энциклопедия" },
+      "topicAffinity": ["knowledge", "sports", "nature-world"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 7,
+        "eras": ["1960s", "1980s", "2026"],
+        "layouts": ["archive", "grid", "vertical"],
+        "typography": ["tiny-editorial", "mixed-serif-sans", "clean-sans"],
+        "colors": ["muted", "one-accent", "duotone"],
+        "effects": ["frame-within-frame", "oversized-number", "map-grid"]
+      }
+    },
+    {
+      "id": "scientific-journal",
+      "groupId": "knowledge",
+      "labels": { "en": "Scientific journal", "ru": "Научный журнал" },
+      "topicAffinity": ["knowledge/science", "technology/artificial-intelligence"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 6,
+        "eras": ["1960s", "2010s", "2026"],
+        "layouts": ["grid", "archive", "minimal"],
+        "typography": ["tiny-editorial", "tech-mono", "mixed-serif-sans"],
+        "colors": ["black-white", "muted", "one-accent"],
+        "effects": ["diagram-overlay", "registration-marks", "caption-rule"]
+      }
+    },
+    {
+      "id": "sports-broadcast",
+      "groupId": "entertainment",
+      "labels": { "en": "Sports broadcast", "ru": "Спортивная трансляция" },
+      "topicAffinity": ["sports"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 7,
+        "eras": ["1990s", "2020–2024", "2026"],
+        "layouts": ["grid", "split", "full"],
+        "typography": ["condensed-headlines", "clean-sans", "poster-bold"],
+        "colors": ["high-contrast", "one-accent", "full-color"],
+        "effects": ["data-scan", "oversized-number", "diagonal-flow"]
+      }
+    },
+    {
+      "id": "gaming-editorial",
+      "groupId": "entertainment",
+      "labels": { "en": "Games editorial", "ru": "Игровой журнал" },
+      "topicAffinity": ["technology/games"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 6,
+        "eras": ["2000s", "2020–2024", "2026"],
+        "layouts": ["grid", "full", "radical"],
+        "typography": ["tech-mono", "poster-bold", "condensed-headlines"],
+        "colors": ["dark-tech", "neon", "high-contrast"],
+        "effects": ["pixel-grid", "glow-accent", "data-scan"]
+      }
+    },
+    {
+      "id": "wedding-editorial",
+      "groupId": "occasions",
+      "labels": { "en": "Wedding editorial", "ru": "Свадебный журнал" },
+      "topicAffinity": ["occasions/wedding"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 7,
+        "eras": ["2010s", "2026"],
+        "layouts": ["minimal", "split", "full"],
+        "typography": ["huge-serif", "mixed-serif-sans", "tiny-editorial"],
+        "colors": ["muted", "pastel", "one-accent"],
+        "effects": ["soft-shadow", "floating-caption", "empty-space"]
+      },
+      "contract": {
+        "archetypes": ["gift-booklet", "personal-tribute", "visual-diary"],
+        "palette": ["#fbf7f0", "#d8b9ad", "#5b514c", "#b28f58"],
+        "typography": ["huge-serif", "mixed-serif-sans"],
+        "fonts": ["Cormorant Garamond", "DM Sans"],
+        "layouts": ["minimal", "split", "full"],
+        "layoutSystems": ["white-space-minimal", "single-hero-image", "split-layout"],
+        "imageTreatments": ["clean-photo", "grainy-photo"],
+        "shapeLanguages": ["organic", "geometric"],
+        "backgrounds": ["pure", "paper"],
+        "rhythms": ["slow-luxury", "calm"],
+        "effects": ["soft-shadow", "floating-caption", "empty-space"],
+        "covers": ["luxury-minimal", "full-photo", "classic-book"]
+      }
+    },
+    {
+      "id": "kids-party-pop",
+      "groupId": "occasions",
+      "labels": { "en": "Children's party pop", "ru": "Детский праздник" },
+      "topicAffinity": ["occasions/birthday/children"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 7,
+        "eras": ["1980s", "2026"],
+        "layouts": ["asymmetric", "grid", "overlap"],
+        "typography": ["playful-rounded", "handwritten-accent"],
+        "colors": ["pastel", "full-color", "one-accent"],
+        "effects": ["paper-cut", "sticker-elements", "scribble-lines"]
+      },
+      "contract": {
+        "archetypes": ["children-storybook", "gift-booklet"],
+        "palette": ["#fff6cf", "#ff695e", "#4eb8df", "#40315f"],
+        "typography": ["playful-rounded", "handwritten-accent"],
+        "fonts": ["Fredoka", "Patrick Hand"],
+        "layouts": ["asymmetric", "grid", "overlap", "minimal"],
+        "layoutSystems": ["modular-cards", "asymmetric-modern", "white-space-minimal"],
+        "imageTreatments": ["illustration-mix", "cutout-collage", "clean-photo"],
+        "shapeLanguages": ["cut-paper", "hand-drawn", "geometric"],
+        "backgrounds": ["paper", "pure"],
+        "rhythms": ["dynamic", "staccato", "balanced"],
+        "effects": ["paper-cut", "sticker-elements", "scribble-lines"],
+        "covers": ["children-cutout", "poster-grid", "collage-chaos"]
+      }
+    },
+    {
+      "id": "halloween-noir",
+      "groupId": "occasions",
+      "labels": { "en": "Halloween noir", "ru": "Хеллоуин-нуар" },
+      "topicAffinity": ["occasions/halloween"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 6,
+        "eras": ["1960s", "1990s", "2026"],
+        "layouts": ["cinematic", "full", "asymmetric"],
+        "typography": ["condensed-headlines", "huge-serif", "poster-bold"],
+        "colors": ["inverted", "high-contrast", "one-accent"],
+        "effects": ["film-grain", "hard-shadow", "torn-edge"]
+      },
+      "contract": {
+        "archetypes": ["poster-book", "art-zine", "gift-booklet"],
+        "palette": ["#111014", "#f1e8d3", "#f36b2b", "#7b3f98"],
+        "typography": ["condensed-headlines", "huge-serif"],
+        "fonts": ["Barlow Condensed", "Cormorant Garamond"],
+        "layouts": ["cinematic", "full", "asymmetric", "poster"],
+        "layoutSystems": ["full-bleed", "poster-layout", "asymmetric-modern"],
+        "imageTreatments": ["black-white-photo", "grainy-photo", "duotone-photo"],
+        "shapeLanguages": ["geometric", "organic"],
+        "backgrounds": ["dark-field", "textured"],
+        "rhythms": ["cinematic", "staccato"],
+        "effects": ["film-grain", "hard-shadow", "torn-edge"],
+        "covers": ["full-photo", "kinetic-type", "collage-chaos"]
+      }
+    }
+  ]
+}
