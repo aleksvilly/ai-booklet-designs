@@ -328,7 +328,10 @@ export function syncRangeOutputs() {
   if (!generationForm) return;
   document.querySelectorAll('[data-range-output]').forEach(output => {
     const input = generationForm.elements[output.dataset.rangeOutput];
-    if (input) output.value = input.value;
+    if (input) {
+      const suffix = output.dataset.suffix || '';
+      output.textContent = `${input.value}${suffix}`;
+    }
   });
 }
 
