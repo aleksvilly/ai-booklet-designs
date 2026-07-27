@@ -3,10 +3,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="An evolving collection of gift booklet concepts for different people, professions and passions.">
+  <meta name="description" content="AI-generated editorial booklets for any person and any occasion — birthday gifts, café menus, event programmes, wedding booklets. Free, automatic, print-ready.">
   <meta name="theme-color" content="#f3f0e8" id="theme-color">
-  <title>AI Booklet Designs</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
+  <title>AI Booklet Designs — unique editorial booklets for any occasion</title>
+  <meta property="og:title" content="AI Booklet Designs — unique editorial booklets for any occasion">
+  <meta property="og:description" content="Birthday gift for a jazz fan. Opening menu for a café. Event booklet for a wedding. Describe the idea — a unique editorial booklet is generated automatically. Free.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aleksvilly.github.io/ai-booklet-designs/">
+  <meta property="og:site_name" content="AI Booklet Designs">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="AI Booklet Designs — free AI-generated editorial booklets">
+  <meta name="twitter:description" content="Any person. Any occasion. Birthday, café, event, wedding — describe the idea and get a unique print-ready booklet automatically.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
   <script>
     (() => {
       const savedTheme = localStorage.getItem('theme');
@@ -52,12 +60,18 @@
   <main>
     <section class="hero" id="generate">
       <div class="hero-intro">
-        <p class="eyebrow">A growing gift-booklet laboratory</p>
-        <h1>Describe it.<br><em>We generate it.</em></h1>
-        <p class="hero-copy">Choose an editorial profile, visual language and page complexity. The brief enters a public queue and GitHub starts generation automatically.</p>
+        <p class="eyebrow">AI-generated editorial booklets — free, automatic, unique</p>
+        <h1>Any person.<br><em>Any occasion.</em></h1>
+        <p class="hero-copy">Birthday gift for a jazz fan. Opening menu for a café. Programme for a gallery night. Event booklet for a wedding. Describe the idea — a unique editorial booklet is generated automatically.</p>
+        <ul class="hero-usecases" aria-label="Example use cases">
+          <li>🎁 <strong>Gift</strong> — birthday, anniversary, graduation</li>
+          <li>☕ <strong>Business</strong> — café menu, brand story, product launch</li>
+          <li>🎉 <strong>Event</strong> — wedding, conference, gallery opening</li>
+          <li>🎨 <strong>Passion</strong> — cinema, music, architecture, sport</li>
+        </ul>
         <div class="hero-actions">
-          <a class="primary-button" href="#collection">Explore the collection</a>
-          <a class="secondary-button" href="#generation-form">Request a booklet</a>
+          <a class="primary-button" href="#generation-form">Create a booklet — free</a>
+          <a class="secondary-button" href="#collection">See examples</a>
           <button class="text-button" id="surprise-button" type="button">Surprise me ↗</button>
         </div>
       </div>
@@ -207,10 +221,10 @@
       </form>
     </section>
 
-    <section class="manifesto" aria-label="Design method">
-      <article><span>01</span><strong>Person</strong><p>Captain, architect, photographer, musician, traveller or dreamer.</p></article>
-      <article><span>02</span><strong>World</strong><p>A subject close to that person: routes, structures, light, sound or discovery.</p></article>
-      <article><span>03</span><strong>Language</strong><p>A different cover, spread rhythm, photo density and typography system—from restrained pairs to twenty-font maximalism.</p></article>
+    <section class="manifesto" aria-label="How it works">
+      <article><span>01</span><strong>Describe</strong><p>Choose a topic, occasion, and editorial style — or leave it to the generator.</p></article>
+      <article><span>02</span><strong>Generate</strong><p>The request enters a public queue. GitHub automatically generates a unique booklet with real photos, curated typography, and editorial spreads.</p></article>
+      <article><span>03</span><strong>Download</strong><p>Open the booklet, preview every spread, then export a print-ready PDF — free, no account required.</p></article>
     </section>
 
     <section class="collection" id="collection">
@@ -228,9 +242,9 @@
 
     <section class="contact-section" id="contact">
       <div class="contact-intro">
-        <p class="eyebrow">Start a conversation</p>
-        <h2>Have a booklet<br>idea?</h2>
-        <p>Tell us who the booklet is for and what makes that person unique. Your message will be delivered directly to us.</p>
+        <p class="eyebrow">Custom orders & partnerships</p>
+        <h2>Need something<br>specific?</h2>
+        <p>Private branded booklets for a business, bulk orders for an event, or a fully custom editorial concept. Write to us — we respond personally.</p>
       </div>
       <form class="contact-form" id="contact-form" action="https://formspree.io/f/meeyvjjd" method="post">
         <input type="hidden" name="_subject" value="New AI Booklet Designs enquiry">
@@ -256,8 +270,8 @@
   </main>
 
   <footer>
-    <p>Experimental editorial concepts. Source and licence records belong to each finished booklet.</p>
-    <p><a href="#contact">Contact us</a> · Updated automatically through GitHub Actions.</p>
+    <p>AI-generated editorial booklets for gifts, events, businesses and passions. Photo credits and licences belong to each finished booklet.</p>
+    <p><a href="#contact">Contact & custom orders</a> · <a href="#collection">Browse collection</a> · Updated automatically through GitHub Actions.</p>
   </footer>
 
   <dialog class="booklet-dialog" id="booklet-dialog">
