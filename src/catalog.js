@@ -126,6 +126,55 @@ export function renderTopicSearch(query) {
   }
 }
 
+export function bindStyleSlider(selectNode) {
+  if (!selectNode || selectNode.dataset.sliderBound === 'true') return;
+  selectNode.dataset.sliderBound = 'true';
+
+  const container = document.createElement('div');
+  container.className = 'style-slider-wrapper';
+  container.style.margin = '8px 0';
+  container.style.padding = '10px 12px';
+  container.style.border = '1px solid var(--line)';
+  container.style.borderRadius = '10px';
+  container.style.background = 'color-mix(in srgb, var(--ink) 4%, var(--paper))';
+
+  const badge = document.createElement('div');
+  badge.className = 'style-slider-badge';
+  badge.style.font = '600 12px/1.3 var(--font-accent, monospace)';
+  badge.style.marginBottom = '6px';
+  badge.style.color = 'var(--c2, var(--ink))';
+
+  const slider = document.createElement('input');
+  slider.type = 'range';
+  slider.className = 'style-slider-input';
+  slider.min = '0';
+  slider.max = String(Math.max(0, selectNode.options.length - 1));
+  slider.value = String(Math.max(0, selectNode.selectedIndex));
+  slider.style.width = '100%';
+  slider.style.cursor = 'pointer';
+
+  function update() {
+    const option = selectNode.options[selectNode.selectedIndex];
+    if (option) {
+      badge.textContent = `🎨 Style: ${option.textContent}`;
+      slider.value = String(selectNode.selectedIndex);
+    }
+  }
+
+  slider.addEventListener('input', () => {
+    const idx = Math.max(0, Math.min(selectNode.options.length - 1, Number(slider.value)));
+    selectNode.selectedIndex = idx;
+    selectNode.dispatchEvent(new Event('change', { bubbles: true }));
+    update();
+  });
+
+  selectNode.addEventListener('change', update);
+
+  container.append(badge, slider);
+  selectNode.parentNode.insertBefore(container, selectNode.nextSibling);
+  update();
+}
+
 export function appendCatalogStyles(styleCatalog) {
   const styleProfileSelect = document.querySelector('#style-profile-select');
   if (!styleProfileSelect) return;
@@ -146,6 +195,8 @@ export function appendCatalogStyles(styleCatalog) {
     group.append(new Option(catalogLabel(style), style.id));
     existing.add(style.id);
   }
+
+  bindStyleSlider(styleProfileSelect);
 }
 
 export function renderCatalogEffects(effectCatalog) {

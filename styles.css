@@ -1146,6 +1146,33 @@ footer a { text-underline-offset: 3px; }
 .style-encyclopedia-reference .book-page,
 .style-scientific-journal .book-page { background: #f6f4ee; border: 3px double #cbd5e1; }
 
+.style-horror-slasher .cover,
+.style-horror-slasher.detail-hero { background: #08080a; color: #f8fafc; }
+.style-horror-slasher .cover-title,
+.style-horror-slasher .detail-title,
+.style-horror-slasher h4 { font-family: "Barlow Condensed", "Impact", sans-serif; text-transform: uppercase; color: #e11d48; text-shadow: 3px 3px 0 #000; letter-spacing: -.03em; }
+.style-horror-slasher .book-page { background: #08080a; color: #f8fafc; border: 2px solid #e11d48; box-shadow: 0 10px 30px rgba(225,29,72,.3); }
+.style-horror-slasher .book-page::before { content: "⚙ ⚙ ⚙ CHAIN SLAW ⚙ ⚙ ⚙"; position: absolute; top: 8px; left: 16px; font: 700 8px/1 monospace; color: #e11d48; letter-spacing: 2px; opacity: .7; }
+.style-horror-slasher .book-page-type { background: #e11d48; color: #fff; padding: 2px 8px; transform: rotate(-2deg); display: inline-block; }
+
+.style-apple-manual .cover,
+.style-apple-manual.detail-hero { background: #ffffff; color: #1d1d1f; }
+.style-apple-manual .cover-title,
+.style-apple-manual .detail-title,
+.style-apple-manual h4 { font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; font-weight: 600; letter-spacing: -.03em; color: #000000; }
+.style-apple-manual .book-page { background: #ffffff; color: #1d1d1f; border: 1px solid #e5e5e7; box-shadow: 0 4px 20px rgba(0,0,0,.04); border-radius: 12px; }
+.style-apple-manual .book-page-type { background: #f5f5f7; color: #0071e3; border-radius: 999px; padding: 4px 12px; font: 600 10px/1 "Inter", sans-serif; display: inline-block; }
+.style-apple-manual .book-page::after { content: "STEP " attr(data-page-index); position: absolute; bottom: 16px; right: 20px; font: 600 11px/1 "Inter", sans-serif; color: #86868b; }
+
+.style-thermal-receipt .cover,
+.style-thermal-receipt.detail-hero { background: #fcfbfa; color: #18181b; }
+.style-thermal-receipt .cover-title,
+.style-thermal-receipt .detail-title,
+.style-thermal-receipt h4 { font-family: "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: -.02em; }
+.style-thermal-receipt .book-page { background: #fcfbfa; color: #18181b; border: 1px dashed #a1a1aa; font-family: "IBM Plex Mono", monospace; }
+.style-thermal-receipt .book-page::before { content: "****************************************"; position: absolute; top: 6px; left: 10px; right: 10px; font: 10px/1 monospace; color: #a1a1aa; overflow: hidden; white-space: nowrap; }
+.style-thermal-receipt .book-page::after { content: "|||||| ||||| ||||||| ||||"; position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); font: 16px/1 monospace; letter-spacing: 2px; color: #27272a; }
+
 .style-y2k-pastel-chaos .cover-title,
 .style-grunge-90s-zine .cover-title,
 .style-post-punk-zine .cover-title,

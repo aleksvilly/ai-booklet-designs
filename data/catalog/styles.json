@@ -191,6 +191,96 @@
         "effects": ["film-grain", "hard-shadow", "torn-edge"],
         "covers": ["full-photo", "kinetic-type", "collage-chaos"]
       }
+    },
+    {
+      "id": "horror-slasher",
+      "groupId": "entertainment",
+      "labels": { "en": "Horror & slasher zine", "ru": "Хоррор и слэшер" },
+      "topicAffinity": ["entertainment/horror", "culture/cinema/horror"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 8,
+        "eras": ["1970s", "1980s", "2026"],
+        "layouts": ["full", "asymmetric", "poster"],
+        "typography": ["condensed-headlines", "poster-bold"],
+        "colors": ["inverted", "high-contrast"],
+        "effects": ["hard-shadow", "torn-edge", "film-grain"]
+      },
+      "contract": {
+        "archetypes": ["art-zine", "poster-book"],
+        "palette": ["#08080a", "#e11d48", "#f8fafc", "#000000"],
+        "typography": ["condensed-headlines"],
+        "fonts": ["Barlow Condensed", "Impact"],
+        "layouts": ["full", "asymmetric", "poster"],
+        "layoutSystems": ["full-bleed", "asymmetric-modern"],
+        "imageTreatments": ["black-white-photo", "duotone-photo"],
+        "shapeLanguages": ["sharp", "organic"],
+        "backgrounds": ["dark-field"],
+        "rhythms": ["staccato", "chaotic"],
+        "effects": ["hard-shadow", "torn-edge", "film-grain"],
+        "covers": ["full-photo", "kinetic-type"]
+      }
+    },
+    {
+      "id": "apple-manual",
+      "groupId": "editorial-media",
+      "labels": { "en": "Apple instruction manual", "ru": "Инструкция Apple" },
+      "topicAffinity": ["technology", "design", "guides"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "inspired", "url": "https://www.apple.com/" },
+      "generator": {
+        "weight": 7,
+        "eras": ["2020–2024", "2026"],
+        "layouts": ["minimal", "grid"],
+        "typography": ["clean-sans"],
+        "colors": ["high-contrast", "muted"],
+        "effects": ["empty-space", "soft-shadow"]
+      },
+      "contract": {
+        "archetypes": ["fact-book", "guide-booklet"],
+        "palette": ["#ffffff", "#000000", "#0071e3", "#86868b"],
+        "typography": ["clean-sans"],
+        "fonts": ["Inter", "DM Sans"],
+        "layouts": ["minimal", "grid"],
+        "layoutSystems": ["white-space-minimal", "single-hero-image"],
+        "imageTreatments": ["clean-photo"],
+        "shapeLanguages": ["geometric"],
+        "backgrounds": ["pure"],
+        "rhythms": ["calm"],
+        "effects": ["empty-space", "soft-shadow"],
+        "covers": ["negative-space", "magazine"]
+      }
+    },
+    {
+      "id": "thermal-receipt",
+      "groupId": "editorial-media",
+      "labels": { "en": "Store cashier receipt", "ru": "Кассовый чек" },
+      "topicAffinity": ["shopping", "lists", "archives"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 6,
+        "eras": ["1990s", "2020s"],
+        "layouts": ["vertical", "archive"],
+        "typography": ["tech-mono"],
+        "colors": ["black-white"],
+        "effects": ["caption-rule", "pixel-grid"]
+      },
+      "contract": {
+        "archetypes": ["art-zine", "archive-booklet"],
+        "palette": ["#fcfbfa", "#18181b", "#71717a", "#e4e4e7"],
+        "typography": ["tech-mono"],
+        "fonts": ["IBM Plex Mono"],
+        "layouts": ["vertical", "archive"],
+        "layoutSystems": ["strict-grid"],
+        "imageTreatments": ["black-white-photo"],
+        "shapeLanguages": ["geometric"],
+        "backgrounds": ["paper"],
+        "rhythms": ["staccato"],
+        "effects": ["caption-rule", "pixel-grid"],
+        "covers": ["type-only"]
+      }
     }
   ]
 }

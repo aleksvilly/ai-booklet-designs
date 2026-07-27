@@ -2,6 +2,7 @@ import { EDITOR_STORAGE_PREFIX, EDITOR_COMPACT_STORAGE_KEY } from './config.js';
 import { safeUrl, safeClass } from './utils.js';
 import { pagesFor, imagesForPage } from './collection.js';
 import { mediaMarkup, loadDialogImages } from './detail-modal.js';
+import { bindStyleSlider } from './catalog.js';
 
 let editorSession = null;
 let editorSaveTimer = null;
@@ -477,6 +478,9 @@ export function initializeBookletEditor(item) {
   }
   if (controls.editorProfile && ![...controls.editorProfile.options].some(option => option.value === editorSession.originalSettings[0].profile)) {
     controls.editorProfile.add(new Option(editorSession.originalSettings[0].profile, editorSession.originalSettings[0].profile));
+  }
+  if (controls.editorProfile) {
+    bindStyleSlider(controls.editorProfile);
   }
 
   editorSession.pageNodes.forEach((node, index) => {
