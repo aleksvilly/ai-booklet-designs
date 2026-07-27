@@ -1818,16 +1818,16 @@ function addSinglePageToPdf(pdf, rendered, firstPage) {
 }
 
 function addTwoPagesToPdf(pdf, renderedPages, firstSheet) {
-  if (!firstSheet) pdf.addPage('a4', 'portrait');
+  if (!firstSheet) pdf.addPage('a4', 'landscape');
   renderedPages.forEach((rendered, index) => {
-    const slotY = index * 148.5;
+    const slotX = index * 148.5;
     pdf.setFillColor(...rendered.edgeColor);
-    pdf.rect(0, slotY, 210, 148.5, 'F');
-    pdf.addImage(rendered.dataUrl, 'JPEG', 52.5, slotY, 105, 148.5, undefined, 'FAST');
+    pdf.rect(slotX, 0, 148.5, 210, 'F');
+    pdf.addImage(rendered.dataUrl, 'JPEG', slotX, 0, 148.5, 210, undefined, 'FAST');
   });
   pdf.setDrawColor(205, 205, 205);
   pdf.setLineWidth(.2);
-  pdf.line(0, 148.5, 210, 148.5);
+  pdf.line(148.5, 0, 148.5, 210);
 }
 
 function bookletPdfName(item, mode) {
@@ -1872,7 +1872,7 @@ async function downloadBookletPdf(event) {
     }), 20000, 'Font embedding timed out').catch(() => '');
     const { jsPDF } = window.jspdf;
     const pdf = new jsPDF({
-      orientation: 'portrait',
+      orientation: mode === 'pages' ? 'portrait' : 'landscape',
       unit: 'mm',
       format: 'a4',
       compress: true,
