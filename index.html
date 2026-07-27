@@ -295,7 +295,10 @@
           <p class="eyebrow">Live editor</p>
           <h2>Adjust the booklet</h2>
         </div>
-        <button class="booklet-editor-close" id="booklet-editor-close" type="button" aria-label="Close editor">×</button>
+        <div class="booklet-editor-heading-actions">
+          <button class="booklet-editor-mode" id="booklet-editor-mode" type="button">Mini</button>
+          <button class="booklet-editor-close" id="booklet-editor-close" type="button" aria-label="Close editor">×</button>
+        </div>
       </div>
 
       <div class="editor-target-card">
@@ -313,11 +316,11 @@
       <div class="booklet-editor-scroll">
         <fieldset class="editor-group">
           <legend>Design system</legend>
-          <label>
+          <label data-editor-parameter="profile">
             <span>Editorial profile</span>
             <select id="editor-profile"></select>
           </label>
-          <label>
+          <label data-editor-parameter="visualMode">
             <span>Visual language</span>
             <select id="editor-visual-mode">
               <option value="auto">Automatic</option>
@@ -330,19 +333,19 @@
 
         <fieldset class="editor-group">
           <legend>Structure</legend>
-          <label class="editor-range">
+          <label class="editor-range" data-editor-parameter="layoutComplexity">
             <span>Page complexity <output id="editor-layout-output">2</output> / 5</span>
             <input id="editor-layout-complexity" type="range" min="1" max="5" value="2">
           </label>
-          <label class="editor-range">
+          <label class="editor-range" data-editor-parameter="imageCount">
             <span>Images <output id="editor-image-output">1</output> / 20</span>
             <input id="editor-image-count" type="range" min="0" max="20" value="1">
           </label>
-          <label class="editor-range">
+          <label class="editor-range" data-editor-parameter="textAmount">
             <span>Text amount <output id="editor-text-output">2</output> / 5</span>
             <input id="editor-text-amount" type="range" min="1" max="5" value="2">
           </label>
-          <label>
+          <label data-editor-parameter="contentPosition">
             <span>Content position</span>
             <select id="editor-content-position">
               <option value="top-left">Top left</option>
@@ -360,15 +363,15 @@
 
         <fieldset class="editor-group">
           <legend>Typography &amp; space</legend>
-          <label class="editor-range">
+          <label class="editor-range" data-editor-parameter="fontScale">
             <span>Font scale <output id="editor-font-output">3</output> / 5</span>
             <input id="editor-font-scale" type="range" min="1" max="5" value="3">
           </label>
-          <label class="editor-range">
+          <label class="editor-range" data-editor-parameter="spacing">
             <span>Page spacing <output id="editor-spacing-output">3</output> / 5</span>
             <input id="editor-spacing" type="range" min="1" max="5" value="3">
           </label>
-          <label class="editor-range">
+          <label class="editor-range" data-editor-parameter="effectLevel">
             <span>Effects intensity <output id="editor-effect-output">2</output> / 5</span>
             <input id="editor-effect-level" type="range" min="0" max="5" value="2">
           </label>
@@ -376,11 +379,20 @@
 
         <fieldset class="editor-group editor-visibility">
           <legend>Visible content</legend>
-          <label><input id="editor-show-title" type="checkbox" checked> Title</label>
-          <label><input id="editor-show-subtitle" type="checkbox" checked> Subtitle / caption</label>
-          <label><input id="editor-show-body" type="checkbox" checked> Main text</label>
+          <label data-editor-parameter="showTitle"><input id="editor-show-title" type="checkbox" checked><span>Title</span></label>
+          <label data-editor-parameter="showSubtitle"><input id="editor-show-subtitle" type="checkbox" checked><span>Subtitle / caption</span></label>
+          <label data-editor-parameter="showBody"><input id="editor-show-body" type="checkbox" checked><span>Main text</span></label>
         </fieldset>
       </div>
+
+      <nav class="editor-mini-navigation" aria-label="Editor parameter navigation">
+        <button id="editor-parameter-previous" type="button" aria-label="Previous parameter">←</button>
+        <div>
+          <strong id="editor-parameter-label">Page complexity</strong>
+          <span id="editor-parameter-value">2 / 5</span>
+        </div>
+        <button id="editor-parameter-next" type="button" aria-label="Next parameter">→</button>
+      </nav>
 
       <div class="booklet-editor-footer">
         <p id="editor-save-status">Changes are saved on this device.</p>

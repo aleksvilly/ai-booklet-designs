@@ -1463,7 +1463,7 @@ footer a { text-underline-offset: 3px; }
   right: max(13px, calc((100vw - 1120px) / 2 + 13px));
   bottom: 13px;
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
   width: min(360px, calc(100vw - 26px));
   overflow: hidden;
   border-left: 1px solid var(--line);
@@ -1492,6 +1492,17 @@ footer a { text-underline-offset: 3px; }
 
 .booklet-editor-heading .eyebrow { margin: 0 0 7px; }
 .booklet-editor-heading h2 { margin: 0; font-size: 25px; letter-spacing: -.04em; }
+.booklet-editor-heading-actions { display: flex; align-items: center; gap: 8px; }
+.booklet-editor-mode {
+  min-height: 34px;
+  padding: 0 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font: 600 11px/1 "DM Sans", sans-serif;
+  cursor: pointer;
+}
 .booklet-editor-close {
   flex: 0 0 auto;
   width: 34px;
@@ -1594,6 +1605,8 @@ footer a { text-underline-offset: 3px; }
   margin: 0;
   accent-color: var(--ink);
 }
+
+.editor-mini-navigation { display: none; }
 
 .booklet-editor-footer {
   padding: 15px 22px 19px;
@@ -1731,6 +1744,167 @@ footer a { text-underline-offset: 3px; }
     box-shadow: 0 -24px 70px rgba(0, 0, 0, .3);
   }
 }
+
+.booklet-dialog.editor-compact-open #dialog-content { margin-right: 0; }
+
+.booklet-editor.editor-compact {
+  top: auto;
+  right: auto;
+  bottom: max(10px, env(safe-area-inset-bottom));
+  left: 50%;
+  width: min(540px, calc(100vw - 20px));
+  height: 238px;
+  grid-template-rows: 42px 48px minmax(72px, 1fr) 62px;
+  transform: translateX(-50%);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  box-shadow: 0 -14px 54px rgba(0, 0, 0, .3);
+}
+
+.booklet-editor.editor-compact .booklet-editor-heading {
+  align-items: center;
+  min-height: 0;
+  padding: 5px 10px 5px 14px;
+}
+
+.booklet-editor.editor-compact .booklet-editor-heading > div:first-child { display: none; }
+.booklet-editor.editor-compact .booklet-editor-heading-actions { margin-left: auto; }
+.booklet-editor.editor-compact .booklet-editor-mode,
+.booklet-editor.editor-compact .booklet-editor-close {
+  min-height: 30px;
+  height: 30px;
+}
+
+.booklet-editor.editor-compact .booklet-editor-close {
+  width: 30px;
+  font-size: 20px;
+}
+
+.booklet-editor.editor-compact .editor-target-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 12px;
+}
+
+.booklet-editor.editor-compact .editor-target-card label { display: block; }
+.booklet-editor.editor-compact .editor-target-card label > span { display: none; }
+.booklet-editor.editor-compact .editor-target-card select {
+  min-height: 34px;
+  padding-inline: 9px 28px;
+  font-size: 12px;
+}
+.booklet-editor.editor-compact .editor-target-card p {
+  max-width: 165px;
+  margin: 0;
+  overflow: hidden;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.booklet-editor.editor-compact .booklet-editor-scroll {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: 10px 20px;
+}
+
+.booklet-editor.editor-compact .editor-group {
+  display: none;
+  width: 100%;
+  margin: 0;
+  padding: 0 !important;
+  border: 0;
+}
+.booklet-editor.editor-compact .editor-group.editor-group-active { display: block; }
+.booklet-editor.editor-compact .editor-group legend { display: none; }
+.booklet-editor.editor-compact [data-editor-parameter] { display: none !important; }
+.booklet-editor.editor-compact [data-editor-parameter].editor-parameter-active {
+  display: grid !important;
+  width: 100%;
+  place-items: center;
+  gap: 0;
+}
+.booklet-editor.editor-compact [data-editor-parameter].editor-parameter-active > span { display: none; }
+.booklet-editor.editor-compact [data-editor-parameter] select {
+  width: min(430px, 100%);
+  min-height: 44px;
+  border-radius: 11px;
+  text-align: center;
+}
+.booklet-editor.editor-compact .editor-range input {
+  width: min(440px, 100%);
+  min-height: 34px;
+}
+.booklet-editor.editor-compact .editor-visibility label.editor-parameter-active {
+  display: flex !important;
+  justify-content: center;
+}
+.booklet-editor.editor-compact .editor-visibility input[type="checkbox"] {
+  position: relative;
+  width: 64px;
+  height: 32px;
+  appearance: none;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 10%, var(--paper));
+  cursor: pointer;
+  transition: background .18s ease;
+}
+.booklet-editor.editor-compact .editor-visibility input[type="checkbox"]::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--paper);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
+  transition: transform .18s ease;
+}
+.booklet-editor.editor-compact .editor-visibility input[type="checkbox"]:checked {
+  background: var(--ink);
+}
+.booklet-editor.editor-compact .editor-visibility input[type="checkbox"]:checked::after {
+  transform: translateX(32px);
+}
+
+.booklet-editor.editor-compact .editor-mini-navigation {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) 58px;
+  align-items: stretch;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+}
+.booklet-editor.editor-compact .editor-mini-navigation button {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 27px;
+  cursor: pointer;
+}
+.booklet-editor.editor-compact .editor-mini-navigation button:first-child { border-right: 1px solid var(--line); }
+.booklet-editor.editor-compact .editor-mini-navigation button:last-child { border-left: 1px solid var(--line); }
+.booklet-editor.editor-compact .editor-mini-navigation div {
+  display: grid;
+  place-content: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 7px 12px;
+  text-align: center;
+}
+.booklet-editor.editor-compact .editor-mini-navigation strong,
+.booklet-editor.editor-compact .editor-mini-navigation span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.booklet-editor.editor-compact .editor-mini-navigation strong { font-size: 13px; }
+.booklet-editor.editor-compact .editor-mini-navigation span { color: var(--muted); font-size: 10px; }
+.booklet-editor.editor-compact .booklet-editor-footer { display: none; }
 
 @media print {
   .booklet-editor { display: none !important; }

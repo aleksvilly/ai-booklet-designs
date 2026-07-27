@@ -6,6 +6,11 @@ const dialogContent = document.querySelector('#dialog-content');
 const dialogEdit = document.querySelector('#dialog-edit');
 const bookletEditor = document.querySelector('#booklet-editor');
 const bookletEditorClose = document.querySelector('#booklet-editor-close');
+const bookletEditorMode = document.querySelector('#booklet-editor-mode');
+const editorParameterPrevious = document.querySelector('#editor-parameter-previous');
+const editorParameterNext = document.querySelector('#editor-parameter-next');
+const editorParameterLabel = document.querySelector('#editor-parameter-label');
+const editorParameterValue = document.querySelector('#editor-parameter-value');
 const editorScope = document.querySelector('#editor-scope');
 const editorTargetLabel = document.querySelector('#editor-target-label');
 const editorProfile = document.querySelector('#editor-profile');
@@ -90,6 +95,25 @@ let requestStatusInterval;
 let editorSession = null;
 let editorSaveTimer = null;
 const editorStoragePrefix = 'ai-booklet-live-editor-v1:';
+const editorCompactStorageKey = 'ai-booklet-editor-compact-v1';
+let editorParameterIndex = 0;
+let editorCompactMode = localStorage.getItem(editorCompactStorageKey) === null
+  ? window.matchMedia('(max-width: 900px)').matches
+  : localStorage.getItem(editorCompactStorageKey) === 'true';
+const editorParameters = [
+  { key: 'profile', label: 'Editorial profile', control: editorProfile },
+  { key: 'visualMode', label: 'Visual language', control: editorVisualMode },
+  { key: 'layoutComplexity', label: 'Page complexity', control: editorLayoutComplexity },
+  { key: 'imageCount', label: 'Images', control: editorImageCount },
+  { key: 'textAmount', label: 'Text amount', control: editorTextAmount },
+  { key: 'contentPosition', label: 'Content position', control: editorContentPosition },
+  { key: 'fontScale', label: 'Font scale', control: editorFontScale },
+  { key: 'spacing', label: 'Page spacing', control: editorSpacing },
+  { key: 'effectLevel', label: 'Effects intensity', control: editorEffectLevel },
+  { key: 'showTitle', label: 'Show title', control: editorShowTitle },
+  { key: 'showSubtitle', label: 'Show subtitle / caption', control: editorShowSubtitle },
+  { key: 'showBody', label: 'Show main text', control: editorShowBody }
+];
 
 function loadGenerationRequests() {
   try {
@@ -931,6 +955,54 @@ function updateEditorSelection() {
   });
 }
 
+function availableEditorParameters() {
+  return editorScope.value === 'booklet'
+    ? editorParameters
+    : editorParameters.filter(parameter => parameter.key !== 'profile');
+}
+
+function editorParameterValueText(parameter) {
+  const control = parameter.control;
+  if (control.type === 'checkbox') return control.checked ? 'On' : 'Off';
+  if (control.tagName === 'SELECT') return control.selectedOptions[0]?.textContent?.trim() || control.value;
+  if (control.type === 'range') return `${control.value} / ${control.max}`;
+  return control.value;
+}
+
+function updateEditorCompactParameter() {
+  const available = availableEditorParameters();
+  if (!available.length) return;
+  editorParameterIndex = ((editorParameterIndex % available.length) + available.length) % available.length;
+  const active = available[editorParameterIndex];
+
+  bookletEditor.querySelectorAll('[data-editor-parameter]').forEach(node => {
+    node.classList.toggle('editor-parameter-active', node.dataset.editorParameter === active.key);
+  });
+  bookletEditor.querySelectorAll('.editor-group').forEach(group => {
+    group.classList.toggle('editor-group-active', Boolean(group.querySelector('.editor-parameter-active')));
+  });
+
+  editorParameterLabel.textContent = active.label;
+  editorParameterValue.textContent = editorParameterValueText(active);
+  bookletEditorMode.textContent = editorCompactMode ? 'Full' : 'Mini';
+  bookletEditorMode.setAttribute('aria-pressed', String(editorCompactMode));
+}
+
+function setEditorCompactMode(compact, persist = true) {
+  editorCompactMode = Boolean(compact);
+  bookletEditor.classList.toggle('editor-compact', editorCompactMode);
+  dialog.classList.toggle('editor-compact-open', editorCompactMode && !bookletEditor.hidden);
+  if (persist) localStorage.setItem(editorCompactStorageKey, String(editorCompactMode));
+  updateEditorCompactParameter();
+}
+
+function moveEditorParameter(direction) {
+  const available = availableEditorParameters();
+  if (!available.length) return;
+  editorParameterIndex = (editorParameterIndex + direction + available.length) % available.length;
+  updateEditorCompactParameter();
+}
+
 function syncBookletEditorControls() {
   if (!editorSession) return;
   const index = editorSession.activePageIndex;
@@ -963,6 +1035,7 @@ function syncBookletEditorControls() {
     : editorScope.value === 'spread'
       ? `Spread ${editorSession.activeSpreadIndex + 1} · pages ${editorSession.activeSpreadIndex * 2 + 1}–${Math.min(editorSession.pages.length, editorSession.activeSpreadIndex * 2 + 2)}`
       : `Page ${editorSession.activePageIndex + 1}`;
+  updateEditorCompactParameter();
 }
 
 function setEditorValue(key, value) {
@@ -978,6 +1051,7 @@ function openBookletEditor() {
   if (!editorSession) return;
   bookletEditor.hidden = false;
   dialog.classList.add('editor-is-open');
+  setEditorCompactMode(editorCompactMode, false);
   updateEditorSelection();
   syncBookletEditorControls();
 }
@@ -985,6 +1059,7 @@ function openBookletEditor() {
 function closeBookletEditor() {
   bookletEditor.hidden = true;
   dialog.classList.remove('editor-is-open');
+  dialog.classList.remove('editor-compact-open');
   updateEditorSelection();
 }
 
@@ -1505,6 +1580,9 @@ function closeDialog() {
 
 editorScope.addEventListener('change', syncBookletEditorControls);
 bookletEditorClose.addEventListener('click', closeBookletEditor);
+bookletEditorMode.addEventListener('click', () => setEditorCompactMode(!editorCompactMode));
+editorParameterPrevious.addEventListener('click', () => moveEditorParameter(-1));
+editorParameterNext.addEventListener('click', () => moveEditorParameter(1));
 dialogEdit.addEventListener('click', openBookletEditor);
 editorResetScope.addEventListener('click', () => {
   if (!editorSession) return;
