@@ -137,16 +137,14 @@ export function bindStyleSlider(selectNode) {
 
   let output = parent.querySelector('output');
   if (!output) {
-    const span = parent.querySelector('span') || parent;
     output = document.createElement('output');
-    span.append(' ', output);
+    selectNode.before(output);
   }
 
-  let slider = parent.querySelector('input[type="range"].style-slider-input');
+  let slider = parent.querySelector('input[type="range"]');
   if (!slider) {
     slider = document.createElement('input');
     slider.type = 'range';
-    slider.className = 'style-slider-input';
     selectNode.after(slider);
   }
 
