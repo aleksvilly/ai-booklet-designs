@@ -127,20 +127,29 @@ export function renderTopicSearch(query) {
 }
 
 export function bindStyleSlider(selectNode) {
-  if (!selectNode || selectNode.dataset.sliderBound === 'true') return;
-  selectNode.dataset.sliderBound = 'true';
+  if (!selectNode) return;
+  const parent = selectNode.parentNode;
+  if (!parent) return;
 
   selectNode.style.display = 'none';
+  if (!parent.classList.contains('range-field')) parent.classList.add('range-field');
+  if (!parent.classList.contains('field-wide')) parent.classList.add('field-wide');
 
-  const container = document.createElement('div');
-  container.className = 'style-slider-wrapper';
+  let output = parent.querySelector('output');
+  if (!output) {
+    const span = parent.querySelector('span') || parent;
+    output = document.createElement('output');
+    span.append(' ', output);
+  }
 
-  const badge = document.createElement('div');
-  badge.className = 'style-slider-badge';
+  let slider = parent.querySelector('input[type="range"].style-slider-input');
+  if (!slider) {
+    slider = document.createElement('input');
+    slider.type = 'range';
+    slider.className = 'style-slider-input';
+    selectNode.after(slider);
+  }
 
-  const slider = document.createElement('input');
-  slider.type = 'range';
-  slider.className = 'style-slider-input';
   slider.min = '0';
   slider.max = String(Math.max(0, selectNode.options.length - 1));
   slider.value = String(Math.max(0, selectNode.selectedIndex));
@@ -148,22 +157,19 @@ export function bindStyleSlider(selectNode) {
   function update() {
     const option = selectNode.options[selectNode.selectedIndex];
     if (option) {
-      badge.textContent = `🎨 Style: ${option.textContent}`;
+      output.textContent = option.textContent;
       slider.value = String(selectNode.selectedIndex);
     }
   }
 
-  slider.addEventListener('input', () => {
+  slider.oninput = () => {
     const idx = Math.max(0, Math.min(selectNode.options.length - 1, Number(slider.value)));
     selectNode.selectedIndex = idx;
     selectNode.dispatchEvent(new Event('change', { bubbles: true }));
     update();
-  });
+  };
 
-  selectNode.addEventListener('change', update);
-
-  container.append(badge, slider);
-  selectNode.parentNode.insertBefore(container, selectNode.nextSibling);
+  selectNode.onchange = update;
   update();
 }
 
