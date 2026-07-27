@@ -2198,22 +2198,31 @@ footer a { text-underline-offset: 3px; }
 .style-slider-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
   width: 100%;
   box-sizing: border-box;
-  margin: 6px 0 12px;
-  padding: 10px 14px;
+  margin: 10px 0 16px;
+  padding: 14px 16px;
   border: 1px solid var(--line);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--ink) 4%, var(--paper));
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, .04);
 }
 
 .style-slider-badge {
-  display: block;
-  width: 100%;
-  min-height: 22px;
-  font: 600 12px/1.3 "IBM Plex Mono", monospace;
-  color: var(--c2, var(--ink));
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  max-width: 100%;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  font: 500 11px/1 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .06em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2221,9 +2230,53 @@ footer a { text-underline-offset: 3px; }
 }
 
 .style-slider-input {
+  appearance: none;
+  -webkit-appearance: none;
   display: block;
   width: 100%;
+  height: 8px;
+  margin: 6px 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 20%, var(--paper));
+  outline: none;
+  cursor: grab;
   box-sizing: border-box;
-  margin: 0;
-  cursor: pointer;
+}
+
+.style-slider-input:active {
+  cursor: grabbing;
+}
+
+.style-slider-input::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .25);
+  transition: transform .15s ease, background-color .15s ease;
+}
+
+.style-slider-input::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  background: var(--ink);
+  border-color: var(--paper);
+}
+
+.style-slider-input::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2.5px solid var(--ink);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, .25);
+  transition: transform .15s ease, background-color .15s ease;
+}
+
+.style-slider-input::-moz-range-thumb:hover {
+  transform: scale(1.15);
+  background: var(--ink);
+  border-color: var(--paper);
 }
