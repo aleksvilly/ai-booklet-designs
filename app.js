@@ -3,6 +3,7 @@ const filtersNode = document.querySelector('#filters');
 const template = document.querySelector('#booklet-card-template');
 const dialog = document.querySelector('#booklet-dialog');
 const dialogContent = document.querySelector('#dialog-content');
+const dialogEdit = document.querySelector('#dialog-edit');
 const bookletEditor = document.querySelector('#booklet-editor');
 const bookletEditorClose = document.querySelector('#booklet-editor-close');
 const editorScope = document.querySelector('#editor-scope');
@@ -1426,6 +1427,7 @@ function openBooklet(item, updateUrl = true) {
   applyPalette(dialogContent, item.palette);
   setFontVariables(dialogContent, item, pagesFor(item)[0]);
   initializeBookletEditor(item);
+  dialogEdit.hidden = false;
 
   const url = new URL(window.location.href);
   const hadPageParameter = url.searchParams.has('page');
@@ -1468,6 +1470,7 @@ function openBooklet(item, updateUrl = true) {
 
 function closeDialog() {
   closeBookletEditor();
+  dialogEdit.hidden = true;
   dialog.close();
   resetDialogScroll();
   const url = new URL(window.location.href);
@@ -1502,6 +1505,7 @@ function closeDialog() {
 
 editorScope.addEventListener('change', syncBookletEditorControls);
 bookletEditorClose.addEventListener('click', closeBookletEditor);
+dialogEdit.addEventListener('click', openBookletEditor);
 editorResetScope.addEventListener('click', () => {
   if (!editorSession) return;
   if (editorScope.value === 'booklet') editorSession.state.booklet = {};
