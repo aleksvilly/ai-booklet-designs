@@ -281,6 +281,36 @@
         "effects": ["caption-rule", "pixel-grid"],
         "covers": ["type-only"]
       }
+    },
+    {
+      "id": "minimal-editorial",
+      "groupId": "editorial-media",
+      "labels": { "en": "Minimal clean editorial", "ru": "Минималистичный чистый стиль" },
+      "topicAffinity": ["culture", "travel", "architecture"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 8,
+        "eras": ["1960s", "1970s", "2026"],
+        "layouts": ["cinematic", "minimal"],
+        "typography": ["huge-serif", "clean-sans"],
+        "colors": ["muted", "one-accent"],
+        "effects": ["empty-space", "floating-caption"]
+      },
+      "contract": {
+        "archetypes": ["visual-diary", "editorial-magazine"],
+        "palette": ["#eee5d4", "#172328", "#d4b85d", "#7c242b"],
+        "typography": ["huge-serif", "clean-sans"],
+        "fonts": ["Playfair Display", "DM Sans"],
+        "layouts": ["cinematic", "minimal"],
+        "layoutSystems": ["white-space-minimal", "single-hero-image"],
+        "imageTreatments": ["clean-photo"],
+        "shapeLanguages": ["geometric"],
+        "backgrounds": ["paper"],
+        "rhythms": ["calm", "slow-luxury"],
+        "effects": ["empty-space", "floating-caption"],
+        "covers": ["luxury-minimal", "negative-space"]
+      }
     }
   ]
 }

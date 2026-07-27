@@ -1,0 +1,42 @@
+/* =========================================================
+   Illustrated Encyclopedia Style Profile
+   ========================================================= */
+
+.style-encyclopedia-reference,
+.style-scientific-journal {
+  --font-display: "Cormorant Garamond", "Playfair Display", serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-accent: "IBM Plex Mono", monospace;
+  --c1: #f6f4ee;
+  --c2: #1e242b;
+  --c3: #cbd5e1;
+  --c4: #334155;
+}
+
+.style-encyclopedia-reference .cover,
+.style-encyclopedia-reference.detail-hero,
+.style-scientific-journal .cover,
+.style-scientific-journal.detail-hero {
+  background: #f6f4ee;
+  color: #1e242b;
+}
+
+.style-encyclopedia-reference h4,
+.style-scientific-journal h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: #1e242b;
+}
+
+.style-encyclopedia-reference .book-page,
+.style-scientific-journal .book-page {
+  background: #f6f4ee;
+  color: #1e242b;
+  border: 3px double #cbd5e1;
+}
+
+.style-encyclopedia-reference .book-page-type {
+  border-bottom: 1px solid #1e242b;
+  padding-bottom: 2px;
+  display: inline-block;
+}

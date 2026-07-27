@@ -5,6 +5,9 @@
 @import url('./styles/profiles/kids.css');
 @import url('./styles/profiles/wedding.css');
 @import url('./styles/profiles/sports.css');
+@import url('./styles/profiles/minimal-editorial.css');
+@import url('./styles/profiles/gaming.css');
+@import url('./styles/profiles/encyclopedia.css');
 
 :root {
   --ink: #111111;

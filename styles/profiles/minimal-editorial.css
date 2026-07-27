@@ -1,0 +1,57 @@
+/* =========================================================
+   Minimal Clean Editorial Style Profile (Inspired by The Last Train North)
+   ========================================================= */
+
+.style-minimal-editorial,
+.style-swiss-minimal,
+.style-minimal-poetic {
+  --font-display: "Playfair Display", "DM Sans", serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-accent: "IBM Plex Mono", monospace;
+  --c1: #eee5d4;
+  --c2: #172328;
+  --c3: #d4b85d;
+  --c4: #7c242b;
+}
+
+.style-minimal-editorial .cover,
+.style-minimal-editorial.detail-hero,
+.style-swiss-minimal .cover,
+.style-swiss-minimal.detail-hero {
+  background: #eee5d4;
+  color: #172328;
+}
+
+.style-minimal-editorial .cover-title,
+.style-minimal-editorial .detail-title,
+.style-minimal-editorial h4,
+.style-swiss-minimal h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  color: #172328;
+}
+
+.style-minimal-editorial .book-page,
+.style-swiss-minimal .book-page {
+  background: #eee5d4;
+  color: #172328;
+  border: 1px solid rgba(23, 35, 40, 0.2);
+  box-shadow: 0 10px 30px rgba(23, 35, 40, 0.05);
+}
+
+.style-minimal-editorial .book-page-type,
+.style-swiss-minimal .book-page-type {
+  color: #7c242b;
+  letter-spacing: .14em;
+}
+
+.style-minimal-editorial .book-page::after {
+  content: "";
+  position: absolute;
+  left: 28px;
+  bottom: 20px;
+  width: 40px;
+  height: 2px;
+  background: #d4b85d;
+}
