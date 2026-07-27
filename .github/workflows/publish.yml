@@ -206,6 +206,8 @@ jobs:
           touch _site/.nojekyll
           cp -R data _site/data
           cp -R vendor _site/vendor
+          cp -R src _site/src
+          if [ -f admin.html ]; then cp admin.html admin.js _site/ 2>/dev/null || true; fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
