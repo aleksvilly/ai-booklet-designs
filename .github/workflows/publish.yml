@@ -204,11 +204,11 @@ jobs:
           mkdir -p _site
           cp index.html styles.css app.js _site/
           touch _site/.nojekyll
+          cp robots.txt sitemap.xml _site/
           cp -R data _site/data
           cp -R vendor _site/vendor
           cp -R src _site/src
           cp -R styles _site/styles
-          if [ -f admin.html ]; then cp admin.html admin.js _site/ 2>/dev/null || true; fi
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
