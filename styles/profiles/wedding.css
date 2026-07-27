@@ -1,0 +1,42 @@
+/* =========================================================
+   Wedding Editorial Style Profile
+   ========================================================= */
+
+.style-wedding-editorial,
+.style-luxury-editorial {
+  --font-display: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-accent: "Cormorant Garamond", serif;
+  --c1: #fbf7f0;
+  --c2: #d8b9ad;
+  --c3: #5b514c;
+  --c4: #b28f58;
+}
+
+.style-wedding-editorial .cover,
+.style-wedding-editorial.detail-hero {
+  background: #fbf7f0;
+  color: #5b514c;
+}
+
+.style-wedding-editorial .cover-title,
+.style-wedding-editorial .detail-title,
+.style-wedding-editorial h4 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: italic;
+}
+
+.style-wedding-editorial .book-page {
+  background: #fbf7f0;
+  border: 1px solid #d8b9ad;
+  box-shadow: 0 12px 35px rgba(91, 81, 76, 0.08);
+}
+
+.style-wedding-editorial .book-page::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(178, 143, 88, 0.3);
+  pointer-events: none;
+}

@@ -1,0 +1,44 @@
+/* =========================================================
+   Children's Party Pop Style Profile
+   ========================================================= */
+
+.style-childlike-paper-cut,
+.style-kids-party-pop {
+  --font-display: "Fredoka", "Trebuchet MS", "Arial Rounded MT Bold", sans-serif;
+  --font-body: "Fredoka", "Trebuchet MS", sans-serif;
+  --font-accent: "Patrick Hand", "Comic Sans MS", cursive;
+  --c1: #fff6cf;
+  --c2: #ff695e;
+  --c3: #4eb8df;
+  --c4: #40315f;
+}
+
+.style-childlike-paper-cut .cover-title,
+.style-childlike-paper-cut .detail-title,
+.style-kids-party-pop .cover-title,
+.style-kids-party-pop .detail-title,
+.style-kids-party-pop h4 {
+  font-family: var(--font-display);
+}
+
+.style-kids-party-pop .cover,
+.style-kids-party-pop.detail-hero {
+  background: #fff6cf;
+  color: #40315f;
+}
+
+.style-kids-party-pop .book-page {
+  border-radius: 16px;
+  border: 2px dashed #ff695e;
+  box-shadow: 8px 10px 0 #4eb8df;
+  background: #ffffff;
+}
+
+.style-kids-party-pop .book-page h4 {
+  transform: rotate(-1.5deg);
+}
+
+.style-kids-party-pop .shape-a {
+  border-radius: 42% 58% 65% 35%;
+  box-shadow: 12px 15px 0 #ff695e;
+}

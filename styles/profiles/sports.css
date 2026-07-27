@@ -1,0 +1,42 @@
+/* =========================================================
+   Sports Broadcast Style Profile
+   ========================================================= */
+
+.style-sports-broadcast {
+  --font-display: "Barlow Condensed", "Impact", sans-serif;
+  --font-body: "Barlow Condensed", sans-serif;
+  --font-accent: "IBM Plex Mono", monospace;
+  --c1: #0f172a;
+  --c2: #facc15;
+  --c3: #2563eb;
+  --c4: #f8fafc;
+}
+
+.style-sports-broadcast .cover,
+.style-sports-broadcast.detail-hero {
+  background: #0f172a;
+  color: #f8fafc;
+}
+
+.style-sports-broadcast .cover-title,
+.style-sports-broadcast .detail-title,
+.style-sports-broadcast h4 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-style: italic;
+  color: #facc15;
+}
+
+.style-sports-broadcast .book-page {
+  background: #0f172a;
+  color: #f8fafc;
+  border: 2px solid #2563eb;
+  transform: skewX(-1deg);
+}
+
+.style-sports-broadcast .book-page-type {
+  background: #2563eb;
+  color: #fff;
+  padding: 4px 8px;
+  display: inline-block;
+}

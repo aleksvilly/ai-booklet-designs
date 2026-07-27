@@ -1,0 +1,54 @@
+/* =========================================================
+   Apple Instruction Manual Style Profile
+   ========================================================= */
+
+.style-apple-manual {
+  --font-display: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-accent: "Inter", sans-serif;
+  --c1: #ffffff;
+  --c2: #000000;
+  --c3: #0071e3;
+  --c4: #86868b;
+}
+
+.style-apple-manual .cover,
+.style-apple-manual.detail-hero {
+  background: #ffffff;
+  color: #1d1d1f;
+}
+
+.style-apple-manual .cover-title,
+.style-apple-manual .detail-title,
+.style-apple-manual h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -.03em;
+  color: #000000;
+}
+
+.style-apple-manual .book-page {
+  background: #ffffff;
+  color: #1d1d1f;
+  border: 1px solid #e5e5e7;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+}
+
+.style-apple-manual .book-page-type {
+  background: #f5f5f7;
+  color: #0071e3;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: 600 10px/1 "Inter", sans-serif;
+  display: inline-block;
+}
+
+.style-apple-manual .book-page::after {
+  content: "STEP " attr(data-page-index);
+  position: absolute;
+  bottom: 16px;
+  right: 20px;
+  font: 600 11px/1 "Inter", sans-serif;
+  color: #86868b;
+}

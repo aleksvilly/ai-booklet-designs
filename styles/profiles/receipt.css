@@ -1,0 +1,57 @@
+/* =========================================================
+   Store Cashier Receipt Style Profile
+   ========================================================= */
+
+.style-thermal-receipt {
+  --font-display: "IBM Plex Mono", monospace;
+  --font-body: "IBM Plex Mono", monospace;
+  --font-accent: "IBM Plex Mono", monospace;
+  --c1: #fcfbfa;
+  --c2: #18181b;
+  --c3: #71717a;
+  --c4: #e4e4e7;
+}
+
+.style-thermal-receipt .cover,
+.style-thermal-receipt.detail-hero {
+  background: #fcfbfa;
+  color: #18181b;
+}
+
+.style-thermal-receipt .cover-title,
+.style-thermal-receipt .detail-title,
+.style-thermal-receipt h4 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -.02em;
+}
+
+.style-thermal-receipt .book-page {
+  background: #fcfbfa;
+  color: #18181b;
+  border: 1px dashed #a1a1aa;
+  font-family: var(--font-body);
+}
+
+.style-thermal-receipt .book-page::before {
+  content: "****************************************";
+  position: absolute;
+  top: 6px;
+  left: 10px;
+  right: 10px;
+  font: 10px/1 monospace;
+  color: #a1a1aa;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.style-thermal-receipt .book-page::after {
+  content: "|||||| ||||| ||||||| ||||";
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font: 16px/1 monospace;
+  letter-spacing: 2px;
+  color: #27272a;
+}

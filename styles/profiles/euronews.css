@@ -1,0 +1,37 @@
+/* =========================================================
+   Euronews-inspired Newsroom Style Profile
+   ========================================================= */
+
+.style-euronews-inspired {
+  --font-display: "Inter", Arial, sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-accent: "IBM Plex Mono", monospace;
+  --euronews-blue: #0172f0;
+  --euronews-blue-dark: #002e44;
+  --euronews-blue-soft: #aec1c9;
+  --euronews-ink: #1a1b1b;
+  --euronews-paper: #fff;
+  --c1: #ffffff;
+  --c2: #0172f0;
+  --c3: #aec1c9;
+  --c4: #002e44;
+}
+
+.style-euronews-inspired .cover,
+.style-euronews-inspired.detail-hero,
+.style-euronews-inspired .book-page {
+  font-family: var(--font-display);
+}
+
+.style-euronews-inspired .cover {
+  background: var(--euronews-paper);
+  color: var(--euronews-blue-dark);
+}
+
+.style-euronews-inspired .book-page {
+  border-color: var(--euronews-blue-soft);
+}
+
+.style-euronews-inspired .book-page-type {
+  color: var(--euronews-blue);
+}

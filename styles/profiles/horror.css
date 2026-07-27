@@ -1,0 +1,59 @@
+/* =========================================================
+   Horror & Slasher Zine Style Profile
+   ========================================================= */
+
+.style-horror-slasher {
+  --font-display: "Barlow Condensed", "Impact", sans-serif;
+  --font-body: "Barlow Condensed", sans-serif;
+  --font-accent: "IBM Plex Mono", monospace;
+  --c1: #08080a;
+  --c2: #e11d48;
+  --c3: #991b1b;
+  --c4: #f8fafc;
+}
+
+.style-horror-slasher .cover,
+.style-horror-slasher.detail-hero {
+  background: #08080a;
+  color: #f8fafc;
+}
+
+.style-horror-slasher .cover-title,
+.style-horror-slasher .detail-title,
+.style-horror-slasher h4 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  color: #e11d48;
+  text-shadow: 3px 3px 0 #000;
+  letter-spacing: -.03em;
+}
+
+.style-horror-slasher .book-page {
+  background: #08080a;
+  color: #f8fafc;
+  border: 2px solid #e11d48;
+  box-shadow: 0 10px 30px rgba(225, 29, 72, 0.3);
+}
+
+.style-horror-slasher .book-page::before {
+  content: "⚙ ⚙ ⚙ CHAIN SAW ⚙ ⚙ ⚙";
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  font: 700 8px/1 monospace;
+  color: #e11d48;
+  letter-spacing: 2px;
+  opacity: .7;
+}
+
+.style-horror-slasher .book-page-type {
+  background: #e11d48;
+  color: #fff;
+  padding: 2px 8px;
+  transform: rotate(-2deg);
+  display: inline-block;
+}
+
+.style-horror-slasher .page-image img {
+  filter: contrast(1.15) saturate(0.8);
+}
