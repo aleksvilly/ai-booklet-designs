@@ -10,6 +10,10 @@
 - [x] Shared public effect IDs and internal generator tokens.
 - [x] Catalog validation command.
 - [x] Preserve a selected visual profile at chaos 0–4; chaos 5 may remix it.
+- [x] Modular ES architecture (`src/config.js`, `src/utils.js`, `src/catalog.js`, `src/collection.js`, `src/detail-modal.js`, `src/editor.js`, `src/pdf-exporter.js`, `src/queue.js`, `src/main.js`).
+- [x] PDF two-page per sheet landscape export alignment.
+- [x] Text container overflow protection & -webkit-line-clamp heading/body safety.
+- [x] High-contrast dedicated visual design rules for all style profiles (Wedding, Kids Party, Halloween Noir, Sports Broadcast, Gaming Tech, Scientific Journal, Encyclopedia).
 
 ## In progress
 

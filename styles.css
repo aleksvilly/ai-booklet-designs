@@ -690,14 +690,14 @@ footer a { text-underline-offset: 3px; }
 
 /* V2: variable booklet pages */
 .page-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.book-page { position: relative; min-height: 430px; overflow: hidden; padding: 28px; border: 1px solid var(--line); background: #fff; isolation: isolate; }
+.book-page { position: relative; min-height: 430px; overflow: hidden; padding: 28px; border: 1px solid var(--line); background: #fff; isolation: isolate; display: flex; flex-direction: column; justify-content: space-between; word-break: break-word; hyphens: auto; }
 .book-page-number { position: absolute; z-index: 4; top: 20px; right: 22px; font: 500 10px/1 "IBM Plex Mono", monospace; }
-.book-page-copy { position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: end; min-height: 360px; max-width: 82%; }
-.book-page-type { margin: 0 0 18px; font: 500 10px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; }
-.book-page h4 { margin: 0; font-size: clamp(36px, 5vw, 76px); line-height: .88; letter-spacing: -.055em; }
-.book-page-copy > p:not(.book-page-type) { max-width: 460px; margin: 18px 0 0; line-height: 1.45; }
-.book-page small { display: block; margin-top: 16px; max-width: 420px; opacity: .72; }
-.page-art { position: absolute; width: 64%; aspect-ratio: 1; right: -22%; top: -16%; border: 34px solid currentColor; border-radius: 50%; opacity: .11; }
+.book-page-copy { position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; max-height: 100%; max-width: 86%; gap: 8px; overflow: hidden; word-break: break-word; }
+.book-page-type { margin: 0 0 6px; font: 500 10px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; flex-shrink: 0; }
+.book-page h4 { margin: 0; font-size: clamp(28px, 4vw, 64px); line-height: .94; letter-spacing: -.04em; word-break: break-word; overflow-wrap: break-word; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
+.book-page-copy > p:not(.book-page-type) { max-width: 460px; margin: 6px 0 0; line-height: 1.45; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; overflow: hidden; }
+.book-page small { display: block; margin-top: 10px; max-width: 420px; opacity: .72; }
+.page-art { position: absolute; width: 64%; aspect-ratio: 1; right: -22%; top: -16%; border: 34px solid currentColor; border-radius: 50%; opacity: .11; pointer-events: none; }
 .page-image {
   position: absolute;
   inset: 0;
@@ -1090,27 +1090,83 @@ footer a { text-underline-offset: 3px; }
 .effect-empty-space .book-page-copy { max-width:42%; min-height:260px; justify-content:center; }
 .effect-empty-space h4 { font-size:clamp(24px,3vw,45px); line-height:1; }
 
-/* Style-family behavior on covers and detail heroes */
+/* Style-family behavior on covers, spreads, pages and detail heroes */
 .style-childlike-paper-cut .cover-title,
-.style-childlike-paper-cut .detail-title { font-family:"Trebuchet MS","Arial Rounded MT Bold",sans-serif; transform:rotate(-3deg); }
-.style-childlike-paper-cut .shape-a { border-radius:42% 58% 65% 35%; box-shadow:12px 15px 0 var(--c3); }
+.style-childlike-paper-cut .detail-title,
+.style-kids-party-pop .cover-title,
+.style-kids-party-pop .detail-title,
+.style-kids-party-pop h4 { font-family: "Fredoka", "Trebuchet MS", "Arial Rounded MT Bold", sans-serif; }
+.style-kids-party-pop .cover,
+.style-kids-party-pop.detail-hero { background: #fff6cf; color: #40315f; }
+.style-kids-party-pop .book-page { border-radius: 16px; border: 2px dashed #ff695e; box-shadow: 8px 10px 0 #4eb8df; }
+.style-kids-party-pop .book-page h4 { transform: rotate(-1.5deg); }
+.style-kids-party-pop .shape-a { border-radius: 42% 58% 65% 35%; box-shadow: 12px 15px 0 #ff695e; }
+
+.style-wedding-editorial .cover,
+.style-wedding-editorial.detail-hero { background: #fbf7f0; color: #5b514c; }
+.style-wedding-editorial .cover-title,
+.style-wedding-editorial .detail-title,
+.style-wedding-editorial h4 { font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif; font-weight: 400; font-style: italic; }
+.style-wedding-editorial .book-page { background: #fbf7f0; border: 1px solid #d8b9ad; box-shadow: 0 12px 35px rgba(91,81,76,.08); }
+.style-wedding-editorial .book-page::after { content: ""; position: absolute; inset: 12px; border: 1px solid rgba(178,143,88,.3); pointer-events: none; }
+
+.style-halloween-noir .cover,
+.style-halloween-noir.detail-hero { background: #111014; color: #f1e8d3; }
+.style-halloween-noir .cover-title,
+.style-halloween-noir .detail-title,
+.style-halloween-noir h4 { font-family: "Barlow Condensed", "Impact", sans-serif; text-transform: uppercase; letter-spacing: -.02em; color: #f36b2b; }
+.style-halloween-noir .book-page { background: #111014; color: #f1e8d3; border: 1px solid #332d3d; box-shadow: 0 16px 40px rgba(0,0,0,.6); }
+.style-halloween-noir .book-page h4 { text-shadow: 4px 4px 0 #7b3f98; }
+
+.style-sports-broadcast .cover,
+.style-sports-broadcast.detail-hero { background: #0f172a; color: #f8fafc; }
+.style-sports-broadcast .cover-title,
+.style-sports-broadcast .detail-title,
+.style-sports-broadcast h4 { font-family: "Barlow Condensed", "Impact", sans-serif; text-transform: uppercase; font-style: italic; color: #facc15; }
+.style-sports-broadcast .book-page { background: #0f172a; color: #f8fafc; border: 2px solid #2563eb; transform: skewX(-1deg); }
+.style-sports-broadcast .book-page-type { background: #2563eb; color: #fff; padding: 4px 8px; display: inline-block; }
+
+.style-gaming-editorial .cover,
+.style-gaming-editorial.detail-hero,
 .style-neo-tech-interface .cover,
-.style-neo-tech-interface.detail-hero { background:#0b0e15; color:#e9fffb; }
-.style-neo-tech-interface .cover::after,
-.style-neo-tech-interface.detail-hero::after { content:"SYSTEM / 2026"; position:absolute; right:20px; top:20px; font:500 9px/1 "IBM Plex Mono",monospace; color:var(--c2); }
-.style-black-white-noir .cover,
-.style-black-white-noir.detail-hero { filter:grayscale(1); }
+.style-neo-tech-interface.detail-hero { background: #0b0e15; color: #e9fffb; }
+.style-gaming-editorial .cover-title,
+.style-gaming-editorial .detail-title,
+.style-gaming-editorial h4,
+.style-neo-tech-interface h4 { font-family: "IBM Plex Mono", monospace; color: #00f2fe; text-shadow: 0 0 12px rgba(0,242,254,.4); }
+.style-gaming-editorial .book-page,
+.style-neo-tech-interface .book-page { background: #0b0e15; color: #e9fffb; border: 1px solid #1e293b; box-shadow: inset 0 0 30px rgba(0,242,254,.08); }
+
+.style-encyclopedia-reference .cover,
+.style-encyclopedia-reference.detail-hero,
+.style-scientific-journal .cover,
+.style-scientific-journal.detail-hero { background: #f6f4ee; color: #1e242b; }
+.style-encyclopedia-reference h4,
+.style-scientific-journal h4 { font-family: "Cormorant Garamond", "Playfair Display", serif; }
+.style-encyclopedia-reference .book-page,
+.style-scientific-journal .book-page { background: #f6f4ee; border: 3px double #cbd5e1; }
+
+.style-y2k-pastel-chaos .cover-title,
+.style-grunge-90s-zine .cover-title,
 .style-post-punk-zine .cover-title,
-.style-grunge-90s .cover-title { font-family:Impact,"Arial Black",sans-serif; text-transform:uppercase; transform:rotate(-4deg); }
+.style-grunge-90s .cover-title { font-family: Impact, "Arial Black", sans-serif; text-transform: uppercase; transform: rotate(-3deg); }
+.style-y2k-pastel-chaos .book-page,
+.style-grunge-90s-zine .book-page { border: 2px solid #111; box-shadow: 8px 9px 0 var(--c2, #ff695e); }
+
+.style-swiss-minimal .book-page,
+.style-bauhaus-grid .book-page { border-left: 6px solid var(--c2, #e63946); }
+
+.style-black-white-noir .cover,
+.style-black-white-noir.detail-hero { filter: grayscale(1); }
 .style-luxury-editorial .cover-title,
-.style-luxury-editorial .detail-title { font-family:"Playfair Display",serif; font-weight:500; }
-.style-minimal-poetic .cover-title { max-width:65%; font-size:clamp(28px,3.2vw,50px); line-height:.98; }
+.style-luxury-editorial .detail-title { font-family: "Playfair Display", serif; font-weight: 500; }
+.style-minimal-poetic .cover-title { max-width: 65%; font-size: clamp(28px, 3.2vw, 50px); line-height: .98; }
 .style-y2k-liquid .shape-a,
-.style-organic-futurism .shape-a { border-radius:44% 56% 61% 39% / 35% 31% 69% 65%; filter:blur(2px); }
-.style-comic-pop .cover-title { font-family:Impact,"Arial Black",sans-serif; text-transform:uppercase; text-shadow:7px 8px 0 var(--c3); }
-.style-scrapbook-memory .cover-title { font-family:"Courier New",monospace; transform:rotate(-3deg); }
+.style-organic-futurism .shape-a { border-radius: 44% 56% 61% 39% / 35% 31% 69% 65%; filter: blur(2px); }
+.style-comic-pop .cover-title { font-family: Impact, "Arial Black", sans-serif; text-transform: uppercase; text-shadow: 7px 8px 0 var(--c3); }
+.style-scrapbook-memory .cover-title { font-family: "Courier New", monospace; transform: rotate(-3deg); }
 .style-scientific-archive .cover,
-.style-museum-clean .cover { background-image:linear-gradient(rgba(0,0,0,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.1) 1px,transparent 1px); background-size:24px 24px; }
+.style-museum-clean .cover { background-image: linear-gradient(rgba(0,0,0,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,.1) 1px, transparent 1px); background-size: 24px 24px; }
 
 /* Rhythm */
 .rhythm-calm .page-grid,

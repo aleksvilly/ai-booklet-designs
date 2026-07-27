@@ -310,7 +310,7 @@ export function applyBookletEditorState() {
   if (!editorSession || !dialogContent) return;
 
   const profile = resolvedEditorSetting('profile', 0);
-  dialogContent.querySelectorAll('.detail-hero, .spread-section').forEach(node => {
+  dialogContent.querySelectorAll('.detail-hero, .spread-section, .book-page').forEach(node => {
     replaceStyleClass(node, profile);
   });
 
