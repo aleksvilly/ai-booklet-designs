@@ -1,57 +1,148 @@
 /* =========================================================
-   Minimal Clean Editorial Style Profile (Inspired by The Last Train North)
+   Minimal Clean Editorial Style Profile
+   (Inspired by The Last Train North)
+   Full interior spread rules
    ========================================================= */
 
+/* === Core Variables === */
 .style-minimal-editorial,
 .style-swiss-minimal,
 .style-minimal-poetic {
-  --font-display: "Playfair Display", "DM Sans", serif;
+  --font-display: "Playfair Display", Georgia, serif;
   --font-body: "DM Sans", sans-serif;
   --font-accent: "IBM Plex Mono", monospace;
+  --minimal-paper: #eee5d4;
+  --minimal-ink: #172328;
+  --minimal-gold: #d4b85d;
+  --minimal-burgundy: #7c242b;
   --c1: #eee5d4;
   --c2: #172328;
   --c3: #d4b85d;
   --c4: #7c242b;
 }
 
+/* === Card Cover === */
 .style-minimal-editorial .cover,
 .style-minimal-editorial.detail-hero,
 .style-swiss-minimal .cover,
 .style-swiss-minimal.detail-hero {
-  background: #eee5d4;
-  color: #172328;
+  background: var(--minimal-paper);
+  color: var(--minimal-ink);
 }
-
 .style-minimal-editorial .cover-title,
 .style-minimal-editorial .detail-title,
-.style-minimal-editorial h4,
 .style-swiss-minimal h4 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -.03em;
-  color: #172328;
+  font: 600 clamp(22px, 4vw, 68px)/1.0 "Playfair Display", serif;
+  letter-spacing: -.02em;
+  color: var(--minimal-ink);
+}
+.style-minimal-editorial .cover-kicker {
+  color: var(--minimal-burgundy);
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font: 500 9px/1 "IBM Plex Mono", monospace;
 }
 
+/* === Interior Book Page Base === */
 .style-minimal-editorial .book-page,
 .style-swiss-minimal .book-page {
-  background: #eee5d4;
-  color: #172328;
-  border: 1px solid rgba(23, 35, 40, 0.2);
-  box-shadow: 0 10px 30px rgba(23, 35, 40, 0.05);
+  font-family: var(--font-body);
+  background: var(--minimal-paper);
+  color: var(--minimal-ink);
+  border: 1px solid rgba(23, 35, 40, 0.18);
+  box-shadow: 0 8px 32px rgba(23, 35, 40, 0.06);
+}
+
+/* Gold accent rule at bottom */
+.style-minimal-editorial .book-page::after {
+  content: "";
+  position: absolute;
+  left: var(--editor-space, 28px);
+  bottom: 20px;
+  width: 48px;
+  height: 2px;
+  background: var(--minimal-gold);
 }
 
 .style-minimal-editorial .book-page-type,
 .style-swiss-minimal .book-page-type {
-  color: #7c242b;
-  letter-spacing: .14em;
+  color: var(--minimal-burgundy);
+  font: 500 9px/1 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .16em;
+}
+.style-minimal-editorial .book-page h4,
+.style-swiss-minimal .book-page h4 {
+  font: 600 clamp(24px, 3.8vw, 60px)/1.0 "Playfair Display", serif;
+  letter-spacing: -.025em;
+  color: var(--minimal-ink);
+}
+.style-minimal-editorial .book-page .page-body,
+.style-swiss-minimal .book-page .page-body {
+  font: 400 13px/1.75 "DM Sans", sans-serif;
+  color: rgba(23, 35, 40, .72);
+  max-width: 400px;
+}
+.style-minimal-editorial .book-page-number {
+  font: 500 10px/1 "IBM Plex Mono", monospace;
+  color: var(--minimal-gold);
 }
 
-.style-minimal-editorial .book-page::after {
-  content: "";
+/* === Layout Variations === */
+.style-minimal-editorial .book-page.layout-cinematic {
+  justify-content: center;
+  align-items: flex-end;
+}
+.style-minimal-editorial .book-page.layout-cinematic .book-page-copy {
+  max-width: 70%;
+}
+.style-minimal-editorial .book-page.layout-full {
+  padding: 0;
+}
+.style-minimal-editorial .book-page.layout-full .book-page-copy {
   position: absolute;
+  bottom: 28px;
   left: 28px;
-  bottom: 20px;
-  width: 40px;
-  height: 2px;
-  background: #d4b85d;
+  right: 28px;
+  z-index: 5;
+  padding: 0;
+}
+.style-minimal-editorial .book-page.layout-minimal {
+  padding: clamp(36px, 6vw, 72px);
+}
+.style-minimal-editorial .book-page.layout-minimal .book-page-copy {
+  max-width: 75%;
+}
+
+/* === Image Treatments === */
+.style-minimal-editorial .book-page.has-image .page-image::after {
+  background: linear-gradient(to top, rgba(23,35,40,.82) 0%, transparent 60%);
+}
+.style-minimal-editorial .book-page.has-image.layout-full h4 { color: #fff; }
+.style-minimal-editorial .book-page.image-treatment-clean-photo .page-image img {
+  filter: brightness(0.94) contrast(1.05) saturate(0.9);
+}
+.style-minimal-editorial .book-page.image-treatment-black-white-photo .page-image img {
+  filter: grayscale(1) contrast(1.12);
+}
+
+/* === Effects === */
+.style-minimal-editorial .book-page.effect-empty-space {
+  padding: clamp(44px, 7vw, 88px);
+}
+.style-minimal-editorial .book-page.effect-floating-caption figcaption {
+  background: rgba(238, 229, 212, .9);
+  color: var(--minimal-ink);
+  padding: 6px 12px;
+  bottom: 28px;
+  left: 24px;
+}
+.style-minimal-editorial .book-page.effect-oversized-number .book-page-number {
+  font-size: clamp(80px, 14vw, 180px);
+  line-height: .85;
+  color: rgba(212, 184, 93, .14);
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  font-weight: 600;
 }

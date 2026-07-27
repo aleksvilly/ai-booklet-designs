@@ -1,54 +1,148 @@
 /* =========================================================
    Apple Instruction Manual Style Profile
+   Full interior spread rules
    ========================================================= */
 
+/* === Core Variables === */
 .style-apple-manual {
-  --font-display: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+  --font-display: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
   --font-body: "Inter", sans-serif;
   --font-accent: "Inter", sans-serif;
+  --apple-blue: #0071e3;
+  --apple-grey: #86868b;
+  --apple-light-grey: #f5f5f7;
   --c1: #ffffff;
   --c2: #000000;
   --c3: #0071e3;
   --c4: #86868b;
 }
 
+/* === Card Cover === */
 .style-apple-manual .cover,
 .style-apple-manual.detail-hero {
   background: #ffffff;
   color: #1d1d1f;
 }
-
 .style-apple-manual .cover-title,
-.style-apple-manual .detail-title,
-.style-apple-manual h4 {
-  font-family: var(--font-display);
-  font-weight: 600;
-  letter-spacing: -.03em;
+.style-apple-manual .detail-title {
+  font: 600 clamp(24px, 4vw, 64px)/1.0 "Inter", sans-serif;
+  letter-spacing: -.04em;
   color: #000000;
 }
+.style-apple-manual .cover-kicker {
+  color: #0071e3;
+  font: 500 10px/1 "Inter", sans-serif;
+  letter-spacing: .06em;
+}
 
+/* === Interior Book Page Base === */
 .style-apple-manual .book-page {
+  font-family: var(--font-display);
   background: #ffffff;
   color: #1d1d1f;
   border: 1px solid #e5e5e7;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 6px 24px rgba(0,0,0,.06);
   border-radius: 12px;
 }
-
 .style-apple-manual .book-page-type {
-  background: #f5f5f7;
-  color: #0071e3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--apple-light-grey);
+  color: var(--apple-blue);
   border-radius: 999px;
   padding: 4px 12px;
-  font: 600 10px/1 "Inter", sans-serif;
-  display: inline-block;
+  font: 600 9px/1 "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+}
+.style-apple-manual .book-page h4 {
+  font: 600 clamp(20px, 3.5vw, 52px)/1.05 "Inter", sans-serif;
+  letter-spacing: -.035em;
+  color: #000000;
+}
+.style-apple-manual .book-page .page-body {
+  font: 400 13px/1.72 "Inter", sans-serif;
+  color: #515154;
+  max-width: 420px;
+}
+.style-apple-manual .book-page-number {
+  font: 500 9px/1 "Inter", sans-serif;
+  color: #86868b;
+  letter-spacing: .06em;
 }
 
+/* STEP pill — data-page-index attribute */
 .style-apple-manual .book-page::after {
   content: "STEP " attr(data-page-index);
   position: absolute;
-  bottom: 16px;
-  right: 20px;
-  font: 600 11px/1 "Inter", sans-serif;
+  bottom: 20px;
+  right: 22px;
+  font: 600 10px/1 "Inter", sans-serif;
   color: #86868b;
+  letter-spacing: .06em;
+}
+
+/* === Layout Variations === */
+.style-apple-manual .book-page.layout-split {
+  background: var(--apple-light-grey);
+}
+.style-apple-manual .book-page.layout-minimal {
+  padding: clamp(24px, 4vw, 60px);
+}
+.style-apple-manual .book-page.layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.style-apple-manual .book-page.layout-full .book-page-copy {
+  position: absolute;
+  bottom: 28px;
+  left: 28px;
+  right: 28px;
+  z-index: 5;
+  background: rgba(255,255,255,.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 12px;
+  padding: 20px 22px;
+}
+
+/* === Image Treatments === */
+.style-apple-manual .book-page.has-image .page-image {
+  border-radius: 8px;
+  overflow: hidden;
+}
+.style-apple-manual .book-page.has-image .page-image::after {
+  background: linear-gradient(to bottom, transparent 50%, rgba(0,0,0,.22) 100%);
+}
+.style-apple-manual .book-page.image-treatment-clean-photo .page-image img {
+  filter: brightness(1.02) contrast(1.04) saturate(1.08);
+}
+
+/* === Effects === */
+.style-apple-manual .book-page.effect-empty-space {
+  padding: clamp(40px, 6vw, 90px);
+}
+.style-apple-manual .book-page.effect-soft-shadow {
+  box-shadow: 0 16px 48px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
+}
+.style-apple-manual .book-page.effect-oversized-number .book-page-number {
+  font-size: clamp(72px, 12vw, 160px);
+  line-height: .85;
+  color: rgba(0, 113, 227, .06);
+  position: absolute;
+  bottom: 10px;
+  right: 14px;
+  font-weight: 700;
+}
+
+/* Divider line at top for certain page types */
+.style-apple-manual .book-page.module-cover::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 28px; right: 28px;
+  height: 1px;
+  background: #e5e5e7;
 }
