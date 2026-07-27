@@ -515,6 +515,40 @@ footer a { text-underline-offset: 3px; }
 .detail-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
 .detail-actions button { min-height: 46px; padding: 0 16px; border: 1px solid var(--line); background: transparent; cursor: pointer; }
 .detail-actions button:first-child { background: var(--ink); color: var(--paper); }
+.detail-action-status { min-height: 1.4em; margin: 12px 0 0; color: var(--muted); font-size: 12px; line-height: 1.4; }
+.share-link-fallback { display: grid; max-width: 680px; gap: 7px; margin-top: 12px; }
+.share-link-fallback[hidden] { display: none; }
+.share-link-fallback span { font: 500 9px/1.2 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
+.share-link-fallback input { width: 100%; min-height: 42px; padding: 0 11px; border: 1px solid var(--line); background: var(--paper); color: var(--ink); font: 500 12px/1.3 "IBM Plex Mono", monospace; }
+
+.print-settings-dialog {
+  width: min(520px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  padding: 0;
+  overflow: auto;
+  border: 0;
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 28px 90px rgba(0,0,0,.34);
+}
+.print-settings-dialog::backdrop { background: rgba(16,15,13,.76); backdrop-filter: blur(8px); }
+.print-settings-close { position: absolute; z-index: 2; top: 14px; right: 14px; width: 38px; height: 38px; border: 1px solid var(--line); border-radius: 50%; background: var(--paper); color: var(--ink); font-size: 24px; cursor: pointer; }
+.print-settings-form { padding: clamp(24px, 5vw, 42px); }
+.print-settings-form .eyebrow { margin: 0 0 10px; }
+.print-settings-form h2 { margin: 0; padding-right: 42px; font-size: clamp(34px, 7vw, 52px); line-height: .92; letter-spacing: -.055em; }
+.print-settings-form > p:not(.eyebrow) { margin: 18px 0 0; color: var(--muted); line-height: 1.45; }
+.print-mode-options { display: grid; gap: 9px; margin: 26px 0 0; padding: 0; border: 0; }
+.print-mode-options legend { margin-bottom: 10px; font: 500 9px/1.2 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .09em; }
+.print-mode-options label { display: grid; grid-template-columns: auto minmax(0,1fr); gap: 13px; align-items: start; padding: 16px; border: 1px solid var(--line); cursor: pointer; }
+.print-mode-options label:has(input:checked) { border-color: var(--ink); background: color-mix(in srgb,var(--ink) 5%,var(--paper)); }
+.print-mode-options input { width: 18px; height: 18px; margin: 1px 0 0; accent-color: var(--ink); }
+.print-mode-options strong,.print-mode-options small { display: block; }
+.print-mode-options strong { font-size: 15px; }
+.print-mode-options small { margin-top: 5px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+.print-settings-note { font-size: 11px; }
+.print-settings-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 26px; }
+.print-settings-actions button { min-height: 44px; padding: 0 15px; border: 1px solid var(--line); background: transparent; color: inherit; cursor: pointer; }
+.print-settings-actions .primary-button { border-color: var(--ink); background: var(--ink); color: var(--paper); }
 
 @media (max-width: 900px) {
   .header-meta span:first-child, .header-meta .live-dot { display: none; }
@@ -1461,18 +1495,77 @@ footer a { text-underline-offset: 3px; }
 .has-image.module-hero_photo .book-page-copy h4,
 .has-image.module-full_bleed_image .book-page-copy h4 { font-size:clamp(54px,6.8vw,104px); }
 
-/* Print output: every row is one A4 landscape spread */
+/* PDF output: always portrait A4, with one page or one scaled spread per sheet. */
 @media print {
-  @page { size:A4 landscape; margin:0; }
-  body { background:white!important; }
+  @page { size:A4 portrait; margin:0; }
+  html,body { width:210mm!important; min-width:210mm!important; margin:0!important; background:white!important; }
   body > *:not(.booklet-dialog) { display:none!important; }
   .booklet-dialog { position:static!important;display:block!important;width:auto!important;max-height:none!important;margin:0!important;padding:0!important;box-shadow:none!important;overflow:visible!important;background:white!important; }
-  .booklet-dialog::backdrop,.dialog-close,.detail-hero,.spread-heading,.detail-actions { display:none!important; }
+  .booklet-dialog::backdrop,.dialog-close,.dialog-edit,.detail-hero,.spread-heading,.detail-actions,.detail-action-status,.share-link-fallback,.booklet-editor { display:none!important; }
   .spread-section { padding:0!important; }
-  .spreads-list { display:block!important; }
-  .print-spread { width:297mm!important;height:210mm!important;aspect-ratio:auto!important;page-break-after:always;break-after:page;box-shadow:none!important; }
-  .book-page { width:148.5mm!important;height:210mm!important;aspect-ratio:auto!important; }
-  .cover-credit,.page-image figcaption,.gallery-image figcaption { print-color-adjust:exact;-webkit-print-color-adjust:exact; }
+  .spreads-list { display:block!important;margin:0!important;padding:0!important; }
+  .print-spread { aspect-ratio:auto!important;box-shadow:none!important; }
+  .print-spread::after { display:none!important; }
+  .booklet-dialog,.booklet-dialog * { print-color-adjust:exact;-webkit-print-color-adjust:exact; }
+
+  html:not([data-print-mode="spreads"]) .print-spread,
+  html[data-print-mode="pages"] .print-spread {
+    display:block!important;
+    width:210mm!important;
+    height:auto!important;
+    margin:0!important;
+    overflow:visible!important;
+    background:transparent!important;
+  }
+  html:not([data-print-mode="spreads"]) .book-page,
+  html[data-print-mode="pages"] .book-page {
+    display:block!important;
+    width:210mm!important;
+    height:297mm!important;
+    min-width:210mm!important;
+    min-height:297mm!important;
+    margin:0!important;
+    border:0!important;
+    aspect-ratio:auto!important;
+    break-inside:avoid-page;
+    page-break-after:always;
+    break-after:page;
+  }
+  html:not([data-print-mode="spreads"]) .blank-page,
+  html[data-print-mode="pages"] .blank-page { display:none!important; }
+
+  html[data-print-mode="spreads"] .print-spread {
+    display:grid!important;
+    grid-template-columns:99mm 99mm!important;
+    grid-template-rows:140mm!important;
+    gap:0!important;
+    width:198mm!important;
+    height:140mm!important;
+    margin:78.5mm 6mm!important;
+    overflow:hidden!important;
+    page-break-after:always;
+    break-after:page;
+  }
+  html[data-print-mode="spreads"] .book-page {
+    width:148.5mm!important;
+    height:210mm!important;
+    min-width:0!important;
+    min-height:0!important;
+    border:0!important;
+    aspect-ratio:auto!important;
+    break-inside:avoid-page;
+    transform:scale(.6666667)!important;
+    transform-origin:top left!important;
+  }
+}
+
+@media (max-width:520px) {
+  .print-settings-form { padding: 22px 18px; }
+  .print-settings-form h2 { font-size: 36px; }
+  .print-mode-options { margin-top: 20px; }
+  .print-mode-options label { padding: 13px; }
+  .print-settings-actions { align-items: stretch; flex-direction: column-reverse; }
+  .print-settings-actions button { width: 100%; }
 }
 
 @media (max-width:900px) {

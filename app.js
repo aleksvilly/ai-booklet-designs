@@ -6,6 +6,10 @@ const dialogContent = document.querySelector('#dialog-content');
 const dialogEdit = document.querySelector('#dialog-edit');
 const bookletEditor = document.querySelector('#booklet-editor');
 const bookletEditorClose = document.querySelector('#booklet-editor-close');
+const printSettingsDialog = document.querySelector('#print-settings-dialog');
+const printSettingsForm = document.querySelector('#print-settings-form');
+const printSettingsClose = document.querySelector('#print-settings-close');
+const printSettingsCancel = document.querySelector('#print-settings-cancel');
 const bookletEditorMode = document.querySelector('#booklet-editor-mode');
 const editorParameterPrevious = document.querySelector('#editor-parameter-previous');
 const editorParameterNext = document.querySelector('#editor-parameter-next');
@@ -104,6 +108,7 @@ let editorSession = null;
 let editorSaveTimer = null;
 const editorStoragePrefix = 'ai-booklet-live-editor-v1:';
 const editorCompactStorageKey = 'ai-booklet-editor-compact-v1';
+const printModeStorageKey = 'ai-booklet-print-mode-v1';
 let editorParameterIndex = 0;
 let editorCompactMode = localStorage.getItem(editorCompactStorageKey) === null
   ? window.matchMedia('(max-width: 900px)').matches
@@ -1599,7 +1604,7 @@ function detailHtml(item) {
     <section class="spread-section ${classes}" style="${escapeHtml(style)}">
       <div class="spread-heading">
         <h3>Print spreads</h3>
-        <p>${escapeHtml(item.direction)} Each row represents one A4 landscape print spread containing two A5 pages.</p>
+        <p>${escapeHtml(item.direction)} Previewed as two-page spreads. Export them as single pages or complete spreads on portrait A4.</p>
       </div>
       <div class="spreads-list">${spreadsMarkup(pages, item)}</div>
       <div class="detail-actions">
@@ -1608,7 +1613,110 @@ function detailHtml(item) {
         <button type="button" data-action="print">Print / save PDF</button>
         <button type="button" data-action="close">Back to collection</button>
       </div>
+      <p class="detail-action-status" data-share-status role="status" aria-live="polite"></p>
+      <label class="share-link-fallback" data-share-fallback hidden>
+        <span>Copy this link manually</span>
+        <input data-share-url type="text" readonly>
+      </label>
     </section>`;
+}
+
+function shareUrlFor(item) {
+  const url = new URL(window.location.href);
+  url.search = '';
+  url.hash = '';
+  url.searchParams.set('booklet', item.id);
+  return url.toString();
+}
+
+async function copyText(text) {
+  if (window.isSecureContext && navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Some mobile browsers expose the API but still deny clipboard access.
+    }
+  }
+
+  const input = document.createElement('textarea');
+  input.value = text;
+  input.readOnly = true;
+  input.setAttribute('aria-hidden', 'true');
+  input.style.position = 'fixed';
+  input.style.left = '-9999px';
+  input.style.top = '0';
+  document.body.append(input);
+  input.focus();
+  input.select();
+  input.setSelectionRange(0, input.value.length);
+
+  let copied = false;
+  try {
+    copied = document.execCommand('copy');
+  } catch {
+    copied = false;
+  }
+  input.remove();
+  return copied;
+}
+
+async function copyBookletShareLink(item, button) {
+  const shareUrl = shareUrlFor(item);
+  const status = dialogContent.querySelector('[data-share-status]');
+  const fallback = dialogContent.querySelector('[data-share-fallback]');
+  const fallbackInput = fallback?.querySelector('[data-share-url]');
+  const defaultLabel = 'Copy share link';
+  const copied = await copyText(shareUrl);
+
+  if (copied) {
+    button.textContent = 'Link copied ✓';
+    status.textContent = 'Share link copied to the clipboard.';
+    fallback.hidden = true;
+    window.setTimeout(() => {
+      if (button.isConnected) button.textContent = defaultLabel;
+    }, 2200);
+    return;
+  }
+
+  button.textContent = 'Select link below';
+  status.textContent = 'Automatic copying was blocked. The share link is selected below.';
+  fallbackInput.value = shareUrl;
+  fallback.hidden = false;
+  fallbackInput.focus();
+  fallbackInput.select();
+  fallbackInput.setSelectionRange(0, fallbackInput.value.length);
+}
+
+function closePrintSettings() {
+  if (printSettingsDialog.open) printSettingsDialog.close();
+}
+
+function openPrintSettings() {
+  closeBookletEditor();
+  const savedMode = localStorage.getItem(printModeStorageKey);
+  const mode = savedMode === 'spreads' ? 'spreads' : 'pages';
+  printSettingsForm.querySelectorAll('input[name="print-mode"]').forEach(option => {
+    option.checked = option.value === mode;
+  });
+  if (!printSettingsDialog.open) printSettingsDialog.showModal();
+}
+
+async function printBooklet(event) {
+  event.preventDefault();
+  const data = new FormData(printSettingsForm);
+  const mode = data.get('print-mode') === 'spreads' ? 'spreads' : 'pages';
+  localStorage.setItem(printModeStorageKey, mode);
+  document.documentElement.dataset.printMode = mode;
+  closePrintSettings();
+
+  if (document.fonts?.ready) {
+    await document.fonts.ready.catch(() => {});
+  }
+
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => window.print());
+  });
 }
 
 function loadDialogImages(root) {
@@ -1723,18 +1831,14 @@ function openBooklet(item, updateUrl = true) {
 
   dialogContent.querySelector('[data-action="close"]').addEventListener('click', closeDialog);
   dialogContent.querySelector('[data-action="edit"]').addEventListener('click', openBookletEditor);
-  dialogContent.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
-  dialogContent.querySelector('[data-action="copy"]').addEventListener('click', async event => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      event.currentTarget.textContent = 'Link copied';
-    } catch {
-      event.currentTarget.textContent = 'Copy failed';
-    }
+  dialogContent.querySelector('[data-action="print"]').addEventListener('click', openPrintSettings);
+  dialogContent.querySelector('[data-action="copy"]').addEventListener('click', event => {
+    copyBookletShareLink(item, event.currentTarget);
   });
 }
 
 function closeDialog() {
+  closePrintSettings();
   closeBookletEditor();
   dialogEdit.hidden = true;
   dialog.close();
@@ -1775,6 +1879,14 @@ bookletEditorMode.addEventListener('click', () => setEditorCompactMode(!editorCo
 editorParameterPrevious.addEventListener('click', () => moveEditorParameter(-1));
 editorParameterNext.addEventListener('click', () => moveEditorParameter(1));
 dialogEdit.addEventListener('click', openBookletEditor);
+printSettingsForm.addEventListener('submit', printBooklet);
+printSettingsClose.addEventListener('click', closePrintSettings);
+printSettingsCancel.addEventListener('click', closePrintSettings);
+printSettingsDialog.addEventListener('click', event => {
+  const rect = printSettingsDialog.getBoundingClientRect();
+  const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
+  if (outside) closePrintSettings();
+});
 editorResetScope.addEventListener('click', () => {
   if (!editorSession) return;
   if (editorScope.value === 'booklet') editorSession.state.booklet = {};

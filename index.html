@@ -420,6 +420,39 @@
     </aside>
   </dialog>
 
+  <dialog class="print-settings-dialog" id="print-settings-dialog" aria-describedby="print-settings-description">
+    <button class="print-settings-close" id="print-settings-close" type="button" aria-label="Close print settings">×</button>
+    <form class="print-settings-form" id="print-settings-form">
+      <p class="eyebrow">PDF export</p>
+      <h2>Print / save PDF</h2>
+      <p id="print-settings-description">Choose how booklet pages should be placed on portrait A4 sheets.</p>
+
+      <fieldset class="print-mode-options">
+        <legend>Page layout</legend>
+        <label>
+          <input type="radio" name="print-mode" value="pages" checked>
+          <span>
+            <strong>Single pages</strong>
+            <small>One booklet page on each portrait A4 sheet.</small>
+          </span>
+        </label>
+        <label>
+          <input type="radio" name="print-mode" value="spreads">
+          <span>
+            <strong>Full spreads</strong>
+            <small>Two booklet pages together, scaled to fit one portrait A4 sheet.</small>
+          </span>
+        </label>
+      </fieldset>
+
+      <p class="print-settings-note">The system print window opens next. Choose “Save as PDF” and enable background graphics for the complete design.</p>
+      <div class="print-settings-actions">
+        <button type="button" id="print-settings-cancel">Cancel</button>
+        <button class="primary-button" type="submit">Continue to print</button>
+      </div>
+    </form>
+  </dialog>
+
   <dialog class="request-status-dialog" id="request-status-dialog">
     <button class="request-dialog-close" id="request-dialog-close" type="button" aria-label="Close request status">×</button>
     <div class="request-dialog-grid">
