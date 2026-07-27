@@ -4,7 +4,7 @@
 
 .style-gaming-editorial,
 .style-neo-tech-interface {
-  --font-display: "IBM Plex Mono", monospace;
+  --font-display: "Orbitron", "IBM Plex Mono", monospace;
   --font-body: "IBM Plex Mono", monospace;
   --font-accent: "IBM Plex Mono", monospace;
   --c1: #0b0e15;

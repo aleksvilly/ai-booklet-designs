@@ -4,7 +4,7 @@
 
 .style-encyclopedia-reference,
 .style-scientific-journal {
-  --font-display: "Cormorant Garamond", "Playfair Display", serif;
+  --font-display: "Lora", "Cormorant Garamond", serif;
   --font-body: "DM Sans", sans-serif;
   --font-accent: "IBM Plex Mono", monospace;
   --c1: #f6f4ee;

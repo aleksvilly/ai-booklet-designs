@@ -3,8 +3,8 @@
    ========================================================= */
 
 .style-thermal-receipt {
-  --font-display: "IBM Plex Mono", monospace;
-  --font-body: "IBM Plex Mono", monospace;
+  --font-display: "Space Mono", "IBM Plex Mono", monospace;
+  --font-body: "Space Mono", "IBM Plex Mono", monospace;
   --font-accent: "IBM Plex Mono", monospace;
   --c1: #fcfbfa;
   --c2: #18181b;
