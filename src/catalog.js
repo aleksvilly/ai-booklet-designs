@@ -140,6 +140,7 @@ export function bindStyleSlider(selectNode) {
     output = document.createElement('output');
     selectNode.before(output);
   }
+  output.classList.add('style-slider-output');
 
   let slider = parent.querySelector('input[type="range"]');
   if (!slider) {

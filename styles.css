@@ -213,7 +213,16 @@ main { overflow: hidden; }
   background: var(--ink);
   color: var(--paper);
 }
-.range-field output { display: block; margin-top: 4px; font: 500 12px/1.3 "IBM Plex Mono", monospace; color: var(--c2, var(--ink)); word-break: break-word; }
+.range-field output { float: right; color: var(--ink); font: inherit; }
+#style-profile-output,
+.style-slider-output {
+  display: block;
+  float: none;
+  margin-top: 4px;
+  font: 500 12px/1.3 "IBM Plex Mono", monospace;
+  color: var(--c2, var(--ink));
+  word-break: break-word;
+}
 .request-form .range-field input[type="range"] {
   width: 100%;
   min-height: 24px;
