@@ -424,8 +424,8 @@
     <button class="print-settings-close" id="print-settings-close" type="button" aria-label="Close print settings">×</button>
     <form class="print-settings-form" id="print-settings-form">
       <p class="eyebrow">PDF export</p>
-      <h2>Print / save PDF</h2>
-      <p id="print-settings-description">Choose how booklet pages should be placed on portrait A4 sheets.</p>
+      <h2>Download PDF</h2>
+      <p id="print-settings-description">The site renders the opened booklet directly into a PDF, preserving its current fonts, effects and page positions.</p>
 
       <fieldset class="print-mode-options">
         <legend>Page layout</legend>
@@ -439,16 +439,22 @@
         <label>
           <input type="radio" name="print-mode" value="spreads">
           <span>
-            <strong>Full spreads</strong>
-            <small>Two booklet pages together, scaled to fit one portrait A4 sheet.</small>
+            <strong>Two pages per sheet</strong>
+            <small>Two upright booklet pages stacked on one portrait A4 sheet.</small>
           </span>
         </label>
       </fieldset>
 
-      <p class="print-settings-note">The system print window opens next. Choose “Save as PDF” and enable background graphics for the complete design.</p>
+      <p class="print-settings-note">PDF creation happens on this device. A larger booklet may take a little longer on a phone.</p>
+      <div class="pdf-export-progress" id="pdf-export-progress" hidden>
+        <span aria-hidden="true"></span>
+        <p id="pdf-export-status" role="status" aria-live="polite">Preparing PDF…</p>
+      </div>
+      <a class="pdf-download-link" id="pdf-download-link" download hidden>Download PDF again ↓</a>
       <div class="print-settings-actions">
         <button type="button" id="print-settings-cancel">Cancel</button>
-        <button class="primary-button" type="submit">Continue to print</button>
+        <button type="button" id="print-system-button">Browser print</button>
+        <button class="primary-button" type="submit">Download PDF</button>
       </div>
     </form>
   </dialog>
@@ -509,6 +515,8 @@
     </article>
   </template>
 
+  <script src="./vendor/html-to-image.min.js"></script>
+  <script src="./vendor/jspdf.umd.min.js"></script>
   <script type="module" src="./app.js"></script>
 </body>
 </html>

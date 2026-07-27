@@ -10,6 +10,10 @@ const printSettingsDialog = document.querySelector('#print-settings-dialog');
 const printSettingsForm = document.querySelector('#print-settings-form');
 const printSettingsClose = document.querySelector('#print-settings-close');
 const printSettingsCancel = document.querySelector('#print-settings-cancel');
+const printSystemButton = document.querySelector('#print-system-button');
+const pdfExportProgress = document.querySelector('#pdf-export-progress');
+const pdfExportStatus = document.querySelector('#pdf-export-status');
+const pdfDownloadLink = document.querySelector('#pdf-download-link');
 const bookletEditorMode = document.querySelector('#booklet-editor-mode');
 const editorParameterPrevious = document.querySelector('#editor-parameter-previous');
 const editorParameterNext = document.querySelector('#editor-parameter-next');
@@ -106,6 +110,9 @@ let requestTimerInterval;
 let requestStatusInterval;
 let editorSession = null;
 let editorSaveTimer = null;
+let printExportItem = null;
+let pdfExportBusy = false;
+let pdfDownloadUrl = '';
 const editorStoragePrefix = 'ai-booklet-live-editor-v1:';
 const editorCompactStorageKey = 'ai-booklet-editor-compact-v1';
 const printModeStorageKey = 'ai-booklet-print-mode-v1';
@@ -1610,7 +1617,7 @@ function detailHtml(item) {
       <div class="detail-actions">
         <button type="button" data-action="edit">Edit booklet</button>
         <button type="button" data-action="copy">Copy share link</button>
-        <button type="button" data-action="print">Print / save PDF</button>
+        <button type="button" data-action="print">Download PDF</button>
         <button type="button" data-action="close">Back to collection</button>
       </div>
       <p class="detail-action-status" data-share-status role="status" aria-live="polite"></p>
@@ -1689,11 +1696,20 @@ async function copyBookletShareLink(item, button) {
 }
 
 function closePrintSettings() {
+  if (pdfExportBusy) return;
   if (printSettingsDialog.open) printSettingsDialog.close();
+  if (pdfDownloadUrl) {
+    URL.revokeObjectURL(pdfDownloadUrl);
+    pdfDownloadUrl = '';
+  }
 }
 
 function openPrintSettings() {
   closeBookletEditor();
+  pdfExportStatus.textContent = 'Preparing PDF…';
+  pdfExportProgress.hidden = true;
+  pdfExportProgress.classList.remove('is-ready', 'is-error');
+  pdfDownloadLink.hidden = true;
   const savedMode = localStorage.getItem(printModeStorageKey);
   const mode = savedMode === 'spreads' ? 'spreads' : 'pages';
   printSettingsForm.querySelectorAll('input[name="print-mode"]').forEach(option => {
@@ -1702,21 +1718,202 @@ function openPrintSettings() {
   if (!printSettingsDialog.open) printSettingsDialog.showModal();
 }
 
-async function printBooklet(event) {
-  event.preventDefault();
+function selectedPrintMode() {
   const data = new FormData(printSettingsForm);
-  const mode = data.get('print-mode') === 'spreads' ? 'spreads' : 'pages';
+  return data.get('print-mode') === 'spreads' ? 'spreads' : 'pages';
+}
+
+function setPdfExportBusy(busy) {
+  pdfExportBusy = busy;
+  printSettingsForm.querySelectorAll('button,input').forEach(control => {
+    control.disabled = busy;
+  });
+  printSettingsClose.disabled = busy;
+  printSettingsDialog.classList.toggle('is-exporting', busy);
+}
+
+function nextPaint() {
+  return new Promise(resolve => {
+    requestAnimationFrame(() => requestAnimationFrame(resolve));
+  });
+}
+
+function promiseWithin(promise, timeout, message) {
+  return new Promise((resolve, reject) => {
+    const timer = window.setTimeout(() => reject(new Error(message)), timeout);
+    Promise.resolve(promise).then(
+      value => {
+        window.clearTimeout(timer);
+        resolve(value);
+      },
+      error => {
+        window.clearTimeout(timer);
+        reject(error);
+      }
+    );
+  });
+}
+
+async function waitForBookletAssets() {
+  if (document.fonts?.ready) {
+    await promiseWithin(document.fonts.ready, 12000, 'Font loading timed out').catch(() => {});
+  }
+  const images = [...dialogContent.querySelectorAll('.book-page img')];
+  const imageReady = Promise.all(images.map(async image => {
+    if (!image.complete) {
+      await new Promise(resolve => {
+        image.addEventListener('load', resolve, { once: true });
+        image.addEventListener('error', resolve, { once: true });
+      });
+    }
+    if (typeof image.decode === 'function') await image.decode().catch(() => {});
+  }));
+  await promiseWithin(imageReady, 15000, 'Image loading timed out').catch(() => {});
+  await nextPaint();
+}
+
+function averageCanvasEdgeColor(canvas) {
+  try {
+    const context = canvas.getContext('2d', { willReadFrequently: true });
+    const insetX = Math.max(1, Math.floor(canvas.width * .015));
+    const insetY = Math.max(1, Math.floor(canvas.height * .015));
+    const points = [
+      [insetX, insetY],
+      [canvas.width - insetX - 1, insetY],
+      [insetX, canvas.height - insetY - 1],
+      [canvas.width - insetX - 1, canvas.height - insetY - 1]
+    ];
+    const totals = points.reduce((sum, [x, y]) => {
+      const pixel = context.getImageData(x, y, 1, 1).data;
+      return [sum[0] + pixel[0], sum[1] + pixel[1], sum[2] + pixel[2]];
+    }, [0, 0, 0]);
+    return totals.map(value => Math.round(value / points.length));
+  } catch {
+    return [255, 255, 255];
+  }
+}
+
+async function renderPageForPdf(page, index, total, fontEmbedCSS) {
+  pdfExportStatus.textContent = `Rendering page ${index + 1} of ${total}…`;
+  const width = Math.max(1, page.getBoundingClientRect().width);
+  const pixelRatio = Math.min(4, Math.max(2, 1400 / width));
+  const canvas = await promiseWithin(window.htmlToImage.toCanvas(page, {
+    pixelRatio,
+    quality: .94,
+    cacheBust: false,
+    includeQueryParams: true,
+    preferredFontFormat: 'woff2',
+    fontEmbedCSS,
+    backgroundColor: getComputedStyle(page).backgroundColor || '#ffffff'
+  }), 45000, `Page ${index + 1} rendering timed out`);
+  return {
+    dataUrl: canvas.toDataURL('image/jpeg', .94),
+    edgeColor: averageCanvasEdgeColor(canvas)
+  };
+}
+
+function addSinglePageToPdf(pdf, rendered, firstPage) {
+  if (!firstPage) pdf.addPage('a4', 'portrait');
+  pdf.addImage(rendered.dataUrl, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+}
+
+function addTwoPagesToPdf(pdf, renderedPages, firstSheet) {
+  if (!firstSheet) pdf.addPage('a4', 'portrait');
+  renderedPages.forEach((rendered, index) => {
+    const slotY = index * 148.5;
+    pdf.setFillColor(...rendered.edgeColor);
+    pdf.rect(0, slotY, 210, 148.5, 'F');
+    pdf.addImage(rendered.dataUrl, 'JPEG', 52.5, slotY, 105, 148.5, undefined, 'FAST');
+  });
+  pdf.setDrawColor(205, 205, 205);
+  pdf.setLineWidth(.2);
+  pdf.line(0, 148.5, 210, 148.5);
+}
+
+function bookletPdfName(item, mode) {
+  const base = safeClass(item?.id || item?.title || 'booklet') || 'booklet';
+  return `${base}-${mode === 'spreads' ? 'two-pages' : 'single-pages'}.pdf`;
+}
+
+function exposePdfDownload(blob, filename) {
+  if (pdfDownloadUrl) URL.revokeObjectURL(pdfDownloadUrl);
+  pdfDownloadUrl = URL.createObjectURL(blob);
+  pdfDownloadLink.href = pdfDownloadUrl;
+  pdfDownloadLink.download = filename;
+  pdfDownloadLink.hidden = false;
+  pdfDownloadLink.click();
+}
+
+async function downloadBookletPdf(event) {
+  event.preventDefault();
+  if (pdfExportBusy) return;
+  const mode = selectedPrintMode();
+  localStorage.setItem(printModeStorageKey, mode);
+
+  if (!window.htmlToImage?.toCanvas || !window.jspdf?.jsPDF) {
+    pdfExportProgress.hidden = false;
+    pdfExportStatus.textContent = 'The PDF renderer did not load. Please use Browser print.';
+    return;
+  }
+
+  const pages = [...dialogContent.querySelectorAll('.book-page:not(.blank-page)')];
+  if (!pages.length) return;
+
+  setPdfExportBusy(true);
+  pdfExportProgress.hidden = false;
+  pdfExportProgress.classList.remove('is-ready', 'is-error');
+  pdfDownloadLink.hidden = true;
+  dialog.classList.add('pdf-exporting');
+
+  try {
+    await waitForBookletAssets();
+    const fontEmbedCSS = await promiseWithin(window.htmlToImage.getFontEmbedCSS(dialogContent, {
+      preferredFontFormat: 'woff2'
+    }), 20000, 'Font embedding timed out').catch(() => '');
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+      compress: true,
+      putOnlyUsedFonts: true
+    });
+
+    if (mode === 'pages') {
+      for (let index = 0; index < pages.length; index += 1) {
+        const rendered = await renderPageForPdf(pages[index], index, pages.length, fontEmbedCSS);
+        addSinglePageToPdf(pdf, rendered, index === 0);
+      }
+    } else {
+      for (let index = 0; index < pages.length; index += 2) {
+        const pair = [];
+        pair.push(await renderPageForPdf(pages[index], index, pages.length, fontEmbedCSS));
+        if (pages[index + 1]) {
+          pair.push(await renderPageForPdf(pages[index + 1], index + 1, pages.length, fontEmbedCSS));
+        }
+        addTwoPagesToPdf(pdf, pair, index === 0);
+      }
+    }
+
+    pdfExportProgress.classList.add('is-ready');
+    pdfExportStatus.textContent = 'PDF is ready. The download should start automatically.';
+    exposePdfDownload(pdf.output('blob'), bookletPdfName(printExportItem, mode));
+  } catch (error) {
+    console.error('PDF export failed', error);
+    pdfExportProgress.classList.add('is-error');
+    pdfExportStatus.textContent = 'PDF creation failed. Try again or use Browser print.';
+  } finally {
+    dialog.classList.remove('pdf-exporting');
+    setPdfExportBusy(false);
+  }
+}
+
+function printBookletInBrowser() {
+  const mode = selectedPrintMode();
   localStorage.setItem(printModeStorageKey, mode);
   document.documentElement.dataset.printMode = mode;
   closePrintSettings();
-
-  if (document.fonts?.ready) {
-    await document.fonts.ready.catch(() => {});
-  }
-
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => window.print());
-  });
+  requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
 }
 
 function loadDialogImages(root) {
@@ -1796,6 +1993,7 @@ function resetDialogScroll() {
 }
 
 function openBooklet(item, updateUrl = true) {
+  printExportItem = item;
   loadGoogleFonts(fontsFor(item), `booklet-${safeClass(item.id)}`);
   dialogContent.innerHTML = detailHtml(item);
   applyPalette(dialogContent, item.palette);
@@ -1879,13 +2077,17 @@ bookletEditorMode.addEventListener('click', () => setEditorCompactMode(!editorCo
 editorParameterPrevious.addEventListener('click', () => moveEditorParameter(-1));
 editorParameterNext.addEventListener('click', () => moveEditorParameter(1));
 dialogEdit.addEventListener('click', openBookletEditor);
-printSettingsForm.addEventListener('submit', printBooklet);
+printSettingsForm.addEventListener('submit', downloadBookletPdf);
 printSettingsClose.addEventListener('click', closePrintSettings);
 printSettingsCancel.addEventListener('click', closePrintSettings);
+printSystemButton.addEventListener('click', printBookletInBrowser);
 printSettingsDialog.addEventListener('click', event => {
   const rect = printSettingsDialog.getBoundingClientRect();
   const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
   if (outside) closePrintSettings();
+});
+printSettingsDialog.addEventListener('cancel', event => {
+  if (pdfExportBusy) event.preventDefault();
 });
 editorResetScope.addEventListener('click', () => {
   if (!editorSession) return;
