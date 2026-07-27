@@ -3,6 +3,31 @@ const filtersNode = document.querySelector('#filters');
 const template = document.querySelector('#booklet-card-template');
 const dialog = document.querySelector('#booklet-dialog');
 const dialogContent = document.querySelector('#dialog-content');
+const bookletEditor = document.querySelector('#booklet-editor');
+const bookletEditorClose = document.querySelector('#booklet-editor-close');
+const editorScope = document.querySelector('#editor-scope');
+const editorTargetLabel = document.querySelector('#editor-target-label');
+const editorProfile = document.querySelector('#editor-profile');
+const editorVisualMode = document.querySelector('#editor-visual-mode');
+const editorLayoutComplexity = document.querySelector('#editor-layout-complexity');
+const editorImageCount = document.querySelector('#editor-image-count');
+const editorTextAmount = document.querySelector('#editor-text-amount');
+const editorContentPosition = document.querySelector('#editor-content-position');
+const editorFontScale = document.querySelector('#editor-font-scale');
+const editorSpacing = document.querySelector('#editor-spacing');
+const editorEffectLevel = document.querySelector('#editor-effect-level');
+const editorShowTitle = document.querySelector('#editor-show-title');
+const editorShowSubtitle = document.querySelector('#editor-show-subtitle');
+const editorShowBody = document.querySelector('#editor-show-body');
+const editorLayoutOutput = document.querySelector('#editor-layout-output');
+const editorImageOutput = document.querySelector('#editor-image-output');
+const editorTextOutput = document.querySelector('#editor-text-output');
+const editorFontOutput = document.querySelector('#editor-font-output');
+const editorSpacingOutput = document.querySelector('#editor-spacing-output');
+const editorEffectOutput = document.querySelector('#editor-effect-output');
+const editorSaveStatus = document.querySelector('#editor-save-status');
+const editorResetScope = document.querySelector('#editor-reset-scope');
+const editorResetAll = document.querySelector('#editor-reset-all');
 const countNode = document.querySelector('#published-count');
 const emptyState = document.querySelector('#empty-state');
 const paginationNode = document.querySelector('#pagination');
@@ -61,6 +86,9 @@ let generationRequests = loadGenerationRequests();
 let activeRequestId = generationRequests[0]?.id || '';
 let requestTimerInterval;
 let requestStatusInterval;
+let editorSession = null;
+let editorSaveTimer = null;
+const editorStoragePrefix = 'ai-booklet-live-editor-v1:';
 
 function loadGenerationRequests() {
   try {
@@ -652,6 +680,353 @@ function imagesForPage(page = {}) {
   return images.filter(image => safeUrl(image?.url || '') !== '#');
 }
 
+const editorLoremSentences = [
+  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+  'Integer posuere erat a ante venenatis dapibus posuere velit aliquet.',
+  'Curabitur blandit tempus porttitor, sed posuere consectetur est at lobortis.',
+  'Donec ullamcorper nulla non metus auctor fringilla.',
+  'Maecenas faucibus mollis interdum, vitae elit libero pharetra augue.',
+  'Aenean lacinia bibendum nulla sed consectetur.',
+  'Praesent commodo cursus magna, vel scelerisque nisl consectetur.',
+  'Cras mattis consectetur purus sit amet fermentum.'
+];
+
+function splitEditorSentences(value = '') {
+  return String(value)
+    .match(/[^.!?]+[.!?]+|[^.!?]+$/g)
+    ?.map(sentence => sentence.trim())
+    .filter(Boolean) || [];
+}
+
+function editorTextVariantsFor(page = {}) {
+  const stored = page.editorVariants?.text;
+  if (Array.isArray(stored) && stored.length >= 5) return stored.slice(0, 5).map(String);
+
+  const original = String(page.body || '').trim();
+  const sentences = splitEditorSentences(original);
+  const short = sentences[0] || '';
+  const medium = sentences.slice(0, Math.max(1, Math.ceil(sentences.length / 2))).join(' ');
+  const withLorem = count => [original, ...editorLoremSentences.slice(0, count)].filter(Boolean).join(' ');
+
+  return [
+    short,
+    medium,
+    original,
+    withLorem(3),
+    withLorem(8)
+  ];
+}
+
+function uniqueEditorImages(pages = []) {
+  const seen = new Set();
+  return pages.flatMap(imagesForPage).filter(image => {
+    const key = safeUrl(image?.url || '');
+    if (key === '#' || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function editorStorageKey(item) {
+  return `${editorStoragePrefix}${item.id}`;
+}
+
+function emptyEditorState() {
+  return { version: 1, booklet: {}, spreads: {}, pages: {} };
+}
+
+function loadEditorState(item) {
+  try {
+    const stored = JSON.parse(localStorage.getItem(editorStorageKey(item)) || 'null');
+    if (!stored || stored.version !== 1) return emptyEditorState();
+    return {
+      version: 1,
+      booklet: stored.booklet && typeof stored.booklet === 'object' ? stored.booklet : {},
+      spreads: stored.spreads && typeof stored.spreads === 'object' ? stored.spreads : {},
+      pages: stored.pages && typeof stored.pages === 'object' ? stored.pages : {}
+    };
+  } catch {
+    return emptyEditorState();
+  }
+}
+
+function scheduleEditorSave() {
+  if (!editorSession) return;
+  clearTimeout(editorSaveTimer);
+  editorSaveStatus.textContent = 'Saving…';
+  editorSaveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(editorStorageKey(editorSession.item), JSON.stringify(editorSession.state));
+      editorSaveStatus.textContent = 'Saved on this device.';
+    } catch {
+      editorSaveStatus.textContent = 'Could not save on this device.';
+    }
+  }, 120);
+}
+
+function originalEditorSettings(item, page) {
+  const dna = item.designDna || {};
+  const align = page.textAlign === 'right' ? 'bottom-right' : page.textAlign === 'center' ? 'bottom-center' : 'bottom-left';
+  return {
+    profile: dna.styleFamily || item.layout || 'auto',
+    visualMode: dna.visualMode || 'auto',
+    layoutComplexity: Math.max(1, Math.min(5, Number(dna.layoutComplexity || 2))),
+    imageCount: imagesForPage(page).length,
+    textAmount: 3,
+    contentPosition: align,
+    fontScale: 3,
+    spacing: 3,
+    effectLevel: Math.max(0, Math.min(5, Number(dna.effectLevel ?? 2))),
+    showTitle: Boolean(page.title),
+    showSubtitle: Boolean(page.caption || page.module || page.type),
+    showBody: Boolean(page.body)
+  };
+}
+
+function editorLayersFor(pageIndex) {
+  if (!editorSession) return [];
+  const spreadIndex = Math.floor(pageIndex / 2);
+  return [
+    editorSession.state.booklet,
+    editorSession.state.spreads[String(spreadIndex)],
+    editorSession.state.pages[String(pageIndex)]
+  ].filter(Boolean);
+}
+
+function hasEditorOverride(key, pageIndex) {
+  return editorLayersFor(pageIndex).some(layer => Object.prototype.hasOwnProperty.call(layer, key));
+}
+
+function resolvedEditorSetting(key, pageIndex) {
+  if (!editorSession) return undefined;
+  const layers = editorLayersFor(pageIndex);
+  let value = editorSession.originalSettings[pageIndex]?.[key];
+  layers.forEach(layer => {
+    if (Object.prototype.hasOwnProperty.call(layer, key)) value = layer[key];
+  });
+  return value;
+}
+
+function activeEditorBucket(create = true) {
+  if (!editorSession) return null;
+  if (editorScope.value === 'booklet') return editorSession.state.booklet;
+
+  const collection = editorScope.value === 'spread'
+    ? editorSession.state.spreads
+    : editorSession.state.pages;
+  const key = String(editorScope.value === 'spread'
+    ? editorSession.activeSpreadIndex
+    : editorSession.activePageIndex);
+
+  if (!collection[key] && create) collection[key] = {};
+  return collection[key] || null;
+}
+
+function replaceStyleClass(node, profile) {
+  if (!node) return;
+  [...node.classList].filter(name => name.startsWith('style-')).forEach(name => node.classList.remove(name));
+  node.classList.add(`style-${safeClass(profile || 'editorial')}`);
+}
+
+function replaceEditorLevelClass(node, prefix, value, enabled) {
+  [...node.classList].filter(name => name.startsWith(prefix)).forEach(name => node.classList.remove(name));
+  if (enabled) node.classList.add(`${prefix}${value}`);
+}
+
+function imagesForEditorCount(page, count, pool) {
+  if (count <= 0) return [];
+  const selected = [];
+  const seen = new Set();
+  [...imagesForPage(page), ...pool].forEach(image => {
+    const key = safeUrl(image?.url || '');
+    if (selected.length >= count || key === '#' || seen.has(key)) return;
+    seen.add(key);
+    selected.push(image);
+  });
+  if (!selected.length) return [];
+  const reusable = [...selected];
+  while (selected.length < count) selected.push(reusable[selected.length % reusable.length]);
+  return selected.slice(0, count);
+}
+
+function renderEditorMedia(pageNode, page, count) {
+  pageNode.querySelectorAll(':scope > .page-image, :scope > .page-gallery, :scope > .page-art').forEach(node => node.remove());
+  const images = imagesForEditorCount(page, count, editorSession.imagePool);
+  const previewPage = { ...page, images, image: null };
+  const copy = pageNode.querySelector('.book-page-copy');
+  copy?.insertAdjacentHTML('beforebegin', mediaMarkup(previewPage));
+  pageNode.classList.toggle('has-image', images.length > 0);
+  pageNode.classList.toggle('no-image', images.length === 0);
+  loadDialogImages(pageNode);
+}
+
+function applyEditorPage(pageNode, page, pageIndex) {
+  const values = {
+    visualMode: resolvedEditorSetting('visualMode', pageIndex),
+    layoutComplexity: resolvedEditorSetting('layoutComplexity', pageIndex),
+    imageCount: resolvedEditorSetting('imageCount', pageIndex),
+    textAmount: resolvedEditorSetting('textAmount', pageIndex),
+    contentPosition: resolvedEditorSetting('contentPosition', pageIndex),
+    fontScale: resolvedEditorSetting('fontScale', pageIndex),
+    spacing: resolvedEditorSetting('spacing', pageIndex),
+    effectLevel: resolvedEditorSetting('effectLevel', pageIndex),
+    showTitle: resolvedEditorSetting('showTitle', pageIndex),
+    showSubtitle: resolvedEditorSetting('showSubtitle', pageIndex),
+    showBody: resolvedEditorSetting('showBody', pageIndex)
+  };
+
+  replaceEditorLevelClass(pageNode, 'editor-visual-', safeClass(values.visualMode), hasEditorOverride('visualMode', pageIndex));
+  replaceEditorLevelClass(pageNode, 'editor-complexity-', values.layoutComplexity, hasEditorOverride('layoutComplexity', pageIndex));
+  replaceEditorLevelClass(pageNode, 'editor-font-', values.fontScale, hasEditorOverride('fontScale', pageIndex));
+  replaceEditorLevelClass(pageNode, 'editor-spacing-', values.spacing, hasEditorOverride('spacing', pageIndex));
+  replaceEditorLevelClass(pageNode, 'editor-effects-', values.effectLevel, hasEditorOverride('effectLevel', pageIndex));
+
+  if (hasEditorOverride('contentPosition', pageIndex)) pageNode.dataset.editorContentPosition = values.contentPosition;
+  else delete pageNode.dataset.editorContentPosition;
+
+  const title = pageNode.querySelector('.book-page-copy h4');
+  const subtitle = pageNode.querySelector('.book-page-type');
+  const caption = pageNode.querySelector('.page-caption');
+  const body = pageNode.querySelector('.page-body');
+  if (title) title.hidden = !values.showTitle;
+  if (subtitle) subtitle.hidden = !values.showSubtitle;
+  if (caption) caption.hidden = !values.showSubtitle;
+  if (body) {
+    body.hidden = !values.showBody;
+    body.textContent = hasEditorOverride('textAmount', pageIndex)
+      ? editorSession.textVariants[pageIndex][Math.max(1, Math.min(5, values.textAmount)) - 1]
+      : String(page.body || '');
+  }
+
+  const requestedImageCount = hasEditorOverride('imageCount', pageIndex)
+    ? Math.max(0, Math.min(20, Number(values.imageCount)))
+    : imagesForPage(page).length;
+  if (Number(pageNode.dataset.editorImageCount) !== requestedImageCount) {
+    renderEditorMedia(pageNode, page, requestedImageCount);
+    pageNode.dataset.editorImageCount = String(requestedImageCount);
+  }
+}
+
+function applyBookletEditorState() {
+  if (!editorSession) return;
+  const profile = resolvedEditorSetting('profile', 0);
+  dialogContent.querySelectorAll('.detail-hero, .spread-section').forEach(node => {
+    replaceStyleClass(node, profile);
+  });
+
+  editorSession.pageNodes.forEach((pageNode, pageIndex) => {
+    applyEditorPage(pageNode, editorSession.pages[pageIndex], pageIndex);
+  });
+  updateEditorSelection();
+}
+
+function updateEditorSelection() {
+  if (!editorSession) return;
+  editorSession.pageNodes.forEach((node, index) => {
+    node.classList.toggle('editor-selected-page', !bookletEditor.hidden && index === editorSession.activePageIndex);
+  });
+  editorSession.spreadNodes.forEach((node, index) => {
+    node.classList.toggle('editor-selected-spread', !bookletEditor.hidden && index === editorSession.activeSpreadIndex);
+  });
+}
+
+function syncBookletEditorControls() {
+  if (!editorSession) return;
+  const index = editorSession.activePageIndex;
+  const values = editorSession.originalSettings[index];
+  const get = key => resolvedEditorSetting(key, index) ?? values[key];
+
+  editorProfile.value = get('profile');
+  editorVisualMode.value = get('visualMode');
+  editorLayoutComplexity.value = get('layoutComplexity');
+  editorImageCount.value = get('imageCount');
+  editorTextAmount.value = get('textAmount');
+  editorContentPosition.value = get('contentPosition');
+  editorFontScale.value = get('fontScale');
+  editorSpacing.value = get('spacing');
+  editorEffectLevel.value = get('effectLevel');
+  editorShowTitle.checked = Boolean(get('showTitle'));
+  editorShowSubtitle.checked = Boolean(get('showSubtitle'));
+  editorShowBody.checked = Boolean(get('showBody'));
+
+  editorLayoutOutput.value = editorLayoutComplexity.value;
+  editorImageOutput.value = editorImageCount.value;
+  editorTextOutput.value = editorTextAmount.value;
+  editorFontOutput.value = editorFontScale.value;
+  editorSpacingOutput.value = editorSpacing.value;
+  editorEffectOutput.value = editorEffectLevel.value;
+  editorProfile.disabled = editorScope.value !== 'booklet';
+  editorProfile.title = editorProfile.disabled ? 'Editorial profile applies to the entire booklet.' : '';
+  editorTargetLabel.textContent = editorScope.value === 'booklet'
+    ? 'Booklet defaults'
+    : editorScope.value === 'spread'
+      ? `Spread ${editorSession.activeSpreadIndex + 1} · pages ${editorSession.activeSpreadIndex * 2 + 1}–${Math.min(editorSession.pages.length, editorSession.activeSpreadIndex * 2 + 2)}`
+      : `Page ${editorSession.activePageIndex + 1}`;
+}
+
+function setEditorValue(key, value) {
+  if (!editorSession) return;
+  const bucket = key === 'profile' ? editorSession.state.booklet : activeEditorBucket();
+  bucket[key] = value;
+  applyBookletEditorState();
+  syncBookletEditorControls();
+  scheduleEditorSave();
+}
+
+function openBookletEditor() {
+  if (!editorSession) return;
+  bookletEditor.hidden = false;
+  dialog.classList.add('editor-is-open');
+  updateEditorSelection();
+  syncBookletEditorControls();
+}
+
+function closeBookletEditor() {
+  bookletEditor.hidden = true;
+  dialog.classList.remove('editor-is-open');
+  updateEditorSelection();
+}
+
+function initializeBookletEditor(item) {
+  const pages = pagesFor(item);
+  editorSession = {
+    item,
+    pages,
+    state: loadEditorState(item),
+    imagePool: uniqueEditorImages(pages),
+    textVariants: pages.map(editorTextVariantsFor),
+    originalSettings: pages.map(page => originalEditorSettings(item, page)),
+    pageNodes: [...dialogContent.querySelectorAll('.book-page:not(.blank-page)')],
+    spreadNodes: [...dialogContent.querySelectorAll('.print-spread')],
+    activePageIndex: 0,
+    activeSpreadIndex: 0
+  };
+
+  const sourceProfile = generationForm?.querySelector('[name="style"]');
+  if (sourceProfile && !editorProfile.options.length) editorProfile.innerHTML = sourceProfile.innerHTML;
+  if (![...editorProfile.options].some(option => option.value === editorSession.originalSettings[0].profile)) {
+    editorProfile.add(new Option(editorSession.originalSettings[0].profile, editorSession.originalSettings[0].profile));
+  }
+
+  editorSession.pageNodes.forEach((node, index) => {
+    node.dataset.pageIndex = String(index);
+    node.addEventListener('click', event => {
+      if (bookletEditor.hidden || event.target.closest('a')) return;
+      editorSession.activePageIndex = index;
+      editorSession.activeSpreadIndex = Math.floor(index / 2);
+      updateEditorSelection();
+      syncBookletEditorControls();
+    });
+  });
+  editorSession.spreadNodes.forEach((node, index) => {
+    node.dataset.spreadIndex = String(index);
+  });
+
+  closeBookletEditor();
+  applyBookletEditorState();
+  syncBookletEditorControls();
+}
+
 function imageCredit(image, compact = false) {
   const creator = escapeHtml(image.creator || 'Creator');
   const source = escapeHtml(image.source || 'Source');
@@ -892,7 +1267,7 @@ function pageMarkup(page, index, item) {
     `--page-weight:${Math.max(100, Math.min(900, Number(page.fontWeight || 600)))}`
   ].join(';');
 
-  return `<article style="${escapeHtml(style)}" class="book-page ${classes}" data-spread-id="${escapeHtml(page.spreadId || '')}">
+  return `<article style="${escapeHtml(style)}" class="book-page ${classes}" data-page-index="${index}" data-spread-id="${escapeHtml(page.spreadId || '')}">
     <span class="book-page-number">${String(index + 1).padStart(2, '0')}</span>
     ${mediaMarkup(page)}
     <div class="book-page-copy">
@@ -912,7 +1287,7 @@ function spreadsMarkup(pages, item) {
     const right = pages[index + 1];
     const continuous = left?.spreadId && right?.spreadId && left.spreadId === right.spreadId;
     const kind = continuous ? left.spreadKind || 'continuous' : 'standard';
-    spreads.push(`<section class="print-spread ${continuous ? 'continuous-spread' : ''} spread-${safeClass(kind)}">
+    spreads.push(`<section class="print-spread ${continuous ? 'continuous-spread' : ''} spread-${safeClass(kind)}" data-spread-index="${Math.floor(index / 2)}">
       ${pageMarkup(left, index, item)}
       ${right ? pageMarkup(right, index + 1, item) : '<article class="book-page blank-page"></article>'}
     </section>`);
@@ -961,6 +1336,7 @@ function detailHtml(item) {
       </div>
       <div class="spreads-list">${spreadsMarkup(pages, item)}</div>
       <div class="detail-actions">
+        <button type="button" data-action="edit">Edit booklet</button>
         <button type="button" data-action="copy">Copy share link</button>
         <button type="button" data-action="print">Print / save PDF</button>
         <button type="button" data-action="close">Back to collection</button>
@@ -1049,6 +1425,7 @@ function openBooklet(item, updateUrl = true) {
   dialogContent.innerHTML = detailHtml(item);
   applyPalette(dialogContent, item.palette);
   setFontVariables(dialogContent, item, pagesFor(item)[0]);
+  initializeBookletEditor(item);
 
   const url = new URL(window.location.href);
   const hadPageParameter = url.searchParams.has('page');
@@ -1077,6 +1454,7 @@ function openBooklet(item, updateUrl = true) {
   });
 
   dialogContent.querySelector('[data-action="close"]').addEventListener('click', closeDialog);
+  dialogContent.querySelector('[data-action="edit"]').addEventListener('click', openBookletEditor);
   dialogContent.querySelector('[data-action="print"]').addEventListener('click', () => window.print());
   dialogContent.querySelector('[data-action="copy"]').addEventListener('click', async event => {
     try {
@@ -1089,6 +1467,7 @@ function openBooklet(item, updateUrl = true) {
 }
 
 function closeDialog() {
+  closeBookletEditor();
   dialog.close();
   resetDialogScroll();
   const url = new URL(window.location.href);
@@ -1097,6 +1476,49 @@ function closeDialog() {
   else url.searchParams.delete('page');
   history.pushState({ page: currentPage }, '', url);
 }
+
+[
+  [editorProfile, 'profile', value => value],
+  [editorVisualMode, 'visualMode', value => value],
+  [editorLayoutComplexity, 'layoutComplexity', Number],
+  [editorImageCount, 'imageCount', Number],
+  [editorTextAmount, 'textAmount', Number],
+  [editorContentPosition, 'contentPosition', value => value],
+  [editorFontScale, 'fontScale', Number],
+  [editorSpacing, 'spacing', Number],
+  [editorEffectLevel, 'effectLevel', Number]
+].forEach(([control, key, parse]) => {
+  const eventName = control.type === 'range' ? 'input' : 'change';
+  control.addEventListener(eventName, () => setEditorValue(key, parse(control.value)));
+});
+
+[
+  [editorShowTitle, 'showTitle'],
+  [editorShowSubtitle, 'showSubtitle'],
+  [editorShowBody, 'showBody']
+].forEach(([control, key]) => {
+  control.addEventListener('change', () => setEditorValue(key, control.checked));
+});
+
+editorScope.addEventListener('change', syncBookletEditorControls);
+bookletEditorClose.addEventListener('click', closeBookletEditor);
+editorResetScope.addEventListener('click', () => {
+  if (!editorSession) return;
+  if (editorScope.value === 'booklet') editorSession.state.booklet = {};
+  else if (editorScope.value === 'spread') delete editorSession.state.spreads[String(editorSession.activeSpreadIndex)];
+  else delete editorSession.state.pages[String(editorSession.activePageIndex)];
+  applyBookletEditorState();
+  syncBookletEditorControls();
+  scheduleEditorSave();
+});
+editorResetAll.addEventListener('click', () => {
+  if (!editorSession) return;
+  editorSession.state = emptyEditorState();
+  localStorage.removeItem(editorStorageKey(editorSession.item));
+  applyBookletEditorState();
+  syncBookletEditorControls();
+  editorSaveStatus.textContent = 'All local adjustments were reset.';
+});
 
 document.querySelector('#dialog-close').addEventListener('click', closeDialog);
 dialog.addEventListener('click', event => {

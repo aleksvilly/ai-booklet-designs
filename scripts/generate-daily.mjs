@@ -1160,6 +1160,26 @@ function bodyForDensity(dna, module, seed, index) {
   return selected.join(' ');
 }
 
+function editorTextVariants(body, dna, seed, index) {
+  const original = String(body || '').trim();
+  const sentences = original.match(/[^.!?]+[.!?]+|[^.!?]+$/g)?.map(value => value.trim()).filter(Boolean) || [];
+  const short = sentences[0] || '';
+  const medium = sentences.slice(0, Math.max(1, Math.ceil(sentences.length / 2))).join(' ');
+  const extras = pickUnique(
+    sentencePool(dna).filter(sentence => sentence && !original.includes(sentence)),
+    8,
+    seed,
+    `editor-text-variants:${index}`
+  );
+  return [
+    short,
+    medium,
+    original,
+    [original, ...extras.slice(0, 3)].filter(Boolean).join(' '),
+    [original, ...extras].filter(Boolean).join(' ')
+  ];
+}
+
 function titleForModule(module, dna, seed, index, bookletTitle) {
   const subject = titleCase(dna.subject);
   const titles = {
@@ -1776,7 +1796,16 @@ function normalizeBooklet(item, index, additions) {
   const base = `${slug(item.audience.replace(/^the /i, ''))}-${slug(item.title)}-${date}`;
   const id = uniqueId(base, additions);
   const palette = Array.isArray(item.palette) && item.palette.length === 4 ? item.palette : PALETTES[index % PALETTES.length].colors;
-  const pages = Array.isArray(item.pages) && item.pages.length >= 6 ? item.pages.slice(0, 16) : [];
+  const dna = item.designDna || {};
+  const pages = Array.isArray(item.pages) && item.pages.length >= 6
+    ? item.pages.slice(0, 16).map((page, pageIndex) => ({
+        ...page,
+        editorVariants: {
+          ...(page.editorVariants || {}),
+          text: editorTextVariants(page.body, dna, `${runId}:editor:${index}`, pageIndex)
+        }
+      }))
+    : [];
   return { ...item, id, publishDate: date, palette, pages };
 }
 
