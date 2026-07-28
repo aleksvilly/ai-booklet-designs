@@ -309,12 +309,12 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     const gap = Math.min(absPct * 0.2, 22);
     const ratio = Math.max(20, Math.min(80, 50 + rawPct * 0.3));
     const ratioB = 100 - ratio;
-    // Split layouts always keep equal base tracks. Positive intensity shrinks
-    // each photo inside its track; negative intensity expands it into adjacent
-    // tracks, creating overlap without depending on the gallery item count.
-    const splitScale = rawPct >= 0
-      ? Math.max(0.04, 1 - rawPct * 0.0096)
-      : Math.min(1.96, 1 + absPct * 0.0096);
+    // Split layouts always keep equal base tracks. Positive intensity closes
+    // a mask around the unchanged image; negative intensity expands the image
+    // area into adjacent tracks. Neither path scales/distorts the bitmap.
+    const splitInset = rawPct > 0 ? rawPct * 0.48 : 0;
+    const splitExtent = rawPct < 0 ? 100 + absPct * 0.96 : 100;
+    const splitOffset = (100 - splitExtent) / 2;
     // Diagonal: diag-top is the x% where the cut crosses the top edge
     //           diag-bottom is where it crosses the bottom edge
     const diagTop = Math.max(30, Math.min(88, 65 + rawPct * 0.23));
@@ -327,7 +327,9 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     pageNode.style.setProperty('--layout-gap', `${gap.toFixed(1)}px`);
     pageNode.style.setProperty('--layout-ratio', `${ratio.toFixed(1)}%`);
     pageNode.style.setProperty('--layout-ratio-b', `${ratioB.toFixed(1)}%`);
-    pageNode.style.setProperty('--layout-split-scale', splitScale.toFixed(3));
+    pageNode.style.setProperty('--layout-split-inset', `${splitInset.toFixed(1)}%`);
+    pageNode.style.setProperty('--layout-split-extent', `${splitExtent.toFixed(1)}%`);
+    pageNode.style.setProperty('--layout-split-offset', `${splitOffset.toFixed(1)}%`);
     pageNode.style.setProperty('--layout-diag-top', `${diagTop.toFixed(1)}%`);
     pageNode.style.setProperty('--layout-diag-bottom', `${diagBottom.toFixed(1)}%`);
     pageNode.style.setProperty('--layout-tilt', `${tiltDeg.toFixed(2)}deg`);
@@ -342,7 +344,8 @@ export function applyEditorPage(pageNode, page, pageIndex) {
   } else {
     // Reset all layout custom properties
     [
-      '--layout-gap', '--layout-ratio', '--layout-ratio-b', '--layout-split-scale',
+      '--layout-gap', '--layout-ratio', '--layout-ratio-b',
+      '--layout-split-inset', '--layout-split-extent', '--layout-split-offset',
       '--layout-diag-top', '--layout-diag-bottom',
       '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size'
     ].forEach(prop => pageNode.style.removeProperty(prop));
