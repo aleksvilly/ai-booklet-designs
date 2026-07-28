@@ -8,6 +8,8 @@
 @import url('./styles/profiles/minimal-editorial.css');
 @import url('./styles/profiles/gaming.css');
 @import url('./styles/profiles/encyclopedia.css');
+@import url('./styles/profiles/base-editorial.css');
+@import url('./styles/profiles/extended.css');
 
 :root {
   --ink: #111111;

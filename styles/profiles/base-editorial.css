@@ -1,0 +1,100 @@
+/* =========================================================
+   Grid / Radical / Editorial / Cinematic — Generic profiles
+   These are the most common legacy styleFamilies and serve
+   as clean fallbacks when no specific profile is available.
+   ========================================================= */
+
+/* ---- GRID ---- */
+.style-grid .book-page {
+  font-family: "Inter", "DM Sans", sans-serif;
+  background: #fff;
+  color: #111;
+  border: 1px solid #e2e8f0;
+}
+.style-grid .book-page h4 {
+  font: 700 clamp(26px, 3.8vw, 60px)/1.0 "Inter", sans-serif;
+  letter-spacing: -.04em;
+}
+.style-grid .book-page .page-body { font-size: 13px; line-height: 1.68; color: #475569; }
+.style-grid .book-page-type { color: #94a3b8; font: 600 9px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; }
+.style-grid .book-page-number { color: #94a3b8; }
+.style-grid .book-page::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #6366f1 0%, #22d3ee 100%);
+}
+
+/* ---- EDITORIAL ---- */
+.style-editorial .book-page {
+  font-family: "DM Sans", sans-serif;
+  background: #fafaf9;
+  color: #1c1917;
+  border: 1px solid #e7e5e4;
+}
+.style-editorial .book-page h4 {
+  font: 600 clamp(28px, 4vw, 64px)/1.0 "Playfair Display", serif;
+  letter-spacing: -.03em;
+}
+.style-editorial .book-page .page-body { font-size: 13px; line-height: 1.72; color: #57534e; }
+.style-editorial .book-page-type { color: #a8a29e; font: 500 9px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; }
+.style-editorial .book-page::after {
+  content: "";
+  position: absolute;
+  bottom: 20px; left: 24px;
+  width: 32px; height: 1px;
+  background: #1c1917;
+}
+
+/* ---- RADICAL ---- */
+.style-radical .book-page {
+  font-family: "Barlow Condensed", "Inter", sans-serif;
+  background: #09090b;
+  color: #fafafa;
+  border: 2px solid #3f3f46;
+}
+.style-radical .book-page h4 {
+  font: 800 clamp(30px, 5vw, 80px)/1.0 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: -.02em;
+  color: #fafafa;
+}
+.style-radical .book-page .page-body { font-size: 12px; line-height: 1.6; color: #a1a1aa; }
+.style-radical .book-page-type { color: #71717a; font: 700 9px/1 "IBM Plex Mono", monospace; letter-spacing: .18em; text-transform: uppercase; }
+.style-radical .book-page::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: #ef4444;
+}
+.style-radical .book-page.has-image .page-image img { filter: contrast(1.15) brightness(0.75) saturate(0.6); }
+.style-radical .book-page.has-image .page-image::after {
+  background: linear-gradient(to top, rgba(9,9,11,.95) 0%, transparent 60%);
+}
+
+/* ---- CINEMATIC ---- */
+.style-cinematic .book-page {
+  font-family: "DM Sans", sans-serif;
+  background: #0c0a09;
+  color: #fafaf9;
+  border: 0;
+}
+.style-cinematic .book-page h4 {
+  font: 600 clamp(28px, 4.5vw, 72px)/1.0 "Cormorant Garamond", serif;
+  font-style: italic;
+  color: #fafaf9;
+  letter-spacing: .01em;
+}
+.style-cinematic .book-page .page-body { font-size: 12px; line-height: 1.75; color: rgba(250,250,249,.65); }
+.style-cinematic .book-page-type { color: rgba(250,250,249,.4); font: 500 9px/1 "IBM Plex Mono", monospace; letter-spacing: .14em; }
+.style-cinematic .book-page.has-image .page-image img { filter: contrast(1.1) brightness(0.7) saturate(0.7); }
+.style-cinematic .book-page.has-image .page-image::after {
+  background: linear-gradient(to top, rgba(12,10,9,.98) 0%, rgba(12,10,9,.2) 55%, transparent 100%);
+}
+.style-cinematic .book-page.layout-full .book-page-copy {
+  position: absolute;
+  bottom: 28px; left: 28px; right: 28px;
+  z-index: 5;
+}
