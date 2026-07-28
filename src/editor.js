@@ -317,11 +317,11 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     const splitOffset = (100 - splitExtent) / 2;
     // Diagonal uses the same equal horizontal tracks as split-h. This depth
     // expands and clips each image into an angled band; the sign is represented
-    // by photo-layout-reversed. Reduce the depth for dense galleries so later
-    // bands do not cover earlier ones when all 20 photos are present.
+    // by photo-layout-reversed. Galleries up to six photos get the full angle;
+    // denser galleries use a non-linear falloff so all 20 bands stay readable.
     const diagPhotoCount = pageNode.querySelectorAll('.page-gallery .gallery-image').length || 1;
-    const diagDensity = Math.min(1, 4 / diagPhotoCount);
-    const diagDepth = absPct * diagDensity;
+    const diagDensity = Math.min(1, Math.pow(6 / diagPhotoCount, 1.5));
+    const diagDepth = 150 * (absPct / 100) * diagDensity;
     const diagOffset = -diagDepth;
     const tiltDeg = rawPct * 0.14;
     const overlayOpacity = Math.max(0, Math.min(0.95, absPct / 100));

@@ -13,7 +13,7 @@
      --layout-split-inset positive split mask inset (0–48%)
      --layout-split-extent negative split image extent (100–196%)
      --layout-split-offset centers the expanded image (0 to -48%)
-     --layout-diag-depth  diagonal band depth (density-adjusted, up to 100px)
+     --layout-diag-depth  diagonal band depth (density-adjusted, up to 150px)
      --layout-diag-offset negative diagonal depth
    ========================================================== */
 
