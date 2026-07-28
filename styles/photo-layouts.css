@@ -261,7 +261,7 @@
 .photo-layout-circles .page-image figcaption { display: none !important; }
 
 /* ==========================================================
-   7. COLLAGE — scattered, rotated, overlapping photos
+   7. COLLAGE — formula-driven scattered stack (2–20 photos)
    ========================================================== */
 .photo-layout-collage .page-gallery {
   display: block !important;
@@ -271,7 +271,18 @@
 }
 .photo-layout-collage .page-gallery .gallery-image {
   position: absolute !important;
+  inset: auto !important;
+  display: block !important;
+  left: var(--layout-collage-x, 50%) !important;
+  top: var(--layout-collage-y, 50%) !important;
+  width: var(--layout-collage-size, 50%) !important;
+  height: auto !important;
+  aspect-ratio: var(--layout-collage-aspect, 1);
+  min-width: 0 !important;
+  min-height: 0 !important;
   overflow: hidden !important;
+  transform: translate(-50%, -50%) rotate(var(--layout-collage-rotation, 0deg));
+  z-index: var(--layout-collage-z, 1);
   box-shadow: 3px 5px 18px rgba(0,0,0,.28);
 }
 .photo-layout-collage .page-gallery .gallery-image img {
@@ -282,17 +293,6 @@
   object-fit: cover !important;
 }
 .photo-layout-collage .page-gallery figcaption { display: none !important; }
-
-/* --layout-tilt is signed (positive or negative from JS) */
-.photo-layout-collage .page-gallery .gallery-image:nth-child(1)  { width:60%; height:52%; top:4%;  left:4%;  transform:rotate(calc(var(--layout-tilt, -7deg))); z-index:5; }
-.photo-layout-collage .page-gallery .gallery-image:nth-child(2)  { width:52%; height:44%; top:8%; right:2%; transform:rotate(calc(var(--layout-tilt, -7deg) * -1)); z-index:4; }
-.photo-layout-collage .page-gallery .gallery-image:nth-child(3)  { width:55%; height:46%; bottom:4%; left:6%;  transform:rotate(calc(var(--layout-tilt, -7deg) * 0.5)); z-index:6; }
-.photo-layout-collage .page-gallery .gallery-image:nth-child(4)  { width:48%; height:40%; bottom:5%; right:3%; transform:rotate(calc(var(--layout-tilt, -7deg) * -0.7)); z-index:3; }
-.photo-layout-collage .page-gallery .gallery-image:nth-child(5)  { width:38%; height:32%; top:30%; left:28%; transform:rotate(calc(var(--layout-tilt, -7deg) * 1.2)); z-index:7; }
-.photo-layout-collage .page-gallery .gallery-image:nth-child(6)  { width:34%; height:30%; top:55%; left:16%; transform:rotate(calc(var(--layout-tilt, -7deg) * -0.4)); z-index:2; }
-.photo-layout-collage .page-gallery .gallery-image:nth-child(7)  { width:36%; height:32%; top:40%; right:4%;  transform:rotate(calc(var(--layout-tilt, -7deg) * 0.8)); z-index:3; }
-.photo-layout-collage .page-gallery .gallery-image:nth-child(8)  { width:30%; height:26%; bottom:12%; left:40%; transform:rotate(calc(var(--layout-tilt, -7deg) * -1.1)); z-index:8; }
-.photo-layout-collage .page-gallery .gallery-image:nth-child(n+9) { display: none !important; }
 
 /* ==========================================================
    8. STRIPS — thin vertical (default) or horizontal bands

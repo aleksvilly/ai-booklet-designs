@@ -366,6 +366,33 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       pageNode.style.setProperty('--layout-shape-single-size', `${(shapeScale * 100).toFixed(1)}%`);
     }
 
+    if (photoLayoutValue === 'collage') {
+      const collageItems = [...pageNode.querySelectorAll('.page-gallery .gallery-image')];
+      const lastCollageIndex = Math.max(1, collageItems.length - 1);
+      const scatterStrength = 0.55 + absPct / 100 * 0.65;
+      const direction = rawPct < 0 ? -1 : 1;
+      const firstSize = Math.min(88, 58 + collageItems.length * 1.5);
+      const lastSize = Math.max(18, 34 - collageItems.length * 0.35);
+
+      collageItems.forEach((item, index) => {
+        const progress = index / lastCollageIndex;
+        const angle = direction * index * 137.508 * Math.PI / 180;
+        const radius = index === 0 ? 0 : (10 + 32 * Math.sqrt(progress)) * scatterStrength;
+        const x = Math.max(8, Math.min(92, 50 + Math.cos(angle) * radius));
+        const y = Math.max(8, Math.min(92, 50 + Math.sin(angle) * radius * 0.82));
+        const size = firstSize - (firstSize - lastSize) * progress;
+        const rotation = Math.sin(angle * 0.73) * (4 + absPct * 0.16);
+        const aspect = [1.28, 0.82, 1, 1.48, 0.72][index % 5];
+
+        item.style.setProperty('--layout-collage-size', `${size.toFixed(2)}%`);
+        item.style.setProperty('--layout-collage-x', `${x.toFixed(2)}%`);
+        item.style.setProperty('--layout-collage-y', `${y.toFixed(2)}%`);
+        item.style.setProperty('--layout-collage-rotation', `${rotation.toFixed(2)}deg`);
+        item.style.setProperty('--layout-collage-aspect', aspect.toFixed(2));
+        item.style.setProperty('--layout-collage-z', String(index + 1));
+      });
+    }
+
     // Direction-based helper classes
     pageNode.classList.toggle('photo-layout-reversed', rawPct < 0);
     // Masonry tiers based on intensity
