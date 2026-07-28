@@ -10,6 +10,7 @@
      --layout-gap         gap between panels (px)
      --layout-ratio       first col/row share (%, 20–80)
      --layout-ratio-b     second col/row share (100% - ratio)
+     --layout-split-scale signed split spacing (0.04–1.96)
      --layout-diag-top    diagonal x at top edge (%)
      --layout-diag-bottom diagonal x at bottom edge (%)
    ========================================================== */
@@ -43,58 +44,56 @@
 }
 
 /* ==========================================================
-   2. SPLIT-V — vertical columns (left | right | ...)
-   Allows up to 4 photos (2x2 at high count)
+   2. SPLIT-V — equal vertical columns (left | right | ...)
+   Shows every available photo. Intensity scales each photo horizontally:
+   positive values create space; negative values create overlap.
    ========================================================== */
 .photo-layout-split-v .page-gallery {
-  display: grid !important;
-  grid-template-columns: var(--layout-ratio, 50%) var(--layout-ratio-b, 50%) !important;
-  grid-template-rows: 1fr 1fr !important;
-  grid-auto-rows: 1fr !important;
-  gap: var(--layout-gap, 0px) !important;
+  display: flex !important;
+  flex-flow: row nowrap !important;
   padding: 0 !important;
+  gap: 0 !important;
   background: transparent !important;
 }
-.photo-layout-split-v .page-gallery .gallery-image { min-height: 60px; }
+.photo-layout-split-v .page-gallery .gallery-image {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  flex: 1 1 0 !important;
+  width: auto !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  transform: scaleX(var(--layout-split-scale, 1));
+  transform-origin: center;
+}
 .photo-layout-split-v .page-gallery figcaption { display: none !important; }
 
-/* 2 photos: each spans 2 rows (fills full height) */
-.photo-layout-split-v .page-gallery.gallery-count-1 .gallery-image,
-.photo-layout-split-v .page-gallery.gallery-count-2 .gallery-image { grid-row: span 2; }
-.photo-layout-split-v .page-gallery.gallery-count-2 .gallery-image:nth-child(n+3) { display: none !important; }
-
-/* 3 photos: left column = 2 stacked, right = 1 full height */
-.photo-layout-split-v .page-gallery.gallery-count-3 .gallery-image:nth-child(3) { grid-row: span 2; }
-
-/* 4+ photos: natural 2x2 */
-.photo-layout-split-v .page-gallery .gallery-image:nth-child(n+5) { display: none !important; }
-
 /* ==========================================================
-   3. SPLIT-H — horizontal rows (top / bottom / ...)
-   Allows up to 4 photos
+   3. SPLIT-H — equal horizontal rows (top / bottom / ...)
+   Shows every available photo. Intensity scales each photo vertically:
+   positive values create space; negative values create overlap.
    ========================================================== */
 .photo-layout-split-h .page-gallery {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  grid-template-rows: var(--layout-ratio, 50%) var(--layout-ratio-b, 50%) !important;
-  grid-auto-rows: 1fr !important;
-  gap: var(--layout-gap, 0px) !important;
+  display: flex !important;
+  flex-flow: column nowrap !important;
   padding: 0 !important;
+  gap: 0 !important;
   background: transparent !important;
 }
-.photo-layout-split-h .page-gallery .gallery-image { min-height: 50px; }
+.photo-layout-split-h .page-gallery .gallery-image {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  flex: 1 1 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  transform: scaleY(var(--layout-split-scale, 1));
+  transform-origin: center;
+}
 .photo-layout-split-h .page-gallery figcaption { display: none !important; }
-
-/* 1-2 photos: each spans 2 columns (full width) */
-.photo-layout-split-h .page-gallery.gallery-count-1 .gallery-image,
-.photo-layout-split-h .page-gallery.gallery-count-2 .gallery-image { grid-column: span 2; }
-.photo-layout-split-h .page-gallery.gallery-count-2 .gallery-image:nth-child(n+3) { display: none !important; }
-
-/* 3 photos: top = spans 2 cols, bottom-left, bottom-right */
-.photo-layout-split-h .page-gallery.gallery-count-3 .gallery-image:nth-child(1) { grid-column: span 2; }
-
-/* 4 photos: 2x2 natural */
-.photo-layout-split-h .page-gallery .gallery-image:nth-child(n+5) { display: none !important; }
 
 /* ==========================================================
    4. DIAGONAL — angled clip-path split
