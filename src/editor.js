@@ -315,10 +315,14 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     const splitInset = rawPct > 0 ? rawPct * 0.48 : 0;
     const splitExtent = rawPct < 0 ? 100 + absPct * 0.96 : 100;
     const splitOffset = (100 - splitExtent) / 2;
-    // Diagonal: diag-top is the x% where the cut crosses the top edge
-    //           diag-bottom is where it crosses the bottom edge
-    const diagTop = Math.max(30, Math.min(88, 65 + rawPct * 0.23));
-    const diagBottom = Math.max(12, Math.min(70, 45 - rawPct * 0.23));
+    // Diagonal uses the same equal horizontal tracks as split-h. This depth
+    // expands and clips each image into an angled band; the sign is represented
+    // by photo-layout-reversed. Reduce the depth for dense galleries so later
+    // bands do not cover earlier ones when all 20 photos are present.
+    const diagPhotoCount = pageNode.querySelectorAll('.page-gallery .gallery-image').length || 1;
+    const diagDensity = Math.min(1, 4 / diagPhotoCount);
+    const diagDepth = absPct * 0.4 * diagDensity;
+    const diagOffset = -diagDepth;
     const tiltDeg = rawPct * 0.14;
     const overlayOpacity = Math.max(0, Math.min(0.95, absPct / 100));
     // Circle size: smaller when intensity is high (more circles), larger when low
@@ -330,8 +334,8 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     pageNode.style.setProperty('--layout-split-inset', `${splitInset.toFixed(1)}%`);
     pageNode.style.setProperty('--layout-split-extent', `${splitExtent.toFixed(1)}%`);
     pageNode.style.setProperty('--layout-split-offset', `${splitOffset.toFixed(1)}%`);
-    pageNode.style.setProperty('--layout-diag-top', `${diagTop.toFixed(1)}%`);
-    pageNode.style.setProperty('--layout-diag-bottom', `${diagBottom.toFixed(1)}%`);
+    pageNode.style.setProperty('--layout-diag-depth', `${diagDepth.toFixed(1)}px`);
+    pageNode.style.setProperty('--layout-diag-offset', `${diagOffset.toFixed(1)}px`);
     pageNode.style.setProperty('--layout-tilt', `${tiltDeg.toFixed(2)}deg`);
     pageNode.style.setProperty('--layout-overlay-opacity', overlayOpacity.toFixed(2));
     pageNode.style.setProperty('--layout-circle-size', `${circleSize.toFixed(1)}%`);
@@ -346,7 +350,7 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     [
       '--layout-gap', '--layout-ratio', '--layout-ratio-b',
       '--layout-split-inset', '--layout-split-extent', '--layout-split-offset',
-      '--layout-diag-top', '--layout-diag-bottom',
+      '--layout-diag-depth', '--layout-diag-offset',
       '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size'
     ].forEach(prop => pageNode.style.removeProperty(prop));
     pageNode.classList.remove('photo-layout-reversed', 'photo-layout-span-first', 'photo-layout-wide');

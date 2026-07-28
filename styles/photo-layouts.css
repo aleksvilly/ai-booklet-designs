@@ -13,8 +13,8 @@
      --layout-split-inset positive split mask inset (0–48%)
      --layout-split-extent negative split image extent (100–196%)
      --layout-split-offset centers the expanded image (0 to -48%)
-     --layout-diag-top    diagonal x at top edge (%)
-     --layout-diag-bottom diagonal x at bottom edge (%)
+     --layout-diag-depth  diagonal band depth (0–40px)
+     --layout-diag-offset negative diagonal depth (0 to -40px)
    ========================================================== */
 
 /* ==========================================================
@@ -110,103 +110,52 @@
 .photo-layout-split-h .page-gallery figcaption { display: none !important; }
 
 /* ==========================================================
-   4. DIAGONAL — angled clip-path split
-   2 photos: full diagonal; 3: alternating; 4+: 2x2 grid
+   4. DIAGONAL — equal horizontal rows with angled masks
+   Shows every available photo. Intensity controls the slope depth and
+   photo-layout-reversed flips its direction.
    ========================================================== */
 .photo-layout-diagonal .page-gallery {
-  display: block !important;
+  display: flex !important;
+  flex-flow: column nowrap !important;
   padding: 0 !important;
   gap: 0 !important;
   background: transparent !important;
 }
 .photo-layout-diagonal .page-gallery .gallery-image {
-  position: absolute !important;
-  inset: 0 !important;
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  flex: 1 1 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
 }
 .photo-layout-diagonal .page-gallery figcaption { display: none !important; }
 
-/* — 2 photos — */
-.photo-layout-diagonal .page-gallery.gallery-count-2 .gallery-image:nth-child(1) {
+.photo-layout-diagonal .page-gallery .gallery-image img {
+  top: var(--layout-diag-offset, 0px) !important;
+  bottom: auto !important;
+  height: calc(100% + var(--layout-diag-depth, 0px) + var(--layout-diag-depth, 0px)) !important;
+  max-height: none !important;
   clip-path: polygon(
-    0 0,
-    var(--layout-diag-top, 65%) 0,
-    var(--layout-diag-bottom, 45%) 100%,
+    0 var(--layout-diag-depth, 0px),
+    100% 0,
+    100% calc(100% - var(--layout-diag-depth, 0px)),
     0 100%
   );
 }
-.photo-layout-diagonal .page-gallery.gallery-count-2 .gallery-image:nth-child(2) {
+
+.photo-layout-diagonal.photo-layout-reversed .page-gallery .gallery-image img {
   clip-path: polygon(
-    var(--layout-diag-top, 65%) 0,
-    100% 0,
+    0 0,
+    100% var(--layout-diag-depth, 0px),
     100% 100%,
-    var(--layout-diag-bottom, 45%) 100%
+    0 calc(100% - var(--layout-diag-depth, 0px))
   );
 }
-.photo-layout-diagonal .page-gallery.gallery-count-2 .gallery-image:nth-child(n+3) { display: none !important; }
-
-/* — 3 photos: horizontal alternating bands — */
-.photo-layout-diagonal .page-gallery.gallery-count-3 .gallery-image:nth-child(1) {
-  clip-path: polygon(0 0, 100% 0, 100% 38%, 0 52%);
-}
-.photo-layout-diagonal .page-gallery.gallery-count-3 .gallery-image:nth-child(2) {
-  clip-path: polygon(0 52%, 100% 38%, 100% 70%, 0 58%);
-}
-.photo-layout-diagonal .page-gallery.gallery-count-3 .gallery-image:nth-child(3) {
-  clip-path: polygon(0 58%, 100% 70%, 100% 100%, 0 100%);
-}
-.photo-layout-diagonal .page-gallery.gallery-count-3 .gallery-image:nth-child(n+4) { display: none !important; }
-
-/* Reversed 3 photos (negative intensity) */
-.photo-layout-diagonal.photo-layout-reversed .page-gallery.gallery-count-3 .gallery-image:nth-child(1) {
-  clip-path: polygon(0 0, 100% 0, 100% 52%, 0 38%);
-}
-.photo-layout-diagonal.photo-layout-reversed .page-gallery.gallery-count-3 .gallery-image:nth-child(2) {
-  clip-path: polygon(0 38%, 100% 52%, 100% 60%, 0 70%);
-}
-.photo-layout-diagonal.photo-layout-reversed .page-gallery.gallery-count-3 .gallery-image:nth-child(3) {
-  clip-path: polygon(0 70%, 100% 60%, 100% 100%, 0 100%);
-}
-
-/* — 4+ photos: clean 2x2 grid fallback — */
-.photo-layout-diagonal .page-gallery.gallery-count-4,
-.photo-layout-diagonal .page-gallery.gallery-count-5,
-.photo-layout-diagonal .page-gallery.gallery-count-6 {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  grid-template-rows: 1fr 1fr !important;
-  grid-auto-rows: 1fr !important;
-  gap: var(--layout-gap, 2px) !important;
-}
-.photo-layout-diagonal .page-gallery.gallery-count-4 .gallery-image,
-.photo-layout-diagonal .page-gallery.gallery-count-5 .gallery-image,
-.photo-layout-diagonal .page-gallery.gallery-count-6 .gallery-image {
-  position: static !important;
-  inset: auto !important;
-  top: auto !important; right: auto !important;
-  bottom: auto !important; left: auto !important;
-  clip-path: none !important;
-  min-height: 60px;
-}
-.photo-layout-diagonal .page-gallery.gallery-count-4 .gallery-image:nth-child(n+5),
-.photo-layout-diagonal .page-gallery.gallery-count-5 .gallery-image:nth-child(n+5),
-.photo-layout-diagonal .page-gallery.gallery-count-6 .gallery-image:nth-child(n+5) { display: none !important; }
-
-/* 7+ photos: same 2x2 grid */
-.photo-layout-diagonal .page-gallery:not(.gallery-count-1):not(.gallery-count-2):not(.gallery-count-3):not(.gallery-count-4):not(.gallery-count-5):not(.gallery-count-6) {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  grid-template-rows: 1fr 1fr !important;
-  gap: var(--layout-gap, 2px) !important;
-}
-.photo-layout-diagonal .page-gallery:not(.gallery-count-1):not(.gallery-count-2):not(.gallery-count-3):not(.gallery-count-4):not(.gallery-count-5):not(.gallery-count-6) .gallery-image {
-  position: static !important;
-  inset: auto !important;
-  top: auto !important; right: auto !important;
-  bottom: auto !important; left: auto !important;
-  clip-path: none !important;
-  min-height: 60px;
-}
-.photo-layout-diagonal .page-gallery:not(.gallery-count-1):not(.gallery-count-2):not(.gallery-count-3):not(.gallery-count-4):not(.gallery-count-5):not(.gallery-count-6) .gallery-image:nth-child(n+5) { display: none !important; }
 
 /* ==========================================================
    5. MASONRY — CSS grid with varied cell spans
