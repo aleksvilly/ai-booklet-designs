@@ -378,8 +378,14 @@ export function applyEditorPage(pageNode, page, pageIndex) {
         ? 36.6
         : Math.max(14, firstSize * (0.58 - Math.min(0.28, collageItems.length * 0.01)));
 
-      pageNode.style.setProperty('--layout-collage-single-width', `${(82 + absPct * 0.7).toFixed(1)}%`);
-      pageNode.style.setProperty('--layout-collage-single-height', `${(68 + absPct * 0.52).toFixed(1)}%`);
+      const singleWidth = rawPct >= 0
+        ? 78 + rawPct * 0.67
+        : 78 + rawPct * 0.36;
+      const singleHeight = rawPct >= 0
+        ? 64 + rawPct * 0.48
+        : 64 + rawPct * 0.28;
+      pageNode.style.setProperty('--layout-collage-single-width', `${singleWidth.toFixed(1)}%`);
+      pageNode.style.setProperty('--layout-collage-single-height', `${singleHeight.toFixed(1)}%`);
       pageNode.style.setProperty('--layout-collage-single-x', `${(50 + rawPct * 0.18).toFixed(1)}%`);
       pageNode.style.setProperty('--layout-collage-single-rotation', `${(rawPct * 0.18).toFixed(2)}deg`);
 

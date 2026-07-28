@@ -299,8 +299,8 @@
   inset: auto !important;
   left: var(--layout-collage-single-x, 50%) !important;
   top: 50% !important;
-  width: var(--layout-collage-single-width, 82%) !important;
-  height: var(--layout-collage-single-height, 68%) !important;
+  width: var(--layout-collage-single-width, 78%) !important;
+  height: var(--layout-collage-single-height, 64%) !important;
   max-width: none !important;
   overflow: hidden !important;
   transform:
