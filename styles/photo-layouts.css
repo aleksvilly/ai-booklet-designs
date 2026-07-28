@@ -13,8 +13,8 @@
      --layout-split-inset positive split mask inset (0–48%)
      --layout-split-extent negative split image extent (100–196%)
      --layout-split-offset centers the expanded image (0 to -48%)
-     --layout-diag-depth  diagonal band depth (0–40px)
-     --layout-diag-offset negative diagonal depth (0 to -40px)
+     --layout-diag-depth  diagonal band depth (density-adjusted, up to 65px)
+     --layout-diag-offset negative diagonal depth
    ========================================================== */
 
 /* ==========================================================
@@ -148,12 +148,22 @@
   );
 }
 
-.photo-layout-diagonal.photo-layout-reversed .page-gallery .gallery-image img {
+.photo-layout-diagonal .page-gallery .gallery-image:nth-child(even) img,
+.photo-layout-diagonal.photo-layout-reversed .page-gallery .gallery-image:nth-child(odd) img {
   clip-path: polygon(
     0 0,
     100% var(--layout-diag-depth, 0px),
     100% 100%,
     0 calc(100% - var(--layout-diag-depth, 0px))
+  );
+}
+
+.photo-layout-diagonal.photo-layout-reversed .page-gallery .gallery-image:nth-child(even) img {
+  clip-path: polygon(
+    0 var(--layout-diag-depth, 0px),
+    100% 0,
+    100% calc(100% - var(--layout-diag-depth, 0px)),
+    0 100%
   );
 }
 

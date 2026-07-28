@@ -321,7 +321,7 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     // bands do not cover earlier ones when all 20 photos are present.
     const diagPhotoCount = pageNode.querySelectorAll('.page-gallery .gallery-image').length || 1;
     const diagDensity = Math.min(1, 4 / diagPhotoCount);
-    const diagDepth = absPct * 0.4 * diagDensity;
+    const diagDepth = absPct * 0.65 * diagDensity;
     const diagOffset = -diagDepth;
     const tiltDeg = rawPct * 0.14;
     const overlayOpacity = Math.max(0, Math.min(0.95, absPct / 100));
