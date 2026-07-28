@@ -13,8 +13,9 @@
      --layout-split-inset positive split mask inset (0–48%)
      --layout-split-extent negative split image extent (100–196%)
      --layout-split-offset centers the expanded image (0 to -48%)
-     --layout-diag-depth  diagonal band depth (density-adjusted, up to 150px)
-     --layout-diag-offset negative diagonal depth
+     --layout-diag-extent expanded diagonal image height (100–300%)
+     --layout-diag-offset centers the expanded image (0 to -100%)
+     --layout-diag-clip   normalized mask depth (0–33.33%)
    ========================================================== */
 
 /* ==========================================================
@@ -136,14 +137,14 @@
 .photo-layout-diagonal .page-gallery figcaption { display: none !important; }
 
 .photo-layout-diagonal .page-gallery .gallery-image img {
-  top: var(--layout-diag-offset, 0px) !important;
+  top: var(--layout-diag-offset, 0%) !important;
   bottom: auto !important;
-  height: calc(100% + var(--layout-diag-depth, 0px) + var(--layout-diag-depth, 0px)) !important;
+  height: var(--layout-diag-extent, 100%) !important;
   max-height: none !important;
   clip-path: polygon(
-    0 var(--layout-diag-depth, 0px),
+    0 var(--layout-diag-clip, 0%),
     100% 0,
-    100% calc(100% - var(--layout-diag-depth, 0px)),
+    100% calc(100% - var(--layout-diag-clip, 0%)),
     0 100%
   );
 }
@@ -152,17 +153,17 @@
 .photo-layout-diagonal.photo-layout-reversed .page-gallery .gallery-image:nth-child(odd) img {
   clip-path: polygon(
     0 0,
-    100% var(--layout-diag-depth, 0px),
+    100% var(--layout-diag-clip, 0%),
     100% 100%,
-    0 calc(100% - var(--layout-diag-depth, 0px))
+    0 calc(100% - var(--layout-diag-clip, 0%))
   );
 }
 
 .photo-layout-diagonal.photo-layout-reversed .page-gallery .gallery-image:nth-child(even) img {
   clip-path: polygon(
-    0 var(--layout-diag-depth, 0px),
+    0 var(--layout-diag-clip, 0%),
     100% 0,
-    100% calc(100% - var(--layout-diag-depth, 0px)),
+    100% calc(100% - var(--layout-diag-clip, 0%)),
     0 100%
   );
 }

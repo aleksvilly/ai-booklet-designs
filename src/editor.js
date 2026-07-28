@@ -315,14 +315,12 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     const splitInset = rawPct > 0 ? rawPct * 0.48 : 0;
     const splitExtent = rawPct < 0 ? 100 + absPct * 0.96 : 100;
     const splitOffset = (100 - splitExtent) / 2;
-    // Diagonal uses the same equal horizontal tracks as split-h. This depth
-    // expands and clips each image into an angled band; the sign is represented
-    // by photo-layout-reversed. Galleries up to six photos get the full angle;
-    // denser galleries use a non-linear falloff so all 20 bands stay readable.
-    const diagPhotoCount = pageNode.querySelectorAll('.page-gallery .gallery-image').length || 1;
-    const diagDensity = Math.min(1, Math.pow(6 / diagPhotoCount, 1.5));
-    const diagDepth = 150 * (absPct / 100) * diagDensity;
-    const diagOffset = -diagDepth;
+    // Diagonal depth is relative to one equal row. At 100%, depth equals the
+    // row height, so bands two rows apart meet and form a sharp point.
+    const diagFactor = absPct / 100;
+    const diagExtent = (1 + diagFactor * 2) * 100;
+    const diagOffset = -diagFactor * 100;
+    const diagClip = diagFactor / (1 + diagFactor * 2) * 100;
     const tiltDeg = rawPct * 0.14;
     const overlayOpacity = Math.max(0, Math.min(0.95, absPct / 100));
     // Circle size: smaller when intensity is high (more circles), larger when low
@@ -334,8 +332,9 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     pageNode.style.setProperty('--layout-split-inset', `${splitInset.toFixed(1)}%`);
     pageNode.style.setProperty('--layout-split-extent', `${splitExtent.toFixed(1)}%`);
     pageNode.style.setProperty('--layout-split-offset', `${splitOffset.toFixed(1)}%`);
-    pageNode.style.setProperty('--layout-diag-depth', `${diagDepth.toFixed(1)}px`);
-    pageNode.style.setProperty('--layout-diag-offset', `${diagOffset.toFixed(1)}px`);
+    pageNode.style.setProperty('--layout-diag-extent', `${diagExtent.toFixed(1)}%`);
+    pageNode.style.setProperty('--layout-diag-offset', `${diagOffset.toFixed(1)}%`);
+    pageNode.style.setProperty('--layout-diag-clip', `${diagClip.toFixed(2)}%`);
     pageNode.style.setProperty('--layout-tilt', `${tiltDeg.toFixed(2)}deg`);
     pageNode.style.setProperty('--layout-overlay-opacity', overlayOpacity.toFixed(2));
     pageNode.style.setProperty('--layout-circle-size', `${circleSize.toFixed(1)}%`);
@@ -350,7 +349,7 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     [
       '--layout-gap', '--layout-ratio', '--layout-ratio-b',
       '--layout-split-inset', '--layout-split-extent', '--layout-split-offset',
-      '--layout-diag-depth', '--layout-diag-offset',
+      '--layout-diag-extent', '--layout-diag-offset', '--layout-diag-clip',
       '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size'
     ].forEach(prop => pageNode.style.removeProperty(prop));
     pageNode.classList.remove('photo-layout-reversed', 'photo-layout-span-first', 'photo-layout-wide');
