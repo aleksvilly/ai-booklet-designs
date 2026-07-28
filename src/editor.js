@@ -385,12 +385,16 @@ export function applyEditorPage(pageNode, page, pageIndex) {
 
       collageItems.forEach((item, index) => {
         const progress = index / lastCollageIndex;
-        const angle = direction * (-45 + index * 137.508) * Math.PI / 180;
+        const baseAngle = -45 + index * 137.508;
+        const intensityPhase = rawPct * 0.35 * progress;
+        const angle = (baseAngle + intensityPhase) * Math.PI / 180;
         const radius = scatterRadius * Math.sqrt(progress);
+        const rectangularX = Math.sign(Math.cos(angle)) * Math.sqrt(Math.abs(Math.cos(angle)));
+        const rectangularY = Math.sign(Math.sin(angle)) * Math.sqrt(Math.abs(Math.sin(angle)));
         let width = firstSize - (firstSize - lastSize) * Math.pow(progress, collageItems.length >= 4 ? 0.85 : 0.55);
         const heightRatio = [0.82, 0.68, 0.92, 0.74, 0.86][index % 5];
-        let x = 50 + Math.cos(angle) * radius;
-        let y = 50 + Math.sin(angle) * radius * 0.9;
+        let x = 50 + rectangularX * radius;
+        let y = 50 + rectangularY * radius * 1.08;
 
         if (collageItems.length === 2) {
           const diagonalX = 22 + absPct * 0.22;
