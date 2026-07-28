@@ -366,6 +366,39 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       pageNode.style.setProperty('--layout-shape-single-size', `${(shapeScale * 100).toFixed(1)}%`);
     }
 
+    if (photoLayoutValue === 'masonry') {
+      const masonryItems = [...pageNode.querySelectorAll('.page-gallery .gallery-image')];
+      const masonryColumns = masonryItems.length <= 3
+        ? 4
+        : masonryItems.length <= 6
+          ? 6
+          : masonryItems.length <= 12
+            ? 8
+            : 10;
+      const maxColumnSpan = masonryColumns >= 8 ? 4 : 3;
+      const seedPhase = rawPct / 100 * Math.PI * 1.6;
+
+      masonryItems.forEach((item, index) => {
+        const columnWave = (Math.sin((index + 1) * 2.17 + seedPhase) + 1) / 2;
+        const rowWave = (Math.sin((index + 1) * 3.11 - seedPhase * 0.73 + 1.4) + 1) / 2;
+        let columnSpan = 1 + Math.floor(columnWave * maxColumnSpan);
+        let rowSpan = 1 + Math.floor(rowWave * 3);
+
+        if (index === 0) {
+          columnSpan = Math.max(2, columnSpan);
+          rowSpan = Math.max(2, rowSpan);
+        } else if (columnSpan === 1 && rowSpan === 1 && index % 3 === 0) {
+          columnSpan = 2;
+        }
+
+        item.style.setProperty('--layout-masonry-column-span', String(Math.min(masonryColumns, columnSpan)));
+        item.style.setProperty('--layout-masonry-row-span', String(rowSpan));
+      });
+
+      pageNode.style.setProperty('--layout-masonry-columns', String(masonryColumns));
+      pageNode.style.setProperty('--layout-masonry-gap', `${(2 + absPct * 0.04).toFixed(1)}px`);
+    }
+
     if (photoLayoutValue === 'collage') {
       const collageItems = [...pageNode.querySelectorAll('.page-gallery .gallery-image')];
       const lastCollageIndex = Math.max(1, collageItems.length - 1);
@@ -424,9 +457,6 @@ export function applyEditorPage(pageNode, page, pageIndex) {
 
     // Direction-based helper classes
     pageNode.classList.toggle('photo-layout-reversed', rawPct < 0);
-    // Masonry tiers based on intensity
-    pageNode.classList.toggle('photo-layout-span-first', absPct >= 30);
-    pageNode.classList.toggle('photo-layout-wide', absPct >= 60);
   } else {
     // Reset all layout custom properties
     [
@@ -436,9 +466,10 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size',
       '--layout-shape-single-size',
       '--layout-collage-single-width', '--layout-collage-single-height',
-      '--layout-collage-single-x', '--layout-collage-single-rotation'
+      '--layout-collage-single-x', '--layout-collage-single-rotation',
+      '--layout-masonry-columns', '--layout-masonry-gap'
     ].forEach(prop => pageNode.style.removeProperty(prop));
-    pageNode.classList.remove('photo-layout-reversed', 'photo-layout-span-first', 'photo-layout-wide');
+    pageNode.classList.remove('photo-layout-reversed');
   }
 
   if (hasEditorOverride('contentPosition', pageIndex)) pageNode.dataset.editorContentPosition = values.contentPosition;

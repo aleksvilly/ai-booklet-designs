@@ -173,28 +173,24 @@
    ========================================================== */
 .photo-layout-masonry .page-gallery {
   display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  grid-auto-rows: 1fr !important;
-  gap: var(--layout-gap, 3px) !important;
+  grid-template-columns: repeat(var(--layout-masonry-columns, 6), minmax(0, 1fr)) !important;
+  grid-auto-flow: dense !important;
+  grid-auto-rows: minmax(28px, 1fr) !important;
+  gap: var(--layout-masonry-gap, 2px) !important;
   padding: 0 !important;
   background: transparent !important;
 }
-.photo-layout-masonry .page-gallery .gallery-image { min-height: 60px; }
+.photo-layout-masonry .page-gallery .gallery-image {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  grid-column: span var(--layout-masonry-column-span, 1) !important;
+  grid-row: span var(--layout-masonry-row-span, 1) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
 .photo-layout-masonry .page-gallery figcaption { display: none !important; }
 /* No hard cap — show all up to 20 */
-
-/* First image spans 2 rows when intensity > 30 (set via class by JS) */
-.photo-layout-masonry.photo-layout-span-first .page-gallery .gallery-image:nth-child(1) {
-  grid-row: span 2;
-}
-/* Three-column layout when intensity > 60 */
-.photo-layout-masonry.photo-layout-wide .page-gallery {
-  grid-template-columns: 2fr 1fr 1fr !important;
-}
-/* Extra wide span when intensity > 80 */
-.photo-layout-masonry.photo-layout-wide.photo-layout-span-first .page-gallery .gallery-image:nth-child(3) {
-  grid-column: span 2;
-}
 
 /* ==========================================================
    6. CIRCLES — concentric nested circular masks
@@ -316,34 +312,6 @@
   object-fit: cover !important;
 }
 .photo-layout-collage .page-image figcaption { display: none !important; }
-
-/* ==========================================================
-   8. STRIPS — thin vertical (default) or horizontal bands
-   ========================================================== */
-/* Vertical strips (intensity >= 0 or default) */
-.photo-layout-strips .page-gallery {
-  display: grid !important;
-  grid-auto-flow: column !important;
-  grid-auto-columns: 1fr !important;
-  grid-template-rows: 1fr !important;
-  gap: var(--layout-gap, 2px) !important;
-  padding: 0 !important;
-  background: transparent !important;
-}
-.photo-layout-strips .page-gallery .gallery-image { min-height: 80px; }
-.photo-layout-strips .page-gallery figcaption { display: none !important; }
-.photo-layout-strips .page-gallery .gallery-image:nth-child(n+13) { display: none !important; }
-
-/* Horizontal strips (negative intensity → photo-layout-reversed) */
-.photo-layout-strips.photo-layout-reversed .page-gallery {
-  grid-auto-flow: row !important;
-  grid-auto-rows: 1fr !important;
-  grid-template-columns: 1fr !important;
-  grid-auto-columns: unset !important;
-}
-.photo-layout-strips.photo-layout-reversed .page-gallery .gallery-image {
-  min-height: 40px;
-}
 
 /* ==========================================================
    Text copy always above layout visuals
