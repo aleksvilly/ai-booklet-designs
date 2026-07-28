@@ -197,27 +197,35 @@
 }
 
 /* ==========================================================
-   6. CIRCLES — photos clipped to circles/shapes
+   6. CIRCLES — layered circular mask pyramid
    ========================================================== */
 .photo-layout-circles .page-gallery {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  align-items: center !important;
-  justify-content: center !important;
-  align-content: center !important;
-  gap: var(--layout-gap, 10px) !important;
-  padding: 16px !important;
+  display: block !important;
+  padding: 0 !important;
+  gap: 0 !important;
   background: transparent !important;
-  box-sizing: border-box !important;
+  isolation: isolate;
 }
 .photo-layout-circles .page-gallery .gallery-image {
-  position: static !important;
-  flex: 0 0 auto;
-  width: var(--layout-circle-size, 22%);
-  height: var(--layout-circle-size, 22%);
+  position: absolute !important;
+  inset: auto !important;
+  left: 50% !important;
+  top: var(--layout-shape-top, 50%) !important;
+  width: var(--layout-shape-size, 60%) !important;
+  height: auto !important;
+  aspect-ratio: 1 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  z-index: var(--layout-shape-z, 1);
+  transform: translate(-50%, -50%);
   border-radius: 50% !important;
   overflow: hidden !important;
-  box-shadow: 0 4px 18px rgba(0,0,0,.22);
+  border: var(--layout-shape-border, 2px) solid var(--c1, #fff);
+  box-sizing: border-box !important;
+  background: var(--c4, #222) !important;
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--c4, #222) 55%, transparent),
+    0 8px 24px rgba(0,0,0,.3);
 }
 .photo-layout-circles .page-gallery .gallery-image img {
   position: absolute !important;
@@ -228,13 +236,12 @@
 }
 .photo-layout-circles .page-gallery figcaption { display: none !important; }
 
-/* Ring variant (negative intensity via photo-layout-reversed) */
+/* Negative intensity reverses the size/z-order pyramid and emphasizes rings. */
 .photo-layout-circles.photo-layout-reversed .page-gallery .gallery-image {
-  box-shadow: 0 0 0 5px var(--c1, #fff), 0 0 0 9px var(--c4, #222), 0 6px 20px rgba(0,0,0,.28);
-}
-/* Blob shapes for alternating items */
-.photo-layout-circles.photo-layout-reversed .page-gallery .gallery-image:nth-child(2n) {
-  border-radius: 40% 60% 60% 40% / 40% 40% 60% 60% !important;
+  box-shadow:
+    0 0 0 2px var(--c4, #222),
+    0 0 0 5px var(--c1, #fff),
+    0 8px 24px rgba(0,0,0,.3);
 }
 
 /* Single .page-image as centered circle */
