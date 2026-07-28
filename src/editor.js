@@ -176,6 +176,8 @@ export function originalEditorSettings(item, page) {
     visualMode: dna.visualMode || 'auto',
     layoutComplexity: Math.max(1, Math.min(5, Number(dna.layoutComplexity || 2))),
     imageCount: imagesForPage(page).length,
+    photoLayout: 'auto',
+    photoLayoutVariant: 0,
     textAmount: 3,
     contentPosition: align,
     fontScale: 3,
@@ -288,13 +290,56 @@ export function applyEditorPage(pageNode, page, pageIndex) {
   replaceEditorLevelClass(pageNode, 'editor-spacing-', values.spacing, hasEditorOverride('spacing', pageIndex));
   replaceEditorLevelClass(pageNode, 'editor-effects-', values.effectLevel, hasEditorOverride('effectLevel', pageIndex));
 
-  // Photo layout family and variant
+  // Photo layout family and variant (-100…+100)
   const photoLayoutValue = hasEditorOverride('photoLayout', pageIndex) ? String(values.photoLayout || 'auto') : 'auto';
-  const photoLayoutVariantValue = hasEditorOverride('photoLayoutVariant', pageIndex) ? Math.max(1, Math.min(5, Number(values.photoLayoutVariant || 3))) : null;
-  [...pageNode.classList].filter(c => c.startsWith('photo-layout-')).forEach(c => pageNode.classList.remove(c));
+  // Remove old photo-layout classes
+  [...pageNode.classList]
+    .filter(c => c.startsWith('photo-layout-'))
+    .forEach(c => pageNode.classList.remove(c));
+
   if (photoLayoutValue !== 'auto') {
     pageNode.classList.add(`photo-layout-${safeClass(photoLayoutValue)}`);
-    if (photoLayoutVariantValue !== null) pageNode.classList.add(`photo-layout-variant-${photoLayoutVariantValue}`);
+
+    const rawPct = hasEditorOverride('photoLayoutVariant', pageIndex)
+      ? Math.max(-100, Math.min(100, Number(values.photoLayoutVariant ?? 0)))
+      : 0;
+    const absPct = Math.abs(rawPct);
+
+    // Derived CSS variables
+    const gap = Math.min(absPct * 0.2, 22);
+    const ratio = Math.max(20, Math.min(80, 50 + rawPct * 0.3));
+    const ratioB = 100 - ratio;
+    // Diagonal: diag-top is the x% where the cut crosses the top edge
+    //           diag-bottom is where it crosses the bottom edge
+    const diagTop = Math.max(30, Math.min(88, 65 + rawPct * 0.23));
+    const diagBottom = Math.max(12, Math.min(70, 45 - rawPct * 0.23));
+    const tiltDeg = rawPct * 0.14;
+    const overlayOpacity = Math.max(0, Math.min(0.95, absPct / 100));
+    // Circle size: smaller when intensity is high (more circles), larger when low
+    const circleSize = Math.max(12, Math.min(36, 22 - absPct * 0.1));
+
+    pageNode.style.setProperty('--layout-gap', `${gap.toFixed(1)}px`);
+    pageNode.style.setProperty('--layout-ratio', `${ratio.toFixed(1)}%`);
+    pageNode.style.setProperty('--layout-ratio-b', `${ratioB.toFixed(1)}%`);
+    pageNode.style.setProperty('--layout-diag-top', `${diagTop.toFixed(1)}%`);
+    pageNode.style.setProperty('--layout-diag-bottom', `${diagBottom.toFixed(1)}%`);
+    pageNode.style.setProperty('--layout-tilt', `${tiltDeg.toFixed(2)}deg`);
+    pageNode.style.setProperty('--layout-overlay-opacity', overlayOpacity.toFixed(2));
+    pageNode.style.setProperty('--layout-circle-size', `${circleSize.toFixed(1)}%`);
+
+    // Direction-based helper classes
+    pageNode.classList.toggle('photo-layout-reversed', rawPct < 0);
+    // Masonry tiers based on intensity
+    pageNode.classList.toggle('photo-layout-span-first', absPct >= 30);
+    pageNode.classList.toggle('photo-layout-wide', absPct >= 60);
+  } else {
+    // Reset all layout custom properties
+    [
+      '--layout-gap', '--layout-ratio', '--layout-ratio-b',
+      '--layout-diag-top', '--layout-diag-bottom',
+      '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size'
+    ].forEach(prop => pageNode.style.removeProperty(prop));
+    pageNode.classList.remove('photo-layout-reversed', 'photo-layout-span-first', 'photo-layout-wide');
   }
 
   if (hasEditorOverride('contentPosition', pageIndex)) pageNode.dataset.editorContentPosition = values.contentPosition;
@@ -413,9 +458,12 @@ export function syncBookletEditorControls() {
   if (controls.editorLayoutComplexity) controls.editorLayoutComplexity.value = get('layoutComplexity');
   if (controls.editorImageCount) controls.editorImageCount.value = get('imageCount');
   if (controls.editorPhotoLayout) controls.editorPhotoLayout.value = get('photoLayout') || 'auto';
-  if (controls.editorPhotoLayoutVariant) controls.editorPhotoLayoutVariant.value = get('photoLayoutVariant') || 3;
-  if (controls.editorTextAmount) controls.editorTextAmount.value = get('textAmount');
+  if (controls.editorPhotoLayoutVariant) controls.editorPhotoLayoutVariant.value = get('photoLayoutVariant') ?? 0;
+  if (controls.editorPhotoLayoutVariantOutput && controls.editorPhotoLayoutVariant) {
+    controls.editorPhotoLayoutVariantOutput.value = controls.editorPhotoLayoutVariant.value;
+  }
   if (controls.editorContentPosition) controls.editorContentPosition.value = get('contentPosition');
+  if (controls.editorTextAmount) controls.editorTextAmount.value = get('textAmount');
   if (controls.editorFontScale) controls.editorFontScale.value = get('fontScale');
   if (controls.editorSpacing) controls.editorSpacing.value = get('spacing');
   if (controls.editorEffectLevel) controls.editorEffectLevel.value = get('effectLevel');
