@@ -343,22 +343,18 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       const shapeItems = [...pageNode.querySelectorAll('.page-gallery .gallery-image')];
       const lastShapeIndex = Math.max(1, shapeItems.length - 1);
       const shapeIntensity = absPct / 100;
-      const shapeMinSize = Math.max(20, 52 - shapeItems.length * 1.3);
-      const shapeTravel = 30 + shapeIntensity * 25;
+      const nestingStrength = 0.45 + shapeIntensity * 0.55;
 
       shapeItems.forEach((item, index) => {
         const progress = index / lastShapeIndex;
         const sizeProgress = rawPct < 0 ? 1 - progress : progress;
-        const size = 72 - (72 - shapeMinSize) * shapeIntensity * sizeProgress;
-        const top = 72 - shapeTravel * progress;
+        const nestedSize = 100 * (shapeItems.length - sizeProgress * lastShapeIndex) / shapeItems.length;
+        const size = 100 - (100 - nestedSize) * nestingStrength;
         const zIndex = rawPct < 0 ? shapeItems.length - index : index + 1;
 
         item.style.setProperty('--layout-shape-size', `${size.toFixed(2)}%`);
-        item.style.setProperty('--layout-shape-top', `${top.toFixed(2)}%`);
         item.style.setProperty('--layout-shape-z', String(zIndex));
       });
-
-      pageNode.style.setProperty('--layout-shape-border', `${(2 + shapeIntensity * 6).toFixed(1)}px`);
     }
 
     // Direction-based helper classes
@@ -372,8 +368,7 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       '--layout-gap', '--layout-ratio', '--layout-ratio-b',
       '--layout-split-inset', '--layout-split-extent', '--layout-split-offset',
       '--layout-diag-extent', '--layout-diag-offset', '--layout-diag-clip',
-      '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size',
-      '--layout-shape-border'
+      '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size'
     ].forEach(prop => pageNode.style.removeProperty(prop));
     pageNode.classList.remove('photo-layout-reversed', 'photo-layout-span-first', 'photo-layout-wide');
   }

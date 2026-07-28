@@ -197,7 +197,7 @@
 }
 
 /* ==========================================================
-   6. CIRCLES — layered circular mask pyramid
+   6. CIRCLES — concentric nested circular masks
    ========================================================== */
 .photo-layout-circles .page-gallery {
   display: block !important;
@@ -210,8 +210,8 @@
   position: absolute !important;
   inset: auto !important;
   left: 50% !important;
-  top: var(--layout-shape-top, 50%) !important;
-  width: var(--layout-shape-size, 60%) !important;
+  top: 50% !important;
+  width: var(--layout-shape-size, 100%) !important;
   height: auto !important;
   aspect-ratio: 1 !important;
   min-width: 0 !important;
@@ -220,12 +220,10 @@
   transform: translate(-50%, -50%);
   border-radius: 50% !important;
   overflow: hidden !important;
-  border: var(--layout-shape-border, 2px) solid var(--c1, #fff);
+  border: 0 !important;
   box-sizing: border-box !important;
   background: var(--c4, #222) !important;
-  box-shadow:
-    0 0 0 1px color-mix(in srgb, var(--c4, #222) 55%, transparent),
-    0 8px 24px rgba(0,0,0,.3);
+  box-shadow: none !important;
 }
 .photo-layout-circles .page-gallery .gallery-image img {
   position: absolute !important;
@@ -236,31 +234,29 @@
 }
 .photo-layout-circles .page-gallery figcaption { display: none !important; }
 
-/* Negative intensity reverses the size/z-order pyramid and emphasizes rings. */
-.photo-layout-circles.photo-layout-reversed .page-gallery .gallery-image {
-  box-shadow:
-    0 0 0 2px var(--c4, #222),
-    0 0 0 5px var(--c1, #fff),
-    0 8px 24px rgba(0,0,0,.3);
-}
-
-/* Single .page-image as centered circle */
+/* Single image: the circular mask touches both horizontal page edges. */
 .photo-layout-circles .page-image {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
+  display: block !important;
+  inset: auto 0 !important;
+  top: 50% !important;
+  width: 100% !important;
+  height: auto !important;
+  aspect-ratio: 1 !important;
+  transform: translateY(-50%);
+  border-radius: 50% !important;
+  overflow: hidden !important;
   background: transparent !important;
 }
 .photo-layout-circles .page-image img {
-  position: static !important;
-  width: 60% !important;
-  height: auto !important;
-  aspect-ratio: 1 !important;
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
   object-fit: cover !important;
-  border-radius: 50% !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,.22) !important;
-  inset: auto !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }
+.photo-layout-circles .page-image figcaption { display: none !important; }
 
 /* ==========================================================
    7. COLLAGE — scattered, rotated, overlapping photos
