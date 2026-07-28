@@ -174,8 +174,7 @@
 .photo-layout-masonry .page-gallery {
   display: grid !important;
   grid-template-columns: repeat(var(--layout-masonry-columns, 6), minmax(0, 1fr)) !important;
-  grid-auto-flow: dense !important;
-  grid-auto-rows: minmax(28px, 1fr) !important;
+  grid-template-rows: repeat(var(--layout-masonry-rows, 8), minmax(0, 1fr)) !important;
   gap: var(--layout-masonry-gap, 2px) !important;
   padding: 0 !important;
   background: transparent !important;
@@ -184,8 +183,12 @@
   position: relative !important;
   inset: auto !important;
   display: block !important;
-  grid-column: span var(--layout-masonry-column-span, 1) !important;
-  grid-row: span var(--layout-masonry-row-span, 1) !important;
+  grid-column:
+    var(--layout-masonry-column-start, auto) /
+    span var(--layout-masonry-column-span, 1) !important;
+  grid-row:
+    var(--layout-masonry-row-start, auto) /
+    span var(--layout-masonry-row-span, 1) !important;
   min-width: 0 !important;
   min-height: 0 !important;
 }

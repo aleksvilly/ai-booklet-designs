@@ -368,34 +368,73 @@ export function applyEditorPage(pageNode, page, pageIndex) {
 
     if (photoLayoutValue === 'masonry') {
       const masonryItems = [...pageNode.querySelectorAll('.page-gallery .gallery-image')];
-      const masonryColumns = masonryItems.length <= 3
-        ? 4
-        : masonryItems.length <= 6
-          ? 6
-          : masonryItems.length <= 12
-            ? 8
-            : 10;
-      const maxColumnSpan = masonryColumns >= 8 ? 4 : 3;
+      const masonryColumns = Math.min(
+        12,
+        Math.max(4, Math.ceil(Math.sqrt(Math.max(1, masonryItems.length) * 1.6)) * 2)
+      );
+      const masonryRows = Math.max(5, Math.round(masonryColumns * 1.35));
       const seedPhase = rawPct / 100 * Math.PI * 1.6;
+      const splitAmplitude = 0.08 + absPct / 100 * 0.18;
+      const regions = [{ x: 0, y: 0, width: masonryColumns, height: masonryRows }];
 
-      masonryItems.forEach((item, index) => {
-        const columnWave = (Math.sin((index + 1) * 2.17 + seedPhase) + 1) / 2;
-        const rowWave = (Math.sin((index + 1) * 3.11 - seedPhase * 0.73 + 1.4) + 1) / 2;
-        let columnSpan = 1 + Math.floor(columnWave * maxColumnSpan);
-        let rowSpan = 1 + Math.floor(rowWave * 3);
+      while (regions.length < masonryItems.length) {
+        let regionIndex = 0;
+        let regionScore = -1;
+        regions.forEach((region, index) => {
+          const seedBias = 1 + Math.sin((regions.length + 1) * 1.91 + index * 2.37 + seedPhase) * 0.06;
+          const score = region.width * region.height * seedBias;
+          if (score > regionScore && (region.width > 1 || region.height > 1)) {
+            regionIndex = index;
+            regionScore = score;
+          }
+        });
 
-        if (index === 0) {
-          columnSpan = Math.max(2, columnSpan);
-          rowSpan = Math.max(2, rowSpan);
-        } else if (columnSpan === 1 && rowSpan === 1 && index % 3 === 0) {
-          columnSpan = 2;
+        const region = regions[regionIndex];
+        const normalizedWidth = region.width / masonryColumns;
+        const normalizedHeight = region.height / masonryRows;
+        const orientationWave = Math.sin((regions.length + 1) * 2.63 + seedPhase);
+        let splitVertically = normalizedWidth > normalizedHeight;
+        if (Math.abs(normalizedWidth - normalizedHeight) < 0.18) {
+          splitVertically = orientationWave >= 0;
         }
+        if (splitVertically && region.width < 2) splitVertically = false;
+        if (!splitVertically && region.height < 2) splitVertically = true;
 
-        item.style.setProperty('--layout-masonry-column-span', String(Math.min(masonryColumns, columnSpan)));
-        item.style.setProperty('--layout-masonry-row-span', String(rowSpan));
+        const splitWave = Math.sin((regions.length + 1) * 2.17 + seedPhase * 0.83);
+        const splitRatio = 0.5 + splitWave * splitAmplitude;
+        const dimension = splitVertically ? region.width : region.height;
+        const splitAt = Math.max(1, Math.min(dimension - 1, Math.round(dimension * splitRatio)));
+        const firstRegion = { ...region };
+        const secondRegion = { ...region };
+
+        if (splitVertically) {
+          firstRegion.width = splitAt;
+          secondRegion.x += splitAt;
+          secondRegion.width -= splitAt;
+        } else {
+          firstRegion.height = splitAt;
+          secondRegion.y += splitAt;
+          secondRegion.height -= splitAt;
+        }
+        regions.splice(regionIndex, 1, firstRegion, secondRegion);
+      }
+
+      regions
+        .sort((a, b) =>
+          b.width * b.height - a.width * a.height ||
+          a.y - b.y ||
+          a.x - b.x
+        )
+        .forEach((region, index) => {
+          const item = masonryItems[index];
+          item.style.setProperty('--layout-masonry-column-start', String(region.x + 1));
+          item.style.setProperty('--layout-masonry-column-span', String(region.width));
+          item.style.setProperty('--layout-masonry-row-start', String(region.y + 1));
+          item.style.setProperty('--layout-masonry-row-span', String(region.height));
       });
 
       pageNode.style.setProperty('--layout-masonry-columns', String(masonryColumns));
+      pageNode.style.setProperty('--layout-masonry-rows', String(masonryRows));
       pageNode.style.setProperty('--layout-masonry-gap', `${(2 + absPct * 0.04).toFixed(1)}px`);
     }
 
@@ -467,7 +506,7 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       '--layout-shape-single-size',
       '--layout-collage-single-width', '--layout-collage-single-height',
       '--layout-collage-single-x', '--layout-collage-single-rotation',
-      '--layout-masonry-columns', '--layout-masonry-gap'
+      '--layout-masonry-columns', '--layout-masonry-rows', '--layout-masonry-gap'
     ].forEach(prop => pageNode.style.removeProperty(prop));
     pageNode.classList.remove('photo-layout-reversed');
   }
