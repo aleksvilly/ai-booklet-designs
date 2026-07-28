@@ -368,47 +368,29 @@ export function applyEditorPage(pageNode, page, pageIndex) {
 
     if (photoLayoutValue === 'collage') {
       const collageItems = [...pageNode.querySelectorAll('.page-gallery .gallery-image')];
-      const baseCollage = [
-        { x: 34, y: 30, width: 60, height: 52, rotation: 1, z: 5 },
-        { x: 72, y: 30, width: 52, height: 44, rotation: -1, z: 4 },
-        { x: 33.5, y: 73, width: 55, height: 46, rotation: 0.5, z: 6 },
-        { x: 73, y: 75, width: 48, height: 40, rotation: -0.7, z: 3 },
-        { x: 47, y: 46, width: 38, height: 32, rotation: 1.2, z: 7 },
-        { x: 33, y: 70, width: 34, height: 30, rotation: -0.4, z: 2 },
-        { x: 78, y: 56, width: 36, height: 32, rotation: 0.8, z: 3 },
-        { x: 55, y: 75, width: 30, height: 26, rotation: -1.1, z: 8 }
-      ];
-      const extraCount = Math.max(0, collageItems.length - baseCollage.length);
-      const firstGrowth = Math.min(5, extraCount * 0.42);
+      const lastCollageIndex = Math.max(1, collageItems.length - 1);
+      const direction = rawPct < 0 ? -1 : 1;
+      const scatterRadius = 36 + absPct * 0.1;
+      const firstSize = Math.max(48, 74 - Math.max(0, collageItems.length - 2) * 1.35);
+      const lastSize = Math.max(10, firstSize * (0.54 - Math.min(0.3, collageItems.length * 0.012)));
 
       collageItems.forEach((item, index) => {
-        let layout = baseCollage[index];
-        if (!layout) {
-          const extraIndex = index - baseCollage.length;
-          const angle = (-90 + extraIndex * (360 / extraCount)) * Math.PI / 180;
-          const width = Math.max(18, 27 - extraCount * 0.35);
-          layout = {
-            x: 50 + Math.cos(angle) * 44,
-            y: 50 + Math.sin(angle) * 46,
-            width,
-            height: width * (0.78 + (extraIndex % 3) * 0.08),
-            rotation: extraIndex % 2 ? -0.75 : 0.75,
-            // Extra photos extend the composition without covering its
-            // original eight-photo visual hierarchy.
-            z: 1
-          };
-        }
-
-        const width = layout.width + (index === 0 ? firstGrowth : 0);
-        const height = layout.height + (index === 0 ? firstGrowth * 0.87 : 0);
-        const rotation = tiltDeg * layout.rotation;
+        const progress = index / lastCollageIndex;
+        const angle = direction * (-45 + index * 137.508) * Math.PI / 180;
+        const radius = scatterRadius * Math.sqrt(progress);
+        const width = firstSize - (firstSize - lastSize) * Math.pow(progress, 0.55);
+        const heightRatio = [0.82, 0.68, 0.92, 0.74, 0.86][index % 5];
+        const height = width * heightRatio;
+        const x = Math.max(5, Math.min(95, 50 + Math.cos(angle) * radius));
+        const y = Math.max(5, Math.min(95, 50 + Math.sin(angle) * radius * 0.9));
+        const rotation = Math.sin(angle * 0.73) * (3 + absPct * 0.16);
 
         item.style.setProperty('--layout-collage-width', `${width.toFixed(2)}%`);
         item.style.setProperty('--layout-collage-height', `${height.toFixed(2)}%`);
-        item.style.setProperty('--layout-collage-x', `${layout.x.toFixed(2)}%`);
-        item.style.setProperty('--layout-collage-y', `${layout.y.toFixed(2)}%`);
+        item.style.setProperty('--layout-collage-x', `${x.toFixed(2)}%`);
+        item.style.setProperty('--layout-collage-y', `${y.toFixed(2)}%`);
         item.style.setProperty('--layout-collage-rotation', `${rotation.toFixed(2)}deg`);
-        item.style.setProperty('--layout-collage-z', String(layout.z));
+        item.style.setProperty('--layout-collage-z', String(index + 1));
       });
     }
 

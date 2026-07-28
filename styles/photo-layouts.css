@@ -261,7 +261,7 @@
 .photo-layout-circles .page-image figcaption { display: none !important; }
 
 /* ==========================================================
-   7. COLLAGE — original 8-photo composition + outer extension ring
+   7. COLLAGE — count-aware scattered particle field (2–20 photos)
    ========================================================== */
 .photo-layout-collage .page-gallery {
   display: block !important;
