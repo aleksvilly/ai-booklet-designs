@@ -370,20 +370,38 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       const collageItems = [...pageNode.querySelectorAll('.page-gallery .gallery-image')];
       const lastCollageIndex = Math.max(1, collageItems.length - 1);
       const direction = rawPct < 0 ? -1 : 1;
-      const scatterRadius = 36 + absPct * 0.1;
-      const firstSize = Math.max(48, 74 - Math.max(0, collageItems.length - 2) * 1.35);
-      const lastSize = Math.max(10, firstSize * (0.54 - Math.min(0.3, collageItems.length * 0.012)));
+      const scatterRadius = 38 + absPct * 0.32;
+      const firstSize = collageItems.length === 3
+        ? 72.7
+        : Math.max(48, 64 - Math.max(0, collageItems.length - 4));
+      const lastSize = collageItems.length === 3
+        ? 36.6
+        : Math.max(14, firstSize * (0.58 - Math.min(0.28, collageItems.length * 0.01)));
+
+      pageNode.style.setProperty('--layout-collage-single-width', `${(82 + absPct * 0.7).toFixed(1)}%`);
+      pageNode.style.setProperty('--layout-collage-single-height', `${(68 + absPct * 0.52).toFixed(1)}%`);
+      pageNode.style.setProperty('--layout-collage-single-x', `${(50 + rawPct * 0.18).toFixed(1)}%`);
+      pageNode.style.setProperty('--layout-collage-single-rotation', `${(rawPct * 0.18).toFixed(2)}deg`);
 
       collageItems.forEach((item, index) => {
         const progress = index / lastCollageIndex;
         const angle = direction * (-45 + index * 137.508) * Math.PI / 180;
         const radius = scatterRadius * Math.sqrt(progress);
-        const width = firstSize - (firstSize - lastSize) * Math.pow(progress, 0.55);
+        let width = firstSize - (firstSize - lastSize) * Math.pow(progress, collageItems.length >= 4 ? 0.85 : 0.55);
         const heightRatio = [0.82, 0.68, 0.92, 0.74, 0.86][index % 5];
-        const height = width * heightRatio;
-        const x = Math.max(5, Math.min(95, 50 + Math.cos(angle) * radius));
-        const y = Math.max(5, Math.min(95, 50 + Math.sin(angle) * radius * 0.9));
-        const rotation = Math.sin(angle * 0.73) * (3 + absPct * 0.16);
+        let x = 50 + Math.cos(angle) * radius;
+        let y = 50 + Math.sin(angle) * radius * 0.9;
+
+        if (collageItems.length === 2) {
+          const diagonalX = 22 + absPct * 0.22;
+          const diagonalY = 8 + absPct * 0.15;
+          width = index === 0 ? 68 : 58;
+          x = index === 0 ? 50 - diagonalX : 50 + diagonalX;
+          y = index === 0 ? 50 - direction * diagonalY : 50 + direction * diagonalY;
+        }
+
+        const height = width * (collageItems.length === 2 ? 0.8 : heightRatio);
+        const rotation = Math.sin(angle * 0.73) * (3 + absPct * 0.18);
 
         item.style.setProperty('--layout-collage-width', `${width.toFixed(2)}%`);
         item.style.setProperty('--layout-collage-height', `${height.toFixed(2)}%`);
@@ -406,7 +424,9 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       '--layout-split-inset', '--layout-split-extent', '--layout-split-offset',
       '--layout-diag-extent', '--layout-diag-offset', '--layout-diag-clip',
       '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size',
-      '--layout-shape-single-size'
+      '--layout-shape-single-size',
+      '--layout-collage-single-width', '--layout-collage-single-height',
+      '--layout-collage-single-x', '--layout-collage-single-rotation'
     ].forEach(prop => pageNode.style.removeProperty(prop));
     pageNode.classList.remove('photo-layout-reversed', 'photo-layout-span-first', 'photo-layout-wide');
   }

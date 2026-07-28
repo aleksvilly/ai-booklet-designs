@@ -293,6 +293,30 @@
 }
 .photo-layout-collage .page-gallery figcaption { display: none !important; }
 
+/* A single image still participates in the scattered-card treatment. */
+.photo-layout-collage .page-image {
+  position: absolute !important;
+  inset: auto !important;
+  left: var(--layout-collage-single-x, 50%) !important;
+  top: 50% !important;
+  width: var(--layout-collage-single-width, 82%) !important;
+  height: var(--layout-collage-single-height, 68%) !important;
+  max-width: none !important;
+  overflow: hidden !important;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--layout-collage-single-rotation, 0deg));
+  box-shadow: 3px 5px 18px rgba(0,0,0,.28);
+}
+.photo-layout-collage .page-image img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+.photo-layout-collage .page-image figcaption { display: none !important; }
+
 /* ==========================================================
    8. STRIPS — thin vertical (default) or horizontal bands
    ========================================================== */
