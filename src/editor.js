@@ -284,6 +284,16 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     showBody: resolvedEditorSetting('showBody', pageIndex)
   };
 
+  // Media must be rendered before layout variables are applied: changing the
+  // image count replaces the gallery nodes that receive per-image properties.
+  const requestedImageCount = hasEditorOverride('imageCount', pageIndex)
+    ? Math.max(0, Math.min(20, Number(values.imageCount)))
+    : imagesForPage(page).length;
+  if (Number(pageNode.dataset.editorImageCount) !== requestedImageCount) {
+    renderEditorMedia(pageNode, page, requestedImageCount);
+    pageNode.dataset.editorImageCount = String(requestedImageCount);
+  }
+
   replaceEditorLevelClass(pageNode, 'editor-visual-', safeClass(values.visualMode), hasEditorOverride('visualMode', pageIndex));
   replaceEditorLevelClass(pageNode, 'editor-complexity-', values.layoutComplexity, hasEditorOverride('layoutComplexity', pageIndex));
   replaceEditorLevelClass(pageNode, 'editor-font-', values.fontScale, hasEditorOverride('fontScale', pageIndex));
@@ -341,20 +351,19 @@ export function applyEditorPage(pageNode, page, pageIndex) {
 
     if (photoLayoutValue === 'circles') {
       const shapeItems = [...pageNode.querySelectorAll('.page-gallery .gallery-image')];
-      const lastShapeIndex = Math.max(1, shapeItems.length - 1);
-      const shapeIntensity = absPct / 100;
-      const nestingStrength = 0.45 + shapeIntensity * 0.55;
+      const shapeScale = rawPct >= 0
+        ? 1 + rawPct * 0.008
+        : 1 - absPct * 0.006;
 
       shapeItems.forEach((item, index) => {
-        const progress = index / lastShapeIndex;
-        const sizeProgress = rawPct < 0 ? 1 - progress : progress;
-        const nestedSize = 100 * (shapeItems.length - sizeProgress * lastShapeIndex) / shapeItems.length;
-        const size = 100 - (100 - nestedSize) * nestingStrength;
-        const zIndex = rawPct < 0 ? shapeItems.length - index : index + 1;
+        const nestedSize = 100 * (shapeItems.length - index) / shapeItems.length;
+        const size = nestedSize * shapeScale;
 
         item.style.setProperty('--layout-shape-size', `${size.toFixed(2)}%`);
-        item.style.setProperty('--layout-shape-z', String(zIndex));
+        item.style.setProperty('--layout-shape-z', String(index + 1));
       });
+
+      pageNode.style.setProperty('--layout-shape-single-size', `${(shapeScale * 100).toFixed(1)}%`);
     }
 
     // Direction-based helper classes
@@ -368,7 +377,8 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       '--layout-gap', '--layout-ratio', '--layout-ratio-b',
       '--layout-split-inset', '--layout-split-extent', '--layout-split-offset',
       '--layout-diag-extent', '--layout-diag-offset', '--layout-diag-clip',
-      '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size'
+      '--layout-tilt', '--layout-overlay-opacity', '--layout-circle-size',
+      '--layout-shape-single-size'
     ].forEach(prop => pageNode.style.removeProperty(prop));
     pageNode.classList.remove('photo-layout-reversed', 'photo-layout-span-first', 'photo-layout-wide');
   }
@@ -390,13 +400,6 @@ export function applyEditorPage(pageNode, page, pageIndex) {
       : String(page.body || '');
   }
 
-  const requestedImageCount = hasEditorOverride('imageCount', pageIndex)
-    ? Math.max(0, Math.min(20, Number(values.imageCount)))
-    : imagesForPage(page).length;
-  if (Number(pageNode.dataset.editorImageCount) !== requestedImageCount) {
-    renderEditorMedia(pageNode, page, requestedImageCount);
-    pageNode.dataset.editorImageCount = String(requestedImageCount);
-  }
 }
 
 export function applyBookletEditorState() {

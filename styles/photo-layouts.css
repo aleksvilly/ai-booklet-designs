@@ -237,12 +237,14 @@
 /* Single image: the circular mask touches both horizontal page edges. */
 .photo-layout-circles .page-image {
   display: block !important;
-  inset: auto 0 !important;
+  inset: auto !important;
+  left: 50% !important;
   top: 50% !important;
-  width: 100% !important;
+  width: var(--layout-shape-single-size, 100%) !important;
+  max-width: none !important;
   height: auto !important;
   aspect-ratio: 1 !important;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   border-radius: 50% !important;
   overflow: hidden !important;
   background: transparent !important;
