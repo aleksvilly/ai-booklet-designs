@@ -261,7 +261,7 @@
 .photo-layout-circles .page-image figcaption { display: none !important; }
 
 /* ==========================================================
-   7. COLLAGE — formula-driven scattered stack (2–20 photos)
+   7. COLLAGE — original 8-photo composition + outer extension ring
    ========================================================== */
 .photo-layout-collage .page-gallery {
   display: block !important;
@@ -275,9 +275,8 @@
   display: block !important;
   left: var(--layout-collage-x, 50%) !important;
   top: var(--layout-collage-y, 50%) !important;
-  width: var(--layout-collage-size, 50%) !important;
-  height: auto !important;
-  aspect-ratio: var(--layout-collage-aspect, 1);
+  width: var(--layout-collage-width, 50%) !important;
+  height: var(--layout-collage-height, 40%) !important;
   min-width: 0 !important;
   min-height: 0 !important;
   overflow: hidden !important;
