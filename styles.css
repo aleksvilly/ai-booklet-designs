@@ -10,6 +10,7 @@
 @import url('./styles/profiles/encyclopedia.css');
 @import url('./styles/profiles/base-editorial.css');
 @import url('./styles/profiles/extended.css');
+@import url('./styles/photo-layouts.css');
 
 :root {
   --ink: #111111;

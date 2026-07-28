@@ -338,6 +338,24 @@
             <span>Images <output id="editor-image-output">1</output> / 20</span>
             <input id="editor-image-count" type="range" min="0" max="20" value="1">
           </label>
+          <label data-editor-parameter="photoLayout">
+            <span>Photo layout</span>
+            <select id="editor-photo-layout">
+              <option value="auto">Auto (original)</option>
+              <option value="full">Fullscreen fill</option>
+              <option value="split-v">Vertical split (left · right)</option>
+              <option value="split-h">Horizontal split (top · bottom)</option>
+              <option value="diagonal">Diagonal / angled</option>
+              <option value="masonry">Grid / Masonry</option>
+              <option value="circles">Circles &amp; shapes</option>
+              <option value="collage">Scattered collage</option>
+              <option value="strips">Thin strips</option>
+            </select>
+          </label>
+          <label class="editor-range" data-editor-parameter="photoLayoutVariant">
+            <span>Layout intensity <output id="editor-photo-layout-variant-output">3</output> / 5</span>
+            <input id="editor-photo-layout-variant" type="range" min="1" max="5" value="3">
+          </label>
           <label class="editor-range" data-editor-parameter="textAmount">
             <span>Text amount <output id="editor-text-output">2</output> / 5</span>
             <input id="editor-text-amount" type="range" min="1" max="5" value="2">

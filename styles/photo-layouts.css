@@ -1,0 +1,419 @@
+/* ==========================================================
+   Photo Layout System
+   Applied as two classes on .book-page:
+     .photo-layout-<family>  +  .photo-layout-variant-<1-5>
+
+   Works with .page-image (1 photo) and .page-gallery.gallery-count-N (2–20 photos)
+   ========================================================== */
+
+/* ----------------------------------------------------------
+   Layout variant: shared CSS custom properties
+   ---------------------------------------------------------- */
+.photo-layout-variant-1 { --layout-angle: 4deg;  --layout-gap: 0px;   --layout-tilt: 2deg;  --layout-r: 50%; }
+.photo-layout-variant-2 { --layout-angle: 10deg; --layout-gap: 4px;   --layout-tilt: 4deg;  --layout-r: 42%; }
+.photo-layout-variant-3 { --layout-angle: 16deg; --layout-gap: 8px;   --layout-tilt: 7deg;  --layout-r: 35%; }
+.photo-layout-variant-4 { --layout-angle: 22deg; --layout-gap: 12px;  --layout-tilt: 10deg; --layout-r: 26%; }
+.photo-layout-variant-5 { --layout-angle: 30deg; --layout-gap: 18px;  --layout-tilt: 14deg; --layout-r: 0%;  }
+
+/* ==========================================================
+   1. FULLSCREEN — one image covers the entire page
+   ========================================================== */
+.photo-layout-full .page-image,
+.photo-layout-full .page-gallery {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+}
+.photo-layout-full .page-gallery .gallery-image {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+}
+.photo-layout-full .page-gallery .gallery-image img,
+.photo-layout-full .page-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* hide extra images — only first is shown full */
+.photo-layout-full .page-gallery .gallery-image:nth-child(n+2) { display: none; }
+.photo-layout-full .page-gallery figcaption { display: none; }
+
+/* variant adjusts gradient overlay opacity */
+.photo-layout-full.photo-layout-variant-1 .page-image::after,
+.photo-layout-full.photo-layout-variant-1 .page-gallery::after { content: none; }
+.photo-layout-full.photo-layout-variant-3 .page-image::after,
+.photo-layout-full.photo-layout-variant-3 .page-gallery .gallery-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.65) 0%, transparent 55%);
+}
+.photo-layout-full.photo-layout-variant-5 .page-image::after,
+.photo-layout-full.photo-layout-variant-5 .page-gallery .gallery-image::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.92) 0%, rgba(0,0,0,.3) 60%, transparent 100%);
+}
+
+/* ==========================================================
+   2. SPLIT-V — vertical halves (left | right)
+   ========================================================== */
+.photo-layout-split-v .page-image,
+.photo-layout-split-v .page-gallery {
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--layout-gap, 0px);
+  width: 100% !important;
+  height: 100% !important;
+}
+.photo-layout-split-v .page-gallery .gallery-image {
+  position: static !important;
+  overflow: hidden;
+  height: 100%;
+}
+.photo-layout-split-v .page-gallery .gallery-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.photo-layout-split-v .page-gallery .gallery-image:nth-child(n+3) { display: none; }
+.photo-layout-split-v .page-gallery figcaption { display: none; }
+
+/* variant 4–5: unequal split 35/65 */
+.photo-layout-split-v.photo-layout-variant-4 .page-gallery,
+.photo-layout-split-v.photo-layout-variant-5 .page-gallery {
+  grid-template-columns: 35fr 65fr;
+}
+
+/* ==========================================================
+   3. SPLIT-H — horizontal halves (top / bottom)
+   ========================================================== */
+.photo-layout-split-h .page-image,
+.photo-layout-split-h .page-gallery {
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr;
+  gap: var(--layout-gap, 0px);
+  width: 100% !important;
+  height: 100% !important;
+}
+.photo-layout-split-h .page-gallery .gallery-image {
+  position: static !important;
+  overflow: hidden;
+  width: 100%;
+}
+.photo-layout-split-h .page-gallery .gallery-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.photo-layout-split-h .page-gallery .gallery-image:nth-child(n+3) { display: none; }
+.photo-layout-split-h .page-gallery figcaption { display: none; }
+
+/* variant 4–5: unequal split 30/70 */
+.photo-layout-split-h.photo-layout-variant-4 .page-gallery,
+.photo-layout-split-h.photo-layout-variant-5 .page-gallery {
+  grid-template-rows: 30fr 70fr;
+}
+
+/* ==========================================================
+   4. DIAGONAL — angled split between photos
+   ========================================================== */
+.photo-layout-diagonal .page-gallery {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+}
+.photo-layout-diagonal .page-gallery .gallery-image {
+  position: absolute !important;
+  inset: 0;
+  overflow: hidden;
+}
+.photo-layout-diagonal .page-gallery .gallery-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.photo-layout-diagonal .page-gallery figcaption { display: none; }
+
+/* 2 photos diagonal */
+.photo-layout-diagonal .page-gallery.gallery-count-2 .gallery-image:nth-child(1) {
+  clip-path: polygon(0 0, 100% 0, calc(100% - tan(var(--layout-angle, 16deg)) * 100%) 100%, 0 100%);
+}
+.photo-layout-diagonal .page-gallery.gallery-count-2 .gallery-image:nth-child(2) {
+  clip-path: polygon(calc(100% - tan(var(--layout-angle, 16deg)) * 100%) 0, 100% 0, 100% 100%, 0 100%);
+}
+.photo-layout-diagonal .page-gallery.gallery-count-2 .gallery-image:nth-child(n+3) { display: none; }
+
+/* 3 photos diagonal — alternating direction */
+.photo-layout-diagonal .page-gallery.gallery-count-3 .gallery-image:nth-child(1) {
+  clip-path: polygon(0 0, 100% 0, 100% calc(33% - tan(var(--layout-angle, 16deg)) * 50%), 0 calc(33% + tan(var(--layout-angle, 16deg)) * 50%));
+}
+.photo-layout-diagonal .page-gallery.gallery-count-3 .gallery-image:nth-child(2) {
+  clip-path: polygon(
+    0 calc(33% + tan(var(--layout-angle, 16deg)) * 50%),
+    100% calc(33% - tan(var(--layout-angle, 16deg)) * 50%),
+    100% calc(66% + tan(var(--layout-angle, 16deg)) * 50%),
+    0 calc(66% - tan(var(--layout-angle, 16deg)) * 50%)
+  );
+}
+.photo-layout-diagonal .page-gallery.gallery-count-3 .gallery-image:nth-child(3) {
+  clip-path: polygon(0 calc(66% - tan(var(--layout-angle, 16deg)) * 50%), 100% calc(66% + tan(var(--layout-angle, 16deg)) * 50%), 100% 100%, 0 100%);
+}
+.photo-layout-diagonal .page-gallery.gallery-count-3 .gallery-image:nth-child(n+4) { display: none; }
+
+/* 4+ photos fall back to a simpler 2-column with diagonal top edge */
+.photo-layout-diagonal .page-gallery:not(.gallery-count-2):not(.gallery-count-3) {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+}
+.photo-layout-diagonal .page-gallery:not(.gallery-count-2):not(.gallery-count-3) .gallery-image {
+  position: static !important;
+  clip-path: none !important;
+  overflow: hidden;
+  height: 50%;
+}
+.photo-layout-diagonal .page-gallery:not(.gallery-count-2):not(.gallery-count-3) .gallery-image:nth-child(n+5) { display: none; }
+
+/* single image diagonal gradient variant */
+.photo-layout-diagonal .page-image {
+  position: absolute !important;
+  inset: 0 !important;
+}
+.photo-layout-diagonal .page-image img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ==========================================================
+   5. MASONRY — grid layout with varied cell sizes
+   ========================================================== */
+.photo-layout-masonry .page-gallery {
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  gap: var(--layout-gap, 4px) !important;
+  grid-template-columns: 1fr 1fr !important;
+  grid-auto-rows: 1fr !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+}
+.photo-layout-masonry .page-gallery .gallery-image {
+  position: static !important;
+  overflow: hidden;
+  height: 100%;
+}
+.photo-layout-masonry .page-gallery .gallery-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.photo-layout-masonry .page-gallery figcaption { display: none; }
+
+/* First image spans 2 rows for visual drama */
+.photo-layout-masonry.photo-layout-variant-3 .page-gallery .gallery-image:nth-child(1),
+.photo-layout-masonry.photo-layout-variant-4 .page-gallery .gallery-image:nth-child(1),
+.photo-layout-masonry.photo-layout-variant-5 .page-gallery .gallery-image:nth-child(1) {
+  grid-row: span 2;
+}
+/* Variant 4–5: 3-column grid */
+.photo-layout-masonry.photo-layout-variant-4 .page-gallery,
+.photo-layout-masonry.photo-layout-variant-5 .page-gallery {
+  grid-template-columns: 2fr 1fr 1fr !important;
+}
+/* Variant 5: extreme variety — first spans 2 rows, third spans 2 columns */
+.photo-layout-masonry.photo-layout-variant-5 .page-gallery .gallery-image:nth-child(3) {
+  grid-column: span 2;
+}
+
+/* single image masonry = fullscreen */
+.photo-layout-masonry .page-image {
+  position: absolute !important;
+  inset: 0 !important;
+}
+.photo-layout-masonry .page-image img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ==========================================================
+   6. CIRCLES — photos clipped to circles / ellipses
+   ========================================================== */
+.photo-layout-circles .page-gallery {
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: var(--layout-gap, 8px) !important;
+  padding: 12px !important;
+  width: 100% !important;
+  height: 100% !important;
+  box-sizing: border-box !important;
+  overflow: hidden;
+  background: var(--c1, #fff);
+}
+.photo-layout-circles .page-gallery .gallery-image {
+  position: static !important;
+  overflow: hidden;
+  flex: 0 0 auto;
+  width: clamp(48px, 18%, 120px);
+  aspect-ratio: 1;
+  border-radius: var(--layout-r, 50%);
+  box-shadow: 0 4px 16px rgba(0,0,0,.18);
+}
+.photo-layout-circles .page-gallery .gallery-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.photo-layout-circles .page-gallery figcaption { display: none; }
+
+/* Variant 1: equal small circles */
+/* Variant 3: larger first circle */
+.photo-layout-circles.photo-layout-variant-3 .page-gallery .gallery-image:nth-child(1) {
+  width: clamp(80px, 32%, 180px);
+  aspect-ratio: 1;
+}
+/* Variant 5: mix of circles and border-ring cutout effect */
+.photo-layout-circles.photo-layout-variant-5 .page-gallery .gallery-image {
+  border-radius: 50%;
+  box-shadow: 0 0 0 8px var(--c1, #fff), 0 0 0 12px var(--c2, #222);
+}
+.photo-layout-circles.photo-layout-variant-5 .page-gallery .gallery-image:nth-child(1) {
+  width: clamp(90px, 36%, 200px);
+  aspect-ratio: 1;
+}
+.photo-layout-circles.photo-layout-variant-5 .page-gallery .gallery-image:nth-child(2n) {
+  border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+}
+
+/* single image = large centered circle */
+.photo-layout-circles .page-image {
+  position: static !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: var(--c1, #fff) !important;
+}
+.photo-layout-circles .page-image img {
+  width: 60% !important;
+  height: auto !important;
+  aspect-ratio: 1 !important;
+  object-fit: cover !important;
+  border-radius: 50% !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,.22) !important;
+}
+
+/* ==========================================================
+   7. COLLAGE — scattered, rotated, overlapping photos
+   ========================================================== */
+.photo-layout-collage .page-gallery {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+  background: var(--c1, #fff);
+}
+.photo-layout-collage .page-gallery .gallery-image {
+  position: absolute !important;
+  overflow: hidden;
+  box-shadow: 4px 6px 18px rgba(0,0,0,.25);
+}
+.photo-layout-collage .page-gallery .gallery-image img {
+  width: 100%; height: 100%; object-fit: cover;
+  display: block;
+}
+.photo-layout-collage .page-gallery figcaption { display: none; }
+
+/* Positions for up to 8 images */
+.photo-layout-collage .page-gallery .gallery-image:nth-child(1)  { width:60%; height:50%; top:5%;  left:5%;  transform:rotate(calc(var(--layout-tilt, 7deg) * -1)); z-index:5; }
+.photo-layout-collage .page-gallery .gallery-image:nth-child(2)  { width:52%; height:44%; top:10%; right:2%; transform:rotate(var(--layout-tilt, 7deg)); z-index:4; }
+.photo-layout-collage .page-gallery .gallery-image:nth-child(3)  { width:55%; height:46%; bottom:4%; left:8%;  transform:rotate(calc(var(--layout-tilt, 7deg) * 0.5)); z-index:6; }
+.photo-layout-collage .page-gallery .gallery-image:nth-child(4)  { width:48%; height:40%; bottom:6%; right:4%; transform:rotate(calc(var(--layout-tilt, 7deg) * -0.7)); z-index:3; }
+.photo-layout-collage .page-gallery .gallery-image:nth-child(5)  { width:38%; height:32%; top:30%; left:30%; transform:rotate(calc(var(--layout-tilt, 7deg) * 1.2)); z-index:7; }
+.photo-layout-collage .page-gallery .gallery-image:nth-child(6)  { width:34%; height:30%; top:55%; left:18%; transform:rotate(calc(var(--layout-tilt, 7deg) * -0.4)); z-index:2; }
+.photo-layout-collage .page-gallery .gallery-image:nth-child(7)  { width:36%; height:32%; top:40%; right:5%;  transform:rotate(calc(var(--layout-tilt, 7deg) * 0.8)); z-index:3; }
+.photo-layout-collage .page-gallery .gallery-image:nth-child(8)  { width:30%; height:26%; bottom:14%; left:42%; transform:rotate(calc(var(--layout-tilt, 7deg) * -1.1)); z-index:8; }
+.photo-layout-collage .page-gallery .gallery-image:nth-child(n+9) { display: none; }
+
+/* single image = centered with slight tilt */
+.photo-layout-collage .page-image {
+  position: absolute !important;
+  inset: 10% !important;
+  transform: rotate(calc(var(--layout-tilt, 7deg) * -0.5)) !important;
+  box-shadow: 8px 12px 40px rgba(0,0,0,.3) !important;
+  overflow: hidden;
+}
+.photo-layout-collage .page-image img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ==========================================================
+   8. STRIPS — thin vertical or horizontal photo strips
+   ========================================================== */
+.photo-layout-strips .page-gallery {
+  position: absolute !important;
+  inset: 0 !important;
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: 1fr !important;
+  gap: var(--layout-gap, 2px) !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden;
+}
+.photo-layout-strips .page-gallery .gallery-image {
+  position: static !important;
+  overflow: hidden;
+  height: 100%;
+}
+.photo-layout-strips .page-gallery .gallery-image img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+.photo-layout-strips .page-gallery figcaption { display: none; }
+/* Limit to 12 strips max */
+.photo-layout-strips .page-gallery .gallery-image:nth-child(n+13) { display: none; }
+
+/* Variant 3: alternating strip heights (not all equal width) */
+.photo-layout-strips.photo-layout-variant-3 .page-gallery .gallery-image:nth-child(2n) {
+  grid-row: span 1;
+  opacity: .85;
+}
+/* Variant 5: angled strips using skew */
+.photo-layout-strips.photo-layout-variant-5 .page-gallery {
+  transform: skewX(-4deg) scaleX(1.08);
+}
+.photo-layout-strips.photo-layout-variant-5 .page-gallery .gallery-image {
+  transform: skewX(4deg);
+}
+
+/* Horizontal strips variant (variants 4–5 flip to rows) */
+.photo-layout-strips.photo-layout-variant-4 .page-gallery,
+.photo-layout-strips.photo-layout-variant-5 .page-gallery {
+  grid-auto-flow: row !important;
+  grid-auto-rows: 1fr !important;
+  grid-auto-columns: unset !important;
+}
+.photo-layout-strips.photo-layout-variant-4 .page-gallery .gallery-image,
+.photo-layout-strips.photo-layout-variant-5 .page-gallery .gallery-image {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* single image = full strip */
+.photo-layout-strips .page-image {
+  position: absolute !important;
+  inset: 0 !important;
+}
+.photo-layout-strips .page-image img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ==========================================================
+   Ensure book-page-copy sits on top of all layout types
+   ========================================================== */
+.photo-layout-full .book-page-copy,
+.photo-layout-diagonal .book-page-copy,
+.photo-layout-masonry .book-page-copy,
+.photo-layout-collage .book-page-copy,
+.photo-layout-strips .book-page-copy {
+  position: relative !important;
+  z-index: 10 !important;
+}

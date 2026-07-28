@@ -54,6 +54,9 @@ function getEditorControls() {
     editorFontOutput: document.querySelector('#editor-font-output'),
     editorSpacingOutput: document.querySelector('#editor-spacing-output'),
     editorEffectOutput: document.querySelector('#editor-effect-output'),
+    editorPhotoLayout: document.querySelector('#editor-photo-layout'),
+    editorPhotoLayoutVariant: document.querySelector('#editor-photo-layout-variant'),
+    editorPhotoLayoutVariantOutput: document.querySelector('#editor-photo-layout-variant-output'),
     editorSaveStatus: document.querySelector('#editor-save-status'),
     editorResetScope: document.querySelector('#editor-reset-scope'),
     editorResetAll: document.querySelector('#editor-reset-all'),
@@ -65,7 +68,8 @@ export function availableEditorParameters() {
   const {
     editorScope, editorProfile, editorVisualMode, editorLayoutComplexity,
     editorImageCount, editorTextAmount, editorContentPosition, editorFontScale,
-    editorSpacing, editorEffectLevel, editorShowTitle, editorShowSubtitle, editorShowBody
+    editorSpacing, editorEffectLevel, editorShowTitle, editorShowSubtitle, editorShowBody,
+    editorPhotoLayout, editorPhotoLayoutVariant
   } = getEditorControls();
 
   const editorParameters = [
@@ -73,6 +77,8 @@ export function availableEditorParameters() {
     { key: 'visualMode', label: 'Visual language', control: editorVisualMode },
     { key: 'layoutComplexity', label: 'Page complexity', control: editorLayoutComplexity },
     { key: 'imageCount', label: 'Images', control: editorImageCount },
+    { key: 'photoLayout', label: 'Photo layout', control: editorPhotoLayout },
+    { key: 'photoLayoutVariant', label: 'Layout intensity', control: editorPhotoLayoutVariant },
     { key: 'textAmount', label: 'Text amount', control: editorTextAmount },
     { key: 'contentPosition', label: 'Content position', control: editorContentPosition },
     { key: 'fontScale', label: 'Font scale', control: editorFontScale },
@@ -264,6 +270,8 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     visualMode: resolvedEditorSetting('visualMode', pageIndex),
     layoutComplexity: resolvedEditorSetting('layoutComplexity', pageIndex),
     imageCount: resolvedEditorSetting('imageCount', pageIndex),
+    photoLayout: resolvedEditorSetting('photoLayout', pageIndex),
+    photoLayoutVariant: resolvedEditorSetting('photoLayoutVariant', pageIndex),
     textAmount: resolvedEditorSetting('textAmount', pageIndex),
     contentPosition: resolvedEditorSetting('contentPosition', pageIndex),
     fontScale: resolvedEditorSetting('fontScale', pageIndex),
@@ -279,6 +287,15 @@ export function applyEditorPage(pageNode, page, pageIndex) {
   replaceEditorLevelClass(pageNode, 'editor-font-', values.fontScale, hasEditorOverride('fontScale', pageIndex));
   replaceEditorLevelClass(pageNode, 'editor-spacing-', values.spacing, hasEditorOverride('spacing', pageIndex));
   replaceEditorLevelClass(pageNode, 'editor-effects-', values.effectLevel, hasEditorOverride('effectLevel', pageIndex));
+
+  // Photo layout family and variant
+  const photoLayoutValue = hasEditorOverride('photoLayout', pageIndex) ? String(values.photoLayout || 'auto') : 'auto';
+  const photoLayoutVariantValue = hasEditorOverride('photoLayoutVariant', pageIndex) ? Math.max(1, Math.min(5, Number(values.photoLayoutVariant || 3))) : null;
+  [...pageNode.classList].filter(c => c.startsWith('photo-layout-')).forEach(c => pageNode.classList.remove(c));
+  if (photoLayoutValue !== 'auto') {
+    pageNode.classList.add(`photo-layout-${safeClass(photoLayoutValue)}`);
+    if (photoLayoutVariantValue !== null) pageNode.classList.add(`photo-layout-variant-${photoLayoutVariantValue}`);
+  }
 
   if (hasEditorOverride('contentPosition', pageIndex)) pageNode.dataset.editorContentPosition = values.contentPosition;
   else delete pageNode.dataset.editorContentPosition;
@@ -395,6 +412,8 @@ export function syncBookletEditorControls() {
   if (controls.editorVisualMode) controls.editorVisualMode.value = get('visualMode');
   if (controls.editorLayoutComplexity) controls.editorLayoutComplexity.value = get('layoutComplexity');
   if (controls.editorImageCount) controls.editorImageCount.value = get('imageCount');
+  if (controls.editorPhotoLayout) controls.editorPhotoLayout.value = get('photoLayout') || 'auto';
+  if (controls.editorPhotoLayoutVariant) controls.editorPhotoLayoutVariant.value = get('photoLayoutVariant') || 3;
   if (controls.editorTextAmount) controls.editorTextAmount.value = get('textAmount');
   if (controls.editorContentPosition) controls.editorContentPosition.value = get('contentPosition');
   if (controls.editorFontScale) controls.editorFontScale.value = get('fontScale');
@@ -406,6 +425,7 @@ export function syncBookletEditorControls() {
 
   if (controls.editorLayoutOutput && controls.editorLayoutComplexity) controls.editorLayoutOutput.value = controls.editorLayoutComplexity.value;
   if (controls.editorImageOutput && controls.editorImageCount) controls.editorImageOutput.value = controls.editorImageCount.value;
+  if (controls.editorPhotoLayoutVariantOutput && controls.editorPhotoLayoutVariant) controls.editorPhotoLayoutVariantOutput.value = controls.editorPhotoLayoutVariant.value;
   if (controls.editorTextOutput && controls.editorTextAmount) controls.editorTextOutput.value = controls.editorTextAmount.value;
   if (controls.editorFontOutput && controls.editorFontScale) controls.editorFontOutput.value = controls.editorFontScale.value;
   if (controls.editorSpacingOutput && controls.editorSpacing) controls.editorSpacingOutput.value = controls.editorSpacing.value;
@@ -510,6 +530,8 @@ export function setupEditorEventListeners() {
     [controls.editorVisualMode, 'visualMode', value => value],
     [controls.editorLayoutComplexity, 'layoutComplexity', Number],
     [controls.editorImageCount, 'imageCount', Number],
+    [controls.editorPhotoLayout, 'photoLayout', value => value],
+    [controls.editorPhotoLayoutVariant, 'photoLayoutVariant', Number],
     [controls.editorTextAmount, 'textAmount', Number],
     [controls.editorContentPosition, 'contentPosition', value => value],
     [controls.editorFontScale, 'fontScale', Number],
