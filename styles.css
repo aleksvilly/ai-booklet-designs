@@ -1966,35 +1966,45 @@ footer a { text-underline-offset: 3px; }
 .book-page[data-editor-content-position="center"] .book-page-copy { align-items: center; text-align: center; }
 .book-page[data-editor-content-position$="-right"] .book-page-copy { align-items: flex-end; text-align: right; }
 
+/* === Spacing === */
 .book-page.editor-spacing-1 { --editor-space: 10px; padding: 10px; }
 .book-page.editor-spacing-2 { --editor-space: 18px; padding: 18px; }
-.book-page.editor-spacing-3 { --editor-space: clamp(18px, 3vw, 42px); }
+.book-page.editor-spacing-3 { --editor-space: clamp(18px, 3vw, 42px); padding: clamp(18px, 3vw, 42px); }
 .book-page.editor-spacing-4 { --editor-space: clamp(30px, 5vw, 62px); padding: clamp(30px, 5vw, 62px); }
 .book-page.editor-spacing-5 { --editor-space: clamp(42px, 7vw, 84px); padding: clamp(42px, 7vw, 84px); }
 
+/* === Font scale (all 5 steps) === */
 .book-page.editor-font-1 h4 { font-size: clamp(17px, 2vw, 30px) !important; line-height: 1.02; }
 .book-page.editor-font-1 .page-body { font-size: 7px !important; }
 .book-page.editor-font-2 h4 { font-size: clamp(25px, 3vw, 44px) !important; line-height: .96; }
 .book-page.editor-font-2 .page-body { font-size: 9px !important; }
+.book-page.editor-font-3 h4 { font-size: clamp(32px, 4vw, 60px) !important; }
+.book-page.editor-font-3 .page-body { font-size: clamp(11px, 1.1vw, 14px) !important; }
 .book-page.editor-font-4 h4 { font-size: clamp(52px, 6vw, 92px) !important; }
 .book-page.editor-font-4 .page-body { font-size: clamp(14px, 1.4vw, 19px) !important; }
 .book-page.editor-font-5 h4 { font-size: clamp(72px, 9vw, 132px) !important; line-height: .7; }
 .book-page.editor-font-5 .page-body { font-size: clamp(17px, 1.8vw, 24px) !important; line-height: 1.24; }
 
+/* === Layout complexity (all 5 steps) === */
 .book-page.editor-complexity-1 .book-page-copy { max-width: 58%; }
 .book-page.editor-complexity-1 .page-body { max-width: 25em; column-count: 1 !important; }
 .book-page.editor-complexity-2 .book-page-copy { max-width: 74%; }
 .book-page.editor-complexity-2 .page-body { column-count: 1 !important; }
+.book-page.editor-complexity-3 .book-page-copy { max-width: 86%; }
+.book-page.editor-complexity-3 .page-body { column-count: 1 !important; }
 .book-page.editor-complexity-4 .book-page-copy,
 .book-page.editor-complexity-5 .book-page-copy { max-width: 100%; }
 .book-page.editor-complexity-4 .page-body { column-count: 2; column-gap: 14px; }
 .book-page.editor-complexity-5 .page-body { max-width: 100%; column-count: 3; column-gap: 10px; font-size: 8px; }
 .book-page.editor-complexity-5 .page-gallery { gap: 1px; padding: 1px; }
 
+/* === Effects intensity (0 = off, 1–5 = progressive) === */
 .book-page.editor-effects-0 {
   transform: none !important;
   text-shadow: none !important;
 }
+/* Suppress ALL ::before and ::after decorators from profile CSS at effects-0 */
+.book-page.editor-effects-0::before,
 .book-page.editor-effects-0::after,
 .book-page.editor-effects-0.effect-scribble-lines::after { display: none !important; }
 .book-page.editor-effects-0 .page-image,
@@ -2018,6 +2028,7 @@ footer a { text-underline-offset: 3px; }
 }
 .book-page.editor-effects-1::after { opacity: .18 !important; }
 .book-page.editor-effects-2::after { opacity: .32 !important; }
+.book-page.editor-effects-3::after { opacity: .54 !important; }
 .book-page.editor-effects-4::after { opacity: .74 !important; }
 .book-page.editor-effects-5::after { opacity: 1 !important; }
 .book-page.editor-effects-5 .page-image img { filter: saturate(1.18) contrast(1.05); }
