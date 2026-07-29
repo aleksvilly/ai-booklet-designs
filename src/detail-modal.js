@@ -350,6 +350,11 @@ export function initDetailModalEvents() {
   dialog?.addEventListener('click', event => {
     const rect = dialog.getBoundingClientRect();
     const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
-    if (outside) closeDialog();
+    if (outside && !dialog.classList.contains('editor-is-open')) closeDialog();
+  });
+  dialog?.addEventListener('cancel', event => {
+    if (!dialog.classList.contains('editor-is-open')) return;
+    event.preventDefault();
+    closeBookletEditor();
   });
 }
