@@ -226,20 +226,22 @@ export async function loadGeneratorCatalogs() {
   const topicPathPreview = document.querySelector('#topic-path-preview');
   const topicCatalogSearch = document.querySelector('#topic-catalog-search');
 
-  const [topicsResponse, stylesResponse, effectsResponse] = await Promise.all([
+  const [topicsResponse, stylesResponse, effectsResponse, fontsResponse] = await Promise.all([
     fetch('./data/catalog/topics.json', { cache: 'no-store' }),
     fetch('./data/catalog/styles.json', { cache: 'no-store' }),
-    fetch('./data/catalog/effects.json', { cache: 'no-store' })
+    fetch('./data/catalog/effects.json', { cache: 'no-store' }),
+    fetch('./data/catalog/fonts.json', { cache: 'no-store' })
   ]);
 
-  if (![topicsResponse, stylesResponse, effectsResponse].every(response => response.ok)) {
+  if (![topicsResponse, stylesResponse, effectsResponse, fontsResponse].every(response => response.ok)) {
     throw new Error('One or more generator catalogs could not be loaded.');
   }
 
   generatorCatalog = {
     topics: await topicsResponse.json(),
     styles: await stylesResponse.json(),
-    effects: await effectsResponse.json()
+    effects: await effectsResponse.json(),
+    fonts: await fontsResponse.json()
   };
 
   renderTopicWheel();

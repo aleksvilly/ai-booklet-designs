@@ -1,8 +1,8 @@
 import { EDITOR_STORAGE_PREFIX, EDITOR_COMPACT_STORAGE_KEY } from './config.js';
-import { safeUrl, safeClass } from './utils.js';
+import { safeUrl, safeClass, fontStack, loadGoogleFonts } from './utils.js';
 import { pagesFor, imagesForPage } from './collection.js';
 import { mediaMarkup, loadDialogImages } from './detail-modal.js';
-import { bindStyleSlider } from './catalog.js';
+import { bindStyleSlider, getGeneratorCatalog } from './catalog.js';
 
 let editorSession = null;
 let editorSaveTimer = null;
@@ -43,6 +43,12 @@ function getEditorControls() {
     editorTextAmount: document.querySelector('#editor-text-amount'),
     editorContentPosition: document.querySelector('#editor-content-position'),
     editorFontScale: document.querySelector('#editor-font-scale'),
+    editorFontFamily: document.querySelector('#editor-font-family'),
+    editorFontFamilyMarks: document.querySelector('#editor-font-family-marks'),
+    editorFontRecommendations: document.querySelector('#editor-font-recommendations'),
+    editorFontTargetTitle: document.querySelector('#editor-font-target-title'),
+    editorFontTargetSubtitle: document.querySelector('#editor-font-target-subtitle'),
+    editorFontTargetBody: document.querySelector('#editor-font-target-body'),
     editorSpacing: document.querySelector('#editor-spacing'),
     editorEffectLevel: document.querySelector('#editor-effect-level'),
     editorShowTitle: document.querySelector('#editor-show-title'),
@@ -64,10 +70,91 @@ function getEditorControls() {
   };
 }
 
+function editorFontItems() {
+  return getGeneratorCatalog()?.fonts?.items || [];
+}
+
+function editorFontTargets(controls = getEditorControls()) {
+  return [
+    { key: 'titleFont', control: controls.editorFontTargetTitle },
+    { key: 'subtitleFont', control: controls.editorFontTargetSubtitle },
+    { key: 'bodyFont', control: controls.editorFontTargetBody }
+  ];
+}
+
+function loadEditorFont(family) {
+  const item = editorFontItems().find(font => font.family === family);
+  if (item?.provider === 'google-fonts') {
+    loadGoogleFonts([family], `editor-${safeClass(family)}`);
+  } else if (item?.fallback) {
+    loadEditorFont(item.fallback);
+  }
+}
+
+function editorFontStack(family) {
+  const item = editorFontItems().find(font => font.family === family);
+  if (!item?.fallback) return fontStack(family);
+  const primary = fontStack(family).replace(/,\s*(?:sans-serif|serif|monospace)$/, '');
+  return `${primary}, ${fontStack(item.fallback)}`;
+}
+
+function populateEditorFontControl() {
+  const controls = getEditorControls();
+  if (!controls.editorFontFamily) return;
+
+  const currentValue = controls.editorFontFamily.value;
+  const items = editorFontItems();
+  if (items.length) {
+    controls.editorFontFamily.replaceChildren(...items.map(font => {
+      const suffix = font.availability === 'licensed' ? ' · licensed' : '';
+      const option = new Option(`${font.family}${suffix}`, font.family);
+      option.dataset.availability = font.availability;
+      option.dataset.provider = font.provider;
+      return option;
+    }));
+  }
+  if ([...controls.editorFontFamily.options].some(option => option.value === currentValue)) {
+    controls.editorFontFamily.value = currentValue;
+  }
+  bindStyleSlider(controls.editorFontFamily);
+}
+
+function syncEditorFontRecommendations() {
+  if (!editorSession) return;
+  const controls = getEditorControls();
+  const catalog = getGeneratorCatalog();
+  const profileId = resolvedEditorSetting('profile', editorSession.activePageIndex);
+  const style = catalog?.styles?.items?.find(item => item.id === profileId);
+  const free = style?.fontRecommendations?.free || style?.contract?.fonts || [];
+  const licensed = style?.fontRecommendations?.licensed || [];
+  const recommended = [...new Set([...free, ...licensed])];
+
+  if (controls.editorFontRecommendations) {
+    const styleLabel = style?.labels?.en || profileId || 'this style';
+    const freeText = free.length ? free.join(' · ') : 'none specified';
+    const licensedText = licensed.length ? ` Licensed: ${licensed.join(' · ')}.` : '';
+    controls.editorFontRecommendations.textContent =
+      `Recommended for ${styleLabel}: ${freeText}.${licensedText}`;
+  }
+
+  if (controls.editorFontFamilyMarks && controls.editorFontFamily) {
+    controls.editorFontFamilyMarks.replaceChildren(...recommended.flatMap(family => {
+      const index = [...controls.editorFontFamily.options].findIndex(option => option.value === family);
+      if (index < 0) return [];
+      const option = document.createElement('option');
+      option.value = String(index);
+      option.label = family;
+      return [option];
+    }));
+    const slider = controls.editorFontFamily.parentElement?.querySelector('input[type="range"]');
+    if (slider) slider.setAttribute('list', controls.editorFontFamilyMarks.id);
+  }
+}
+
 export function availableEditorParameters() {
   const {
     editorScope, editorProfile, editorVisualMode, editorLayoutComplexity,
-    editorImageCount, editorTextAmount, editorContentPosition, editorFontScale,
+    editorImageCount, editorTextAmount, editorContentPosition, editorFontScale, editorFontFamily,
     editorSpacing, editorEffectLevel, editorShowTitle, editorShowSubtitle, editorShowBody,
     editorPhotoLayout, editorPhotoLayoutVariant
   } = getEditorControls();
@@ -82,6 +169,7 @@ export function availableEditorParameters() {
     { key: 'textAmount', label: 'Text amount', control: editorTextAmount },
     { key: 'contentPosition', label: 'Content position', control: editorContentPosition },
     { key: 'fontScale', label: 'Font scale', control: editorFontScale },
+    { key: 'fontFamily', label: 'Font family', control: editorFontFamily },
     { key: 'spacing', label: 'Page spacing', control: editorSpacing },
     { key: 'effectLevel', label: 'Effects intensity', control: editorEffectLevel },
     { key: 'showTitle', label: 'Show title', control: editorShowTitle },
@@ -170,6 +258,8 @@ export function scheduleEditorSave() {
 
 export function originalEditorSettings(item, page) {
   const dna = item.designDna || {};
+  const fontPalette = Array.isArray(dna.fontPalette) ? dna.fontPalette : [];
+  const pageFont = page.fontFamily || fontPalette[0] || 'DM Sans';
   const align = page.textAlign === 'right' ? 'bottom-right' : page.textAlign === 'center' ? 'bottom-center' : 'bottom-left';
   return {
     profile: dna.styleFamily || item.layout || 'auto',
@@ -181,6 +271,9 @@ export function originalEditorSettings(item, page) {
     textAmount: 3,
     contentPosition: align,
     fontScale: 3,
+    titleFont: fontPalette[0] || pageFont,
+    subtitleFont: fontPalette[2] || fontPalette[0] || pageFont,
+    bodyFont: page.fontFamily || fontPalette[1] || pageFont,
     spacing: 3,
     effectLevel: Math.max(0, Math.min(5, Number(dna.effectLevel ?? 2))),
     showTitle: Boolean(page.title),
@@ -277,6 +370,9 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     textAmount: resolvedEditorSetting('textAmount', pageIndex),
     contentPosition: resolvedEditorSetting('contentPosition', pageIndex),
     fontScale: resolvedEditorSetting('fontScale', pageIndex),
+    titleFont: resolvedEditorSetting('titleFont', pageIndex),
+    subtitleFont: resolvedEditorSetting('subtitleFont', pageIndex),
+    bodyFont: resolvedEditorSetting('bodyFont', pageIndex),
     spacing: resolvedEditorSetting('spacing', pageIndex),
     effectLevel: resolvedEditorSetting('effectLevel', pageIndex),
     showTitle: resolvedEditorSetting('showTitle', pageIndex),
@@ -518,6 +614,27 @@ export function applyEditorPage(pageNode, page, pageIndex) {
   const subtitle = pageNode.querySelector('.book-page-type');
   const caption = pageNode.querySelector('.page-caption');
   const body = pageNode.querySelector('.page-body');
+  if (title) {
+    if (hasEditorOverride('titleFont', pageIndex)) {
+      loadEditorFont(values.titleFont);
+      title.style.fontFamily = editorFontStack(values.titleFont);
+    }
+    else title.style.removeProperty('font-family');
+  }
+  [subtitle, caption].filter(Boolean).forEach(node => {
+    if (hasEditorOverride('subtitleFont', pageIndex)) {
+      loadEditorFont(values.subtitleFont);
+      node.style.fontFamily = editorFontStack(values.subtitleFont);
+    }
+    else node.style.removeProperty('font-family');
+  });
+  if (body) {
+    if (hasEditorOverride('bodyFont', pageIndex)) {
+      loadEditorFont(values.bodyFont);
+      body.style.fontFamily = editorFontStack(values.bodyFont);
+    }
+    else body.style.removeProperty('font-family');
+  }
   if (title) title.hidden = !values.showTitle;
   if (subtitle) subtitle.hidden = !values.showSubtitle;
   if (caption) caption.hidden = !values.showSubtitle;
@@ -627,6 +744,25 @@ export function syncBookletEditorControls() {
   if (controls.editorContentPosition) controls.editorContentPosition.value = get('contentPosition');
   if (controls.editorTextAmount) controls.editorTextAmount.value = get('textAmount');
   if (controls.editorFontScale) controls.editorFontScale.value = get('fontScale');
+  if (controls.editorFontFamily) {
+    const activeTargets = editorFontTargets(controls).filter(target => target.control?.checked);
+    const fontKey = activeTargets[0]?.key || 'titleFont';
+    const family = get(fontKey);
+    if (family && ![...controls.editorFontFamily.options].some(option => option.value === family)) {
+      controls.editorFontFamily.add(new Option(`${family} · custom`, family));
+    }
+    if (family) controls.editorFontFamily.value = family;
+
+    const selectedIndex = Math.max(0, controls.editorFontFamily.selectedIndex);
+    const wrapper = controls.editorFontFamily.parentElement;
+    const slider = wrapper?.querySelector('input[type="range"]');
+    const output = wrapper?.querySelector('.style-slider-output');
+    if (slider) {
+      slider.max = String(Math.max(0, controls.editorFontFamily.options.length - 1));
+      slider.value = String(selectedIndex);
+    }
+    if (output) output.textContent = controls.editorFontFamily.selectedOptions[0]?.textContent || family;
+  }
   if (controls.editorSpacing) controls.editorSpacing.value = get('spacing');
   if (controls.editorEffectLevel) controls.editorEffectLevel.value = get('effectLevel');
   if (controls.editorShowTitle) controls.editorShowTitle.checked = Boolean(get('showTitle'));
@@ -640,6 +776,7 @@ export function syncBookletEditorControls() {
   if (controls.editorFontOutput && controls.editorFontScale) controls.editorFontOutput.value = controls.editorFontScale.value;
   if (controls.editorSpacingOutput && controls.editorSpacing) controls.editorSpacingOutput.value = controls.editorSpacing.value;
   if (controls.editorEffectOutput && controls.editorEffectLevel) controls.editorEffectOutput.value = controls.editorEffectLevel.value;
+  syncEditorFontRecommendations();
 
   if (controls.editorProfile && controls.editorScope) {
     controls.editorProfile.disabled = controls.editorScope.value !== 'booklet';
@@ -653,6 +790,26 @@ export function syncBookletEditorControls() {
         : `Page ${editorSession.activePageIndex + 1}`;
   }
   updateEditorCompactParameter();
+}
+
+export function setEditorFontForTargets(family) {
+  if (!editorSession || !family) return;
+  const controls = getEditorControls();
+  const targets = editorFontTargets(controls).filter(target => target.control?.checked);
+  if (!targets.length) {
+    if (controls.editorSaveStatus) controls.editorSaveStatus.textContent = 'Choose Title, Subtitle or Body first.';
+    return;
+  }
+
+  const bucket = activeEditorBucket();
+  if (!bucket) return;
+  targets.forEach(target => {
+    bucket[target.key] = family;
+  });
+  loadEditorFont(family);
+  applyBookletEditorState();
+  syncBookletEditorControls();
+  scheduleEditorSave();
 }
 
 export function setEditorValue(key, value) {
@@ -712,6 +869,7 @@ export function initializeBookletEditor(item) {
   if (controls.editorProfile) {
     bindStyleSlider(controls.editorProfile);
   }
+  populateEditorFontControl();
 
   editorSession.pageNodes.forEach((node, index) => {
     node.dataset.pageIndex = String(index);
@@ -751,6 +909,13 @@ export function setupEditorEventListeners() {
     if (!control) return;
     const eventName = control.type === 'range' ? 'input' : 'change';
     control.addEventListener(eventName, () => setEditorValue(key, parse(control.value)));
+  });
+
+  controls.editorFontFamily?.addEventListener('change', () => {
+    setEditorFontForTargets(controls.editorFontFamily.value);
+  });
+  editorFontTargets(controls).forEach(target => {
+    target.control?.addEventListener('change', syncBookletEditorControls);
   });
 
   [

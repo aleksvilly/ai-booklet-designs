@@ -1933,13 +1933,16 @@ footer a { text-underline-offset: 3px; }
 }
 
 .editor-target-card label,
-.editor-group > label:not(.editor-visibility label) {
+.editor-group > label:not(.editor-visibility label),
+.editor-group > .editor-font-family-control {
   display: grid;
   gap: 7px;
 }
 
 .editor-target-card label > span,
-.editor-group label > span {
+.editor-group label > span,
+.editor-font-family-control > span,
+.editor-font-targets > span {
   font: 500 9px/1.2 "IBM Plex Mono", monospace;
   text-transform: uppercase;
   letter-spacing: .08em;
@@ -1997,6 +2000,45 @@ footer a { text-underline-offset: 3px; }
   background: var(--ink);
   color: var(--paper);
   text-align: center;
+}
+
+.editor-font-family-control .style-slider-output {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.editor-font-targets {
+  display: grid;
+  grid-template-columns: auto repeat(3, minmax(0, 1fr));
+  align-items: center;
+  gap: 6px;
+  margin-top: 3px;
+}
+
+.editor-font-targets label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  min-height: 30px;
+  padding: 5px 6px;
+  border: 1px solid var(--line);
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.editor-font-targets input {
+  width: 14px;
+  height: 14px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+#editor-font-recommendations {
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.45;
 }
 
 .editor-visibility {
@@ -2260,6 +2302,19 @@ footer a { text-underline-offset: 3px; }
   width: min(440px, 100%);
   min-height: 34px;
 }
+.booklet-editor.editor-compact .editor-font-family-control {
+  grid-template-columns: 1fr;
+  gap: 2px;
+}
+.booklet-editor.editor-compact .editor-font-targets {
+  grid-template-columns: auto repeat(3, auto);
+  justify-content: center;
+}
+.booklet-editor.editor-compact .editor-font-targets label {
+  min-height: 24px;
+  padding: 2px 7px;
+}
+.booklet-editor.editor-compact #editor-font-recommendations { display: none; }
 .booklet-editor.editor-compact .editor-visibility label.editor-parameter-active {
   display: flex !important;
   justify-content: center;

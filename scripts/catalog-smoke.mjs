@@ -27,6 +27,11 @@ uniqueIds(catalog.styles.groups, 'Style groups');
 uniqueIds(catalog.styles.items, 'Styles');
 uniqueIds(catalog.effects.groups, 'Effect groups');
 uniqueIds(catalog.effects.items, 'Effects');
+assert(Array.isArray(catalog.fonts.items) && catalog.fonts.items.length, 'Font catalog is empty.');
+assert(
+  new Set(catalog.fonts.items.map(font => font.family)).size === catalog.fonts.items.length,
+  'Font catalog contains duplicate families.'
+);
 
 const styleGroups = new Set(catalog.styles.groups.map(group => group.id));
 for (const style of catalog.styles.items) {
@@ -43,7 +48,15 @@ for (const effect of catalog.effects.items) {
   assert(effect.generatorToken, `Effect ${effect.id} has no generatorToken.`);
 }
 
+for (const font of catalog.fonts.items) {
+  assert(font.family, 'Font catalog contains an empty family.');
+  assert(font.category, `Font ${font.family} has no category.`);
+  assert(['free', 'licensed'].includes(font.availability), `Font ${font.family} has invalid availability.`);
+  assert(font.provider, `Font ${font.family} has no provider.`);
+}
+
 console.log(
   `Catalog OK: ${catalog.topics.groups.length} topic groups, ` +
-  `${catalog.styles.items.length} styles, ${catalog.effects.items.length} effects.`
+  `${catalog.styles.items.length} styles, ${catalog.effects.items.length} effects, ` +
+  `${catalog.fonts.items.length} fonts.`
 );

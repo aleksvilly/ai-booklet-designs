@@ -8,13 +8,14 @@ async function readCatalog(name) {
 }
 
 export async function loadDesignCatalog() {
-  const [topics, styles, effects] = await Promise.all([
+  const [topics, styles, effects, fonts] = await Promise.all([
     readCatalog('topics.json'),
     readCatalog('styles.json'),
-    readCatalog('effects.json')
+    readCatalog('effects.json'),
+    readCatalog('fonts.json')
   ]);
 
-  return { topics, styles, effects };
+  return { topics, styles, effects, fonts };
 }
 
 export function styleFamiliesFromCatalog(styleCatalog) {

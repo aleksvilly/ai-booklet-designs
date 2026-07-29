@@ -89,7 +89,7 @@
     {
       "id": "athletic-campaign",
       "groupId": "entertainment",
-      "labels": { "en": "Athletic campaign", "ru": "Спортивная кампания" },
+      "labels": { "en": "Nike — athletic campaign", "ru": "Nike — спортивная кампания" },
       "topicAffinity": ["sports"],
       "lockUntilChaos": 5,
       "source": {
@@ -124,6 +124,10 @@
         "rhythms": ["dynamic", "staccato"],
         "effects": ["oversized-number", "diagonal-flow", "floating-caption", "hard-shadow"],
         "covers": ["full-photo", "kinetic-type", "poster-grid"]
+      },
+      "fontRecommendations": {
+        "free": ["Barlow Condensed", "Bebas Neue", "Inter"],
+        "licensed": ["Helvetica Now Text", "Futura Now Condensed"]
       }
     },
     {
@@ -295,7 +299,7 @@
     {
       "id": "marketplace-modular",
       "groupId": "editorial-media",
-      "labels": { "en": "Marketplace modular", "ru": "Модульный маркетплейс" },
+      "labels": { "en": "Amazon — modular marketplace", "ru": "Amazon — модульный маркетплейс" },
       "topicAffinity": ["technology", "culture"],
       "lockUntilChaos": 5,
       "source": {
@@ -330,6 +334,10 @@
         "rhythms": ["staccato", "balanced", "dynamic"],
         "effects": ["frame-within-frame", "caption-rule", "oversized-number"],
         "covers": ["poster-grid", "magazine", "split-object"]
+      },
+      "fontRecommendations": {
+        "free": ["Inter", "Source Sans 3", "DM Sans"],
+        "licensed": ["Frutiger Next", "Neue Haas Grotesk Text"]
       }
     },
     {

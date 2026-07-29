@@ -14,9 +14,10 @@
 - [x] PDF two-page per sheet landscape export alignment.
 - [x] Text container overflow protection & -webkit-line-clamp heading/body safety.
 - [x] High-contrast dedicated visual design rules for all style profiles (Wedding, Kids Party, Halloween Noir, Sports Broadcast, Gaming Tech, Scientific Journal, Encyclopedia).
-- [x] Two project-native visual-reference pilots with explicit provenance and
-      no copied brand assets or source code: Athletic Campaign and Marketplace
-      Modular.
+- [x] Two named visual-reference pilots with explicit provenance and no copied
+      brand assets: Nike Athletic Campaign and Amazon Modular Marketplace.
+- [x] Shared font catalog with free/licensed availability, full live-editor
+      font slider, Title/Subtitle/Body targets and per-style recommendations.
 
 ## In progress
 
@@ -36,6 +37,8 @@
 - [ ] Add a repeatable visual-reference intake checklist covering provenance,
       asset/code exclusion, public naming and similarity review.
 - [ ] Add automated screenshot tests for every style at chaos 0 and chaos 5.
+- [ ] Add licensed font upload/purchase fulfilment and verified `@font-face`
+      delivery without exposing font files to non-licensees.
 
 ## Later
 

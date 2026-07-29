@@ -331,51 +331,9 @@ const COVER_ARCHETYPES = [
   'data-cover', 'negative-space'
 ];
 
-const FONT_LIBRARY = [
-  { family: 'DM Sans', category: 'sans' }, { family: 'Inter', category: 'sans' },
-  { family: 'Space Grotesk', category: 'sans' }, { family: 'Manrope', category: 'sans' },
-  { family: 'Work Sans', category: 'sans' }, { family: 'Archivo', category: 'sans' },
-  { family: 'Barlow', category: 'sans' }, { family: 'Rubik', category: 'sans' },
-  { family: 'Outfit', category: 'sans' }, { family: 'Urbanist', category: 'sans' },
-  { family: 'Montserrat', category: 'sans' }, { family: 'Poppins', category: 'sans' },
-  { family: 'Raleway', category: 'sans' }, { family: 'Figtree', category: 'sans' },
-  { family: 'IBM Plex Sans', category: 'sans' }, { family: 'Source Sans 3', category: 'sans' },
-  { family: 'Noto Sans', category: 'sans' }, { family: 'Afacad', category: 'sans' },
-  { family: 'Playfair Display', category: 'serif' }, { family: 'Cormorant Garamond', category: 'serif' },
-  { family: 'Bodoni Moda', category: 'serif' }, { family: 'Libre Baskerville', category: 'serif' },
-  { family: 'Lora', category: 'serif' }, { family: 'Spectral', category: 'serif' },
-  { family: 'Fraunces', category: 'serif' }, { family: 'DM Serif Display', category: 'serif' },
-  { family: 'Prata', category: 'serif' }, { family: 'Cinzel', category: 'serif' },
-  { family: 'EB Garamond', category: 'serif' }, { family: 'Cardo', category: 'serif' },
-  { family: 'Merriweather', category: 'serif' }, { family: 'Noto Serif', category: 'serif' },
-  { family: 'Noto Serif Display', category: 'serif' }, { family: 'Gloock', category: 'serif' },
-  { family: 'Bebas Neue', category: 'display' }, { family: 'Anton', category: 'display' },
-  { family: 'Bungee', category: 'display' }, { family: 'Black Ops One', category: 'display' },
-  { family: 'Bowlby One SC', category: 'display' }, { family: 'Climate Crisis', category: 'display' },
-  { family: 'Fascinate', category: 'display' }, { family: 'Fjalla One', category: 'display' },
-  { family: 'Graduate', category: 'display' }, { family: 'Limelight', category: 'display' },
-  { family: 'Monoton', category: 'display' }, { family: 'Righteous', category: 'display' },
-  { family: 'Russo One', category: 'display' }, { family: 'Syne', category: 'display' },
-  { family: 'Unbounded', category: 'display' }, { family: 'Yeseva One', category: 'display' },
-  { family: 'Alfa Slab One', category: 'display' }, { family: 'Abril Fatface', category: 'display' },
-  { family: 'IBM Plex Mono', category: 'mono' }, { family: 'JetBrains Mono', category: 'mono' },
-  { family: 'Space Mono', category: 'mono' }, { family: 'Roboto Mono', category: 'mono' },
-  { family: 'Source Code Pro', category: 'mono' }, { family: 'VT323', category: 'mono' },
-  { family: 'Share Tech Mono', category: 'mono' }, { family: 'Azeret Mono', category: 'mono' },
-  { family: 'Caveat', category: 'hand' }, { family: 'Patrick Hand', category: 'hand' },
-  { family: 'Permanent Marker', category: 'hand' }, { family: 'Rock Salt', category: 'hand' },
-  { family: 'Kalam', category: 'hand' }, { family: 'Indie Flower', category: 'hand' },
-  { family: 'Gloria Hallelujah', category: 'hand' }, { family: 'Architects Daughter', category: 'hand' },
-  { family: 'Shadows Into Light', category: 'hand' }, { family: 'Schoolbell', category: 'hand' },
-  { family: 'Fredoka', category: 'playful' }, { family: 'Baloo 2', category: 'playful' },
-  { family: 'Bubblegum Sans', category: 'playful' }, { family: 'Chewy', category: 'playful' },
-  { family: 'Lilita One', category: 'playful' }, { family: 'Modak', category: 'playful' },
-  { family: 'Titan One', category: 'playful' }, { family: 'Coiny', category: 'playful' },
-  { family: 'DynaPuff', category: 'playful' }, { family: 'Roboto Condensed', category: 'condensed' },
-  { family: 'Archivo Narrow', category: 'condensed' }, { family: 'Barlow Condensed', category: 'condensed' },
-  { family: 'Oswald', category: 'condensed' }, { family: 'Teko', category: 'condensed' },
-  { family: 'Yanone Kaffeesatz', category: 'condensed' }
-];
+const FONT_LIBRARY = designCatalog.fonts.items
+  .filter(font => font.availability === 'free')
+  .map(({ family, category }) => ({ family, category }));
 
 const HEADLINE_SCALES = ['micro', 'small', 'medium', 'large', 'huge', 'extreme'];
 const BODY_SCALES = ['micro', 'small', 'normal', 'large'];
