@@ -394,33 +394,44 @@
         <fieldset class="editor-group editor-advanced-typography">
           <legend>Advanced typography</legend>
           <div class="editor-typography-target-list" id="editor-typography-target-list" data-editor-parameter="advancedTypography">
-            <button type="button" data-typography-target="title" popovertarget="editor-typography-popover">
+            <button type="button" data-typography-target="title">
               <strong>Title</strong>
               <small class="editor-typography-target-summary">Display font</small>
               <span aria-hidden="true">›</span>
             </button>
-            <button type="button" data-typography-target="subtitle" popovertarget="editor-typography-popover">
+            <button type="button" data-typography-target="subtitle">
               <strong>Subtitle</strong>
               <small class="editor-typography-target-summary">Accent font</small>
               <span aria-hidden="true">›</span>
             </button>
-            <button type="button" data-typography-target="body" popovertarget="editor-typography-popover">
+            <button type="button" data-typography-target="body">
               <strong>Body</strong>
               <small class="editor-typography-target-summary">Body font</small>
               <span aria-hidden="true">›</span>
             </button>
           </div>
 
-          <div class="editor-typography-popover" id="editor-typography-popover" popover="auto">
+          <div class="editor-typography-cascade" id="editor-typography-cascade" hidden>
             <header>
+              <button class="editor-typography-back" id="editor-typography-back" type="button">‹ Advanced typography</button>
               <div>
                 <small>Advanced typography</small>
-                <strong id="editor-typography-popover-title">Title</strong>
+                <strong id="editor-typography-cascade-title">Title</strong>
               </div>
-              <button type="button" popovertarget="editor-typography-popover" popovertargetaction="hide" aria-label="Close typography settings">×</button>
             </header>
-            <div class="editor-typography-popover-scroll">
-              <div class="editor-range editor-font-family-control">
+
+            <div class="editor-typography-setting-list" id="editor-typography-setting-list">
+              <button type="button" data-typography-setting="fontFamily"><strong>Font family</strong><small></small><span>›</span></button>
+              <button type="button" data-typography-setting="fontWeight"><strong>Font weight</strong><small></small><span>›</span></button>
+              <button type="button" data-typography-setting="fontTracking"><strong>Letter spacing</strong><small></small><span>›</span></button>
+              <button type="button" data-typography-setting="fontLineHeight"><strong>Line height</strong><small></small><span>›</span></button>
+              <button type="button" data-typography-setting="fontItalic"><strong>Italic</strong><small></small><span>›</span></button>
+              <button type="button" data-typography-setting="fontUnderline"><strong>Underline</strong><small></small><span>›</span></button>
+              <button type="button" data-typography-setting="fontUppercase"><strong>Uppercase</strong><small></small><span>›</span></button>
+            </div>
+
+            <div class="editor-typography-setting-editor" id="editor-typography-setting-editor" hidden>
+              <div class="editor-range editor-font-family-control" data-typography-control="fontFamily">
                 <span>Font family</span>
                 <select id="editor-font-family" aria-label="Font family">
                   <option value="DM Sans">DM Sans</option>
@@ -432,7 +443,7 @@
                 <small id="editor-font-recommendations">Style recommendations appear here.</small>
                 <datalist id="editor-font-family-marks"></datalist>
               </div>
-              <div class="editor-range editor-font-weight-control">
+              <div class="editor-range editor-font-weight-control" data-typography-control="fontWeight">
                 <span>Font weight</span>
                 <select id="editor-font-weight" aria-label="Font weight">
                   <option value="100">Super light</option>
@@ -446,19 +457,17 @@
                   <option value="900">Super bold</option>
                 </select>
               </div>
-              <label class="editor-range">
+              <label class="editor-range" data-typography-control="fontTracking">
                 <span>Letter spacing <output id="editor-font-tracking-output">0</output>%</span>
                 <input id="editor-font-tracking" type="range" min="-10" max="20" value="0">
               </label>
-              <label class="editor-range">
+              <label class="editor-range" data-typography-control="fontLineHeight">
                 <span>Line height <output id="editor-font-line-height-output">120</output>%</span>
                 <input id="editor-font-line-height" type="range" min="60" max="180" value="120" step="5">
               </label>
-              <div class="editor-advanced-toggles">
-                <label><input id="editor-font-italic" type="checkbox"><span>Italic</span></label>
-                <label><input id="editor-font-underline" type="checkbox"><span>Underline</span></label>
-                <label><input id="editor-font-uppercase" type="checkbox"><span>Uppercase</span></label>
-              </div>
+              <label class="editor-typography-toggle" data-typography-control="fontItalic"><span>Italic</span><input id="editor-font-italic" type="checkbox"></label>
+              <label class="editor-typography-toggle" data-typography-control="fontUnderline"><span>Underline</span><input id="editor-font-underline" type="checkbox"></label>
+              <label class="editor-typography-toggle" data-typography-control="fontUppercase"><span>Uppercase</span><input id="editor-font-uppercase" type="checkbox"></label>
             </div>
           </div>
         </fieldset>

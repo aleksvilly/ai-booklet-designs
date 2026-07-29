@@ -2016,12 +2016,20 @@ footer a { text-underline-offset: 3px; }
   line-height: 1.45;
 }
 
-.editor-typography-target-list {
+#editor-typography-target-list[hidden],
+#editor-typography-cascade[hidden],
+#editor-typography-setting-list[hidden],
+#editor-typography-setting-editor[hidden],
+[data-typography-control][hidden] { display: none !important; }
+
+.editor-typography-target-list,
+.editor-typography-setting-list {
   display: grid;
   gap: 7px;
 }
 
-.editor-typography-target-list button {
+.editor-typography-target-list button,
+.editor-typography-setting-list button {
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr) auto;
   align-items: center;
@@ -2037,13 +2045,16 @@ footer a { text-underline-offset: 3px; }
 }
 
 .editor-typography-target-list button:hover,
-.editor-typography-target-list button[aria-pressed="true"] {
+.editor-typography-target-list button[aria-pressed="true"],
+.editor-typography-setting-list button:hover {
   background: var(--ink);
   color: var(--paper);
 }
 
-.editor-typography-target-list button strong { font-size: 12px; }
-.editor-typography-target-list button small {
+.editor-typography-target-list button strong,
+.editor-typography-setting-list button strong { font-size: 12px; }
+.editor-typography-target-list button small,
+.editor-typography-setting-list button small {
   overflow: hidden;
   color: inherit;
   font: 500 9px/1.25 "IBM Plex Mono", monospace;
@@ -2051,85 +2062,64 @@ footer a { text-underline-offset: 3px; }
   white-space: nowrap;
   opacity: .72;
 }
-.editor-typography-target-list button > span { font-size: 20px; }
+.editor-typography-target-list button > span,
+.editor-typography-setting-list button > span { font-size: 20px; }
 
-.editor-typography-popover {
-  position: fixed;
-  inset: 0;
-  width: min(430px, calc(100vw - 24px));
-  max-height: min(720px, calc(100dvh - 24px));
-  margin: auto;
-  overflow: hidden;
-  padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--paper);
-  color: var(--ink);
-  box-shadow: 0 28px 90px rgba(0, 0, 0, .38);
+.editor-typography-cascade {
+  display: grid;
+  gap: 10px;
+  min-height: 0;
 }
 
-.editor-typography-popover::backdrop {
-  background: rgba(10, 10, 9, .48);
-  backdrop-filter: blur(4px);
-}
-
-.editor-typography-popover > header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 15px 18px;
+.editor-typography-cascade > header {
+  display: grid;
+  gap: 9px;
+  padding-bottom: 9px;
   border-bottom: 1px solid var(--line);
 }
 
-.editor-typography-popover > header div { display: grid; gap: 3px; }
-.editor-typography-popover > header small {
+.editor-typography-back {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--muted);
+  font: 600 10px/1.2 "IBM Plex Mono", monospace;
+  cursor: pointer;
+}
+
+.editor-typography-cascade > header div { display: grid; gap: 3px; }
+.editor-typography-cascade > header small {
   font: 500 8px/1.2 "IBM Plex Mono", monospace;
   text-transform: uppercase;
   letter-spacing: .1em;
   opacity: .62;
 }
-.editor-typography-popover > header strong { font-size: 20px; }
-.editor-typography-popover > header button {
-  width: 32px;
-  height: 32px;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  background: transparent;
-  color: inherit;
-  font-size: 21px;
-  cursor: pointer;
-}
+.editor-typography-cascade > header strong { font-size: 18px; }
 
-.editor-typography-popover-scroll {
+.editor-typography-setting-list,
+.editor-typography-setting-editor {
   display: grid;
-  gap: 17px;
-  max-height: min(620px, calc(100dvh - 92px));
+  gap: 12px;
+  min-height: 0;
   overflow-y: auto;
-  padding: 18px;
 }
 
-.editor-advanced-toggles {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 7px;
-}
-
-.editor-advanced-toggles label {
+.editor-typography-toggle {
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 6px;
-  min-height: 34px;
-  padding: 5px 7px;
+  min-height: 44px;
+  padding: 8px 10px;
   border: 1px solid var(--line);
-  font-size: 11px;
+  font-size: 12px;
   cursor: pointer;
 }
 
-.editor-advanced-toggles input {
-  width: 15px;
-  height: 15px;
+.editor-typography-toggle input {
+  width: 18px;
+  height: 18px;
   margin: 0;
   accent-color: var(--ink);
 }
@@ -2404,10 +2394,36 @@ footer a { text-underline-offset: 3px; }
 .booklet-editor.editor-compact:has(.editor-advanced-typography.editor-group-active) .booklet-editor-scroll {
   padding-block: 6px;
 }
+.booklet-editor.editor-compact .editor-advanced-typography.editor-group-active {
+  height: 100%;
+  overflow: hidden;
+}
 .booklet-editor.editor-compact .editor-typography-target-list.editor-parameter-active {
   place-items: stretch;
   gap: 6px;
   width: 100%;
+}
+.booklet-editor.editor-compact .editor-typography-target-list button {
+  min-height: 38px;
+  padding-block: 4px;
+}
+.booklet-editor.editor-compact .editor-typography-cascade {
+  grid-template-rows: auto minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+}
+.booklet-editor.editor-compact .editor-typography-cascade > header {
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 9px;
+  padding-bottom: 6px;
+}
+.booklet-editor.editor-compact .editor-typography-cascade > header small { display: none; }
+.booklet-editor.editor-compact .editor-typography-cascade > header strong { font-size: 14px; }
+.booklet-editor.editor-compact .editor-typography-setting-list,
+.booklet-editor.editor-compact .editor-typography-setting-editor {
+  max-height: 100%;
+  overflow-y: auto;
 }
 .booklet-editor.editor-compact .editor-visibility label.editor-parameter-active {
   display: flex !important;

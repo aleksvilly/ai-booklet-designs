@@ -8,6 +8,8 @@ let editorSession = null;
 let editorSaveTimer = null;
 let editorParameterIndex = 0;
 let editorTypographyTarget = 'title';
+let editorTypographyLevel = 'targets';
+let editorTypographySetting = null;
 let editorCompactMode = localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === null
   ? window.matchMedia('(max-width: 900px)').matches
   : localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === 'true';
@@ -56,8 +58,11 @@ function getEditorControls() {
     editorFontUnderline: document.querySelector('#editor-font-underline'),
     editorFontUppercase: document.querySelector('#editor-font-uppercase'),
     editorTypographyTargetList: document.querySelector('#editor-typography-target-list'),
-    editorTypographyPopover: document.querySelector('#editor-typography-popover'),
-    editorTypographyPopoverTitle: document.querySelector('#editor-typography-popover-title'),
+    editorTypographyCascade: document.querySelector('#editor-typography-cascade'),
+    editorTypographyBack: document.querySelector('#editor-typography-back'),
+    editorTypographyCascadeTitle: document.querySelector('#editor-typography-cascade-title'),
+    editorTypographySettingList: document.querySelector('#editor-typography-setting-list'),
+    editorTypographySettingEditor: document.querySelector('#editor-typography-setting-editor'),
     editorSpacing: document.querySelector('#editor-spacing'),
     editorEffectLevel: document.querySelector('#editor-effect-level'),
     editorShowTitle: document.querySelector('#editor-show-title'),
@@ -194,6 +199,34 @@ function syncEditorFontRecommendations() {
   }
 }
 
+const editorTypographySettings = [
+  { id: 'fontFamily', label: 'Font family' },
+  { id: 'fontWeight', label: 'Font weight' },
+  { id: 'fontTracking', label: 'Letter spacing' },
+  { id: 'fontLineHeight', label: 'Line height' },
+  { id: 'fontItalic', label: 'Italic' },
+  { id: 'fontUnderline', label: 'Underline' },
+  { id: 'fontUppercase', label: 'Uppercase' }
+];
+
+function editorTypographySettingValue(settingId, get, target, controls) {
+  if (settingId === 'fontFamily') return get(target.familyKey);
+  if (settingId === 'fontWeight') {
+    const weight = String(get(`${target.prefix}FontWeight`));
+    const label = [...(controls.editorFontWeight?.options || [])]
+      .find(option => option.value === weight)?.textContent;
+    return label ? `${label} · ${weight}` : weight;
+  }
+  if (settingId === 'fontTracking') return `${get(`${target.prefix}FontTracking`)}%`;
+  if (settingId === 'fontLineHeight') return `${get(`${target.prefix}FontLineHeight`)}%`;
+  const suffix = settingId === 'fontItalic'
+    ? 'FontItalic'
+    : settingId === 'fontUnderline'
+      ? 'FontUnderline'
+      : 'FontUppercase';
+  return get(`${target.prefix}${suffix}`) ? 'On' : 'Off';
+}
+
 function syncEditorTypographyTargets(get, controls = getEditorControls()) {
   editorFontTargets(controls).forEach(target => {
     const family = get(target.familyKey);
@@ -210,8 +243,40 @@ function syncEditorTypographyTargets(get, controls = getEditorControls()) {
   });
 
   const activeTarget = activeEditorFontTarget(controls);
-  if (controls.editorTypographyPopoverTitle) {
-    controls.editorTypographyPopoverTitle.textContent = activeTarget?.label || 'Typography';
+  editorTypographySettings.forEach(setting => {
+    const button = controls.editorTypographySettingList
+      ?.querySelector(`[data-typography-setting="${setting.id}"]`);
+    const summary = button?.querySelector('small');
+    if (summary && activeTarget) {
+      summary.textContent = editorTypographySettingValue(setting.id, get, activeTarget, controls);
+    }
+  });
+
+  const activeSetting = editorTypographySettings.find(setting => setting.id === editorTypographySetting);
+  if (controls.editorTypographyCascadeTitle) {
+    controls.editorTypographyCascadeTitle.textContent = editorTypographyLevel === 'control'
+      ? activeSetting?.label || 'Typography'
+      : activeTarget?.label || 'Typography';
+  }
+  if (controls.editorTypographyBack) {
+    controls.editorTypographyBack.textContent = editorTypographyLevel === 'control'
+      ? `‹ ${activeTarget?.label || 'Typography'}`
+      : '‹ Advanced typography';
+  }
+  if (controls.editorTypographyTargetList) {
+    controls.editorTypographyTargetList.hidden = editorTypographyLevel !== 'targets';
+  }
+  if (controls.editorTypographyCascade) {
+    controls.editorTypographyCascade.hidden = editorTypographyLevel === 'targets';
+  }
+  if (controls.editorTypographySettingList) {
+    controls.editorTypographySettingList.hidden = editorTypographyLevel !== 'settings';
+  }
+  if (controls.editorTypographySettingEditor) {
+    controls.editorTypographySettingEditor.hidden = editorTypographyLevel !== 'control';
+    controls.editorTypographySettingEditor.querySelectorAll('[data-typography-control]').forEach(control => {
+      control.hidden = control.dataset.typographyControl !== editorTypographySetting;
+    });
   }
 }
 
@@ -830,7 +895,7 @@ export function setEditorCompactMode(compact, persist = true) {
 export function moveEditorParameter(direction) {
   const available = availableEditorParameters();
   if (!available.length) return;
-  hideEditorTypographyPopover();
+  resetEditorTypographyCascade();
   editorParameterIndex = (editorParameterIndex + direction + available.length) % available.length;
   updateEditorCompactParameter();
 }
@@ -953,21 +1018,21 @@ export function openBookletEditor() {
   syncBookletEditorControls();
 }
 
-function hideEditorTypographyPopover() {
-  const { editorTypographyPopover } = getEditorControls();
-  if (typeof editorTypographyPopover?.hidePopover !== 'function') return;
-  try {
-    editorTypographyPopover.hidePopover();
-  } catch {
-    // The popover is already closed.
-  }
+function resetEditorTypographyCascade() {
+  const controls = getEditorControls();
+  editorTypographyLevel = 'targets';
+  editorTypographySetting = null;
+  if (controls.editorTypographyTargetList) controls.editorTypographyTargetList.hidden = false;
+  if (controls.editorTypographyCascade) controls.editorTypographyCascade.hidden = true;
+  if (controls.editorTypographySettingList) controls.editorTypographySettingList.hidden = false;
+  if (controls.editorTypographySettingEditor) controls.editorTypographySettingEditor.hidden = true;
 }
 
 export function closeBookletEditor() {
   const { bookletEditor, dialog } = getEditorControls();
   if (!bookletEditor || !dialog) return;
 
-  hideEditorTypographyPopover();
+  resetEditorTypographyCascade();
   bookletEditor.hidden = true;
   dialog.classList.remove('editor-is-open');
   dialog.classList.remove('editor-compact-open');
@@ -978,6 +1043,7 @@ export function initializeBookletEditor(item) {
   const controls = getEditorControls();
   const pages = pagesFor(item);
   editorTypographyTarget = 'title';
+  resetEditorTypographyCascade();
 
   editorSession = {
     item,
@@ -1068,8 +1134,27 @@ export function setupEditorEventListeners() {
   editorFontTargets(controls).forEach(target => {
     target.button?.addEventListener('click', () => {
       editorTypographyTarget = target.prefix;
+      editorTypographyLevel = 'settings';
+      editorTypographySetting = null;
       syncBookletEditorControls();
     });
+  });
+  controls.editorTypographySettingList?.querySelectorAll('[data-typography-setting]').forEach(button => {
+    button.addEventListener('click', () => {
+      editorTypographySetting = button.dataset.typographySetting;
+      editorTypographyLevel = 'control';
+      syncBookletEditorControls();
+    });
+  });
+  controls.editorTypographyBack?.addEventListener('click', () => {
+    if (editorTypographyLevel === 'control') {
+      editorTypographyLevel = 'settings';
+      editorTypographySetting = null;
+      syncBookletEditorControls();
+      return;
+    }
+    resetEditorTypographyCascade();
+    syncBookletEditorControls();
   });
 
   [
