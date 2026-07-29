@@ -2006,7 +2006,15 @@ footer a { text-underline-offset: 3px; }
 
 .editor-font-family-control .style-slider-output,
 .editor-font-weight-control .style-slider-output {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  margin-top: 0;
+  padding: 0 7px;
   overflow: hidden;
+  box-sizing: border-box;
+  font-size: 11px;
+  line-height: 1;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
