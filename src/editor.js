@@ -10,6 +10,7 @@ let editorParameterIndex = 0;
 let editorTypographyTarget = 'title';
 let editorTypographyLevel = 'targets';
 let editorTypographySetting = null;
+let editorParameterMenuOpen = false;
 let editorCompactMode = localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === null
   ? window.matchMedia('(max-width: 900px)').matches
   : localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === 'true';
@@ -35,6 +36,8 @@ function getEditorControls() {
     bookletEditorMode: document.querySelector('#booklet-editor-mode'),
     editorParameterPrevious: document.querySelector('#editor-parameter-previous'),
     editorParameterNext: document.querySelector('#editor-parameter-next'),
+    editorParameterMenu: document.querySelector('#editor-parameter-menu'),
+    editorParameterMenuToggle: document.querySelector('#editor-parameter-menu-toggle'),
     editorParameterLabel: document.querySelector('#editor-parameter-label'),
     editorParameterValue: document.querySelector('#editor-parameter-value'),
     editorScope: document.querySelector('#editor-scope'),
@@ -68,6 +71,11 @@ function getEditorControls() {
     editorShowTitle: document.querySelector('#editor-show-title'),
     editorShowSubtitle: document.querySelector('#editor-show-subtitle'),
     editorShowBody: document.querySelector('#editor-show-body'),
+    editorShowCaption: document.querySelector('#editor-show-caption'),
+    editorShowPageNumber: document.querySelector('#editor-show-page-number'),
+    editorShowSource: document.querySelector('#editor-show-source'),
+    editorShowImageCaptions: document.querySelector('#editor-show-image-captions'),
+    editorVisibilityOptions: document.querySelector('.editor-visibility-options'),
     editorLayoutOutput: document.querySelector('#editor-layout-output'),
     editorImageOutput: document.querySelector('#editor-image-output'),
     editorTextOutput: document.querySelector('#editor-text-output'),
@@ -275,7 +283,7 @@ export function availableEditorParameters() {
     editorScope, editorProfile, editorVisualMode, editorLayoutComplexity,
     editorImageCount, editorTextAmount, editorContentPosition, editorFontScale,
     editorTypographyTargetList,
-    editorSpacing, editorEffectLevel, editorShowTitle, editorShowSubtitle, editorShowBody,
+    editorSpacing, editorEffectLevel, editorVisibilityOptions,
     editorPhotoLayout, editorPhotoLayoutVariant
   } = getEditorControls();
 
@@ -292,9 +300,7 @@ export function availableEditorParameters() {
     { key: 'advancedTypography', label: 'Advanced typography', control: editorTypographyTargetList },
     { key: 'spacing', label: 'Page spacing', control: editorSpacing },
     { key: 'effectLevel', label: 'Effects intensity', control: editorEffectLevel },
-    { key: 'showTitle', label: 'Show title', control: editorShowTitle },
-    { key: 'showSubtitle', label: 'Show subtitle / caption', control: editorShowSubtitle },
-    { key: 'showBody', label: 'Show main text', control: editorShowBody }
+    { key: 'visibleContent', label: 'Text visibility', control: editorVisibilityOptions }
   ];
 
   return editorScope?.value === 'booklet'
@@ -415,8 +421,12 @@ export function originalEditorSettings(item, page) {
     spacing: 3,
     effectLevel: Math.max(0, Math.min(5, Number(dna.effectLevel ?? 2))),
     showTitle: Boolean(page.title),
-    showSubtitle: Boolean(page.caption || page.module || page.type),
-    showBody: Boolean(page.body)
+    showSubtitle: Boolean(page.module || page.type),
+    showBody: Boolean(page.body),
+    showCaption: Boolean(page.caption),
+    showPageNumber: true,
+    showSource: Boolean(page.source?.url),
+    showImageCaptions: imagesForPage(page).length > 0
   };
 }
 
@@ -536,7 +546,11 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     effectLevel: resolvedEditorSetting('effectLevel', pageIndex),
     showTitle: resolvedEditorSetting('showTitle', pageIndex),
     showSubtitle: resolvedEditorSetting('showSubtitle', pageIndex),
-    showBody: resolvedEditorSetting('showBody', pageIndex)
+    showBody: resolvedEditorSetting('showBody', pageIndex),
+    showCaption: resolvedEditorSetting('showCaption', pageIndex),
+    showPageNumber: resolvedEditorSetting('showPageNumber', pageIndex),
+    showSource: resolvedEditorSetting('showSource', pageIndex),
+    showImageCaptions: resolvedEditorSetting('showImageCaptions', pageIndex)
   };
 
   // Media must be rendered before layout variables are applied: changing the
@@ -773,6 +787,8 @@ export function applyEditorPage(pageNode, page, pageIndex) {
   const subtitle = pageNode.querySelector('.book-page-type');
   const caption = pageNode.querySelector('.page-caption');
   const body = pageNode.querySelector('.page-body');
+  const pageNumber = pageNode.querySelector('.book-page-number');
+  const source = pageNode.querySelector('.page-source');
   if (title) {
     if (hasEditorOverride('titleFont', pageIndex)) {
       loadEditorFont(values.titleFont);
@@ -799,7 +815,12 @@ export function applyEditorPage(pageNode, page, pageIndex) {
   }
   if (title) title.hidden = !values.showTitle;
   if (subtitle) subtitle.hidden = !values.showSubtitle;
-  if (caption) caption.hidden = !values.showSubtitle;
+  if (caption) caption.hidden = !values.showCaption;
+  if (pageNumber) pageNumber.hidden = !values.showPageNumber;
+  if (source) source.hidden = !values.showSource;
+  pageNode.querySelectorAll('.page-image figcaption, .gallery-image figcaption').forEach(node => {
+    node.hidden = !values.showImageCaptions;
+  });
   if (body) {
     body.hidden = !values.showBody;
     body.textContent = hasEditorOverride('textAmount', pageIndex)
@@ -840,6 +861,10 @@ export function editorParameterValueText(parameter) {
   const control = parameter.control;
   if (!control) return '';
   if (parameter.key === 'advancedTypography') return 'Title · Subtitle · Body';
+  if (parameter.key === 'visibleContent') {
+    const toggles = [...control.querySelectorAll('input[type="checkbox"]')];
+    return `${toggles.filter(toggle => toggle.checked).length} / ${toggles.length} shown`;
+  }
   if (control.type === 'checkbox') return control.checked ? 'On' : 'Off';
   if (control.tagName === 'SELECT') return control.selectedOptions[0]?.textContent?.trim() || control.value;
   if (parameter.key === 'fontTracking' || parameter.key === 'fontLineHeight') return `${control.value}%`;
@@ -847,7 +872,48 @@ export function editorParameterValueText(parameter) {
   return control.value;
 }
 
-export function updateEditorCompactParameter() {
+function renderEditorParameterMenu() {
+  const { editorParameterMenu, editorParameterMenuToggle } = getEditorControls();
+  if (!editorParameterMenu) return;
+
+  const available = availableEditorParameters();
+  const fragment = document.createDocumentFragment();
+  available.forEach((parameter, index) => {
+    const button = document.createElement('button');
+    const label = document.createElement('strong');
+    const value = document.createElement('span');
+    const arrow = document.createElement('i');
+
+    button.type = 'button';
+    button.dataset.editorParameterKey = parameter.key;
+    button.classList.toggle('is-active', index === editorParameterIndex);
+    label.textContent = parameter.label;
+    value.textContent = editorParameterValueText(parameter);
+    arrow.textContent = '→';
+    arrow.setAttribute('aria-hidden', 'true');
+    button.append(label, value, arrow);
+    fragment.append(button);
+  });
+
+  editorParameterMenu.replaceChildren(fragment);
+  editorParameterMenu.setAttribute('aria-hidden', String(!editorParameterMenuOpen));
+  if (editorParameterMenuToggle) {
+    editorParameterMenuToggle.setAttribute('aria-expanded', String(editorParameterMenuOpen));
+  }
+}
+
+function setEditorParameterMenu(open) {
+  const { bookletEditor, editorParameterMenu, editorParameterMenuToggle } = getEditorControls();
+  if (!bookletEditor) return;
+
+  const mobileCompact = editorCompactMode && window.matchMedia('(max-width: 700px)').matches;
+  editorParameterMenuOpen = Boolean(open && mobileCompact);
+  bookletEditor.classList.toggle('editor-parameter-menu-open', editorParameterMenuOpen);
+  editorParameterMenu?.setAttribute('aria-hidden', String(!editorParameterMenuOpen));
+  editorParameterMenuToggle?.setAttribute('aria-expanded', String(editorParameterMenuOpen));
+}
+
+export function updateEditorCompactParameter(renderMenu = true) {
   const { bookletEditor, editorParameterLabel, editorParameterValue, bookletEditorMode } = getEditorControls();
   if (!bookletEditor) return;
 
@@ -869,6 +935,7 @@ export function updateEditorCompactParameter() {
     bookletEditorMode.textContent = editorCompactMode ? 'Full' : 'Mini';
     bookletEditorMode.setAttribute('aria-pressed', String(editorCompactMode));
   }
+  if (renderMenu) renderEditorParameterMenu();
 }
 
 export function setEditorCompactMode(compact, persist = true) {
@@ -876,6 +943,7 @@ export function setEditorCompactMode(compact, persist = true) {
   if (!bookletEditor || !dialog) return;
 
   editorCompactMode = Boolean(compact);
+  setEditorParameterMenu(false);
   bookletEditor.classList.toggle('editor-compact', editorCompactMode);
   dialog.classList.toggle('editor-compact-open', editorCompactMode && !bookletEditor.hidden);
   if (persist) localStorage.setItem(EDITOR_COMPACT_STORAGE_KEY, String(editorCompactMode));
@@ -885,6 +953,7 @@ export function setEditorCompactMode(compact, persist = true) {
 export function moveEditorParameter(direction) {
   const available = availableEditorParameters();
   if (!available.length) return;
+  setEditorParameterMenu(false);
   resetEditorTypographyCascade();
   editorParameterIndex = (editorParameterIndex + direction + available.length) % available.length;
   updateEditorCompactParameter();
@@ -938,6 +1007,10 @@ export function syncBookletEditorControls() {
   if (controls.editorShowTitle) controls.editorShowTitle.checked = Boolean(get('showTitle'));
   if (controls.editorShowSubtitle) controls.editorShowSubtitle.checked = Boolean(get('showSubtitle'));
   if (controls.editorShowBody) controls.editorShowBody.checked = Boolean(get('showBody'));
+  if (controls.editorShowCaption) controls.editorShowCaption.checked = Boolean(get('showCaption'));
+  if (controls.editorShowPageNumber) controls.editorShowPageNumber.checked = Boolean(get('showPageNumber'));
+  if (controls.editorShowSource) controls.editorShowSource.checked = Boolean(get('showSource'));
+  if (controls.editorShowImageCaptions) controls.editorShowImageCaptions.checked = Boolean(get('showImageCaptions'));
 
   if (controls.editorLayoutOutput && controls.editorLayoutComplexity) controls.editorLayoutOutput.value = controls.editorLayoutComplexity.value;
   if (controls.editorImageOutput && controls.editorImageCount) controls.editorImageOutput.value = controls.editorImageCount.value;
@@ -1026,6 +1099,7 @@ export function closeBookletEditor() {
   if (!bookletEditor || !dialog) return;
 
   resetEditorTypographyCascade();
+  setEditorParameterMenu(false);
   bookletEditor.hidden = true;
   dialog.classList.remove('editor-is-open');
   dialog.classList.remove('editor-compact-open');
@@ -1153,7 +1227,11 @@ export function setupEditorEventListeners() {
   [
     [controls.editorShowTitle, 'showTitle'],
     [controls.editorShowSubtitle, 'showSubtitle'],
-    [controls.editorShowBody, 'showBody']
+    [controls.editorShowBody, 'showBody'],
+    [controls.editorShowCaption, 'showCaption'],
+    [controls.editorShowPageNumber, 'showPageNumber'],
+    [controls.editorShowSource, 'showSource'],
+    [controls.editorShowImageCaptions, 'showImageCaptions']
   ].forEach(([control, key]) => {
     control?.addEventListener('change', () => setEditorValue(key, control.checked));
   });
@@ -1168,6 +1246,37 @@ export function setupEditorEventListeners() {
   controls.bookletEditorMode?.addEventListener('click', () => setEditorCompactMode(!editorCompactMode));
   controls.editorParameterPrevious?.addEventListener('click', () => moveEditorParameter(-1));
   controls.editorParameterNext?.addEventListener('click', () => moveEditorParameter(1));
+  controls.editorParameterMenuToggle?.addEventListener('click', () => {
+    if (!editorCompactMode || !window.matchMedia('(max-width: 700px)').matches) return;
+    if (editorParameterMenuOpen) {
+      setEditorParameterMenu(false);
+      return;
+    }
+    renderEditorParameterMenu();
+    requestAnimationFrame(() => setEditorParameterMenu(true));
+  });
+  controls.editorParameterMenu?.addEventListener('click', event => {
+    const button = event.target.closest('[data-editor-parameter-key]');
+    if (!button) return;
+    const available = availableEditorParameters();
+    const index = available.findIndex(parameter => parameter.key === button.dataset.editorParameterKey);
+    if (index < 0) return;
+    controls.editorParameterMenu.querySelectorAll('[data-editor-parameter-key]').forEach(item => {
+      item.classList.toggle('is-active', item === button);
+    });
+    resetEditorTypographyCascade();
+    editorParameterIndex = index;
+    updateEditorCompactParameter(false);
+    setEditorParameterMenu(false);
+  });
+  controls.bookletEditor?.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !editorParameterMenuOpen) return;
+    event.stopPropagation();
+    setEditorParameterMenu(false);
+  });
+  window.matchMedia('(max-width: 700px)').addEventListener('change', event => {
+    if (!event.matches) setEditorParameterMenu(false);
+  });
   controls.dialogEdit?.addEventListener('click', openBookletEditor);
 
   controls.editorResetScope?.addEventListener('click', () => {
