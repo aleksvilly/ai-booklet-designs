@@ -2301,7 +2301,7 @@ footer a { text-underline-offset: 3px; }
   left: 50%;
   width: min(540px, calc(100vw - 20px));
   height: 238px;
-  grid-template-rows: 42px 48px minmax(72px, 1fr) 62px;
+  grid-template-rows: 42px minmax(72px, 1fr) 62px;
   transform: translateX(-50%);
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -2315,6 +2315,8 @@ footer a { text-underline-offset: 3px; }
 }
 
 .booklet-editor.editor-compact .booklet-editor-heading {
+  z-index: 2;
+  grid-row: 1;
   align-items: center;
   min-height: 0;
   padding: 5px 10px 5px 14px;
@@ -2334,30 +2336,55 @@ footer a { text-underline-offset: 3px; }
 }
 
 .booklet-editor.editor-compact .editor-target-card {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  position: relative;
+  z-index: 3;
+  grid-row: 1;
+  justify-self: start;
+  display: block;
   align-items: center;
-  gap: 10px;
-  padding: 6px 12px;
+  width: min(220px, calc(100% - 120px));
+  padding: 6px 0 6px 14px;
+  border: 0;
+  background: transparent;
+  pointer-events: none;
 }
 
-.booklet-editor.editor-compact .editor-target-card label { display: block; }
+.booklet-editor.editor-compact .editor-target-card label {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+  pointer-events: auto;
+}
 .booklet-editor.editor-compact .editor-target-card label > span { display: none; }
+.booklet-editor.editor-compact .editor-target-card label::after {
+  content: "⌄";
+  position: absolute;
+  top: 50%;
+  right: 0;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1;
+  pointer-events: none;
+  transform: translateY(-58%);
+}
 .booklet-editor.editor-compact .editor-target-card select {
-  min-height: 34px;
-  padding-inline: 9px 28px;
-  font-size: 12px;
+  width: auto;
+  max-width: 100%;
+  min-height: 30px;
+  padding: 0 20px 0 0;
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: 600 12px/1 "DM Sans", sans-serif;
+  cursor: pointer;
 }
 .booklet-editor.editor-compact .editor-target-card p {
-  max-width: 165px;
-  margin: 0;
-  overflow: hidden;
-  font-size: 10px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  display: none;
 }
 
 .booklet-editor.editor-compact .booklet-editor-scroll {
+  grid-row: 2;
   display: grid;
   place-items: center;
   overflow: hidden;
@@ -2460,6 +2487,7 @@ footer a { text-underline-offset: 3px; }
 }
 
 .booklet-editor.editor-compact .editor-mini-navigation {
+  grid-row: 3;
   display: grid;
   grid-template-columns: 58px minmax(0, 1fr) 58px;
   align-items: stretch;
