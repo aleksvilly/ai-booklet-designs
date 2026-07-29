@@ -251,9 +251,7 @@ function syncEditorTypographyTargets(get, controls = getEditorControls()) {
       : activeTarget?.label || 'Typography';
   }
   if (controls.editorTypographyBack) {
-    controls.editorTypographyBack.textContent = editorTypographyLevel === 'control'
-      ? `‹ ${activeTarget?.label || 'Typography'}`
-      : '‹ Advanced typography';
+    controls.editorTypographyBack.textContent = `‹ ${activeTarget?.label || 'Typography'}`;
   }
   if (controls.editorTypographyTargetList) {
     controls.editorTypographyTargetList.hidden = editorTypographyLevel !== 'targets';
