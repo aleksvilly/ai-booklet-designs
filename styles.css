@@ -717,10 +717,10 @@ footer a { text-underline-offset: 3px; }
 .page-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .book-page { position: relative; min-height: 430px; overflow: hidden; padding: 28px; border: 1px solid var(--line); background: #fff; isolation: isolate; display: flex; flex-direction: column; justify-content: space-between; word-break: break-word; hyphens: auto; }
 .book-page-number { position: absolute; z-index: 4; top: 20px; right: 22px; font: 500 10px/1 "IBM Plex Mono", monospace; }
-.book-page-copy { position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; max-height: 100%; max-width: 86%; gap: 8px; overflow: hidden; word-break: break-word; }
+.book-page-copy { position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; max-height: 100%; max-width: 86%; gap: 8px; word-break: break-word; }
 .book-page-type { margin: 0 0 6px; font: 500 10px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; flex-shrink: 0; }
-.book-page h4 { margin: 0; font-size: clamp(28px, 4vw, 64px); line-height: .94; letter-spacing: -.04em; word-break: break-word; overflow-wrap: break-word; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 4; overflow: hidden; }
-.book-page-copy > p:not(.book-page-type) { max-width: 460px; margin: 6px 0 0; line-height: 1.45; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 6; overflow: hidden; }
+.book-page h4 { margin: 0; font-size: clamp(28px, 4vw, 64px); line-height: .94; letter-spacing: -.04em; word-break: break-word; overflow-wrap: break-word; }
+.book-page-copy > p:not(.book-page-type) { max-width: 460px; margin: 6px 0 0; line-height: 1.45; }
 .book-page small { display: block; margin-top: 10px; max-width: 420px; opacity: .72; }
 .page-art { position: absolute; width: 64%; aspect-ratio: 1; right: -22%; top: -16%; border: 34px solid currentColor; border-radius: 50%; opacity: .11; pointer-events: none; }
 .page-image {
@@ -1934,7 +1934,8 @@ footer a { text-underline-offset: 3px; }
 
 .editor-target-card label,
 .editor-group > label:not(.editor-visibility label),
-.editor-group > .editor-font-family-control {
+.editor-group > .editor-font-family-control,
+.editor-group > .editor-font-weight-control {
   display: grid;
   gap: 7px;
 }
@@ -1942,6 +1943,7 @@ footer a { text-underline-offset: 3px; }
 .editor-target-card label > span,
 .editor-group label > span,
 .editor-font-family-control > span,
+.editor-font-weight-control > span,
 .editor-font-targets > span {
   font: 500 9px/1.2 "IBM Plex Mono", monospace;
   text-transform: uppercase;
@@ -2002,7 +2004,8 @@ footer a { text-underline-offset: 3px; }
   text-align: center;
 }
 
-.editor-font-family-control .style-slider-output {
+.editor-font-family-control .style-slider-output,
+.editor-font-weight-control .style-slider-output {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -2039,6 +2042,31 @@ footer a { text-underline-offset: 3px; }
   color: var(--muted);
   font-size: 10px;
   line-height: 1.45;
+}
+
+.editor-advanced-toggles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.editor-advanced-toggles label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 5px 7px;
+  border: 1px solid var(--line);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.editor-advanced-toggles input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: var(--ink);
 }
 
 .editor-visibility {
@@ -2226,7 +2254,7 @@ footer a { text-underline-offset: 3px; }
   transition: height .18s ease;
 }
 
-.booklet-editor.editor-compact:has(.editor-font-family-control.editor-parameter-active) {
+.booklet-editor.editor-compact:has(.editor-advanced-typography.editor-group-active) {
   height: 276px;
   height: min(276px, calc(100dvh - 20px));
 }
@@ -2308,11 +2336,12 @@ footer a { text-underline-offset: 3px; }
   width: min(440px, 100%);
   min-height: 34px;
 }
-.booklet-editor.editor-compact .editor-font-family-control {
+.booklet-editor.editor-compact .editor-font-family-control,
+.booklet-editor.editor-compact .editor-font-weight-control {
   grid-template-columns: 1fr;
   gap: 2px;
 }
-.booklet-editor.editor-compact:has(.editor-font-family-control.editor-parameter-active) .booklet-editor-scroll {
+.booklet-editor.editor-compact:has(.editor-advanced-typography.editor-group-active) .booklet-editor-scroll {
   padding-block: 6px;
 }
 .booklet-editor.editor-compact .editor-font-targets {
@@ -2324,11 +2353,17 @@ footer a { text-underline-offset: 3px; }
   padding: 2px 7px;
 }
 .booklet-editor.editor-compact #editor-font-recommendations { display: none; }
-.booklet-editor.editor-compact .editor-visibility label.editor-parameter-active {
+.booklet-editor.editor-compact .editor-advanced-toggles {
+  display: block;
+  width: 100%;
+}
+.booklet-editor.editor-compact .editor-visibility label.editor-parameter-active,
+.booklet-editor.editor-compact .editor-advanced-toggles label.editor-parameter-active {
   display: flex !important;
   justify-content: center;
 }
-.booklet-editor.editor-compact .editor-visibility input[type="checkbox"] {
+.booklet-editor.editor-compact .editor-visibility input[type="checkbox"],
+.booklet-editor.editor-compact .editor-advanced-toggles input[type="checkbox"] {
   position: relative;
   width: 64px;
   height: 32px;
@@ -2339,7 +2374,8 @@ footer a { text-underline-offset: 3px; }
   cursor: pointer;
   transition: background .18s ease;
 }
-.booklet-editor.editor-compact .editor-visibility input[type="checkbox"]::after {
+.booklet-editor.editor-compact .editor-visibility input[type="checkbox"]::after,
+.booklet-editor.editor-compact .editor-advanced-toggles input[type="checkbox"]::after {
   content: "";
   position: absolute;
   top: 3px;
@@ -2351,10 +2387,12 @@ footer a { text-underline-offset: 3px; }
   box-shadow: 0 2px 8px rgba(0, 0, 0, .2);
   transition: transform .18s ease;
 }
-.booklet-editor.editor-compact .editor-visibility input[type="checkbox"]:checked {
+.booklet-editor.editor-compact .editor-visibility input[type="checkbox"]:checked,
+.booklet-editor.editor-compact .editor-advanced-toggles input[type="checkbox"]:checked {
   background: var(--ink);
 }
-.booklet-editor.editor-compact .editor-visibility input[type="checkbox"]:checked::after {
+.booklet-editor.editor-compact .editor-visibility input[type="checkbox"]:checked::after,
+.booklet-editor.editor-compact .editor-advanced-toggles input[type="checkbox"]:checked::after {
   transform: translateX(32px);
 }
 

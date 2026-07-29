@@ -381,6 +381,24 @@
             <span>Font scale <output id="editor-font-output">3</output> / 5</span>
             <input id="editor-font-scale" type="range" min="1" max="5" value="3">
           </label>
+          <label class="editor-range" data-editor-parameter="spacing">
+            <span>Page spacing <output id="editor-spacing-output">3</output> / 5</span>
+            <input id="editor-spacing" type="range" min="1" max="5" value="3">
+          </label>
+          <label class="editor-range" data-editor-parameter="effectLevel">
+            <span>Effects intensity <output id="editor-effect-output">2</output> / 5</span>
+            <input id="editor-effect-level" type="range" min="0" max="5" value="2">
+          </label>
+        </fieldset>
+
+        <fieldset class="editor-group editor-advanced-typography">
+          <legend>Advanced typography</legend>
+          <div class="editor-font-targets" aria-label="Apply typography to">
+            <span>Apply to</span>
+            <label><input id="editor-font-target-title" type="checkbox" checked>Title</label>
+            <label><input id="editor-font-target-subtitle" type="checkbox" checked>Subtitle</label>
+            <label><input id="editor-font-target-body" type="checkbox" checked>Body</label>
+          </div>
           <div class="editor-range editor-font-family-control" data-editor-parameter="fontFamily">
             <span>Font family</span>
             <select id="editor-font-family" aria-label="Font family">
@@ -390,23 +408,36 @@
               <option value="Bebas Neue">Bebas Neue</option>
               <option value="Playfair Display">Playfair Display</option>
             </select>
-            <div class="editor-font-targets" aria-label="Apply font to">
-              <span>Apply to</span>
-              <label><input id="editor-font-target-title" type="checkbox" checked>Title</label>
-              <label><input id="editor-font-target-subtitle" type="checkbox" checked>Subtitle</label>
-              <label><input id="editor-font-target-body" type="checkbox" checked>Body</label>
-            </div>
             <small id="editor-font-recommendations">Style recommendations appear here.</small>
             <datalist id="editor-font-family-marks"></datalist>
           </div>
-          <label class="editor-range" data-editor-parameter="spacing">
-            <span>Page spacing <output id="editor-spacing-output">3</output> / 5</span>
-            <input id="editor-spacing" type="range" min="1" max="5" value="3">
+          <div class="editor-range editor-font-weight-control" data-editor-parameter="fontWeight">
+            <span>Font weight</span>
+            <select id="editor-font-weight" aria-label="Font weight">
+              <option value="100">Super light</option>
+              <option value="200">Extra light</option>
+              <option value="300">Light</option>
+              <option value="400" selected>Regular</option>
+              <option value="500">Medium</option>
+              <option value="600">Semi bold</option>
+              <option value="700">Bold</option>
+              <option value="800">Extra bold</option>
+              <option value="900">Super bold</option>
+            </select>
+          </div>
+          <label class="editor-range" data-editor-parameter="fontTracking">
+            <span>Letter spacing <output id="editor-font-tracking-output">0</output>%</span>
+            <input id="editor-font-tracking" type="range" min="-10" max="20" value="0">
           </label>
-          <label class="editor-range" data-editor-parameter="effectLevel">
-            <span>Effects intensity <output id="editor-effect-output">2</output> / 5</span>
-            <input id="editor-effect-level" type="range" min="0" max="5" value="2">
+          <label class="editor-range" data-editor-parameter="fontLineHeight">
+            <span>Line height <output id="editor-font-line-height-output">120</output>%</span>
+            <input id="editor-font-line-height" type="range" min="60" max="180" value="120" step="5">
           </label>
+          <div class="editor-advanced-toggles">
+            <label data-editor-parameter="fontItalic"><input id="editor-font-italic" type="checkbox"><span>Italic</span></label>
+            <label data-editor-parameter="fontUnderline"><input id="editor-font-underline" type="checkbox"><span>Underline</span></label>
+            <label data-editor-parameter="fontUppercase"><input id="editor-font-uppercase" type="checkbox"><span>Uppercase</span></label>
+          </div>
         </fieldset>
 
         <fieldset class="editor-group editor-visibility">

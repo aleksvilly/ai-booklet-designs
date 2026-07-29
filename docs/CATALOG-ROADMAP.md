@@ -18,6 +18,8 @@
       brand assets: Nike Athletic Campaign and Amazon Modular Marketplace.
 - [x] Shared font catalog with free/licensed availability, full live-editor
       font slider, Title/Subtitle/Body targets and per-style recommendations.
+- [x] Advanced typography editor for per-target weight, tracking, line height,
+      italic, underline and uppercase overrides.
 
 ## In progress
 
