@@ -7,6 +7,7 @@ import { bindStyleSlider, getGeneratorCatalog } from './catalog.js';
 let editorSession = null;
 let editorSaveTimer = null;
 let editorParameterIndex = 0;
+let editorTypographyTarget = 'title';
 let editorCompactMode = localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === null
   ? window.matchMedia('(max-width: 900px)').matches
   : localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === 'true';
@@ -54,9 +55,9 @@ function getEditorControls() {
     editorFontItalic: document.querySelector('#editor-font-italic'),
     editorFontUnderline: document.querySelector('#editor-font-underline'),
     editorFontUppercase: document.querySelector('#editor-font-uppercase'),
-    editorFontTargetTitle: document.querySelector('#editor-font-target-title'),
-    editorFontTargetSubtitle: document.querySelector('#editor-font-target-subtitle'),
-    editorFontTargetBody: document.querySelector('#editor-font-target-body'),
+    editorTypographyTargetList: document.querySelector('#editor-typography-target-list'),
+    editorTypographyPopover: document.querySelector('#editor-typography-popover'),
+    editorTypographyPopoverTitle: document.querySelector('#editor-typography-popover-title'),
     editorSpacing: document.querySelector('#editor-spacing'),
     editorEffectLevel: document.querySelector('#editor-effect-level'),
     editorShowTitle: document.querySelector('#editor-show-title'),
@@ -84,10 +85,30 @@ function editorFontItems() {
 
 function editorFontTargets(controls = getEditorControls()) {
   return [
-    { prefix: 'title', familyKey: 'titleFont', control: controls.editorFontTargetTitle },
-    { prefix: 'subtitle', familyKey: 'subtitleFont', control: controls.editorFontTargetSubtitle },
-    { prefix: 'body', familyKey: 'bodyFont', control: controls.editorFontTargetBody }
+    {
+      prefix: 'title',
+      label: 'Title',
+      familyKey: 'titleFont',
+      button: controls.editorTypographyTargetList?.querySelector('[data-typography-target="title"]')
+    },
+    {
+      prefix: 'subtitle',
+      label: 'Subtitle',
+      familyKey: 'subtitleFont',
+      button: controls.editorTypographyTargetList?.querySelector('[data-typography-target="subtitle"]')
+    },
+    {
+      prefix: 'body',
+      label: 'Body',
+      familyKey: 'bodyFont',
+      button: controls.editorTypographyTargetList?.querySelector('[data-typography-target="body"]')
+    }
   ];
+}
+
+function activeEditorFontTarget(controls = getEditorControls()) {
+  return editorFontTargets(controls).find(target => target.prefix === editorTypographyTarget)
+    || editorFontTargets(controls)[0];
 }
 
 function loadEditorFont(family) {
@@ -173,12 +194,32 @@ function syncEditorFontRecommendations() {
   }
 }
 
+function syncEditorTypographyTargets(get, controls = getEditorControls()) {
+  editorFontTargets(controls).forEach(target => {
+    const family = get(target.familyKey);
+    const weight = get(`${target.prefix}FontWeight`);
+    const flags = [
+      get(`${target.prefix}FontItalic`) ? 'italic' : '',
+      get(`${target.prefix}FontUnderline`) ? 'underline' : '',
+      get(`${target.prefix}FontUppercase`) ? 'uppercase' : ''
+    ].filter(Boolean);
+    const summary = [family, weight, ...flags].filter(Boolean).join(' · ');
+    const summaryNode = target.button?.querySelector('.editor-typography-target-summary');
+    if (summaryNode) summaryNode.textContent = summary;
+    target.button?.setAttribute('aria-pressed', String(target.prefix === editorTypographyTarget));
+  });
+
+  const activeTarget = activeEditorFontTarget(controls);
+  if (controls.editorTypographyPopoverTitle) {
+    controls.editorTypographyPopoverTitle.textContent = activeTarget?.label || 'Typography';
+  }
+}
+
 export function availableEditorParameters() {
   const {
     editorScope, editorProfile, editorVisualMode, editorLayoutComplexity,
-    editorImageCount, editorTextAmount, editorContentPosition, editorFontScale, editorFontFamily,
-    editorFontWeight, editorFontTracking, editorFontLineHeight,
-    editorFontItalic, editorFontUnderline, editorFontUppercase,
+    editorImageCount, editorTextAmount, editorContentPosition, editorFontScale,
+    editorTypographyTargetList,
     editorSpacing, editorEffectLevel, editorShowTitle, editorShowSubtitle, editorShowBody,
     editorPhotoLayout, editorPhotoLayoutVariant
   } = getEditorControls();
@@ -193,13 +234,7 @@ export function availableEditorParameters() {
     { key: 'textAmount', label: 'Text amount', control: editorTextAmount },
     { key: 'contentPosition', label: 'Content position', control: editorContentPosition },
     { key: 'fontScale', label: 'Font scale', control: editorFontScale },
-    { key: 'fontFamily', label: 'Font family', control: editorFontFamily },
-    { key: 'fontWeight', label: 'Font weight', control: editorFontWeight },
-    { key: 'fontTracking', label: 'Letter spacing', control: editorFontTracking },
-    { key: 'fontLineHeight', label: 'Line height', control: editorFontLineHeight },
-    { key: 'fontItalic', label: 'Italic', control: editorFontItalic },
-    { key: 'fontUnderline', label: 'Underline', control: editorFontUnderline },
-    { key: 'fontUppercase', label: 'Uppercase', control: editorFontUppercase },
+    { key: 'advancedTypography', label: 'Advanced typography', control: editorTypographyTargetList },
     { key: 'spacing', label: 'Page spacing', control: editorSpacing },
     { key: 'effectLevel', label: 'Effects intensity', control: editorEffectLevel },
     { key: 'showTitle', label: 'Show title', control: editorShowTitle },
@@ -749,6 +784,7 @@ export function updateEditorSelection() {
 export function editorParameterValueText(parameter) {
   const control = parameter.control;
   if (!control) return '';
+  if (parameter.key === 'advancedTypography') return 'Title · Subtitle · Body';
   if (control.type === 'checkbox') return control.checked ? 'On' : 'Off';
   if (control.tagName === 'SELECT') return control.selectedOptions[0]?.textContent?.trim() || control.value;
   if (parameter.key === 'fontTracking' || parameter.key === 'fontLineHeight') return `${control.value}%`;
@@ -794,6 +830,7 @@ export function setEditorCompactMode(compact, persist = true) {
 export function moveEditorParameter(direction) {
   const available = availableEditorParameters();
   if (!available.length) return;
+  hideEditorTypographyPopover();
   editorParameterIndex = (editorParameterIndex + direction + available.length) % available.length;
   updateEditorCompactParameter();
 }
@@ -817,8 +854,8 @@ export function syncBookletEditorControls() {
   if (controls.editorContentPosition) controls.editorContentPosition.value = get('contentPosition');
   if (controls.editorTextAmount) controls.editorTextAmount.value = get('textAmount');
   if (controls.editorFontScale) controls.editorFontScale.value = get('fontScale');
-  const activeFontTargets = editorFontTargets(controls).filter(target => target.control?.checked);
-  const activeFontTarget = activeFontTargets[0] || editorFontTargets(controls)[0];
+  const activeFontTarget = activeEditorFontTarget(controls);
+  syncEditorTypographyTargets(get, controls);
   if (controls.editorFontFamily) {
     const fontKey = activeFontTarget?.familyKey || 'titleFont';
     const family = get(fontKey);
@@ -872,17 +909,11 @@ export function syncBookletEditorControls() {
 export function setEditorFontForTargets(family) {
   if (!editorSession || !family) return;
   const controls = getEditorControls();
-  const targets = editorFontTargets(controls).filter(target => target.control?.checked);
-  if (!targets.length) {
-    if (controls.editorSaveStatus) controls.editorSaveStatus.textContent = 'Choose Title, Subtitle or Body first.';
-    return;
-  }
+  const target = activeEditorFontTarget(controls);
 
   const bucket = activeEditorBucket();
-  if (!bucket) return;
-  targets.forEach(target => {
-    bucket[target.familyKey] = family;
-  });
+  if (!bucket || !target) return;
+  bucket[target.familyKey] = family;
   loadEditorFont(family);
   applyBookletEditorState();
   syncBookletEditorControls();
@@ -892,17 +923,11 @@ export function setEditorFontForTargets(family) {
 export function setEditorTypographyForTargets(suffix, value) {
   if (!editorSession) return;
   const controls = getEditorControls();
-  const targets = editorFontTargets(controls).filter(target => target.control?.checked);
-  if (!targets.length) {
-    if (controls.editorSaveStatus) controls.editorSaveStatus.textContent = 'Choose Title, Subtitle or Body first.';
-    return;
-  }
+  const target = activeEditorFontTarget(controls);
 
   const bucket = activeEditorBucket();
-  if (!bucket) return;
-  targets.forEach(target => {
-    bucket[`${target.prefix}${suffix}`] = value;
-  });
+  if (!bucket || !target) return;
+  bucket[`${target.prefix}${suffix}`] = value;
   applyBookletEditorState();
   syncBookletEditorControls();
   scheduleEditorSave();
@@ -928,10 +953,21 @@ export function openBookletEditor() {
   syncBookletEditorControls();
 }
 
+function hideEditorTypographyPopover() {
+  const { editorTypographyPopover } = getEditorControls();
+  if (typeof editorTypographyPopover?.hidePopover !== 'function') return;
+  try {
+    editorTypographyPopover.hidePopover();
+  } catch {
+    // The popover is already closed.
+  }
+}
+
 export function closeBookletEditor() {
   const { bookletEditor, dialog } = getEditorControls();
   if (!bookletEditor || !dialog) return;
 
+  hideEditorTypographyPopover();
   bookletEditor.hidden = true;
   dialog.classList.remove('editor-is-open');
   dialog.classList.remove('editor-compact-open');
@@ -941,6 +977,7 @@ export function closeBookletEditor() {
 export function initializeBookletEditor(item) {
   const controls = getEditorControls();
   const pages = pagesFor(item);
+  editorTypographyTarget = 'title';
 
   editorSession = {
     item,
@@ -1029,7 +1066,10 @@ export function setupEditorEventListeners() {
     });
   });
   editorFontTargets(controls).forEach(target => {
-    target.control?.addEventListener('change', syncBookletEditorControls);
+    target.button?.addEventListener('click', () => {
+      editorTypographyTarget = target.prefix;
+      syncBookletEditorControls();
+    });
   });
 
   [
