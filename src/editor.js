@@ -38,6 +38,7 @@ function getEditorControls() {
     editorParameterLabel: document.querySelector('#editor-parameter-label'),
     editorParameterValue: document.querySelector('#editor-parameter-value'),
     editorScope: document.querySelector('#editor-scope'),
+    editorScopeCompact: document.querySelector('#editor-scope-compact'),
     editorTargetLabel: document.querySelector('#editor-target-label'),
     editorProfile: document.querySelector('#editor-profile'),
     editorVisualMode: document.querySelector('#editor-visual-mode'),
@@ -907,6 +908,9 @@ export function syncBookletEditorControls() {
   const values = editorSession.originalSettings[index];
   const get = key => resolvedEditorSetting(key, index) ?? values[key];
 
+  if (controls.editorScopeCompact && controls.editorScope) {
+    controls.editorScopeCompact.value = controls.editorScope.value;
+  }
   if (controls.editorProfile) controls.editorProfile.value = get('profile');
   if (controls.editorVisualMode) controls.editorVisualMode.value = get('visualMode');
   if (controls.editorLayoutComplexity) controls.editorLayoutComplexity.value = get('layoutComplexity');
@@ -1166,6 +1170,11 @@ export function setupEditorEventListeners() {
   });
 
   controls.editorScope?.addEventListener('change', syncBookletEditorControls);
+  controls.editorScopeCompact?.addEventListener('change', () => {
+    if (!controls.editorScope) return;
+    controls.editorScope.value = controls.editorScopeCompact.value;
+    syncBookletEditorControls();
+  });
   controls.bookletEditorClose?.addEventListener('click', closeBookletEditor);
   controls.bookletEditorMode?.addEventListener('click', () => setEditorCompactMode(!editorCompactMode));
   controls.editorParameterPrevious?.addEventListener('click', () => moveEditorParameter(-1));
