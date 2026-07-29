@@ -14,6 +14,9 @@
 - [x] PDF two-page per sheet landscape export alignment.
 - [x] Text container overflow protection & -webkit-line-clamp heading/body safety.
 - [x] High-contrast dedicated visual design rules for all style profiles (Wedding, Kids Party, Halloween Noir, Sports Broadcast, Gaming Tech, Scientific Journal, Encyclopedia).
+- [x] Two project-native visual-reference pilots with explicit provenance and
+      no copied brand assets or source code: Athletic Campaign and Marketplace
+      Modular.
 
 ## In progress
 
@@ -30,6 +33,8 @@
 - [ ] Add per-property inheritance indicators and a one-tap “return to parent”.
 - [ ] Save an edited booklet as a reusable personal template.
 - [ ] Import permissively licensed style packs from GitHub with attribution.
+- [ ] Add a repeatable visual-reference intake checklist covering provenance,
+      asset/code exclusion, public naming and similarity review.
 - [ ] Add automated screenshot tests for every style at chaos 0 and chaos 5.
 
 ## Later

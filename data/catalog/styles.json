@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-27",
+  "updatedAt": "2026-07-29",
   "groups": [
     { "id": "editorial-media", "labels": { "en": "Editorial & media", "ru": "Редакционные и медиа" } },
     { "id": "knowledge", "labels": { "en": "Science & knowledge", "ru": "Наука и знания" } },
@@ -84,6 +84,46 @@
         "typography": ["condensed-headlines", "clean-sans", "poster-bold"],
         "colors": ["high-contrast", "one-accent", "full-color"],
         "effects": ["data-scan", "oversized-number", "diagonal-flow"]
+      }
+    },
+    {
+      "id": "athletic-campaign",
+      "groupId": "entertainment",
+      "labels": { "en": "Athletic campaign", "ru": "Спортивная кампания" },
+      "topicAffinity": ["sports"],
+      "lockUntilChaos": 5,
+      "source": {
+        "kind": "inspired",
+        "url": "https://www.nike.com/",
+        "reference": "Nike.com visual research",
+        "accessedAt": "2026-07-29",
+        "license": {
+          "assets": "not-included",
+          "code": "not-copied",
+          "implementation": "project-native"
+        }
+      },
+      "generator": {
+        "weight": 7,
+        "eras": ["2020–2024", "2026"],
+        "layouts": ["full", "asymmetric", "split", "grid"],
+        "typography": ["condensed-headlines", "poster-bold", "clean-sans"],
+        "colors": ["black-white", "high-contrast", "one-accent"],
+        "effects": ["oversized-number", "diagonal-flow", "floating-caption", "hard-shadow"]
+      },
+      "contract": {
+        "archetypes": ["poster-book", "editorial-magazine"],
+        "palette": ["#0b0b0b", "#ffffff", "#c7ff2e", "#e7e7e7"],
+        "typography": ["condensed-headlines", "clean-sans"],
+        "fonts": ["Barlow Condensed", "Inter"],
+        "layouts": ["full", "asymmetric", "split", "grid"],
+        "layoutSystems": ["full-bleed", "single-hero-image", "asymmetric-modern", "strict-grid"],
+        "imageTreatments": ["clean-photo", "photo-with-text-overlay", "black-white-photo"],
+        "shapeLanguages": ["sharp", "geometric"],
+        "backgrounds": ["pure", "dark-field"],
+        "rhythms": ["dynamic", "staccato"],
+        "effects": ["oversized-number", "diagonal-flow", "floating-caption", "hard-shadow"],
+        "covers": ["full-photo", "kinetic-type", "poster-grid"]
       }
     },
     {
@@ -250,6 +290,46 @@
         "rhythms": ["calm"],
         "effects": ["empty-space", "soft-shadow"],
         "covers": ["negative-space", "magazine"]
+      }
+    },
+    {
+      "id": "marketplace-modular",
+      "groupId": "editorial-media",
+      "labels": { "en": "Marketplace modular", "ru": "Модульный маркетплейс" },
+      "topicAffinity": ["technology", "culture"],
+      "lockUntilChaos": 5,
+      "source": {
+        "kind": "inspired",
+        "url": "https://www.amazon.com/",
+        "reference": "Amazon.com visual research",
+        "accessedAt": "2026-07-29",
+        "license": {
+          "assets": "not-included",
+          "code": "not-copied",
+          "implementation": "project-native"
+        }
+      },
+      "generator": {
+        "weight": 6,
+        "eras": ["2020–2024", "2026"],
+        "layouts": ["grid", "archive", "split"],
+        "typography": ["clean-sans", "tiny-editorial"],
+        "colors": ["full-color", "one-accent", "high-contrast"],
+        "effects": ["frame-within-frame", "caption-rule", "oversized-number"]
+      },
+      "contract": {
+        "archetypes": ["fact-book", "archive-booklet", "editorial-magazine"],
+        "palette": ["#17202b", "#f5f6f6", "#f2b84b", "#ffffff"],
+        "typography": ["clean-sans", "tiny-editorial"],
+        "fonts": ["Inter", "DM Sans"],
+        "layouts": ["grid", "archive", "split"],
+        "layoutSystems": ["modular-cards", "strict-grid", "split-layout"],
+        "imageTreatments": ["clean-photo", "illustration-mix"],
+        "shapeLanguages": ["geometric"],
+        "backgrounds": ["pure", "paper", "dark-field"],
+        "rhythms": ["staccato", "balanced", "dynamic"],
+        "effects": ["frame-within-frame", "caption-rule", "oversized-number"],
+        "covers": ["poster-grid", "magazine", "split-object"]
       }
     },
     {
