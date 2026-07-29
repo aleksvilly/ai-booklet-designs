@@ -49,7 +49,6 @@ function getEditorControls() {
     editorFontScale: document.querySelector('#editor-font-scale'),
     editorFontFamily: document.querySelector('#editor-font-family'),
     editorFontFamilyMarks: document.querySelector('#editor-font-family-marks'),
-    editorFontRecommendations: document.querySelector('#editor-font-recommendations'),
     editorFontWeight: document.querySelector('#editor-font-weight'),
     editorFontTracking: document.querySelector('#editor-font-tracking'),
     editorFontTrackingOutput: document.querySelector('#editor-font-tracking-output'),
@@ -177,14 +176,6 @@ function syncEditorFontRecommendations() {
   const free = style?.fontRecommendations?.free || style?.contract?.fonts || [];
   const licensed = style?.fontRecommendations?.licensed || [];
   const recommended = [...new Set([...free, ...licensed])];
-
-  if (controls.editorFontRecommendations) {
-    const styleLabel = style?.labels?.en || profileId || 'this style';
-    const freeText = free.length ? free.join(' · ') : 'none specified';
-    const licensedText = licensed.length ? ` Licensed: ${licensed.join(' · ')}.` : '';
-    controls.editorFontRecommendations.textContent =
-      `Recommended for ${styleLabel}: ${freeText}.${licensedText}`;
-  }
 
   if (controls.editorFontFamilyMarks && controls.editorFontFamily) {
     controls.editorFontFamilyMarks.replaceChildren(...recommended.flatMap(family => {

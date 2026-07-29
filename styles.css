@@ -2008,9 +2008,9 @@ footer a { text-underline-offset: 3px; }
 .editor-font-weight-control .style-slider-output {
   display: flex;
   align-items: center;
-  height: 24px;
+  min-height: 28px;
   margin-top: 0;
-  padding: 0 7px;
+  padding: 5px 8px;
   overflow: hidden;
   box-sizing: border-box;
   font-size: 11px;
@@ -2019,10 +2019,15 @@ footer a { text-underline-offset: 3px; }
   white-space: nowrap;
 }
 
-#editor-font-recommendations {
-  color: var(--muted);
-  font-size: 10px;
-  line-height: 1.45;
+.editor-font-family-control,
+.editor-font-weight-control,
+.editor-typography-setting-editor {
+  align-content: start;
+}
+
+.editor-font-family-control,
+.editor-font-weight-control {
+  gap: 10px;
 }
 
 #editor-typography-target-list[hidden],
