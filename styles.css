@@ -2223,6 +2223,12 @@ footer a { text-underline-offset: 3px; }
   border: 1px solid var(--line);
   border-radius: 18px;
   box-shadow: 0 -14px 54px rgba(0, 0, 0, .3);
+  transition: height .18s ease;
+}
+
+.booklet-editor.editor-compact:has(.editor-font-family-control.editor-parameter-active) {
+  height: 276px;
+  height: min(276px, calc(100dvh - 20px));
 }
 
 .booklet-editor.editor-compact .booklet-editor-heading {
@@ -2305,6 +2311,9 @@ footer a { text-underline-offset: 3px; }
 .booklet-editor.editor-compact .editor-font-family-control {
   grid-template-columns: 1fr;
   gap: 2px;
+}
+.booklet-editor.editor-compact:has(.editor-font-family-control.editor-parameter-active) .booklet-editor-scroll {
+  padding-block: 6px;
 }
 .booklet-editor.editor-compact .editor-font-targets {
   grid-template-columns: auto repeat(3, auto);
