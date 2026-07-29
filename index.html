@@ -440,9 +440,9 @@
               <button type="button" data-typography-setting="fontWeight"><strong>Font weight</strong><small></small><span>›</span></button>
               <button type="button" data-typography-setting="fontTracking"><strong>Letter spacing</strong><small></small><span>›</span></button>
               <button type="button" data-typography-setting="fontLineHeight"><strong>Line height</strong><small></small><span>›</span></button>
-              <button type="button" data-typography-setting="fontItalic"><strong>Italic</strong><small></small><span>›</span></button>
-              <button type="button" data-typography-setting="fontUnderline"><strong>Underline</strong><small></small><span>›</span></button>
-              <button type="button" data-typography-setting="fontUppercase"><strong>Uppercase</strong><small></small><span>›</span></button>
+              <label class="editor-typography-inline-toggle" data-typography-setting="fontItalic"><strong>Italic</strong><small></small><input id="editor-font-italic" type="checkbox"></label>
+              <label class="editor-typography-inline-toggle" data-typography-setting="fontUnderline"><strong>Underline</strong><small></small><input id="editor-font-underline" type="checkbox"></label>
+              <label class="editor-typography-inline-toggle" data-typography-setting="fontUppercase"><strong>Uppercase</strong><small></small><input id="editor-font-uppercase" type="checkbox"></label>
             </div>
 
             <div class="editor-typography-setting-editor" id="editor-typography-setting-editor" hidden>
@@ -480,9 +480,6 @@
                 <span>Line height <output id="editor-font-line-height-output">120</output>%</span>
                 <input id="editor-font-line-height" type="range" min="60" max="180" value="120" step="5">
               </label>
-              <label class="editor-typography-toggle" data-typography-control="fontItalic"><span>Italic</span><input id="editor-font-italic" type="checkbox"></label>
-              <label class="editor-typography-toggle" data-typography-control="fontUnderline"><span>Underline</span><input id="editor-font-underline" type="checkbox"></label>
-              <label class="editor-typography-toggle" data-typography-control="fontUppercase"><span>Uppercase</span><input id="editor-font-uppercase" type="checkbox"></label>
             </div>
           </div>
         </fieldset>

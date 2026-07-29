@@ -1143,7 +1143,7 @@ export function setupEditorEventListeners() {
       syncBookletEditorControls();
     });
   });
-  controls.editorTypographySettingList?.querySelectorAll('[data-typography-setting]').forEach(button => {
+  controls.editorTypographySettingList?.querySelectorAll('button[data-typography-setting]').forEach(button => {
     button.addEventListener('click', () => {
       editorTypographySetting = button.dataset.typographySetting;
       editorTypographyLevel = 'control';

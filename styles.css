@@ -2030,7 +2030,8 @@ footer a { text-underline-offset: 3px; }
 }
 
 .editor-typography-target-list button,
-.editor-typography-setting-list button {
+.editor-typography-setting-list button,
+.editor-typography-inline-toggle {
   display: grid;
   grid-template-columns: 72px minmax(0, 1fr) auto;
   align-items: center;
@@ -2053,9 +2054,11 @@ footer a { text-underline-offset: 3px; }
 }
 
 .editor-typography-target-list button strong,
-.editor-typography-setting-list button strong { font-size: 12px; }
+.editor-typography-setting-list button strong,
+.editor-typography-inline-toggle strong { font-size: 12px; }
 .editor-typography-target-list button small,
-.editor-typography-setting-list button small {
+.editor-typography-setting-list button small,
+.editor-typography-inline-toggle small {
   overflow: hidden;
   color: inherit;
   font: 500 9px/1.25 "IBM Plex Mono", monospace;
@@ -2106,19 +2109,7 @@ footer a { text-underline-offset: 3px; }
   overflow-y: auto;
 }
 
-.editor-typography-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  min-height: 44px;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.editor-typography-toggle input {
+.editor-typography-inline-toggle input {
   width: 18px;
   height: 18px;
   margin: 0;
@@ -2301,7 +2292,7 @@ footer a { text-underline-offset: 3px; }
   bottom: max(10px, env(safe-area-inset-bottom));
   left: 50%;
   width: min(540px, calc(100vw - 20px));
-  height: 238px;
+  height: 190px;
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: 42px minmax(72px, 1fr) 62px;
   transform: translateX(-50%);
