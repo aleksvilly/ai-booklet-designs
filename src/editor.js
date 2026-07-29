@@ -783,6 +783,7 @@ export function applyEditorPage(pageNode, page, pageIndex) {
   if (hasEditorOverride('contentPosition', pageIndex)) pageNode.dataset.editorContentPosition = values.contentPosition;
   else delete pageNode.dataset.editorContentPosition;
 
+  const copy = pageNode.querySelector('.book-page-copy');
   const title = pageNode.querySelector('.book-page-copy h4');
   const subtitle = pageNode.querySelector('.book-page-type');
   const caption = pageNode.querySelector('.page-caption');
@@ -826,6 +827,11 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     body.textContent = hasEditorOverride('textAmount', pageIndex)
       ? editorSession.textVariants[pageIndex][Math.max(1, Math.min(5, values.textAmount)) - 1]
       : String(page.body || '');
+  }
+  if (copy) {
+    copy.hidden = ![...copy.children].some(node => {
+      return !node.hidden && String(node.textContent || '').trim().length > 0;
+    });
   }
 
 }
@@ -973,12 +979,18 @@ export function syncBookletEditorControls() {
   if (controls.editorVisualMode) controls.editorVisualMode.value = get('visualMode');
   if (controls.editorLayoutComplexity) controls.editorLayoutComplexity.value = get('layoutComplexity');
   if (controls.editorImageCount) controls.editorImageCount.value = get('imageCount');
-  if (controls.editorPhotoLayout) controls.editorPhotoLayout.value = get('photoLayout') || 'auto';
+  if (controls.editorPhotoLayout) {
+    controls.editorPhotoLayout.value = get('photoLayout') || 'auto';
+    syncEditorSliderSelect(controls.editorPhotoLayout);
+  }
   if (controls.editorPhotoLayoutVariant) controls.editorPhotoLayoutVariant.value = get('photoLayoutVariant') ?? 0;
   if (controls.editorPhotoLayoutVariantOutput && controls.editorPhotoLayoutVariant) {
     controls.editorPhotoLayoutVariantOutput.value = controls.editorPhotoLayoutVariant.value;
   }
-  if (controls.editorContentPosition) controls.editorContentPosition.value = get('contentPosition');
+  if (controls.editorContentPosition) {
+    controls.editorContentPosition.value = get('contentPosition');
+    syncEditorSliderSelect(controls.editorContentPosition);
+  }
   if (controls.editorTextAmount) controls.editorTextAmount.value = get('textAmount');
   if (controls.editorFontScale) controls.editorFontScale.value = get('fontScale');
   const activeFontTarget = activeEditorFontTarget(controls);
@@ -1134,6 +1146,12 @@ export function initializeBookletEditor(item) {
   }
   if (controls.editorProfile) {
     bindStyleSlider(controls.editorProfile);
+  }
+  if (controls.editorPhotoLayout) {
+    bindStyleSlider(controls.editorPhotoLayout);
+  }
+  if (controls.editorContentPosition) {
+    bindStyleSlider(controls.editorContentPosition);
   }
   populateEditorFontControl();
 

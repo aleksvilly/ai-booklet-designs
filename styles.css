@@ -718,6 +718,7 @@ footer a { text-underline-offset: 3px; }
 .book-page { position: relative; min-height: 430px; overflow: hidden; padding: 28px; border: 1px solid var(--line); background: #fff; isolation: isolate; display: flex; flex-direction: column; justify-content: space-between; word-break: break-word; hyphens: auto; }
 .book-page-number { position: absolute; z-index: 4; top: 20px; right: 22px; font: 500 10px/1 "IBM Plex Mono", monospace; }
 .book-page-copy { position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; max-height: 100%; max-width: 86%; gap: 8px; word-break: break-word; }
+.book-page [hidden] { display: none !important; }
 .book-page-type { margin: 0 0 6px; font: 500 10px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; flex-shrink: 0; }
 .book-page h4 { margin: 0; font-size: clamp(28px, 4vw, 64px); line-height: .94; letter-spacing: -.04em; word-break: break-word; overflow-wrap: break-word; }
 .book-page-copy > p:not(.book-page-type) { max-width: 460px; margin: 6px 0 0; line-height: 1.45; }
@@ -2321,6 +2322,25 @@ footer a { text-underline-offset: 3px; }
   border-radius: 18px;
   box-shadow: 0 -14px 54px rgba(0, 0, 0, .3);
   transition: height var(--editor-compact-motion-duration) var(--editor-compact-close-easing);
+}
+
+.booklet-editor.editor-compact:not([hidden]) {
+  animation: booklet-editor-compact-enter .48s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+@keyframes booklet-editor-compact-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 34px) scale(.97);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booklet-editor.editor-compact:not([hidden]) { animation: none; }
 }
 
 .booklet-editor.editor-compact:has(.editor-advanced-typography.editor-group-active):not(.editor-parameter-menu-open) {
