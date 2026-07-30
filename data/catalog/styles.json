@@ -1,11 +1,12 @@
 {
   "schemaVersion": 1,
-  "updatedAt": "2026-07-29",
+  "updatedAt": "2026-07-30",
   "groups": [
     { "id": "editorial-media", "labels": { "en": "Editorial & media", "ru": "Редакционные и медиа" } },
     { "id": "knowledge", "labels": { "en": "Science & knowledge", "ru": "Наука и знания" } },
     { "id": "entertainment", "labels": { "en": "Entertainment & sport", "ru": "Развлечения и спорт" } },
-    { "id": "occasions", "labels": { "en": "Celebrations & occasions", "ru": "Праздники и события" } }
+    { "id": "occasions", "labels": { "en": "Celebrations & occasions", "ru": "Праздники и события" } },
+    { "id": "digital-products", "labels": { "en": "Digital products & apps", "ru": "Цифровые продукты и приложения" } }
   ],
   "items": [
     {
@@ -398,6 +399,178 @@
         "rhythms": ["calm", "slow-luxury"],
         "effects": ["empty-space", "floating-caption"],
         "covers": ["luxury-minimal", "negative-space"]
+      }
+    },
+    {
+      "id": "youtube-inspired",
+      "groupId": "digital-products",
+      "labels": { "en": "YouTube — video platform interface", "ru": "YouTube — интерфейс видеоплатформы" },
+      "topicAffinity": ["arts-culture/cinema", "technology/games", "society/community"],
+      "lockUntilChaos": 5,
+      "source": {
+        "kind": "inspired",
+        "url": "https://design.google/library/youtube-new-red-color",
+        "reference": "YouTube product and visual-system research",
+        "accessedAt": "2026-07-30",
+        "license": {
+          "assets": "not-included",
+          "logos": "not-included",
+          "icons": "not-copied",
+          "code": "not-copied",
+          "implementation": "project-native"
+        }
+      },
+      "generator": {
+        "weight": 5,
+        "eras": ["2020–2024", "2026"],
+        "layouts": ["full", "grid", "split"],
+        "typography": ["clean-sans", "poster-bold"],
+        "colors": ["inverted", "high-contrast", "one-accent"],
+        "effects": ["floating-caption", "frame-within-frame", "gradient-overlay"]
+      },
+      "contract": {
+        "archetypes": ["editorial-magazine", "visual-diary", "fact-book"],
+        "palette": ["#0f0f0f", "#f1f1f1", "#ff3158", "#272727"],
+        "typography": ["clean-sans"],
+        "fonts": ["Inter", "DM Sans"],
+        "layouts": ["full", "grid", "split", "minimal"],
+        "layoutSystems": ["modular-cards", "strict-grid", "single-hero-image", "split-layout"],
+        "imageTreatments": ["clean-photo", "photo-with-text-overlay"],
+        "shapeLanguages": ["geometric"],
+        "backgrounds": ["dark-field", "pure"],
+        "rhythms": ["staccato", "dynamic", "balanced"],
+        "printFeels": ["screen-only", "glossy-magazine"],
+        "contentModes": ["factual", "documentary", "playful"],
+        "referenceCultures": ["global-digital"],
+        "effects": ["floating-caption", "frame-within-frame", "gradient-overlay"],
+        "covers": ["poster-grid", "full-photo", "magazine"]
+      },
+      "fontRecommendations": {
+        "free": ["Inter", "DM Sans", "Roboto Condensed"],
+        "licensed": []
+      }
+    },
+    {
+      "id": "streaming-library",
+      "groupId": "digital-products",
+      "labels": { "en": "Streaming music library", "ru": "Стриминговая музыкальная библиотека" },
+      "topicAffinity": ["arts-culture/music", "arts-culture"],
+      "lockUntilChaos": 5,
+      "source": {
+        "kind": "inspired",
+        "url": "https://spotify.design/article/reimagining-design-systems-at-spotify",
+        "reference": "Streaming-app and Spotify Encore visual research",
+        "accessedAt": "2026-07-30",
+        "license": {
+          "assets": "not-included",
+          "logos": "not-included",
+          "icons": "not-copied",
+          "code": "not-copied",
+          "implementation": "project-native"
+        }
+      },
+      "generator": {
+        "weight": 5,
+        "eras": ["2020–2024", "2026"],
+        "layouts": ["grid", "full", "vertical"],
+        "typography": ["clean-sans", "poster-bold"],
+        "colors": ["dark-tech", "full-color", "one-accent"],
+        "effects": ["gradient-overlay", "soft-shadow", "floating-caption"]
+      },
+      "contract": {
+        "archetypes": ["visual-diary", "archive-booklet", "editorial-magazine"],
+        "palette": ["#121212", "#f5f5f5", "#1ed760", "#242424"],
+        "typography": ["clean-sans"],
+        "fonts": ["DM Sans", "Inter"],
+        "layouts": ["grid", "full", "vertical", "minimal"],
+        "layoutSystems": ["modular-cards", "framed-gallery", "vertical-rhythm", "single-hero-image"],
+        "imageTreatments": ["clean-photo", "duotone-photo"],
+        "shapeLanguages": ["geometric"],
+        "backgrounds": ["dark-field", "gradient"],
+        "rhythms": ["dynamic", "staccato", "balanced"],
+        "printFeels": ["screen-only", "glossy-magazine"],
+        "contentModes": ["emotional", "playful", "documentary"],
+        "referenceCultures": ["global-digital"],
+        "effects": ["gradient-overlay", "soft-shadow", "floating-caption"],
+        "covers": ["poster-grid", "full-photo", "data-cover"]
+      },
+      "fontRecommendations": {
+        "free": ["DM Sans", "Inter", "Manrope"],
+        "licensed": []
+      }
+    },
+    {
+      "id": "mobile-social-feed",
+      "groupId": "digital-products",
+      "labels": { "en": "Mobile social feed", "ru": "Мобильная социальная лента" },
+      "topicAffinity": ["society/community", "arts-culture", "occasions"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 6,
+        "eras": ["2020–2024", "2026"],
+        "layouts": ["vertical", "grid", "overlap"],
+        "typography": ["clean-sans", "playful-rounded"],
+        "colors": ["pastel", "full-color", "one-accent"],
+        "effects": ["soft-shadow", "floating-caption", "sticker-elements"]
+      },
+      "contract": {
+        "archetypes": ["visual-diary", "personal-tribute", "gift-booklet"],
+        "palette": ["#fffaf7", "#27243a", "#ff6d7a", "#8b7cff"],
+        "typography": ["clean-sans", "playful-rounded"],
+        "fonts": ["Figtree", "DM Sans"],
+        "layouts": ["vertical", "grid", "overlap", "minimal"],
+        "layoutSystems": ["modular-cards", "vertical-rhythm", "framed-gallery", "layered-overlap"],
+        "imageTreatments": ["clean-photo", "illustration-mix", "cutout-collage"],
+        "shapeLanguages": ["geometric", "organic"],
+        "backgrounds": ["pure", "gradient"],
+        "rhythms": ["balanced", "dynamic"],
+        "printFeels": ["screen-only", "glossy-magazine"],
+        "contentModes": ["playful", "emotional", "mixed"],
+        "referenceCultures": ["global-digital"],
+        "effects": ["soft-shadow", "floating-caption", "sticker-elements"],
+        "covers": ["poster-grid", "collage-chaos", "full-photo"]
+      },
+      "fontRecommendations": {
+        "free": ["Figtree", "DM Sans", "Fredoka"],
+        "licensed": []
+      }
+    },
+    {
+      "id": "analytics-dashboard",
+      "groupId": "digital-products",
+      "labels": { "en": "Analytics dashboard", "ru": "Аналитический дашборд" },
+      "topicAffinity": ["technology", "technology/artificial-intelligence", "knowledge/science"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 6,
+        "eras": ["2025", "2026"],
+        "layouts": ["grid", "split", "archive"],
+        "typography": ["clean-sans", "tech-mono"],
+        "colors": ["one-accent", "muted", "high-contrast"],
+        "effects": ["data-scan", "frame-within-frame", "oversized-number"]
+      },
+      "contract": {
+        "archetypes": ["fact-book", "futurist-dossier", "archive-booklet"],
+        "palette": ["#f7f8fc", "#172033", "#635bff", "#dfe4f2"],
+        "typography": ["clean-sans", "tech-mono"],
+        "fonts": ["Space Grotesk", "IBM Plex Mono"],
+        "layouts": ["grid", "split", "archive", "minimal"],
+        "layoutSystems": ["strict-grid", "modular-cards", "split-layout", "vertical-rhythm"],
+        "imageTreatments": ["clean-photo", "diagram-overlay", "duotone-photo"],
+        "shapeLanguages": ["geometric", "technical"],
+        "backgrounds": ["pure", "grid-paper"],
+        "rhythms": ["balanced", "staccato"],
+        "printFeels": ["screen-only", "museum-catalogue"],
+        "contentModes": ["factual", "conceptual"],
+        "referenceCultures": ["global-digital"],
+        "effects": ["data-scan", "frame-within-frame", "oversized-number"],
+        "covers": ["data-cover", "poster-grid", "negative-space"]
+      },
+      "fontRecommendations": {
+        "free": ["Space Grotesk", "IBM Plex Mono", "Inter"],
+        "licensed": []
       }
     }
   ]

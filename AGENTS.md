@@ -87,6 +87,23 @@ Browser
     printing, generation form, and request-status dialog.
   - The request dialog has special layouts for short laptop screens and small
     phones such as iPhone SE.
+- `styles/photo-layouts.css`
+  - Dedicated Photo Layout implementations used by the live editor.
+  - Supports up to 20 gallery images for split, diagonal, masonry, circles and
+    collage layouts.
+- `src/editor.js`
+  - Live booklet editor, local persistence and the inheritance chain
+    booklet → spread → page.
+  - Applies Photo Layout, typography, text visibility and structural controls
+    directly to rendered booklet pages.
+- `src/detail-modal.js`
+  - Renders booklet pages and media inside the detail dialog.
+  - Owns booklet-dialog open/close behaviour, including editor-aware backdrop
+    and Escape handling.
+- `src/catalog.js`
+  - Loads browser-side catalogs and provides `bindStyleSlider()`, which exposes
+    a select as a discrete range slider while preserving the select as the
+    source of truth.
 - `app.js`
   - Loads and renders `data/booklets.json`.
   - Opens booklet details and supports direct URLs such as
@@ -108,6 +125,9 @@ Browser
 - `data/catalog/effects.json`
   - Public effect IDs, labels, groups, intensity hints, and internal Design DNA
     tokens.
+- `data/catalog/fonts.json`
+  - Font families, availability, provider and fallback metadata shared by the
+    generator and live editor.
 - `docs/CATALOG-ROADMAP.md`
   - Checklist of finished, active, next, and later catalog/editor work.
 
@@ -134,6 +154,11 @@ Browser
 - `package.json`
   - `npm run generate` runs `scripts/generate-daily.mjs`.
   - `npm run serve` starts a simple local static server.
+  - There are currently no npm package dependencies. Gemini calls use direct
+    HTTP `fetch`; do not reintroduce an SDK dependency unless code actually
+    imports it and the published package version has been verified.
+  - GitHub Actions uses Node 24. Local Node 22 is sufficient for the current
+    frontend and scripts. `npm install` is not required for `npm run serve`.
 
 ### GitHub Actions
 
@@ -397,6 +422,140 @@ The generation form intentionally contains no email or phone field.
 - Mobile navigation must remain accessible through the burger button.
 - Direct booklet links using `?booklet=<id>` must continue to work.
 - Print styles for booklet spreads must not be broken by site-level UI changes.
+
+## Live booklet editor
+
+The editor is rendered inside `#booklet-dialog` and has two presentations:
+
+- Full View: the normal sidebar editor.
+- Compact View: a bottom, mobile-first control surface. It can also be selected
+  manually on larger screens, but its expandable all-parameters menu is enabled
+  only at widths up to 700px.
+
+Editor state is stored locally per booklet. Controls resolve through the
+inheritance chain booklet → spread → page. Do not bypass this chain by writing
+directly to one page unless that is the selected scope.
+
+Current parameter families include:
+
+- editorial profile and visual language;
+- page complexity and image count;
+- Photo Layout and layout intensity;
+- text amount and content position;
+- font scale, spacing and effects intensity;
+- advanced typography per Title, Subtitle and Body;
+- grouped text visibility.
+
+### Discrete select sliders
+
+`Editorial profile`, `Photo layout`, `Content position`, font family and font
+weight use `bindStyleSlider()` where applicable. The original `<select>` remains
+the semantic and persisted source of truth; the generated range input only
+changes `selectedIndex` and dispatches `change`.
+
+When changing these controls:
+
+1. Preserve the select and its option values.
+2. Call `bindStyleSlider()` after options are populated.
+3. Call `syncEditorSliderSelect()` when JS changes the select value without
+   dispatching `change`.
+4. Do not create a second independent value model for the visible range input.
+
+### Photo Layout
+
+Photo Layout families currently exposed by the editor are:
+
+- Auto/original;
+- Fullscreen;
+- Vertical split;
+- Horizontal split;
+- Diagonal/angled;
+- Grid/Masonry;
+- Circles and shapes;
+- Scattered collage.
+
+The `strips` option was intentionally removed from the public editor because it
+duplicated vertical split behaviour.
+
+Important behaviour:
+
+- Layouts must handle every available gallery image from 1–20 where the family
+  supports it.
+- Vertical and horizontal split change masks/gaps/overlap without distorting
+  the underlying image aspect ratio; images retain `object-fit: cover`.
+- Diagonal alternates angle direction and supports all gallery images.
+- Circle sizes form a nested progression based on image count.
+- Collage and masonry are deterministic and intensity-driven; avoid true random
+  re-layout on every slider input.
+- `photoLayoutVariant` remains the shared intensity value from -100 to +100.
+
+### Typography and text visibility
+
+Advanced typography targets Title, Subtitle and Body independently. Each target
+supports font family, weight, letter spacing, line height, italic, underline and
+uppercase. Italic, underline and uppercase are immediate toggles rather than
+another cascade level.
+
+Text visibility is one grouped Compact View parameter. Current keys are:
+
+- `showTitle`;
+- `showSubtitle` for the page type/subtitle;
+- `showBody`;
+- `showCaption` for `.page-caption`;
+- `showPageNumber`;
+- `showSource` for `.page-source`;
+- `showImageCaptions`.
+
+Author CSS gives some text nodes an explicit `display`, so
+`.book-page [hidden] { display: none !important; }` is required. After applying
+visibility, `src/editor.js` hides `.book-page-copy` when none of its children is
+both visible and non-empty. Preserve both behaviours.
+
+### Compact View behaviour and animation
+
+The Compact View has a fixed three-row structure: heading, active control and
+mini navigation. Clicking the central parameter label/value on mobile expands
+the editor and reveals the full parameter list. Selecting a list item updates
+the active control and closes the list.
+
+Layering is intentional:
+
+- `.booklet-editor-heading` and `.editor-mini-navigation`: `z-index: 4`;
+- `.editor-parameter-menu`: `z-index: 3`, with an opaque paper background;
+- `.booklet-editor-scroll`: `z-index: 2`.
+
+The menu background must stay opaque. Opacity animation belongs to the menu
+buttons/content, otherwise the outgoing control appears above the list even
+when z-index values are correct.
+
+Menu masking and movement are mathematically paired. During the reveal, a
+bottom inset of 72% is paired with `translateY(72%)`; during closing both values
+reach 100%. Do not change only one side of this pair because it creates a blank
+gap above `.editor-mini-navigation`.
+
+Opening and closing deliberately use different easing. The shared motion and
+fade durations are CSS custom properties on `.booklet-editor.editor-compact`.
+The outgoing `.booklet-editor-scroll` moves upward underneath the opaque menu
+and header. Avoid immediate DOM replacement during close; the parameter list is
+rendered before its next opening.
+
+Compact View itself has an entry animation when the user presses `Edit booklet`.
+Keep the `prefers-reduced-motion` override.
+
+### Editor-aware dialog closing
+
+While `.booklet-dialog` has `editor-is-open`:
+
+- clicking the dialog backdrop must not close the booklet;
+- Escape closes only the editor panel;
+- the explicit booklet close button may still close the booklet.
+
+Once the editor is closed, normal backdrop and Escape behaviour resumes.
+
+### Analytics
+
+Microsoft Clarity is installed in `index.html` using the public project tag.
+Keep it asynchronous and do not treat the public tag ID as a private API secret.
 
 ## Extensible catalog architecture
 

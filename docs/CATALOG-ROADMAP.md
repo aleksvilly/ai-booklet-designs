@@ -16,6 +16,10 @@
 - [x] High-contrast dedicated visual design rules for all style profiles (Wedding, Kids Party, Halloween Noir, Sports Broadcast, Gaming Tech, Scientific Journal, Encyclopedia).
 - [x] Two named visual-reference pilots with explicit provenance and no copied
       brand assets: Nike Athletic Campaign and Amazon Modular Marketplace.
+- [x] Four selectable digital-product profiles with strict visual contracts:
+      YouTube video interface, streaming music library, mobile social feed and
+      analytics dashboard. All use project-native CSS without logos, copied
+      icons, proprietary fonts or source code.
 - [x] Shared font catalog with free/licensed availability, full live-editor
       font slider, Title/Subtitle/Body targets and per-style recommendations.
 - [x] Advanced typography editor for per-target weight, tracking, line height,
