@@ -1113,12 +1113,16 @@ function setCompactPageZoom(value, animate = true) {
   if (controls.editorPageZoomOutput) controls.editorPageZoomOutput.textContent = compactZoomLabel(next);
 
   requestAnimationFrame(() => {
-    // For mode-switch transitions don't smooth-scroll — the grid/strip layout
-    // change already repositions everything, and scroll would fight the FLIP.
-    scrollCompactPageIntoView(animate && !isModeSwitch ? 'smooth' : 'auto');
     if (isModeSwitch) {
+      // Start the FLIP animation immediately in the first RAF while the new
+      // layout is being painted. The scroll must wait one more frame because
+      // the flex layout (wrap→nowrap or vice-versa) may not be fully
+      // recalculated yet — reading getBoundingClientRect() too early gives
+      // wrong positions (e.g. last page appears as page 2).
       animateCompactZoomTransition(previousRects, prev, next);
+      requestAnimationFrame(() => scrollCompactPageIntoView('auto'));
     } else {
+      scrollCompactPageIntoView(animate ? 'smooth' : 'auto');
       animateCompactPageLayout(previousRects);
     }
   });
