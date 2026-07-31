@@ -11,6 +11,16 @@ let editorTypographyTarget = 'title';
 let editorTypographyLevel = 'targets';
 let editorTypographySetting = null;
 let editorParameterMenuOpen = false;
+let editorCompactPageZoom = 1;
+let editorCompactPageScale = 1;
+let editorCompactZoomOpen = false;
+let editorCompactScrollFrame = null;
+let editorCompactResizeFrame = null;
+let editorCompactPairSettleTimer = null;
+let editorCompactLastTapPage = -1;
+let editorCompactLastTapTime = 0;
+let editorCompactScrollSelectionLockedUntil = 0;
+const editorCompactPageAnimations = new WeakMap();
 let editorCompactMode = localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === null
   ? window.matchMedia('(max-width: 900px)').matches
   : localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === 'true';
@@ -34,6 +44,13 @@ function getEditorControls() {
     bookletEditor: document.querySelector('#booklet-editor'),
     bookletEditorClose: document.querySelector('#booklet-editor-close'),
     bookletEditorMode: document.querySelector('#booklet-editor-mode'),
+    editorPageZoom: document.querySelector('#editor-page-zoom'),
+    editorPageZoomToggle: document.querySelector('#editor-page-zoom-toggle'),
+    editorPageZoomPanel: document.querySelector('#editor-page-zoom-panel'),
+    editorPageZoomRange: document.querySelector('#editor-page-zoom-range'),
+    editorPageZoomBadge: document.querySelector('#editor-page-zoom-badge'),
+    editorPageZoomOutput: document.querySelector('#editor-page-zoom-output'),
+    spreadsList: document.querySelector('#dialog-content .spreads-list'),
     editorParameterPrevious: document.querySelector('#editor-parameter-previous'),
     editorParameterNext: document.querySelector('#editor-parameter-next'),
     editorParameterMenu: document.querySelector('#editor-parameter-menu'),
@@ -863,6 +880,317 @@ export function updateEditorSelection() {
   });
 }
 
+function isCompactPageStageActive() {
+  const { bookletEditor, dialog } = getEditorControls();
+  return Boolean(
+    editorSession &&
+    bookletEditor &&
+    dialog &&
+    !bookletEditor.hidden &&
+    editorCompactMode &&
+    window.matchMedia('(max-width: 700px)').matches
+  );
+}
+
+function compactZoomLabel(level = editorCompactPageZoom) {
+  return {
+    1: '1 page',
+    2: '2 pages',
+    3: '2-column grid',
+    4: '3-column grid',
+    5: '4-column grid',
+    6: 'Maximum overview'
+  }[level] || '1 page';
+}
+
+function compactZoomScale(level, controls = getEditorControls()) {
+  const { spreadsList } = controls;
+  const page = editorSession?.pageNodes[0];
+  if (!spreadsList || !page || level <= 1) return 1;
+
+  const pageRect = page.getBoundingClientRect();
+  const baseWidth = page.offsetWidth || pageRect.width / Math.max(.01, editorCompactPageScale);
+  const baseHeight = page.offsetHeight || pageRect.height / Math.max(.01, editorCompactPageScale);
+  if (!baseWidth || !baseHeight) return 1;
+
+  if (level === 2) {
+    return Math.min(1, Math.max(.12, (spreadsList.clientWidth - 72) / 2 / baseWidth));
+  }
+
+  const gap = 10;
+  const availableWidth = Math.max(1, spreadsList.clientWidth - 28);
+  const availableHeight = Math.max(1, spreadsList.clientHeight - 28);
+  const pageCount = Math.max(1, editorSession?.pageNodes.length || 1);
+  const columns = Math.min(level - 1, pageCount);
+  const rows = Math.ceil(pageCount / columns);
+  const widthScale = (availableWidth - gap * (columns - 1)) / columns / baseWidth;
+  const heightScale = (availableHeight - gap * (rows - 1)) / rows / baseHeight;
+  const twoPageScale = (spreadsList.clientWidth - 72) / 2 / baseWidth;
+  const scale = level === 3
+    ? Math.min(widthScale, twoPageScale * .94)
+    : level === 6
+      ? Math.min(widthScale, heightScale)
+      : widthScale;
+  return Math.min(1, Math.max(.08, scale));
+}
+
+function setCompactZoomOpen(open) {
+  const { editorPageZoom, editorPageZoomPanel, editorPageZoomToggle } = getEditorControls();
+  editorCompactZoomOpen = Boolean(open && isCompactPageStageActive());
+  editorPageZoom?.classList.toggle('editor-page-zoom-open', editorCompactZoomOpen);
+  if (editorPageZoomPanel) editorPageZoomPanel.hidden = !editorCompactZoomOpen;
+  editorPageZoomToggle?.setAttribute('aria-expanded', String(editorCompactZoomOpen));
+}
+
+function scrollCompactPageIntoView(behavior = 'smooth') {
+  const { spreadsList } = getEditorControls();
+  const page = editorSession?.pageNodes[editorSession.activePageIndex];
+  if (!isCompactPageStageActive() || !spreadsList || !page) return;
+
+  const scrollBehavior = window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : behavior;
+  const listRect = spreadsList.getBoundingClientRect();
+  const pageRects = editorCompactPageZoom === 2
+    ? editorSession.pageNodes
+        .slice(editorSession.activeSpreadIndex * 2, editorSession.activeSpreadIndex * 2 + 2)
+        .map(node => node.getBoundingClientRect())
+    : [page.getBoundingClientRect()];
+  const firstRect = pageRects[0];
+  const pageRect = pageRects.slice(1).reduce((combined, rect) => ({
+    left: Math.min(combined.left, rect.left),
+    right: Math.max(combined.right, rect.right),
+    top: Math.min(combined.top, rect.top),
+    bottom: Math.max(combined.bottom, rect.bottom),
+    width: Math.max(combined.right, rect.right) - Math.min(combined.left, rect.left),
+    height: Math.max(combined.bottom, rect.bottom) - Math.min(combined.top, rect.top)
+  }), {
+    left: firstRect.left,
+    right: firstRect.right,
+    top: firstRect.top,
+    bottom: firstRect.bottom,
+    width: firstRect.width,
+    height: firstRect.height
+  });
+  const horizontal = editorCompactPageZoom <= 2;
+  const left = spreadsList.scrollLeft + pageRect.left - listRect.left - (listRect.width - pageRect.width) / 2;
+  const top = spreadsList.scrollTop + pageRect.top - listRect.top - Math.max(0, (listRect.height - pageRect.height) / 2);
+
+  // CSS `scroll-behavior: smooth` on the element can override JS `behavior: 'instant'`
+  // in some browsers (Safari). Temporarily remove the CSS property for instant scrolls.
+  const needsInstant = scrollBehavior === 'auto' || scrollBehavior === 'instant';
+  if (needsInstant) spreadsList.style.scrollBehavior = 'auto';
+  spreadsList.scrollTo({
+    left: horizontal ? Math.max(0, left) : 0,
+    top: horizontal ? 0 : Math.max(0, top),
+    behavior: scrollBehavior
+  });
+  if (needsInstant) {
+    // Restore after the next frame so smooth-scroll CSS re-engages for user swipes.
+    requestAnimationFrame(() => { spreadsList.style.scrollBehavior = ''; });
+  }
+}
+
+function animateCompactPageLayout(previousRects) {
+  if (!previousRects || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  editorSession?.pageNodes.forEach(page => {
+    const previous = previousRects.get(page);
+    const next = page.getBoundingClientRect();
+    if (!previous || !next.width || !next.height || typeof page.animate !== 'function') return;
+    const deltaX = previous.left - next.left;
+    const deltaY = previous.top - next.top;
+    const scaleX = previous.width / next.width;
+    const scaleY = previous.height / next.height;
+    if (Math.abs(deltaX) < 1 && Math.abs(deltaY) < 1 && Math.abs(scaleX - 1) < .01 && Math.abs(scaleY - 1) < .01) return;
+    editorCompactPageAnimations.get(page)?.cancel();
+    const animation = page.animate([
+      { transform: `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})` },
+      { transform: 'translate(0, 0) scale(1)' }
+    ], {
+      duration: 520,
+      easing: 'cubic-bezier(.22, 1, .36, 1)'
+    });
+    editorCompactPageAnimations.set(page, animation);
+    animation.addEventListener('finish', () => {
+      if (editorCompactPageAnimations.get(page) === animation) editorCompactPageAnimations.delete(page);
+    }, { once: true });
+  });
+}
+
+// Zoom-transition for mode switches (horizontal scroll ↔ grid).
+// Creates a real camera-zoom feel: pages FLIP from their old positions/sizes
+// while pages that weren't visible before fade in from opacity 0.
+function animateCompactZoomTransition(previousRects, fromLevel, toLevel) {
+  if (!previousRects || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const pages = editorSession?.pageNodes || [];
+  if (!pages.length) return;
+
+  const { spreadsList } = getEditorControls();
+  const listRect = spreadsList?.getBoundingClientRect();
+
+  // Zooming out (going to more pages): longer duration feels more cinematic.
+  // Zooming in (going to fewer pages): snappier feel.
+  const zoomingOut = toLevel > fromLevel;
+  const DURATION = zoomingOut ? 580 : 500;
+  const EASING = 'cubic-bezier(.22, 1, .36, 1)';
+
+  pages.forEach(page => {
+    const previous = previousRects.get(page);
+    const next = page.getBoundingClientRect();
+    if (!next.width || !next.height || typeof page.animate !== 'function') return;
+
+    editorCompactPageAnimations.get(page)?.cancel();
+
+    // Was this page visible in the viewport before the transition?
+    const wasVisible = previous && listRect
+      ? previous.right > listRect.left + 1 && previous.left < listRect.right - 1
+        && previous.bottom > listRect.top + 1 && previous.top < listRect.bottom - 1
+      : Boolean(previous);
+
+    let fromTransform, fromOpacity;
+    if (!previous || !wasVisible) {
+      // Page not visible before — zoom/fade it in from the centre.
+      // Use average scale of visible pages so it feels like a zoom reveal.
+      const avgScale = zoomingOut ? 2.5 : 0.4;
+      fromTransform = `scale(${avgScale})`;
+      fromOpacity = 0;
+    } else {
+      // Page was visible — FLIP it from its old position/size.
+      const deltaX = previous.left - next.left;
+      const deltaY = previous.top - next.top;
+      const scaleX = previous.width / next.width;
+      const scaleY = previous.height / next.height;
+      fromTransform = `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`;
+      fromOpacity = 1;
+    }
+
+    const animation = page.animate([
+      { transform: fromTransform, opacity: fromOpacity },
+      { transform: 'translate(0, 0) scale(1)', opacity: 1 }
+    ], {
+      duration: DURATION,
+      easing: EASING,
+    });
+
+    editorCompactPageAnimations.set(page, animation);
+    animation.addEventListener('finish', () => {
+      if (editorCompactPageAnimations.get(page) === animation) editorCompactPageAnimations.delete(page);
+    }, { once: true });
+  });
+}
+
+function setCompactPageZoom(value, animate = true) {
+  const controls = getEditorControls();
+  const prev = editorCompactPageZoom;
+  const next = Math.max(1, Math.min(6, Number(value) || 1));
+
+  // Detect whether we're crossing the horizontal-scroll ↔ wrap-grid boundary.
+  // Levels 1 and 2 use a horizontal scroll strip; levels 3+ use a wrap grid.
+  const isModeSwitch = (prev <= 2) !== (next <= 2);
+
+  // BUG FIX (1→2 drift): for same-mode transitions in the horizontal strip,
+  // perform an *instant* scroll to the target position BEFORE taking FLIP
+  // snapshots. This prevents the scroll animation from running simultaneously
+  // with the FLIP transform, which caused pages to appear to slide sideways.
+  if (animate && isCompactPageStageActive() && !isModeSwitch && next <= 2) {
+    // Temporarily switch to the new zoom level so scrollCompactPageIntoView
+    // can compute the correct scroll offset, then restore for the snapshot.
+    editorCompactPageZoom = next;
+    scrollCompactPageIntoView('instant');
+    editorCompactPageZoom = prev; // restore so snapshot sees old positions
+  }
+
+  const previousRects = animate && isCompactPageStageActive()
+    ? new Map((editorSession?.pageNodes || []).map(page => [page, page.getBoundingClientRect()]))
+    : null;
+  if (animate) editorCompactScrollSelectionLockedUntil = performance.now() + 900;
+
+  editorCompactPageZoom = next;
+  controls.dialog?.setAttribute('data-compact-page-zoom', String(next));
+  editorCompactPageScale = compactZoomScale(next, controls);
+  controls.dialog?.style.setProperty('--compact-page-scale', editorCompactPageScale.toFixed(4));
+  if (controls.editorPageZoomRange) controls.editorPageZoomRange.value = String(next);
+  if (controls.editorPageZoomBadge) controls.editorPageZoomBadge.textContent = `${next}×`;
+  if (controls.editorPageZoomOutput) controls.editorPageZoomOutput.textContent = compactZoomLabel(next);
+
+  requestAnimationFrame(() => {
+    // For mode-switch transitions don't smooth-scroll — the grid/strip layout
+    // change already repositions everything, and scroll would fight the FLIP.
+    scrollCompactPageIntoView(animate && !isModeSwitch ? 'smooth' : 'auto');
+    if (isModeSwitch) {
+      animateCompactZoomTransition(previousRects, prev, next);
+    } else {
+      animateCompactPageLayout(previousRects);
+    }
+  });
+}
+
+function syncCompactPageStage(animate = false) {
+  const { dialog, editorPageZoom } = getEditorControls();
+  const active = isCompactPageStageActive();
+  if (editorPageZoom) editorPageZoom.hidden = !active;
+  if (!active) {
+    setCompactZoomOpen(false);
+    dialog?.removeAttribute('data-compact-page-zoom');
+    dialog?.style.removeProperty('--compact-page-scale');
+    return;
+  }
+  setCompactPageZoom(editorCompactPageZoom, animate);
+  requestAnimationFrame(() => requestAnimationFrame(() => scrollCompactPageIntoView('auto')));
+}
+
+function syncEditorPageFromCompactScroll() {
+  editorCompactScrollFrame = null;
+  const { spreadsList } = getEditorControls();
+  if (!isCompactPageStageActive() || editorCompactPageZoom > 2 || !spreadsList || !editorSession) return;
+  if (performance.now() < editorCompactScrollSelectionLockedUntil) return;
+
+  const listRect = spreadsList.getBoundingClientRect();
+  const center = listRect.left + listRect.width / 2;
+  let closestIndex = editorSession.activePageIndex;
+  let closestDistance = Number.POSITIVE_INFINITY;
+  editorSession.pageNodes.forEach((page, index) => {
+    const rect = page.getBoundingClientRect();
+    const distance = Math.abs(rect.left + rect.width / 2 - center);
+    if (distance < closestDistance) {
+      closestDistance = distance;
+      closestIndex = index;
+    }
+  });
+  if (editorCompactPageZoom === 2 && Math.floor(closestIndex / 2) === editorSession.activeSpreadIndex) return;
+  if (closestIndex === editorSession.activePageIndex) return;
+  editorSession.activePageIndex = closestIndex;
+  editorSession.activeSpreadIndex = Math.floor(closestIndex / 2);
+  updateEditorSelection();
+  syncBookletEditorControls();
+}
+
+function queueCompactScrollSelection() {
+  if (editorCompactScrollFrame !== null) return;
+  editorCompactScrollFrame = requestAnimationFrame(syncEditorPageFromCompactScroll);
+  clearTimeout(editorCompactPairSettleTimer);
+  if (editorCompactPageZoom === 2) {
+    editorCompactPairSettleTimer = setTimeout(() => scrollCompactPageIntoView('smooth'), 160);
+  }
+}
+
+function queueCompactPageStageResize() {
+  if (!isCompactPageStageActive() || editorCompactResizeFrame !== null) return;
+  editorCompactResizeFrame = requestAnimationFrame(() => {
+    editorCompactResizeFrame = null;
+    setCompactPageZoom(editorCompactPageZoom, false);
+  });
+}
+
+function zoomIntoCompactPage(pageIndex) {
+  if (!isCompactPageStageActive() || editorCompactPageZoom <= 2 || !editorSession?.pageNodes[pageIndex]) return;
+  editorSession.activePageIndex = pageIndex;
+  editorSession.activeSpreadIndex = Math.floor(pageIndex / 2);
+  updateEditorSelection();
+  syncBookletEditorControls();
+  setCompactZoomOpen(false);
+  setCompactPageZoom(1, true);
+}
+
 export function editorParameterValueText(parameter) {
   const control = parameter.control;
   if (!control) return '';
@@ -954,6 +1282,7 @@ export function setEditorCompactMode(compact, persist = true) {
   dialog.classList.toggle('editor-compact-open', editorCompactMode && !bookletEditor.hidden);
   if (persist) localStorage.setItem(EDITOR_COMPACT_STORAGE_KEY, String(editorCompactMode));
   updateEditorCompactParameter();
+  syncCompactPageStage(true);
 }
 
 export function moveEditorParameter(direction) {
@@ -1094,6 +1423,7 @@ export function openBookletEditor() {
   setEditorCompactMode(editorCompactMode, false);
   updateEditorSelection();
   syncBookletEditorControls();
+  syncCompactPageStage(false);
 }
 
 function resetEditorTypographyCascade() {
@@ -1115,6 +1445,7 @@ export function closeBookletEditor() {
   bookletEditor.hidden = true;
   dialog.classList.remove('editor-is-open');
   dialog.classList.remove('editor-compact-open');
+  syncCompactPageStage(false);
   updateEditorSelection();
 }
 
@@ -1164,10 +1495,26 @@ export function initializeBookletEditor(item) {
       updateEditorSelection();
       syncBookletEditorControls();
     });
+    node.addEventListener('dblclick', event => {
+      if (event.target.closest('a')) return;
+      event.preventDefault();
+      zoomIntoCompactPage(index);
+    });
+    node.addEventListener('pointerup', event => {
+      if (event.pointerType === 'mouse' || event.target.closest('a') || editorCompactPageZoom <= 2) return;
+      const now = performance.now();
+      const isDoubleTap = editorCompactLastTapPage === index && now - editorCompactLastTapTime < 360;
+      editorCompactLastTapPage = isDoubleTap ? -1 : index;
+      editorCompactLastTapTime = isDoubleTap ? 0 : now;
+      if (!isDoubleTap) return;
+      event.preventDefault();
+      zoomIntoCompactPage(index);
+    });
   });
   editorSession.spreadNodes.forEach((node, index) => {
     node.dataset.spreadIndex = String(index);
   });
+  controls.spreadsList?.addEventListener('scroll', queueCompactScrollSelection, { passive: true });
 
   closeBookletEditor();
   applyBookletEditorState();
@@ -1262,6 +1609,16 @@ export function setupEditorEventListeners() {
   });
   controls.bookletEditorClose?.addEventListener('click', closeBookletEditor);
   controls.bookletEditorMode?.addEventListener('click', () => setEditorCompactMode(!editorCompactMode));
+  controls.editorPageZoomToggle?.addEventListener('click', () => setCompactZoomOpen(!editorCompactZoomOpen));
+  controls.editorPageZoomRange?.addEventListener('input', () => {
+    setCompactPageZoom(controls.editorPageZoomRange.value, true);
+  });
+  controls.editorPageZoom?.addEventListener('keydown', event => {
+    if (event.key !== 'Escape' || !editorCompactZoomOpen) return;
+    event.stopPropagation();
+    setCompactZoomOpen(false);
+    controls.editorPageZoomToggle?.focus();
+  });
   controls.editorParameterPrevious?.addEventListener('click', () => moveEditorParameter(-1));
   controls.editorParameterNext?.addEventListener('click', () => moveEditorParameter(1));
   controls.editorParameterMenuToggle?.addEventListener('click', () => {
@@ -1294,7 +1651,9 @@ export function setupEditorEventListeners() {
   });
   window.matchMedia('(max-width: 700px)').addEventListener('change', event => {
     if (!event.matches) setEditorParameterMenu(false);
+    syncCompactPageStage(false);
   });
+  window.addEventListener('resize', queueCompactPageStageResize, { passive: true });
   controls.dialogEdit?.addEventListener('click', openBookletEditor);
 
   controls.editorResetScope?.addEventListener('click', () => {
