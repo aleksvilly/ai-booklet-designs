@@ -1489,6 +1489,13 @@ export function initializeBookletEditor(item) {
   editorSession.pageNodes.forEach((node, index) => {
     node.dataset.pageIndex = String(index);
     node.addEventListener('click', event => {
+      // At zoom ≥ 2, tapping a page should zoom in, not activate links or
+      // change the editor selection. Block ALL click outcomes here.
+      if (isCompactPageStageActive() && editorCompactPageZoom >= 2) {
+        event.preventDefault();
+        event.stopPropagation();
+        return;
+      }
       if (controls.bookletEditor?.hidden || event.target.closest('a')) return;
       editorSession.activePageIndex = index;
       editorSession.activeSpreadIndex = Math.floor(index / 2);
@@ -1496,20 +1503,34 @@ export function initializeBookletEditor(item) {
       syncBookletEditorControls();
     });
     node.addEventListener('dblclick', event => {
+      // At zoom ≥ 2, dblclick (mouse) zooms into the tapped page.
+      if (isCompactPageStageActive() && editorCompactPageZoom >= 2) {
+        event.preventDefault();
+        zoomIntoCompactPage(index);
+        return;
+      }
       if (event.target.closest('a')) return;
       event.preventDefault();
       zoomIntoCompactPage(index);
     });
     node.addEventListener('pointerup', event => {
-      if (event.pointerType === 'mouse' || event.target.closest('a') || editorCompactPageZoom <= 2) return;
+      if (event.pointerType === 'mouse') return;
+      if (!isCompactPageStageActive() || editorCompactPageZoom < 2) return;
+
+      // Prevent any link or default tap action when we're in overview mode.
+      event.preventDefault();
+
       const now = performance.now();
       const isDoubleTap = editorCompactLastTapPage === index && now - editorCompactLastTapTime < 360;
       editorCompactLastTapPage = isDoubleTap ? -1 : index;
       editorCompactLastTapTime = isDoubleTap ? 0 : now;
-      if (!isDoubleTap) return;
-      event.preventDefault();
-      zoomIntoCompactPage(index);
+
+      // Only double-tap zooms in; single-tap does nothing (just blocks links).
+      if (isDoubleTap) {
+        zoomIntoCompactPage(index);
+      }
     });
+
   });
   editorSession.spreadNodes.forEach((node, index) => {
     node.dataset.spreadIndex = String(index);
