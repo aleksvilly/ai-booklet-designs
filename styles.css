@@ -2304,7 +2304,15 @@ footer a { text-underline-offset: 3px; }
   }
 }
 
+/* Compact-open zeros the margin so pages fill the whole width on mobile.
+   On desktop full editor mode (.editor-is-open, no .editor-compact class),
+   we must restore the margin so the fixed sidebar doesn't overlap pages. */
 .booklet-dialog.editor-compact-open #dialog-content { margin-right: 0; }
+@media (min-width: 701px) {
+  .booklet-dialog.editor-compact-open:has(.booklet-editor:not(.editor-compact)) #dialog-content {
+    margin-right: 360px; /* keep space for the full editor sidebar */
+  }
+}
 
 .editor-page-zoom[hidden],
 .editor-page-zoom-panel[hidden] { display: none; }
@@ -3027,12 +3035,18 @@ footer a { text-underline-offset: 3px; }
   .editor-page-zoom { display: none; }
   .booklet-dialog.editor-compact-open .editor-page-zoom { display: flex; }
 
-  /* On desktop the editor sidebar stays fixed on the right (360px wide).
-     Position the zoom badge at the bottom-left of the content area
-     instead of above the compact editor panel. */
-  .booklet-dialog.editor-compact-open .editor-page-zoom {
+  /* Compact mode on desktop: zoom badge bottom-left of the content area */
+  .booklet-dialog.editor-compact-open:has(.booklet-editor.editor-compact) .editor-page-zoom {
     right: auto;
     left: max(12px, calc((100vw - 1120px) / 2 + 12px));
+    bottom: 16px;
+  }
+
+  /* Full editor mode on desktop: zoom badge bottom-right of the content area,
+     just to the left of the 360px editor sidebar. */
+  .booklet-dialog.editor-compact-open:has(.booklet-editor:not(.editor-compact)) .editor-page-zoom {
+    right: calc(360px + 12px);
+    left: auto;
     bottom: 16px;
   }
 }

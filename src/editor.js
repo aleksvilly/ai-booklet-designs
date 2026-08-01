@@ -882,13 +882,12 @@ export function updateEditorSelection() {
 
 function isCompactPageStageActive() {
   const { bookletEditor, dialog } = getEditorControls();
-  return Boolean(
-    editorSession &&
-    bookletEditor &&
-    dialog &&
-    !bookletEditor.hidden &&
-    editorCompactMode
-  );
+  if (!editorSession || !bookletEditor || !dialog || bookletEditor.hidden) return false;
+  // Always active in compact (mobile bottom-bar) mode.
+  if (editorCompactMode) return true;
+  // Also active on desktop (>700px) whenever the full editor sidebar is open,
+  // so the zoom panel is always accessible without switching to compact mode.
+  return window.matchMedia('(min-width: 701px)').matches;
 }
 
 function compactZoomLabel(level = editorCompactPageZoom) {
@@ -1128,9 +1127,13 @@ function setCompactPageZoom(value, animate = true) {
 }
 
 function syncCompactPageStage(animate = false) {
-  const { dialog, editorPageZoom } = getEditorControls();
+  const { dialog, editorPageZoom, bookletEditor } = getEditorControls();
   const active = isCompactPageStageActive();
   if (editorPageZoom) editorPageZoom.hidden = !active;
+  // editor-compact-open drives all the page-stage CSS layout.
+  // Centralise class management here so both compact mode and desktop full
+  // mode go through the same path.
+  dialog?.classList.toggle('editor-compact-open', active);
   if (!active) {
     setCompactZoomOpen(false);
     dialog?.removeAttribute('data-compact-page-zoom');
@@ -1282,7 +1285,8 @@ export function setEditorCompactMode(compact, persist = true) {
   editorCompactMode = Boolean(compact);
   setEditorParameterMenu(false);
   bookletEditor.classList.toggle('editor-compact', editorCompactMode);
-  dialog.classList.toggle('editor-compact-open', editorCompactMode && !bookletEditor.hidden);
+  // editor-compact-open is now managed by syncCompactPageStage() which is
+  // called below — do NOT toggle it here to avoid a race condition.
   if (persist) localStorage.setItem(EDITOR_COMPACT_STORAGE_KEY, String(editorCompactMode));
   updateEditorCompactParameter();
   syncCompactPageStage(true);
