@@ -887,8 +887,7 @@ function isCompactPageStageActive() {
     bookletEditor &&
     dialog &&
     !bookletEditor.hidden &&
-    editorCompactMode &&
-    window.matchMedia('(max-width: 700px)').matches
+    editorCompactMode
   );
 }
 

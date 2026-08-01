@@ -2306,6 +2306,105 @@ footer a { text-underline-offset: 3px; }
 
 .booklet-dialog.editor-compact-open #dialog-content { margin-right: 0; }
 
+.editor-page-zoom[hidden],
+.editor-page-zoom-panel[hidden] { display: none; }
+
+.editor-page-zoom {
+  position: fixed;
+  z-index: 42;
+  right: max(12px, env(safe-area-inset-right));
+  bottom: calc(212px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  gap: 9px;
+  transition:
+    bottom .55s cubic-bezier(.22, 1, .36, 1),
+    opacity .2s ease,
+    transform .55s cubic-bezier(.22, 1, .36, 1);
+}
+
+.editor-page-zoom-toggle {
+  display: grid;
+  place-content: center;
+  gap: 1px;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--paper) 94%, transparent);
+  color: var(--ink);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, .2);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  cursor: pointer;
+}
+
+.editor-page-zoom-toggle span {
+  font: 650 9px/1 "DM Sans", sans-serif;
+  letter-spacing: .02em;
+}
+
+.editor-page-zoom-toggle strong {
+  font: 600 9px/1 "IBM Plex Mono", monospace;
+  color: var(--muted);
+}
+
+.editor-page-zoom-toggle[aria-expanded="true"] {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.editor-page-zoom-toggle[aria-expanded="true"] strong {
+  color: color-mix(in srgb, var(--paper) 68%, transparent);
+}
+
+.editor-page-zoom-panel {
+  display: grid;
+  grid-template-columns: minmax(116px, 1fr) auto;
+  align-items: center;
+  gap: 7px 12px;
+  width: min(250px, calc(100vw - 84px));
+  padding: 11px 13px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--paper) 96%, transparent);
+  color: var(--ink);
+  box-shadow: 0 12px 38px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  transform-origin: right center;
+  animation: editor-page-zoom-panel-in .34s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+.editor-page-zoom-panel label {
+  font: 650 9px/1.2 "IBM Plex Mono", monospace;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.editor-page-zoom-panel input {
+  grid-column: 1;
+  width: 100%;
+  accent-color: var(--ink);
+}
+
+.editor-page-zoom-panel output {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  max-width: 74px;
+  color: var(--muted);
+  font: 600 9px/1.25 "DM Sans", sans-serif;
+  text-align: right;
+}
+
+@keyframes editor-page-zoom-panel-in {
+  from { opacity: 0; transform: translateX(12px) scale(.94); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
 .booklet-editor.editor-compact {
   --editor-compact-motion-duration: .75s;
   --editor-compact-fade-duration: .46s;
@@ -2583,7 +2682,195 @@ footer a { text-underline-offset: 3px; }
 .booklet-editor.editor-compact .editor-mini-navigation span { color: var(--muted); font-size: 10px; }
 .editor-parameter-menu { display: none; }
 
+/* ─── Compact page stage — core layout (all screen sizes) ─────────────────── */
+
+.booklet-dialog.editor-compact-open .spread-section {
+  overflow: hidden;
+  background: var(--paper);
+}
+
+.booklet-dialog.editor-compact-open .spreads-list {
+  --compact-page-base-width: min(calc(100vw - 58px), 40dvh);
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  height: 100%;
+  padding: 10px calc((100% - var(--compact-page-base-width)) / 2);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  scroll-padding-inline: calc((100% - var(--compact-page-base-width)) / 2);
+  scroll-snap-type: x mandatory;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  box-sizing: border-box;
+}
+
+.booklet-dialog.editor-compact-open .spreads-list::-webkit-scrollbar { display: none; }
+.booklet-dialog.editor-compact-open .print-spread { display: contents; }
+.booklet-dialog.editor-compact-open .print-spread::after,
+.booklet-dialog.editor-compact-open .book-page.blank-page { display: none; }
+
+.booklet-dialog.editor-compact-open .print-spread > .book-page {
+  flex: 0 0 var(--compact-page-base-width);
+  width: var(--compact-page-base-width);
+  max-width: none;
+  height: auto;
+  aspect-ratio: 148 / 210;
+  zoom: var(--compact-page-scale, 1);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+  box-shadow: 0 16px 42px rgba(24, 21, 17, .2);
+  opacity: .62;
+  filter: saturate(.82) brightness(.88);
+  transform-origin: center;
+  transition:
+    opacity .28s ease,
+    filter .28s ease,
+    box-shadow .38s ease;
+}
+
+.booklet-dialog.editor-compact-open .book-page.editor-selected-page {
+  opacity: 1;
+  filter: none;
+  box-shadow: 0 18px 52px rgba(24, 21, 17, .28);
+}
+
+.booklet-dialog.editor-compact-open[data-compact-page-zoom="2"] .spreads-list {
+  padding-inline: 30px;
+  scroll-padding-inline: 30px;
+  scroll-snap-type: none;
+}
+
+.booklet-dialog.editor-compact-open[data-compact-page-zoom="2"] .print-spread > .book-page {
+  scroll-snap-stop: normal;
+}
+
+.booklet-dialog.editor-compact-open:is(
+  [data-compact-page-zoom="3"],
+  [data-compact-page-zoom="4"],
+  [data-compact-page-zoom="5"],
+  [data-compact-page-zoom="6"]
+) .spreads-list {
+  align-content: flex-start;
+  align-items: flex-start;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scroll-padding: 14px;
+  scroll-snap-type: none;
+}
+
+.booklet-dialog.editor-compact-open:is(
+  [data-compact-page-zoom="3"],
+  [data-compact-page-zoom="4"],
+  [data-compact-page-zoom="5"],
+  [data-compact-page-zoom="6"]
+) .print-spread > .book-page {
+  opacity: 1;
+  filter: none;
+  scroll-snap-align: none;
+  touch-action: manipulation;
+  cursor: zoom-in;
+}
+
+.booklet-dialog.editor-compact-open[data-compact-page-zoom="6"] .spreads-list {
+  align-content: center;
+}
+
+/* ─── Desktop compact page stage overrides (> 700px) ───────────────────────── */
+@media (min-width: 701px) {
+  /* On desktop the dialog is up to 1120px wide. The editor sidebar is
+     fixed at 360px on the right. The content area (left of sidebar) gets
+     the remaining width. We hide the usual booklet meta header so spread-
+     section can fill the entire dialog height. */
+  .booklet-dialog.editor-compact-open .dialog-close,
+  .booklet-dialog.editor-compact-open .dialog-edit,
+  .booklet-dialog.editor-compact-open .detail-hero,
+  .booklet-dialog.editor-compact-open .spread-heading,
+  .booklet-dialog.editor-compact-open .detail-actions,
+  .booklet-dialog.editor-compact-open .detail-action-status,
+  .booklet-dialog.editor-compact-open .share-link-fallback {
+    display: none !important;
+  }
+
+  .booklet-dialog.editor-compact-open #dialog-content {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .booklet-dialog.editor-compact-open .spread-section {
+    height: 100%;
+    padding: 14px 0;
+  }
+
+  /* Page base-width on desktop: fit a single page comfortably in the
+     content area (dialog width minus sidebar ~360px, minus some breathing room).
+     Use viewport height as the limiting dimension so portrait pages don't
+     overflow vertically. */
+  .booklet-dialog.editor-compact-open .spreads-list {
+    --compact-page-base-width: min(46vh, 320px);
+  }
+}
+
+/* ─── Mobile-only compact page stage overrides (≤ 700px) ───────────────────── */
 @media (max-width: 700px) {
+
+  .booklet-dialog.editor-compact-open {
+    inset: 0;
+    width: 100vw;
+    max-width: none;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    overflow: hidden;
+    background: var(--paper);
+    box-shadow: none;
+  }
+
+  .booklet-dialog.editor-compact-open #dialog-content {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .booklet-dialog.editor-compact-open .dialog-close,
+  .booklet-dialog.editor-compact-open .dialog-edit,
+  .booklet-dialog.editor-compact-open .detail-hero,
+  .booklet-dialog.editor-compact-open .spread-heading,
+  .booklet-dialog.editor-compact-open .detail-actions,
+  .booklet-dialog.editor-compact-open .detail-action-status,
+  .booklet-dialog.editor-compact-open .share-link-fallback {
+    display: none !important;
+  }
+
+  .booklet-dialog.editor-compact-open .spread-section {
+    height: calc(100dvh - 214px - env(safe-area-inset-bottom));
+    padding: max(10px, env(safe-area-inset-top)) 0 10px;
+  }
+
+  .booklet-dialog.editor-compact-open .spreads-list {
+    --compact-page-base-width: min(calc(100vw - 58px), 40dvh);
+    padding-inline: calc((100vw - var(--compact-page-base-width)) / 2);
+    scroll-padding-inline: calc((100vw - var(--compact-page-base-width)) / 2);
+  }
+}
+
+  .booklet-dialog:has(.booklet-editor.editor-compact .editor-advanced-typography.editor-group-active) .editor-page-zoom {
+    bottom: calc(322px + env(safe-area-inset-bottom));
+  }
+
+  .booklet-dialog:has(.booklet-editor.editor-compact.editor-parameter-menu-open) .editor-page-zoom {
+    opacity: 0;
+    transform: translateY(18px) scale(.96);
+    pointer-events: none;
+  }
+}
+
   .booklet-editor.editor-compact .booklet-editor-scroll {
     position: relative;
     z-index: 2;
@@ -2729,7 +3016,34 @@ footer a { text-underline-offset: 3px; }
 .booklet-editor.editor-compact .booklet-editor-footer { display: none; }
 
 @media print {
+  .editor-page-zoom { display: none !important; }
   .booklet-editor { display: none !important; }
   .book-page.editor-selected-page { outline: 0; }
   .print-spread.editor-selected-spread { box-shadow: none; }
+}
+
+/* Zoom badge is hidden unless the compact page stage is active */
+@media (min-width: 701px) {
+  .editor-page-zoom { display: none; }
+  .booklet-dialog.editor-compact-open .editor-page-zoom { display: flex; }
+
+  /* On desktop the editor sidebar stays fixed on the right (360px wide).
+     Position the zoom badge at the bottom-left of the content area
+     instead of above the compact editor panel. */
+  .booklet-dialog.editor-compact-open .editor-page-zoom {
+    right: auto;
+    left: max(12px, calc((100vw - 1120px) / 2 + 12px));
+    bottom: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .editor-page-zoom,
+  .editor-page-zoom-panel,
+  .booklet-dialog.editor-compact-open .spreads-list,
+  .booklet-dialog.editor-compact-open .print-spread > .book-page {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
