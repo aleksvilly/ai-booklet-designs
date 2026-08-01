@@ -32,7 +32,7 @@
 .style-minimal-editorial .cover-title,
 .style-minimal-editorial .detail-title,
 .style-swiss-minimal h4 {
-  font: 600 clamp(22px, 4vw, 68px)/1.0 "Playfair Display", serif;
+  font: 600 40px/1.0 "Playfair Display", serif;
   letter-spacing: -.02em;
   color: var(--minimal-ink);
 }
@@ -73,7 +73,7 @@
 }
 .style-minimal-editorial .book-page h4,
 .style-swiss-minimal .book-page h4 {
-  font: 600 clamp(24px, 3.8vw, 60px)/1.0 "Playfair Display", serif;
+  font: 600 38px/1.0 "Playfair Display", serif;
   letter-spacing: -.025em;
   color: var(--minimal-ink);
 }
@@ -108,7 +108,7 @@
   padding: 0;
 }
 .style-minimal-editorial .book-page.layout-minimal {
-  padding: clamp(36px, 6vw, 72px);
+  padding: 36px;
 }
 .style-minimal-editorial .book-page.layout-minimal .book-page-copy {
   max-width: 75%;
@@ -128,7 +128,7 @@
 
 /* === Effects === */
 .style-minimal-editorial .book-page.effect-empty-space {
-  padding: clamp(44px, 7vw, 88px);
+  padding: 44px;
 }
 .style-minimal-editorial .book-page.effect-floating-caption figcaption {
   background: rgba(238, 229, 212, .9);
@@ -138,7 +138,7 @@
   left: 24px;
 }
 .style-minimal-editorial .book-page.effect-oversized-number .book-page-number {
-  font-size: clamp(80px, 14vw, 180px);
+  font-size: 96px;
   line-height: .85;
   color: rgba(212, 184, 93, .14);
   position: absolute;

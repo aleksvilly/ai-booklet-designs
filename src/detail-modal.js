@@ -234,7 +234,25 @@ export function activateGeneratedEffects(root) {
       }, { root: dialog, threshold: 0.12 })
     : null;
 
-  root.querySelectorAll('.book-page').forEach(page => observer?.observe(page));
+  const pageScaleObserver = 'ResizeObserver' in window
+    ? new ResizeObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.target.closest('.spreads-list')) {
+            entry.target.style.removeProperty('--page-scale');
+            return;
+          }
+          const width = entry.contentRect.width;
+          if (width > 0) {
+            entry.target.style.setProperty('--page-scale', (width / 320).toFixed(4));
+          }
+        });
+      })
+    : null;
+
+  root.querySelectorAll('.book-page').forEach(page => {
+    observer?.observe(page);
+    pageScaleObserver?.observe(page);
+  });
 
   root.querySelectorAll('.effect-parallax-depth').forEach(page => {
     const images = page.querySelectorAll('img');
@@ -324,10 +342,37 @@ export function openBooklet(item, updateUrl = true) {
   });
 }
 
+export function hideLinkPopover() {
+  const popover = document.querySelector('#link-popover');
+  if (popover) popover.hidden = true;
+}
+
+export function showLinkPopover(anchorNode) {
+  const popover = document.querySelector('#link-popover');
+  const action = document.querySelector('#link-popover-action');
+  if (!popover || !action || !anchorNode) return;
+
+  const rawUrl = anchorNode.getAttribute('href') || anchorNode.dataset.url || '';
+  if (!rawUrl || rawUrl === '#') return;
+
+  action.href = safeUrl(rawUrl);
+
+  const rect = anchorNode.getBoundingClientRect();
+  popover.hidden = false;
+
+  const popoverRect = popover.getBoundingClientRect();
+  const top = Math.max(10, rect.top - popoverRect.height - 8);
+  const left = Math.max(10, Math.min(window.innerWidth - popoverRect.width - 10, rect.left + (rect.width - popoverRect.width) / 2));
+
+  popover.style.top = `${top}px`;
+  popover.style.left = `${left}px`;
+}
+
 export function closeDialog() {
   const dialog = document.querySelector('#booklet-dialog');
   const dialogEdit = document.querySelector('#dialog-edit');
 
+  hideLinkPopover();
   closePrintSettings();
   closeBookletEditor();
   if (dialogEdit) dialogEdit.hidden = true;
@@ -348,10 +393,24 @@ export function initDetailModalEvents() {
 
   dialogClose?.addEventListener('click', closeDialog);
   dialog?.addEventListener('click', event => {
+    const popover = document.querySelector('#link-popover');
+    if (popover && !popover.hidden && !event.target.closest('#link-popover')) {
+      hideLinkPopover();
+    }
+
+    const anchor = event.target.closest('a');
+    if (anchor && anchor.id !== 'link-popover-action' && !dialog.classList.contains('editor-is-open')) {
+      event.preventDefault();
+      event.stopPropagation();
+      showLinkPopover(anchor);
+      return;
+    }
+
     const rect = dialog.getBoundingClientRect();
     const outside = event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom;
     if (outside && !dialog.classList.contains('editor-is-open')) closeDialog();
   });
+  dialog?.addEventListener('scroll', hideLinkPopover, { passive: true, capture: true });
   dialog?.addEventListener('cancel', event => {
     if (!dialog.classList.contains('editor-is-open')) return;
     event.preventDefault();

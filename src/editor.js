@@ -17,6 +17,7 @@ let editorCompactZoomOpen = false;
 let editorCompactScrollFrame = null;
 let editorCompactResizeFrame = null;
 let editorCompactPairSettleTimer = null;
+let editorCompactSnapUnlockTimer = null;
 let editorCompactLastTapPage = -1;
 let editorCompactLastTapTime = 0;
 let editorCompactScrollSelectionLockedUntil = 0;
@@ -105,7 +106,16 @@ function getEditorControls() {
     editorSaveStatus: document.querySelector('#editor-save-status'),
     editorResetScope: document.querySelector('#editor-reset-scope'),
     editorResetAll: document.querySelector('#editor-reset-all'),
-    generationForm: document.querySelector('#generation-form')
+    generationForm: document.querySelector('#generation-form'),
+    editorTextMode: document.querySelector('#editor-text-mode'),
+    editorTextBackBtn: document.querySelector('#editor-text-back-btn'),
+    editorTextFieldEyebrow: document.querySelector('#editor-text-field-eyebrow'),
+    editorTextFieldTitle: document.querySelector('#editor-text-field-title'),
+    editorTextTextarea: document.querySelector('#editor-text-textarea'),
+    editorTextUrlGroup: document.querySelector('#editor-text-url-group'),
+    editorTextUrlInput: document.querySelector('#editor-text-url-input'),
+    editorTextCancelBtn: document.querySelector('#editor-text-cancel-btn'),
+    editorTextSaveBtn: document.querySelector('#editor-text-save-btn')
   };
 }
 
@@ -831,11 +841,26 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     else body.style.removeProperty('font-family');
     applyEditorTypography(body, 'body', pageIndex);
   }
-  if (title) title.hidden = !values.showTitle;
-  if (subtitle) subtitle.hidden = !values.showSubtitle;
-  if (caption) caption.hidden = !values.showCaption;
+  if (title) {
+    title.hidden = !values.showTitle;
+    title.textContent = String(page.title || '');
+  }
+  if (subtitle) {
+    subtitle.hidden = !values.showSubtitle;
+    subtitle.textContent = String(page.subtitle || (page.module || page.type || 'editorial').replaceAll('_', ' '));
+  }
+  if (caption) {
+    caption.hidden = !values.showCaption;
+    caption.textContent = String(page.caption || '');
+  }
   if (pageNumber) pageNumber.hidden = !values.showPageNumber;
-  if (source) source.hidden = !values.showSource;
+  if (source) {
+    source.hidden = !values.showSource;
+    if (page.source?.title) {
+      source.textContent = `Source suggestion: ${page.source.title} ↗`;
+      if (page.source.url) source.href = safeUrl(page.source.url);
+    }
+  }
   pageNode.querySelectorAll('.page-image figcaption, .gallery-image figcaption').forEach(node => {
     node.hidden = !values.showImageCaptions;
   });
@@ -885,9 +910,9 @@ function isCompactPageStageActive() {
   if (!editorSession || !bookletEditor || !dialog || bookletEditor.hidden) return false;
   // Always active in compact (mobile bottom-bar) mode.
   if (editorCompactMode) return true;
-  // Also active on desktop (>700px) whenever the full editor sidebar is open,
+  // Also active on desktop (>900px) whenever the full editor sidebar is open,
   // so the zoom panel is always accessible without switching to compact mode.
-  return window.matchMedia('(min-width: 701px)').matches;
+  return window.matchMedia('(min-width: 901px)').matches;
 }
 
 function compactZoomLabel(level = editorCompactPageZoom) {
@@ -895,9 +920,7 @@ function compactZoomLabel(level = editorCompactPageZoom) {
     1: '1 page',
     2: '2 pages',
     3: '4-page grid',
-    4: '3-column grid',
-    5: '4-column grid',
-    6: 'Maximum overview'
+    4: '6-column grid'
   }[level] || '1 page';
 }
 
@@ -911,31 +934,31 @@ function compactZoomScale(level, controls = getEditorControls()) {
   const baseHeight = page.offsetHeight || pageRect.height / Math.max(.01, editorCompactPageScale);
   if (!baseWidth || !baseHeight) return 1;
 
-  if (level === 2) {
-    return Math.min(1, Math.max(.12, (spreadsList.clientWidth - 72) / 2 / baseWidth));
-  }
+  const twoPageScale = Math.min(1, Math.max(.12, (spreadsList.clientWidth - 72) / 2 / baseWidth));
+  if (level === 2) return twoPageScale;
 
   const gap = 10;
   const availableWidth = Math.max(1, spreadsList.clientWidth - 28);
   const availableHeight = Math.max(1, spreadsList.clientHeight - 28);
   const pageCount = Math.max(1, editorSession?.pageNodes.length || 1);
-  const columns = Math.min(level - 1, pageCount);
-  const rows = Math.ceil(pageCount / columns);
-  const widthScale = (availableWidth - gap * (columns - 1)) / columns / baseWidth;
-  const heightScale = (availableHeight - gap * (rows - 1)) / rows / baseHeight;
-  const twoPageScale = (spreadsList.clientWidth - 72) / 2 / baseWidth;
-  // Zoom 3 promises a real 2 × 2 overview. Fit two rows inside the visible
-  // stage and reserve room for the floating Zoom control, otherwise short
-  // desktop windows show only the first row and look identical to Zoom 2.
-  const previewRows = Math.min(2, rows);
-  const previewHeight = Math.max(1, availableHeight - 64 - gap * (previewRows - 1));
-  const fourPageScale = previewHeight / previewRows / baseHeight;
-  const scale = level === 3
-    ? Math.min(widthScale, twoPageScale * .94, fourPageScale)
-    : level === 6
-      ? Math.min(widthScale, heightScale)
-      : widthScale;
-  return Math.min(1, Math.max(.08, scale));
+
+  // Level 3 (2 columns / 4-page grid): ensure 2 rows fit in visible stage
+  const col3 = Math.min(2, pageCount);
+  const rows3 = Math.ceil(pageCount / col3);
+  const widthScale3 = (availableWidth - gap * (col3 - 1)) / col3 / baseWidth;
+  const previewRows3 = Math.min(2, rows3);
+  const previewHeight3 = Math.max(1, availableHeight - 64 - gap * (previewRows3 - 1));
+  const fourPageScale = previewHeight3 / previewRows3 / baseHeight;
+  const scale3 = Math.min(widthScale3, twoPageScale * .94, fourPageScale);
+  if (level === 3) return Math.min(1, Math.max(.08, scale3));
+
+  // Level 4 (6-column grid / overview): 6 columns fitted into available width and height
+  const col4 = Math.min(6, pageCount);
+  const rows4 = Math.ceil(pageCount / col4);
+  const widthScale4 = (availableWidth - gap * (col4 - 1)) / col4 / baseWidth;
+  const heightScale4 = (availableHeight - gap * (rows4 - 1)) / rows4 / baseHeight;
+  const scale4 = Math.min(widthScale4, heightScale4, scale3 * .78);
+  return Math.min(1, Math.max(.06, scale4));
 }
 
 function setCompactZoomOpen(open) {
@@ -1094,7 +1117,16 @@ function setCompactPageZoom(value, animate = true) {
   const previousRects = animate && isCompactPageStageActive()
     ? new Map((editorSession?.pageNodes || []).map(page => [page, page.getBoundingClientRect()]))
     : null;
-  if (animate) editorCompactScrollSelectionLockedUntil = performance.now() + 900;
+  if (animate) {
+    editorCompactScrollSelectionLockedUntil = performance.now() + 900;
+    if (controls.spreadsList) {
+      controls.spreadsList.style.scrollSnapType = 'none';
+      clearTimeout(editorCompactSnapUnlockTimer);
+      editorCompactSnapUnlockTimer = setTimeout(() => {
+        if (controls.spreadsList) controls.spreadsList.style.scrollSnapType = '';
+      }, 600);
+    }
+  }
 
   editorCompactPageZoom = next;
   controls.dialog?.setAttribute('data-compact-page-zoom', String(next));
@@ -1243,8 +1275,8 @@ function setEditorParameterMenu(open) {
   const { bookletEditor, editorParameterMenu, editorParameterMenuToggle } = getEditorControls();
   if (!bookletEditor) return;
 
-  const mobileCompact = editorCompactMode && window.matchMedia('(max-width: 700px)').matches;
-  editorParameterMenuOpen = Boolean(open && mobileCompact);
+  const canShowMenu = editorCompactMode;
+  editorParameterMenuOpen = Boolean(open && canShowMenu);
   bookletEditor.classList.toggle('editor-parameter-menu-open', editorParameterMenuOpen);
   editorParameterMenu?.setAttribute('aria-hidden', String(!editorParameterMenuOpen));
   editorParameterMenuToggle?.setAttribute('aria-expanded', String(editorParameterMenuOpen));
@@ -1418,16 +1450,20 @@ export function setEditorValue(key, value) {
   scheduleEditorSave();
 }
 
+function syncResponsiveEditorMode(persist = false) {
+  const isSmallScreen = window.matchMedia('(max-width: 900px)').matches;
+  setEditorCompactMode(isSmallScreen, persist);
+}
+
 export function openBookletEditor() {
   const { bookletEditor, dialog } = getEditorControls();
   if (!editorSession || !bookletEditor || !dialog) return;
 
   bookletEditor.hidden = false;
   dialog.classList.add('editor-is-open');
-  setEditorCompactMode(editorCompactMode, false);
+  syncResponsiveEditorMode(false);
   updateEditorSelection();
   syncBookletEditorControls();
-  syncCompactPageStage(false);
 }
 
 function resetEditorTypographyCascade() {
@@ -1440,10 +1476,160 @@ function resetEditorTypographyCascade() {
   if (controls.editorTypographySettingEditor) controls.editorTypographySettingEditor.hidden = true;
 }
 
+let editorActiveTextSession = null;
+
+export function openTextEditor(fieldKey, pageIndex, targetElement) {
+  const controls = getEditorControls();
+  if (!editorSession || !controls.editorTextMode) return;
+
+  const page = editorSession.pages[pageIndex];
+  if (!page) return;
+
+  let currentText = '';
+  let currentUrl = '';
+  let fieldTitle = 'Edit text';
+
+  if (fieldKey === 'title') {
+    fieldTitle = 'Edit Title';
+    currentText = String(page.title || '');
+  } else if (fieldKey === 'subtitle') {
+    fieldTitle = 'Edit Subtitle';
+    currentText = String(page.subtitle || (page.module || page.type || 'editorial').replaceAll('_', ' '));
+  } else if (fieldKey === 'body') {
+    fieldTitle = 'Edit Body Text';
+    currentText = String(page.body || '');
+  } else if (fieldKey === 'caption') {
+    fieldTitle = 'Edit Caption';
+    currentText = String(page.caption || '');
+  } else if (fieldKey === 'source') {
+    fieldTitle = 'Edit Source Link';
+    currentText = String(page.source?.title || '');
+    currentUrl = String(page.source?.url || '');
+  }
+
+  if (editorActiveTextSession?.targetElement) {
+    editorActiveTextSession.targetElement.classList.remove('is-editing-text');
+  }
+
+  editorActiveTextSession = {
+    fieldKey,
+    pageIndex,
+    originalText: currentText,
+    originalUrl: currentUrl,
+    targetElement
+  };
+
+  if (targetElement) {
+    targetElement.classList.add('is-editing-text');
+  }
+
+  if (controls.editorTextFieldEyebrow) {
+    controls.editorTextFieldEyebrow.textContent = `Page ${pageIndex + 1}`;
+  }
+  if (controls.editorTextFieldTitle) {
+    controls.editorTextFieldTitle.textContent = fieldTitle;
+  }
+
+  if (controls.editorTextTextarea) {
+    controls.editorTextTextarea.value = currentText;
+  }
+
+  if (controls.editorTextUrlGroup && controls.editorTextUrlInput) {
+    const isSource = fieldKey === 'source';
+    controls.editorTextUrlGroup.hidden = !isSource;
+    if (isSource) controls.editorTextUrlInput.value = currentUrl;
+  }
+
+  controls.bookletEditor?.classList.add('editor-text-editing-active');
+  controls.editorTextMode.hidden = false;
+
+  requestAnimationFrame(() => {
+    controls.editorTextTextarea?.focus();
+    controls.editorTextTextarea?.select();
+  });
+}
+
+export function closeTextEditor(save = false) {
+  const controls = getEditorControls();
+  if (editorActiveTextSession?.targetElement) {
+    editorActiveTextSession.targetElement.classList.remove('is-editing-text');
+  }
+
+  if (!editorActiveTextSession) {
+    controls.bookletEditor?.classList.remove('editor-text-editing-active');
+    if (controls.editorTextMode) controls.editorTextMode.hidden = true;
+    return;
+  }
+
+  const { fieldKey, pageIndex, originalText, originalUrl } = editorActiveTextSession;
+  const page = editorSession?.pages[pageIndex];
+  const pageNode = editorSession?.pageNodes[pageIndex];
+
+  if (!save && page && pageNode) {
+    // Revert edits on cancel
+    if (fieldKey === 'title') page.title = originalText;
+    else if (fieldKey === 'subtitle') page.subtitle = originalText;
+    else if (fieldKey === 'body') page.body = originalText;
+    else if (fieldKey === 'caption') page.caption = originalText;
+    else if (fieldKey === 'source') {
+      if (!page.source) page.source = {};
+      page.source.title = originalText;
+      page.source.url = originalUrl;
+    }
+    applyEditorPage(pageNode, page, pageIndex);
+  } else if (save && page) {
+    // Persist edits to state and localStorage
+    if (!editorSession.state.pages[String(pageIndex)]) {
+      editorSession.state.pages[String(pageIndex)] = {};
+    }
+    const pageOverrides = editorSession.state.pages[String(pageIndex)];
+    if (fieldKey === 'title') pageOverrides.title = page.title;
+    else if (fieldKey === 'subtitle') pageOverrides.subtitle = page.subtitle;
+    else if (fieldKey === 'body') pageOverrides.body = page.body;
+    else if (fieldKey === 'caption') pageOverrides.caption = page.caption;
+    else if (fieldKey === 'source') pageOverrides.source = page.source;
+    saveEditorState();
+  }
+
+  controls.bookletEditor?.classList.remove('editor-text-editing-active');
+  if (controls.editorTextMode) controls.editorTextMode.hidden = true;
+  editorActiveTextSession = null;
+}
+
+function handleTextEditorInput() {
+  if (!editorActiveTextSession || !editorSession) return;
+  const controls = getEditorControls();
+  const { fieldKey, pageIndex } = editorActiveTextSession;
+  const page = editorSession.pages[pageIndex];
+  const pageNode = editorSession.pageNodes[pageIndex];
+  if (!page || !pageNode) return;
+
+  const newText = controls.editorTextTextarea?.value || '';
+
+  if (fieldKey === 'title') {
+    page.title = newText;
+  } else if (fieldKey === 'subtitle') {
+    page.subtitle = newText;
+  } else if (fieldKey === 'body') {
+    page.body = newText;
+  } else if (fieldKey === 'caption') {
+    page.caption = newText;
+  } else if (fieldKey === 'source') {
+    if (!page.source) page.source = {};
+    page.source.title = newText;
+    if (controls.editorTextUrlInput) {
+      page.source.url = controls.editorTextUrlInput.value || '';
+    }
+  }
+
+  applyEditorPage(pageNode, page, pageIndex);
+}
+
 export function closeBookletEditor() {
   const { bookletEditor, dialog } = getEditorControls();
   if (!bookletEditor || !dialog) return;
 
+  closeTextEditor(false);
   resetEditorTypographyCascade();
   setEditorParameterMenu(false);
   bookletEditor.hidden = true;
@@ -1490,56 +1676,108 @@ export function initializeBookletEditor(item) {
   }
   populateEditorFontControl();
 
+  const selectPage = (index, scrollIntoView = true) => {
+    if (controls.bookletEditor?.hidden) return;
+    const pageChanged = editorSession.activePageIndex !== index;
+    editorSession.activePageIndex = index;
+    editorSession.activeSpreadIndex = Math.floor(index / 2);
+    if (pageChanged) {
+      updateEditorSelection();
+      syncBookletEditorControls();
+    }
+    if (scrollIntoView && isCompactPageStageActive() && editorCompactPageZoom <= 2) {
+      scrollCompactPageIntoView('smooth');
+    }
+  };
+
   editorSession.pageNodes.forEach((node, index) => {
     node.dataset.pageIndex = String(index);
     node.addEventListener('click', event => {
-      // At zoom ≥ 2, tapping a page should zoom in, not activate links or
-      // change the editor selection. Block ALL click outcomes here.
-      if (isCompactPageStageActive() && editorCompactPageZoom >= 2) {
+      const wasAlreadyActive = editorSession.activePageIndex === index;
+      const textTarget = event.target.closest('h4, .book-page-type, .page-body, .page-caption, .page-source');
+
+      if (editorActiveTextSession) {
         event.preventDefault();
         event.stopPropagation();
+        closeTextEditor(false);
         return;
       }
-      if (controls.bookletEditor?.hidden || event.target.closest('a')) return;
-      editorSession.activePageIndex = index;
-      editorSession.activeSpreadIndex = Math.floor(index / 2);
-      updateEditorSelection();
-      syncBookletEditorControls();
-    });
-    node.addEventListener('dblclick', event => {
-      // At zoom ≥ 2, dblclick (mouse) zooms into the tapped page.
+
+      if (textTarget && wasAlreadyActive) {
+        event.preventDefault();
+        event.stopPropagation();
+        let fieldKey = 'body';
+        if (textTarget.tagName === 'H4') fieldKey = 'title';
+        else if (textTarget.classList.contains('book-page-type')) fieldKey = 'subtitle';
+        else if (textTarget.classList.contains('page-caption')) fieldKey = 'caption';
+        else if (textTarget.classList.contains('page-source')) fieldKey = 'source';
+        openTextEditor(fieldKey, index, textTarget);
+        return;
+      }
+
+      if (event.target.closest('a')) event.preventDefault();
       if (isCompactPageStageActive() && editorCompactPageZoom >= 2) {
         event.preventDefault();
-        zoomIntoCompactPage(index);
-        return;
       }
+      selectPage(index);
+    });
+    node.addEventListener('dblclick', event => {
       if (event.target.closest('a')) return;
       event.preventDefault();
-      zoomIntoCompactPage(index);
+      selectPage(index);
+      if (isCompactPageStageActive() && editorCompactPageZoom > 2) {
+        zoomIntoCompactPage(index);
+      }
     });
     node.addEventListener('pointerup', event => {
       if (event.pointerType === 'mouse') return;
       if (!isCompactPageStageActive() || editorCompactPageZoom < 2) return;
 
-      // Prevent any link or default tap action when we're in overview mode.
       event.preventDefault();
+
+      const wasAlreadyActive = editorSession.activePageIndex === index;
+      const textTarget = event.target.closest('h4, .book-page-type, .page-body, .page-caption, .page-source');
+
+      if (editorActiveTextSession) {
+        closeTextEditor(false);
+        return;
+      }
+
+      if (textTarget && wasAlreadyActive) {
+        let fieldKey = 'body';
+        if (textTarget.tagName === 'H4') fieldKey = 'title';
+        else if (textTarget.classList.contains('book-page-type')) fieldKey = 'subtitle';
+        else if (textTarget.classList.contains('page-caption')) fieldKey = 'caption';
+        else if (textTarget.classList.contains('page-source')) fieldKey = 'source';
+        openTextEditor(fieldKey, index, textTarget);
+        return;
+      }
 
       const now = performance.now();
       const isDoubleTap = editorCompactLastTapPage === index && now - editorCompactLastTapTime < 360;
       editorCompactLastTapPage = isDoubleTap ? -1 : index;
       editorCompactLastTapTime = isDoubleTap ? 0 : now;
 
-      // Only double-tap zooms in; single-tap does nothing (just blocks links).
-      if (isDoubleTap) {
+      selectPage(index);
+
+      // Only double-tap at zoom > 2 zooms into Level 1
+      if (isDoubleTap && editorCompactPageZoom > 2) {
         zoomIntoCompactPage(index);
       }
     });
-
   });
   editorSession.spreadNodes.forEach((node, index) => {
     node.dataset.spreadIndex = String(index);
   });
   controls.spreadsList?.addEventListener('scroll', queueCompactScrollSelection, { passive: true });
+  controls.dialogContent?.addEventListener('click', event => {
+    if (!editorActiveTextSession) return;
+    const textTarget = event.target.closest('h4, .book-page-type, .page-body, .page-caption, .page-source');
+    const textModeArea = event.target.closest('#editor-text-mode');
+    if (!textTarget && !textModeArea) {
+      closeTextEditor(false);
+    }
+  });
 
   closeBookletEditor();
   applyBookletEditorState();
@@ -1633,6 +1871,11 @@ export function setupEditorEventListeners() {
     syncBookletEditorControls();
   });
   controls.bookletEditorClose?.addEventListener('click', closeBookletEditor);
+  controls.editorTextBackBtn?.addEventListener('click', () => closeTextEditor(false));
+  controls.editorTextCancelBtn?.addEventListener('click', () => closeTextEditor(false));
+  controls.editorTextSaveBtn?.addEventListener('click', () => closeTextEditor(true));
+  controls.editorTextTextarea?.addEventListener('input', handleTextEditorInput);
+  controls.editorTextUrlInput?.addEventListener('input', handleTextEditorInput);
   controls.bookletEditorMode?.addEventListener('click', () => setEditorCompactMode(!editorCompactMode));
   controls.editorPageZoomToggle?.addEventListener('click', () => setCompactZoomOpen(!editorCompactZoomOpen));
   controls.editorPageZoomRange?.addEventListener('input', () => {
@@ -1647,7 +1890,7 @@ export function setupEditorEventListeners() {
   controls.editorParameterPrevious?.addEventListener('click', () => moveEditorParameter(-1));
   controls.editorParameterNext?.addEventListener('click', () => moveEditorParameter(1));
   controls.editorParameterMenuToggle?.addEventListener('click', () => {
-    if (!editorCompactMode || !window.matchMedia('(max-width: 700px)').matches) return;
+    if (!editorCompactMode) return;
     if (editorParameterMenuOpen) {
       setEditorParameterMenu(false);
       return;
@@ -1670,13 +1913,22 @@ export function setupEditorEventListeners() {
     setEditorParameterMenu(false);
   });
   controls.bookletEditor?.addEventListener('keydown', event => {
-    if (event.key !== 'Escape' || !editorParameterMenuOpen) return;
-    event.stopPropagation();
-    setEditorParameterMenu(false);
+    if (event.key !== 'Escape') return;
+    if (editorActiveTextSession) {
+      event.stopPropagation();
+      closeTextEditor(false);
+      return;
+    }
+    if (editorParameterMenuOpen) {
+      event.stopPropagation();
+      setEditorParameterMenu(false);
+    }
   });
-  window.matchMedia('(max-width: 700px)').addEventListener('change', event => {
-    if (!event.matches) setEditorParameterMenu(false);
-    syncCompactPageStage(false);
+  window.matchMedia('(max-width: 900px)').addEventListener('change', () => {
+    const { bookletEditor } = getEditorControls();
+    if (bookletEditor && !bookletEditor.hidden) {
+      syncResponsiveEditorMode(false);
+    }
   });
   window.addEventListener('resize', queueCompactPageStageResize, { passive: true });
   controls.dialogEdit?.addEventListener('click', openBookletEditor);

@@ -25,7 +25,7 @@
 }
 .style-apple-manual .cover-title,
 .style-apple-manual .detail-title {
-  font: 600 clamp(24px, 4vw, 64px)/1.0 "Inter", sans-serif;
+  font: 600 40px/1.0 "Inter", sans-serif;
   letter-spacing: -.04em;
   color: #000000;
 }
@@ -57,7 +57,7 @@
   letter-spacing: .08em;
 }
 .style-apple-manual .book-page h4 {
-  font: 600 clamp(20px, 3.5vw, 52px)/1.05 "Inter", sans-serif;
+  font: 600 38px/1.05 "Inter", sans-serif;
   letter-spacing: -.035em;
   color: #000000;
 }
@@ -129,7 +129,7 @@
   box-shadow: 0 16px 48px rgba(0,0,0,.10), 0 2px 8px rgba(0,0,0,.06);
 }
 .style-apple-manual .book-page.effect-oversized-number .book-page-number {
-  font-size: clamp(72px, 12vw, 160px);
+  font-size: 96px;
   line-height: .85;
   color: rgba(0, 113, 227, .06);
   position: absolute;

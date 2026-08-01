@@ -179,13 +179,13 @@
   aspect-ratio: 1;
   right: -8%;
   bottom: -24%;
-  border: clamp(18px, 3.2vw, 42px) solid rgba(30, 215, 96, .28);
+  border: 30px solid rgba(30, 215, 96, .28);
   border-radius: 50%;
 }
 
 .style-streaming-library .cover-title,
 .style-streaming-library .detail-title {
-  font: 800 clamp(34px, 5.5vw, 88px)/.9 var(--font-display);
+  font: 800 42px/.9 var(--font-display);
   letter-spacing: -.06em;
   color: var(--stream-ink);
 }
@@ -244,7 +244,7 @@
 }
 
 .style-streaming-library .book-page h4 {
-  font: 800 clamp(26px, 4.2vw, 68px)/.96 var(--font-display);
+  font: 800 36px/.96 var(--font-display);
   letter-spacing: -.055em;
   color: var(--stream-ink);
 }

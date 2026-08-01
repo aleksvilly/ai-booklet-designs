@@ -12,7 +12,7 @@
   border: 1px solid #e2e8f0;
 }
 .style-grid .book-page h4 {
-  font: 700 clamp(26px, 3.8vw, 60px)/1.0 "Inter", sans-serif;
+  font: 700 38px/1.0 "Inter", sans-serif;
   letter-spacing: -.04em;
 }
 .style-grid .book-page .page-body { font-size: 13px; line-height: 1.68; color: #475569; }
@@ -34,7 +34,7 @@
   border: 1px solid #e7e5e4;
 }
 .style-editorial .book-page h4 {
-  font: 600 clamp(28px, 4vw, 64px)/1.0 "Playfair Display", serif;
+  font: 600 40px/1.0 "Playfair Display", serif;
   letter-spacing: -.03em;
 }
 .style-editorial .book-page .page-body { font-size: 13px; line-height: 1.72; color: #57534e; }
@@ -55,7 +55,7 @@
   border: 2px solid #3f3f46;
 }
 .style-radical .book-page h4 {
-  font: 800 clamp(30px, 5vw, 80px)/1.0 "Barlow Condensed", sans-serif;
+  font: 800 44px/1.0 "Barlow Condensed", sans-serif;
   text-transform: uppercase;
   letter-spacing: -.02em;
   color: #fafafa;
@@ -82,7 +82,7 @@
   border: 0;
 }
 .style-cinematic .book-page h4 {
-  font: 600 clamp(28px, 4.5vw, 72px)/1.0 "Cormorant Garamond", serif;
+  font: 600 42px/1.0 "Cormorant Garamond", serif;
   font-style: italic;
   color: #fafaf9;
   letter-spacing: .01em;

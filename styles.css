@@ -716,13 +716,28 @@ footer a { text-underline-offset: 3px; }
 
 /* V2: variable booklet pages */
 .page-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
-.book-page { position: relative; min-height: 430px; overflow: hidden; padding: 28px; border: 1px solid var(--line); background: #fff; isolation: isolate; display: flex; flex-direction: column; justify-content: space-between; word-break: break-word; hyphens: auto; }
-.book-page-number { position: absolute; z-index: 4; top: 20px; right: 22px; font: 500 10px/1 "IBM Plex Mono", monospace; }
-.book-page-copy { position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; max-height: 100%; max-width: 86%; gap: 8px; word-break: break-word; }
+.book-page {
+  container-type: inline-size;
+  container-name: page;
+  position: relative;
+  min-height: 430px;
+  aspect-ratio: 148 / 210;
+  overflow: hidden;
+  padding: 7.5cqw;
+  border: 1px solid var(--line);
+  background: #fff;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+.book-page-number { position: absolute; z-index: 4; top: 5cqw; right: 5.5cqw; font: 500 3.1cqw/1 "IBM Plex Mono", monospace; }
+.book-page-copy { position: relative; z-index: 3; display: flex; flex-direction: column; justify-content: flex-end; min-height: 0; max-height: 100%; max-width: 86%; gap: 2.3cqw; }
 .book-page [hidden] { display: none !important; }
-.book-page-type { margin: 0 0 6px; font: 500 10px/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; flex-shrink: 0; }
-.book-page h4 { margin: 0; font-size: clamp(28px, 4vw, 64px); line-height: .94; letter-spacing: -.04em; word-break: break-word; overflow-wrap: break-word; }
-.book-page-copy > p:not(.book-page-type) { max-width: 460px; margin: 6px 0 0; line-height: 1.45; }
+.book-page-type { margin: 0 0 1.8cqw; font: 500 3.1cqw/1 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .1em; flex-shrink: 0; }
+.book-page h4 { margin: 0; font-size: 11.5cqw; line-height: .94; letter-spacing: -.04em; }
+.book-page-copy > p:not(.book-page-type) { max-width: 460px; margin: 1.8cqw 0 0; font-size: 3.6cqw; line-height: 1.45; }
 .book-page small { display: block; margin-top: 10px; max-width: 420px; opacity: .72; }
 .page-art { position: absolute; width: 64%; aspect-ratio: 1; right: -22%; top: -16%; border: 34px solid currentColor; border-radius: 50%; opacity: .11; pointer-events: none; }
 .page-image {
@@ -774,12 +789,12 @@ footer a { text-underline-offset: 3px; }
 .book-page.has-image .book-page-copy {
   justify-content: start;
   min-height: auto;
-  max-width: 72%;
+  max-width: 84%;
   text-shadow: 0 1px 16px rgba(0,0,0,.45);
 }
 .page-source { display: inline-block; margin-top: 16px; color: inherit; font: 500 10px/1.3 "IBM Plex Mono", monospace; }
 .type-cover { grid-row: span 2; background: var(--c1); color: var(--c4); }
-.type-cover h4, .type-full_bleed h4 { font-size: clamp(52px, 7vw, 108px); }
+.type-cover h4, .type-full_bleed h4 { font-size: 52px; }
 .type-facts { background: var(--c2); color: var(--c4); }
 .type-quote { background: var(--c4); color: var(--c1); }
 .type-quote h4 { font-family: "Playfair Display", serif; font-style: italic; }
@@ -795,7 +810,6 @@ footer a { text-underline-offset: 3px; }
   .page-grid { grid-template-columns: 1fr; }
   .book-page, .type-closing { grid-column: auto; min-height: 390px; }
   .type-cover { grid-row: auto; }
-  .book-page.has-image .book-page-copy { max-width: 90%; }
   .page-image,
   .page-image img { min-width: 100%; min-height: 100%; }
 }
@@ -1025,9 +1039,9 @@ footer a { text-underline-offset: 3px; }
 .book-page.align-right .book-page-copy { text-align: right; margin-left: auto; align-items: flex-end; }
 
 /* Typography modes */
-.typeface-huge-serif h4 { font-family: "Playfair Display", Georgia, serif; font-size: clamp(54px, 8vw, 118px); font-weight: 600; line-height: .78; }
-.typeface-tiny-editorial h4 { max-width: 78%; font-size: clamp(23px, 3vw, 42px); line-height: 1.03; letter-spacing: -.02em; }
-.typeface-tiny-editorial .book-page-copy > p:not(.book-page-type) { font-size: 12px; max-width: 330px; }
+.typeface-huge-serif h4 { font-family: "Playfair Display", Georgia, serif; font-size: 64px; font-weight: 600; line-height: .78; }
+.typeface-tiny-editorial h4 { max-width: 78%; font-size: 24px; line-height: 1.03; letter-spacing: -.02em; }
+.typeface-tiny-editorial .book-page-copy > p:not(.book-page-type) { font-size: 10px; max-width: 330px; }
 .typeface-clean-sans h4 { font-family: "DM Sans", Arial, sans-serif; }
 .typeface-mixed-serif-sans h4 { font-family: "Playfair Display", Georgia, serif; font-weight: 600; }
 .typeface-poster-bold h4 { font-family: Impact, "Arial Black", sans-serif; text-transform: uppercase; line-height: .78; letter-spacing: -.045em; }
@@ -1075,9 +1089,9 @@ footer a { text-underline-offset: 3px; }
 .effect-micro-3d-layering .book-page-copy { transform: translate(-8px,-8px); text-shadow: 8px 8px 0 color-mix(in srgb, var(--c2) 60%, transparent); }
 .effect-micro-3d-layering .page-image { transform: translate(7px,7px); box-shadow: -14px -14px 0 color-mix(in srgb, var(--c3) 55%, transparent); }
 .effect-parallax-depth .page-image img { transform: translate(var(--parallax-x), var(--parallax-y)) scale(1.09); transition: transform .2s ease-out, opacity .2s ease; }
-.effect-text-behind-image .book-page-copy h4 { position: relative; z-index: 0; font-size: clamp(66px, 10vw, 138px); mix-blend-mode: difference; color: white; }
+.effect-text-behind-image .book-page-copy h4 { position: relative; z-index: 0; font-size: 72px; mix-blend-mode: difference; color: white; }
 .effect-text-behind-image .page-image { z-index: 2; clip-path: inset(18% 10% 17% 30%); }
-.effect-oversized-number .book-page-number { top: -5%; right: 2%; font-size: clamp(120px, 22vw, 300px); line-height: .8; opacity: .12; }
+.effect-oversized-number .book-page-number { top: -5%; right: 2%; font-size: 120px; line-height: .8; opacity: .12; }
 .effect-inverted-section { background: var(--c4); color: var(--c1); }
 .effect-mirrored-layout .page-image img { transform: scaleX(-1); }
 .effect-tilted-photo .page-image { inset: 6%; transform: rotate(var(--page-rotation)); box-shadow: 0 25px 50px rgba(0,0,0,.25); }
@@ -1108,7 +1122,7 @@ footer a { text-underline-offset: 3px; }
 .effect-registration-marks::after { content:"+       +\A\A\A+       +"; white-space:pre; position:absolute; inset:16px; z-index:5; font:700 22px/1 monospace; opacity:.45; pointer-events:none; }
 .effect-misregistration h4 { text-shadow:-4px 0 var(--c2),4px 0 var(--c3); }
 .effect-blurred-depth .page-image img { transform:scale(1.08); filter:blur(2px) saturate(.85); }
-.effect-impossible-scale h4 { font-size:clamp(88px,15vw,210px); transform:translateX(-8%); }
+.effect-impossible-scale h4 { font-size: 96px; transform:translateX(-8%); }
 .effect-floating-object .page-art { animation:float-object 5s ease-in-out infinite; box-shadow:20px 28px 45px rgba(0,0,0,.25); }
 @keyframes float-object { 50% { transform:translateY(-22px) rotate(7deg); } }
 .effect-pattern-layer::after { content:""; position:absolute; inset:0; z-index:2; pointer-events:none; background:repeating-linear-gradient(45deg,transparent 0 20px,currentColor 21px 22px); opacity:.12; }
@@ -2156,6 +2170,318 @@ footer a { text-underline-offset: 3px; }
 
 .editor-mini-navigation { display: none; }
 
+/* ─── Link Popover Tooltip ───────────────────────────────────────────── */
+
+.link-popover[hidden] { display: none !important; }
+
+.link-popover {
+  position: fixed;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--paper) 96%, transparent);
+  color: var(--ink);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  font: 600 12px/1 "DM Sans", sans-serif;
+  pointer-events: auto;
+  animation: link-popover-in .22s cubic-bezier(.22, 1, .36, 1) both;
+}
+
+@keyframes link-popover-in {
+  from { opacity: 0; transform: translateY(6px) scale(.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.link-popover-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.link-popover-action:hover {
+  text-decoration: underline;
+}
+
+.link-popover-icon {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
+
+/* Disable default text I-beam cursor on booklet pages */
+.book-page h4,
+.book-page .book-page-type,
+.book-page .page-body,
+.book-page .page-caption,
+.book-page .page-source {
+  cursor: inherit;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Hover effect ONLY for editable text on the active page when text editor is NOT open */
+.booklet-dialog.editor-is-open:has(#booklet-editor:not(.editor-text-editing-active)) .book-page.editor-selected-page h4:hover,
+.booklet-dialog.editor-is-open:has(#booklet-editor:not(.editor-text-editing-active)) .book-page.editor-selected-page .book-page-type:hover,
+.booklet-dialog.editor-is-open:has(#booklet-editor:not(.editor-text-editing-active)) .book-page.editor-selected-page .page-body:hover,
+.booklet-dialog.editor-is-open:has(#booklet-editor:not(.editor-text-editing-active)) .book-page.editor-selected-page .page-caption:hover,
+.booklet-dialog.editor-is-open:has(#booklet-editor:not(.editor-text-editing-active)) .book-page.editor-selected-page .page-source:hover {
+  cursor: pointer;
+  outline: 1px dashed color-mix(in srgb, var(--ink) 35%, transparent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Active text element gradient border in editor */
+.is-editing-text {
+  position: relative !important;
+  border-radius: 6px !important;
+  background: color-mix(in srgb, var(--ink) 5%, transparent) !important;
+  cursor: default !important;
+  transition: background .2s ease !important;
+}
+
+.is-editing-text::before {
+  content: "" !important;
+  position: absolute !important;
+  inset: -3px !important;
+  border-radius: 8px !important;
+  padding: 2px !important;
+  background: linear-gradient(135deg, var(--c1, #3b82f6), var(--c2, #8b5cf6), var(--ink, #111)) !important;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  -webkit-mask-composite: xor !important;
+  mask-composite: exclude !important;
+  pointer-events: none !important;
+  animation: is-editing-text-glow 2.5s ease-in-out infinite alternate !important;
+}
+
+@keyframes is-editing-text-glow {
+  from { opacity: .75; filter: drop-shadow(0 0 2px color-mix(in srgb, var(--c1, #3b82f6) 40%, transparent)); }
+  to { opacity: 1; filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c2, #8b5cf6) 60%, transparent)); }
+}
+
+/* ─── Text Editing Panel in Booklet Editor ───────────────────────────── */
+
+.editor-text-mode[hidden] { display: none !important; }
+
+.editor-text-mode {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex: 1;
+  padding: 18px 22px;
+  background: var(--paper);
+  color: var(--ink);
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.booklet-editor.editor-text-editing-active .editor-target-card,
+.booklet-editor.editor-text-editing-active .booklet-editor-scroll,
+.booklet-editor.editor-text-editing-active .booklet-editor-footer,
+.booklet-editor.editor-text-editing-active .editor-mini-navigation,
+.booklet-editor.editor-text-editing-active .editor-parameter-menu {
+  display: none !important;
+}
+
+.editor-text-mode-heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.editor-text-back-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s ease;
+}
+
+.editor-text-back-btn:hover {
+  background: rgba(0, 0, 0, .06);
+}
+
+.editor-text-mode-heading-info h3 {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: -.02em;
+}
+
+.editor-text-mode-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.editor-text-field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.editor-text-field-label textarea,
+.editor-text-field-label input {
+  width: 100%;
+  padding: 9px 11px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.editor-text-field-label textarea {
+  min-height: 90px;
+}
+
+.editor-text-field-label textarea:focus,
+.editor-text-field-label input:focus {
+  outline: 2px solid var(--ink);
+  outline-offset: -1px;
+}
+
+.editor-text-mode-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+.editor-text-cancel-btn,
+.editor-text-save-btn {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: transform .15s ease, opacity .15s ease;
+}
+
+.editor-text-cancel-btn {
+  background: transparent;
+  color: var(--ink);
+}
+
+.editor-text-save-btn {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+
+.editor-text-cancel-btn:active,
+.editor-text-save-btn:active {
+  transform: scale(.97);
+}
+
+/* Compact Mobile overrides for Text Editor */
+.booklet-editor.editor-compact.editor-text-editing-active .booklet-editor-heading {
+  display: none !important;
+}
+
+.booklet-editor.editor-compact .editor-text-mode {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: block;
+  padding: 0;
+  background: var(--paper);
+  border-radius: 18px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.booklet-editor.editor-compact .editor-text-mode-heading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 42px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 18px 18px 0 0;
+  box-sizing: border-box;
+}
+
+.booklet-editor.editor-compact .editor-text-mode-body {
+  position: absolute;
+  top: 42px;
+  bottom: 50px;
+  left: 0;
+  right: 0;
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 14px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.booklet-editor.editor-compact .editor-text-field-label textarea {
+  min-height: 54px;
+  height: 100%;
+}
+
+.booklet-editor.editor-compact .editor-text-mode-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: center;
+  padding: 6px 14px;
+  border-top: 1px solid var(--line);
+  background: var(--paper);
+  border-radius: 0 0 18px 18px;
+  box-sizing: border-box;
+  margin-top: 0;
+}
+
+.booklet-editor.editor-compact .editor-text-cancel-btn,
+.booklet-editor.editor-compact .editor-text-save-btn {
+  min-height: 36px;
+}
+
 .booklet-editor-footer {
   padding: 15px 22px 19px;
   border-top: 1px solid var(--line);
@@ -2213,21 +2539,25 @@ footer a { text-underline-offset: 3px; }
 /* === Spacing === */
 .book-page.editor-spacing-1 { --editor-space: 10px; padding: 10px; }
 .book-page.editor-spacing-2 { --editor-space: 18px; padding: 18px; }
-.book-page.editor-spacing-3 { --editor-space: clamp(18px, 3vw, 42px); padding: clamp(18px, 3vw, 42px); }
-.book-page.editor-spacing-4 { --editor-space: clamp(30px, 5vw, 62px); padding: clamp(30px, 5vw, 62px); }
-.book-page.editor-spacing-5 { --editor-space: clamp(42px, 7vw, 84px); padding: clamp(42px, 7vw, 84px); }
+.book-page.editor-spacing-3 { --editor-space: 26px; padding: 26px; }
+.book-page.editor-spacing-4 { --editor-space: 36px; padding: 36px; }
+.book-page.editor-spacing-5 { --editor-space: 48px; padding: 48px; }
 
-/* === Font scale (all 5 steps) === */
-.book-page.editor-font-1 h4 { font-size: clamp(17px, 2vw, 30px) !important; line-height: 1.02; }
-.book-page.editor-font-1 .page-body { font-size: 7px !important; }
-.book-page.editor-font-2 h4 { font-size: clamp(25px, 3vw, 44px) !important; line-height: .96; }
-.book-page.editor-font-2 .page-body { font-size: 9px !important; }
-.book-page.editor-font-3 h4 { font-size: clamp(32px, 4vw, 60px) !important; }
-.book-page.editor-font-3 .page-body { font-size: clamp(11px, 1.1vw, 14px) !important; }
-.book-page.editor-font-4 h4 { font-size: clamp(52px, 6vw, 92px) !important; }
-.book-page.editor-font-4 .page-body { font-size: clamp(14px, 1.4vw, 19px) !important; }
-.book-page.editor-font-5 h4 { font-size: clamp(72px, 9vw, 132px) !important; line-height: .7; }
-.book-page.editor-font-5 .page-body { font-size: clamp(17px, 1.8vw, 24px) !important; line-height: 1.24; }
+/* === Font scale (all 5 steps for 320px base canvas) === */
+.book-page.editor-font-1 h4 { font-size: 22px !important; line-height: 1.02; }
+.book-page.editor-font-1 .page-body { font-size: 8.5px !important; }
+
+.book-page.editor-font-2 h4 { font-size: 28px !important; line-height: .96; }
+.book-page.editor-font-2 .page-body { font-size: 10px !important; }
+
+.book-page.editor-font-3 h4 { font-size: 38px !important; }
+.book-page.editor-font-3 .page-body { font-size: 11.5px !important; }
+
+.book-page.editor-font-4 h4 { font-size: 50px !important; }
+.book-page.editor-font-4 .page-body { font-size: 14px !important; }
+
+.book-page.editor-font-5 h4 { font-size: 68px !important; line-height: .7; }
+.book-page.editor-font-5 .page-body { font-size: 17px !important; line-height: 1.24; }
 
 /* === Layout complexity (all 5 steps) === */
 .book-page.editor-complexity-1 .book-page-copy { max-width: 58%; }
@@ -2308,7 +2638,7 @@ footer a { text-underline-offset: 3px; }
    On desktop full editor mode (.editor-is-open, no .editor-compact class),
    we must restore the margin so the fixed sidebar doesn't overlap pages. */
 .booklet-dialog.editor-compact-open #dialog-content { margin-right: 0; }
-@media (min-width: 701px) {
+@media (min-width: 901px) {
   .booklet-dialog.editor-compact-open:has(.booklet-editor:not(.editor-compact)) #dialog-content {
     margin-right: 360px; /* keep space for the full editor sidebar */
   }
@@ -2698,7 +3028,7 @@ footer a { text-underline-offset: 3px; }
 }
 
 .booklet-dialog.editor-compact-open .spreads-list {
-  --compact-page-base-width: min(calc(100vw - 58px), 40dvh);
+  --compact-page-base-width: min(340px, calc(100vw - 36px), calc(68dvh * 148 / 210));
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -2805,8 +3135,8 @@ footer a { text-underline-offset: 3px; }
   align-content: center;
 }
 
-/* ─── Desktop compact page stage overrides (> 700px) ───────────────────────── */
-@media (min-width: 701px) {
+/* ─── Desktop compact page stage overrides (> 900px) ───────────────────────── */
+@media (min-width: 901px) {
   /* On desktop the dialog is up to 1120px wide. The editor sidebar is
      fixed at 360px on the right. The content area (left of sidebar) gets
      the remaining width. We hide the usual booklet meta header so spread-
@@ -2836,12 +3166,12 @@ footer a { text-underline-offset: 3px; }
      Use viewport height as the limiting dimension so portrait pages don't
      overflow vertically. */
   .booklet-dialog.editor-compact-open .spreads-list {
-    --compact-page-base-width: min(46vh, 320px);
+    --compact-page-base-width: min(340px, calc(72vh * 148 / 210));
   }
 }
 
-/* ─── Mobile-only compact page stage overrides (≤ 700px) ───────────────────── */
-@media (max-width: 700px) {
+/* ─── Mobile and tablet compact page stage overrides (≤ 900px) ───────────────────── */
+@media (max-width: 900px) {
 
   .booklet-dialog.editor-compact-open {
     inset: 0;
@@ -3045,16 +3375,9 @@ footer a { text-underline-offset: 3px; }
 }
 
 /* Zoom badge is hidden unless the compact page stage is active */
-@media (min-width: 701px) {
+@media (min-width: 901px) {
   .editor-page-zoom { display: none; }
   .booklet-dialog.editor-compact-open .editor-page-zoom { display: flex; }
-
-  /* Compact mode on desktop: zoom badge bottom-left of the content area */
-  .booklet-dialog.editor-compact-open:has(.booklet-editor.editor-compact) .editor-page-zoom {
-    right: auto;
-    left: max(12px, calc((100vw - 1120px) / 2 + 12px));
-    bottom: 16px;
-  }
 
   /* Full editor mode on desktop: zoom badge bottom-right of the content area,
      just to the left of the 360px editor sidebar. */
@@ -3099,9 +3422,7 @@ footer a { text-underline-offset: 3px; }
   }
 
   .booklet-dialog.editor-is-open.editor-compact-open:has(.booklet-editor:not(.editor-compact)) .spreads-list {
-    /* Size from the real page-stage box, not the viewport: almost full height,
-       at least 24px side gutters, and a ceiling for very large monitors. */
-    --compact-page-base-width: min(640px, calc(70cqh - 34px), calc(100cqw - 48px));
+    --compact-page-base-width: min(340px, calc(72cqh * 148 / 210));
   }
 
   .booklet-dialog.editor-is-open.editor-compact-open:has(.booklet-editor:not(.editor-compact)) .booklet-editor {

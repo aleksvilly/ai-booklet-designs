@@ -216,12 +216,11 @@ a {
 .book-page.has-image .book-page-copy {
   justify-content: start;
   min-height: auto;
-  max-width: 72%;
+  max-width: 84%;
   text-shadow: 0 1px 16px rgba(0,0,0,.45);
 }
 
 @media (max-width: 700px) {
   .page-grid { grid-template-columns: 1fr; }
   .book-page { min-height: 390px; }
-  .book-page.has-image .book-page-copy { max-width: 90%; }
 }

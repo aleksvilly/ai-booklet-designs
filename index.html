@@ -293,6 +293,16 @@
   <dialog class="booklet-dialog" id="booklet-dialog">
     <button class="dialog-close" id="dialog-close" type="button" aria-label="Close">×</button>
     <button class="dialog-edit" id="dialog-edit" type="button" hidden>Edit booklet</button>
+    <div class="link-popover" id="link-popover" hidden>
+      <a class="link-popover-action" id="link-popover-action" href="#" target="_blank" rel="noopener">
+        <span>Open link</span>
+        <svg class="link-popover-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </div>
     <div id="dialog-content"></div>
     <div class="editor-page-zoom" id="editor-page-zoom" hidden>
       <button class="editor-page-zoom-toggle" id="editor-page-zoom-toggle" type="button" aria-expanded="false" aria-controls="editor-page-zoom-panel">
@@ -301,7 +311,7 @@
       </button>
       <div class="editor-page-zoom-panel" id="editor-page-zoom-panel" hidden>
         <label for="editor-page-zoom-range">Pages in view</label>
-        <input id="editor-page-zoom-range" type="range" min="1" max="6" value="1" step="1">
+        <input id="editor-page-zoom-range" type="range" min="1" max="4" value="1" step="1">
         <output id="editor-page-zoom-output" for="editor-page-zoom-range">1 page</output>
       </div>
     </div>
@@ -319,7 +329,6 @@
               <option value="page">Current page</option>
             </select>
           </label>
-          <button class="booklet-editor-mode" id="booklet-editor-mode" type="button">Mini</button>
           <button class="booklet-editor-close" id="booklet-editor-close" type="button" aria-label="Close editor">×</button>
         </div>
       </div>
@@ -504,6 +513,30 @@
             <label><input id="editor-show-image-captions" type="checkbox" checked><span>Show photo captions</span></label>
           </div>
         </fieldset>
+      </div>
+
+      <div class="editor-text-mode" id="editor-text-mode" hidden aria-label="Text editor">
+        <div class="editor-text-mode-heading">
+          <button class="editor-text-back-btn" id="editor-text-back-btn" type="button" aria-label="Cancel text editing">←</button>
+          <div class="editor-text-mode-heading-info">
+            <span class="eyebrow" id="editor-text-field-eyebrow">Text editor</span>
+            <h3 id="editor-text-field-title">Edit text</h3>
+          </div>
+        </div>
+        <div class="editor-text-mode-body">
+          <label class="editor-text-field-label" for="editor-text-textarea">
+            <span>Text content</span>
+            <textarea id="editor-text-textarea" rows="4" placeholder="Enter text..."></textarea>
+          </label>
+          <label class="editor-text-field-label" id="editor-text-url-group" for="editor-text-url-input" hidden>
+            <span>Source URL</span>
+            <input id="editor-text-url-input" type="url" placeholder="https://...">
+          </label>
+        </div>
+        <div class="editor-text-mode-actions">
+          <button class="editor-text-cancel-btn" id="editor-text-cancel-btn" type="button">Cancel</button>
+          <button class="editor-text-save-btn" id="editor-text-save-btn" type="button">Save text</button>
+        </div>
       </div>
 
       <div class="editor-parameter-menu" id="editor-parameter-menu" aria-hidden="true"></div>

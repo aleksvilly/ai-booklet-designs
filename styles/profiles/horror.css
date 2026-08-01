@@ -61,7 +61,7 @@
   letter-spacing: .18em;
 }
 .style-horror-slasher .book-page h4 {
-  font: 800 clamp(28px, 4vw, 72px)/1.0 "Barlow Condensed", sans-serif;
+  font: 800 44px/1.0 "Barlow Condensed", sans-serif;
   text-transform: uppercase;
   color: #f1e8d3;
   text-shadow: 3px 3px 0 #e11d48;
@@ -137,7 +137,7 @@
   z-index: 6;
 }
 .style-horror-slasher .book-page.effect-oversized-number .book-page-number {
-  font-size: clamp(80px, 14vw, 180px);
+  font-size: 96px;
   line-height: .85;
   color: rgba(225, 29, 72, .07);
   position: absolute;
