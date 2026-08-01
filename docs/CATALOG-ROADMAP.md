@@ -24,6 +24,13 @@
       font slider, Title/Subtitle/Body targets and per-style recommendations.
 - [x] Advanced typography editor for per-target weight, tracking, line height,
       italic, underline and uppercase overrides.
+- [x] Mobile Compact View page stage with horizontal page snapping, adjacent
+      page previews and an animated, composition-preserving 1-page → 2-page →
+      5-column overview zoom control, centred two-page pairs and double-tap
+      focus from overview grids.
+- [x] Desktop Full View split into separate page-stage and floating editor
+      surfaces with a visible gap, responsive page sizing and a content-aligned
+      zoom control.
 
 ## In progress
 

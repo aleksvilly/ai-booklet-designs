@@ -2787,6 +2787,20 @@ footer a { text-underline-offset: 3px; }
   cursor: zoom-in;
 }
 
+.booklet-dialog.editor-compact-open[data-compact-page-zoom="3"] .print-spread {
+  display: flex;
+  flex: 0 0 100%;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  aspect-ratio: auto;
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+  isolation: auto;
+}
+
 .booklet-dialog.editor-compact-open[data-compact-page-zoom="6"] .spreads-list {
   align-content: center;
 }
@@ -3048,6 +3062,68 @@ footer a { text-underline-offset: 3px; }
     right: calc(360px + 12px);
     left: auto;
     bottom: 16px;
+  }
+}
+
+/* Desktop Full View is composed as two separate surfaces inside the dialog:
+   the page stage, then a visible gap, then a shorter floating editor. */
+@media (min-width: 901px) {
+  .booklet-dialog.editor-is-open.editor-compact-open:has(.booklet-editor:not(.editor-compact)) {
+    --desktop-editor-width: 360px;
+    --desktop-editor-edge: 18px;
+    --desktop-editor-gap: 24px;
+    --desktop-editor-reserve: calc(
+      var(--desktop-editor-width) +
+      var(--desktop-editor-edge) +
+      var(--desktop-editor-gap)
+    );
+    width: min(1120px, calc(100vw - 26px));
+    height: min(820px, calc(100dvh - 52px));
+    max-height: calc(100dvh - 52px);
+    overflow: visible;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .booklet-dialog.editor-is-open.editor-compact-open:has(.booklet-editor:not(.editor-compact)) #dialog-content {
+    height: 100%;
+    margin-right: var(--desktop-editor-reserve);
+    overflow: hidden;
+    border-radius: 16px;
+    background: var(--paper);
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .24);
+  }
+
+  .booklet-dialog.editor-is-open.editor-compact-open:has(.booklet-editor:not(.editor-compact)) .spread-section {
+    container: desktop-page-stage / size;
+  }
+
+  .booklet-dialog.editor-is-open.editor-compact-open:has(.booklet-editor:not(.editor-compact)) .spreads-list {
+    /* Size from the real page-stage box, not the viewport: almost full height,
+       at least 24px side gutters, and a ceiling for very large monitors. */
+    --compact-page-base-width: min(640px, calc(70cqh - 34px), calc(100cqw - 48px));
+  }
+
+  .booklet-dialog.editor-is-open.editor-compact-open:has(.booklet-editor:not(.editor-compact)) .booklet-editor {
+    position: absolute;
+    top: 30px;
+    right: var(--desktop-editor-edge);
+    bottom: 30px;
+    left: auto;
+    width: var(--desktop-editor-width);
+    height: auto;
+    max-height: none;
+    transform: none;
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 22px 70px rgba(0, 0, 0, .28);
+  }
+
+  .booklet-dialog.editor-is-open.editor-compact-open:has(.booklet-editor:not(.editor-compact)) .editor-page-zoom {
+    position: absolute;
+    right: calc(var(--desktop-editor-reserve) + 12px);
+    bottom: 16px;
+    left: auto;
   }
 }
 

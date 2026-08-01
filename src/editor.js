@@ -894,7 +894,7 @@ function compactZoomLabel(level = editorCompactPageZoom) {
   return {
     1: '1 page',
     2: '2 pages',
-    3: '2-column grid',
+    3: '4-page grid',
     4: '3-column grid',
     5: '4-column grid',
     6: 'Maximum overview'
@@ -924,8 +924,14 @@ function compactZoomScale(level, controls = getEditorControls()) {
   const widthScale = (availableWidth - gap * (columns - 1)) / columns / baseWidth;
   const heightScale = (availableHeight - gap * (rows - 1)) / rows / baseHeight;
   const twoPageScale = (spreadsList.clientWidth - 72) / 2 / baseWidth;
+  // Zoom 3 promises a real 2 × 2 overview. Fit two rows inside the visible
+  // stage and reserve room for the floating Zoom control, otherwise short
+  // desktop windows show only the first row and look identical to Zoom 2.
+  const previewRows = Math.min(2, rows);
+  const previewHeight = Math.max(1, availableHeight - 64 - gap * (previewRows - 1));
+  const fourPageScale = previewHeight / previewRows / baseHeight;
   const scale = level === 3
-    ? Math.min(widthScale, twoPageScale * .94)
+    ? Math.min(widthScale, twoPageScale * .94, fourPageScale)
     : level === 6
       ? Math.min(widthScale, heightScale)
       : widthScale;
@@ -1085,18 +1091,6 @@ function setCompactPageZoom(value, animate = true) {
   // Levels 1 and 2 use a horizontal scroll strip; levels 3+ use a wrap grid.
   const isModeSwitch = (prev <= 2) !== (next <= 2);
 
-  // BUG FIX (1→2 drift): for same-mode transitions in the horizontal strip,
-  // perform an *instant* scroll to the target position BEFORE taking FLIP
-  // snapshots. This prevents the scroll animation from running simultaneously
-  // with the FLIP transform, which caused pages to appear to slide sideways.
-  if (animate && isCompactPageStageActive() && !isModeSwitch && next <= 2) {
-    // Temporarily switch to the new zoom level so scrollCompactPageIntoView
-    // can compute the correct scroll offset, then restore for the snapshot.
-    editorCompactPageZoom = next;
-    scrollCompactPageIntoView('instant');
-    editorCompactPageZoom = prev; // restore so snapshot sees old positions
-  }
-
   const previousRects = animate && isCompactPageStageActive()
     ? new Map((editorSession?.pageNodes || []).map(page => [page, page.getBoundingClientRect()]))
     : null;
@@ -1120,7 +1114,10 @@ function setCompactPageZoom(value, animate = true) {
       animateCompactZoomTransition(previousRects, prev, next);
       requestAnimationFrame(() => scrollCompactPageIntoView('auto'));
     } else {
-      scrollCompactPageIntoView(animate ? 'smooth' : 'auto');
+      // Centre against the NEW page geometry before FLIP reads its destination.
+      // Doing this in the same frame prevents 2→1 from first centring a small
+      // Zoom 2 page and then visibly correcting to the large Zoom 1 position.
+      scrollCompactPageIntoView(animate ? 'instant' : 'auto');
       animateCompactPageLayout(previousRects);
     }
   });
