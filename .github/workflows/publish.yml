@@ -210,6 +210,15 @@ jobs:
           mkdir -p _site
           if [ -d "dist" ]; then
             cp -R dist/* _site/
+            cp _site/menu/index.html _site/menu.html 2>/dev/null || true
+            cp _site/wedding/index.html _site/wedding.html 2>/dev/null || true
+            cp _site/gifts/index.html _site/gifts.html 2>/dev/null || true
+            cp _site/events/index.html _site/events.html 2>/dev/null || true
+            cp _site/privacy/index.html _site/privacy.html 2>/dev/null || true
+            cp _site/ru/menu/index.html _site/ru/menu.html 2>/dev/null || true
+            cp _site/ru/wedding/index.html _site/ru/wedding.html 2>/dev/null || true
+            cp _site/ru/gifts/index.html _site/ru/gifts.html 2>/dev/null || true
+            cp _site/ru/events/index.html _site/ru/events.html 2>/dev/null || true
           else
             cp index.html styles.css app.js privacy.html _site/ 2>/dev/null || true
             cp wedding.html menu.html gifts.html events.html _site/ 2>/dev/null || true

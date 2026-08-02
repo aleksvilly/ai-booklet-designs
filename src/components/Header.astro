@@ -14,10 +14,10 @@ const baseUrl = import.meta.env.BASE_URL || '';
   </a>
   <nav class="site-nav" id="site-nav" aria-label="Main navigation">
     <a href={`${baseUrl}/`} class={activeNav === 'home' ? 'active' : ''}>Home</a>
-    <a href={lang === 'ru' ? `${baseUrl}/ru/wedding.html` : `${baseUrl}/wedding.html`} class={activeNav === 'wedding' ? 'active' : ''}>Weddings</a>
-    <a href={lang === 'ru' ? `${baseUrl}/ru/menu.html` : `${baseUrl}/menu.html`} class={activeNav === 'menu' ? 'active' : ''}>Café &amp; Menus</a>
-    <a href={lang === 'ru' ? `${baseUrl}/ru/gifts.html` : `${baseUrl}/gifts.html`} class={activeNav === 'gifts' ? 'active' : ''}>Gifts</a>
-    <a href={lang === 'ru' ? `${baseUrl}/ru/events.html` : `${baseUrl}/events.html`} class={activeNav === 'events' ? 'active' : ''}>Events</a>
+    <a href={lang === 'ru' ? `${baseUrl}/ru/wedding/` : `${baseUrl}/wedding/`} class={activeNav === 'wedding' ? 'active' : ''}>Weddings</a>
+    <a href={lang === 'ru' ? `${baseUrl}/ru/menu/` : `${baseUrl}/menu/`} class={activeNav === 'menu' ? 'active' : ''}>Café &amp; Menus</a>
+    <a href={lang === 'ru' ? `${baseUrl}/ru/gifts/` : `${baseUrl}/gifts/`} class={activeNav === 'gifts' ? 'active' : ''}>Gifts</a>
+    <a href={lang === 'ru' ? `${baseUrl}/ru/events/` : `${baseUrl}/events/`} class={activeNav === 'events' ? 'active' : ''}>Events</a>
     <a href={`${baseUrl}/#contact`} data-i18n="nav_contact">Contacts</a>
   </nav>
   <div class="header-tools">
@@ -37,8 +37,8 @@ const baseUrl = import.meta.env.BASE_URL || '';
         <span id="lang-current-code">{lang.toUpperCase()}</span>
       </button>
       <div class="lang-dropdown" id="lang-dropdown" hidden>
-        <a class={`lang-option ${lang === 'en' ? 'active' : ''}`} data-lang="en" href={activeNav === 'wedding' ? `${baseUrl}/wedding.html` : activeNav === 'menu' ? `${baseUrl}/menu.html` : activeNav === 'gifts' ? `${baseUrl}/gifts.html` : activeNav === 'events' ? `${baseUrl}/events.html` : `${baseUrl}/`}><span>🇬🇧</span> English</a>
-        <a class={`lang-option ${lang === 'ru' ? 'active' : ''}`} data-lang="ru" href={activeNav === 'wedding' ? `${baseUrl}/ru/wedding.html` : activeNav === 'menu' ? `${baseUrl}/ru/menu.html` : activeNav === 'gifts' ? `${baseUrl}/ru/gifts.html` : activeNav === 'events' ? `${baseUrl}/ru/events.html` : `${baseUrl}/ru/`}><span>🇷🇺</span> Русский</a>
+        <a class={`lang-option ${lang === 'en' ? 'active' : ''}`} data-lang="en" href={activeNav === 'wedding' ? `${baseUrl}/wedding/` : activeNav === 'menu' ? `${baseUrl}/menu/` : activeNav === 'gifts' ? `${baseUrl}/gifts/` : activeNav === 'events' ? `${baseUrl}/events/` : `${baseUrl}/`}><span>🇬🇧</span> English</a>
+        <a class={`lang-option ${lang === 'ru' ? 'active' : ''}`} data-lang="ru" href={activeNav === 'wedding' ? `${baseUrl}/ru/wedding/` : activeNav === 'menu' ? `${baseUrl}/ru/menu/` : activeNav === 'gifts' ? `${baseUrl}/ru/gifts/` : activeNav === 'events' ? `${baseUrl}/ru/events/` : `${baseUrl}/ru/`}><span>🇷🇺</span> Русский</a>
         <a class={`lang-option ${lang === 'es' ? 'active' : ''}`} data-lang="es" href={`${baseUrl}/es/`}><span>🇪🇸</span> Español</a>
         <a class={`lang-option ${lang === 'de' ? 'active' : ''}`} data-lang="de" href={`${baseUrl}/de/`}><span>🇩🇪</span> Deutsch</a>
         <a class={`lang-option ${lang === 'fr' ? 'active' : ''}`} data-lang="fr" href={`${baseUrl}/fr/`}><span>🇫🇷</span> Français</a>
