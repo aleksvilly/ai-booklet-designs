@@ -153,7 +153,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: 22
 
       - name: Generate booklet concepts
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
@@ -199,24 +199,27 @@ jobs:
           git commit -m "Add generated booklet concepts"
           git push
 
+      - name: Install dependencies
+        run: npm install
+
       - name: Build Astro static site
-        run: |
-          npx astro build || true
+        run: npm run build
 
       - name: Prepare static site
         run: |
           mkdir -p _site
           if [ -d "dist" ]; then
             cp -R dist/* _site/
+          else
+            cp index.html styles.css app.js privacy.html _site/ 2>/dev/null || true
+            cp wedding.html menu.html gifts.html events.html _site/ 2>/dev/null || true
           fi
           touch _site/.nojekyll
-          cp index.html styles.css app.js privacy.html _site/ 2>/dev/null || true
-          cp wedding.html menu.html gifts.html events.html _site/ 2>/dev/null || true
           cp robots.txt sitemap.xml _site/ 2>/dev/null || true
-          cp -R data _site/data
-          cp -R vendor _site/vendor
-          cp -R src _site/src
-          cp -R styles _site/styles
+          cp -R data _site/data 2>/dev/null || true
+          cp -R vendor _site/vendor 2>/dev/null || true
+          cp -R src _site/src 2>/dev/null || true
+          cp -R styles _site/styles 2>/dev/null || true
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
