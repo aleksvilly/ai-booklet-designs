@@ -5,6 +5,6 @@ export default defineConfig({
   base: '/ai-booklet-designs',
   output: 'static',
   build: {
-    format: 'file'
+    format: 'directory'
   }
 });
