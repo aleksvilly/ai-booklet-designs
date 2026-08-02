@@ -1,0 +1,325 @@
+/* ==========================================================
+   Photo Layout System
+   Applied as two classes on .book-page:
+     .photo-layout-<family>   (layout type)
+     .photo-layout-reversed   (when intensity < 0)
+
+   All intensity-driven values come from CSS custom properties
+   set INLINE by editor.js from the -100…+100 slider:
+     --layout-tilt        rotation angle (signed degrees)
+     --layout-gap         gap between panels (px)
+     --layout-ratio       first col/row share (%, 20–80)
+     --layout-ratio-b     second col/row share (100% - ratio)
+     --layout-split-inset positive split mask inset (0–48%)
+     --layout-split-extent negative split image extent (100–196%)
+     --layout-split-offset centers the expanded image (0 to -48%)
+     --layout-diag-extent expanded diagonal image height (100–300%)
+     --layout-diag-offset centers the expanded image (0 to -100%)
+     --layout-diag-clip   normalized mask depth (0–33.33%)
+   ========================================================== */
+
+/* ==========================================================
+   1. FULLSCREEN — first image covers the entire page
+   ========================================================== */
+.photo-layout-full .page-gallery {
+  display: block !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  background: transparent !important;
+}
+.photo-layout-full .page-gallery .gallery-image {
+  position: absolute !important;
+  inset: 0 !important;
+}
+.photo-layout-full .page-gallery .gallery-image:nth-child(n+2) { display: none !important; }
+.photo-layout-full .page-gallery figcaption { display: none !important; }
+
+/* Gradient overlay driven by intensity (JS sets opacity via --layout-overlay-opacity) */
+.photo-layout-full .page-gallery::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.85) 0%, transparent 55%);
+  opacity: var(--layout-overlay-opacity, 0);
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity .2s;
+}
+
+/* ==========================================================
+   2. SPLIT-V — equal vertical columns (left | right | ...)
+   Shows every available photo. Intensity scales each photo horizontally:
+   positive values create space; negative values create overlap.
+   ========================================================== */
+.photo-layout-split-v .page-gallery {
+  display: flex !important;
+  flex-flow: row nowrap !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  background: transparent !important;
+}
+.photo-layout-split-v .page-gallery .gallery-image {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  flex: 1 1 0 !important;
+  width: auto !important;
+  height: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  clip-path: inset(0 var(--layout-split-inset, 0%) 0 var(--layout-split-inset, 0%));
+}
+.photo-layout-split-v .page-gallery .gallery-image img {
+  left: var(--layout-split-offset, 0%) !important;
+  right: auto !important;
+  width: var(--layout-split-extent, 100%) !important;
+  max-width: none !important;
+}
+.photo-layout-split-v .page-gallery figcaption { display: none !important; }
+
+/* ==========================================================
+   3. SPLIT-H — equal horizontal rows (top / bottom / ...)
+   Shows every available photo. Intensity scales each photo vertically:
+   positive values create space; negative values create overlap.
+   ========================================================== */
+.photo-layout-split-h .page-gallery {
+  display: flex !important;
+  flex-flow: column nowrap !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  background: transparent !important;
+}
+.photo-layout-split-h .page-gallery .gallery-image {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  flex: 1 1 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  clip-path: inset(var(--layout-split-inset, 0%) 0 var(--layout-split-inset, 0%) 0);
+}
+.photo-layout-split-h .page-gallery .gallery-image img {
+  top: var(--layout-split-offset, 0%) !important;
+  bottom: auto !important;
+  height: var(--layout-split-extent, 100%) !important;
+  max-height: none !important;
+}
+.photo-layout-split-h .page-gallery figcaption { display: none !important; }
+
+/* ==========================================================
+   4. DIAGONAL — equal horizontal rows with angled masks
+   Shows every available photo. Intensity controls the slope depth and
+   photo-layout-reversed flips its direction.
+   ========================================================== */
+.photo-layout-diagonal .page-gallery {
+  display: flex !important;
+  flex-flow: column nowrap !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  background: transparent !important;
+}
+.photo-layout-diagonal .page-gallery .gallery-image {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  flex: 1 1 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+}
+.photo-layout-diagonal .page-gallery figcaption { display: none !important; }
+
+.photo-layout-diagonal .page-gallery .gallery-image img {
+  top: var(--layout-diag-offset, 0%) !important;
+  bottom: auto !important;
+  height: var(--layout-diag-extent, 100%) !important;
+  max-height: none !important;
+  clip-path: polygon(
+    0 var(--layout-diag-clip, 0%),
+    100% 0,
+    100% calc(100% - var(--layout-diag-clip, 0%)),
+    0 100%
+  );
+}
+
+.photo-layout-diagonal .page-gallery .gallery-image:nth-child(even) img,
+.photo-layout-diagonal.photo-layout-reversed .page-gallery .gallery-image:nth-child(odd) img {
+  clip-path: polygon(
+    0 0,
+    100% var(--layout-diag-clip, 0%),
+    100% 100%,
+    0 calc(100% - var(--layout-diag-clip, 0%))
+  );
+}
+
+.photo-layout-diagonal.photo-layout-reversed .page-gallery .gallery-image:nth-child(even) img {
+  clip-path: polygon(
+    0 var(--layout-diag-clip, 0%),
+    100% 0,
+    100% calc(100% - var(--layout-diag-clip, 0%)),
+    0 100%
+  );
+}
+
+/* ==========================================================
+   5. MASONRY — CSS grid with varied cell spans
+   ========================================================== */
+.photo-layout-masonry .page-gallery {
+  display: grid !important;
+  grid-template-columns: repeat(var(--layout-masonry-columns, 6), minmax(0, 1fr)) !important;
+  grid-template-rows: repeat(var(--layout-masonry-rows, 8), minmax(0, 1fr)) !important;
+  gap: var(--layout-masonry-gap, 2px) !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+.photo-layout-masonry .page-gallery .gallery-image {
+  position: relative !important;
+  inset: auto !important;
+  display: block !important;
+  grid-column:
+    var(--layout-masonry-column-start, auto) /
+    span var(--layout-masonry-column-span, 1) !important;
+  grid-row:
+    var(--layout-masonry-row-start, auto) /
+    span var(--layout-masonry-row-span, 1) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+.photo-layout-masonry .page-gallery figcaption { display: none !important; }
+/* No hard cap — show all up to 20 */
+
+/* ==========================================================
+   6. CIRCLES — concentric nested circular masks
+   ========================================================== */
+.photo-layout-circles .page-gallery {
+  display: block !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  background: transparent !important;
+  isolation: isolate;
+}
+.photo-layout-circles .page-gallery .gallery-image {
+  position: absolute !important;
+  inset: auto !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: var(--layout-shape-size, 100%) !important;
+  height: auto !important;
+  aspect-ratio: 1 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  z-index: var(--layout-shape-z, 1);
+  transform: translate(-50%, -50%);
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  box-sizing: border-box !important;
+  background: var(--c4, #222) !important;
+  box-shadow: none !important;
+}
+.photo-layout-circles .page-gallery .gallery-image img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+.photo-layout-circles .page-gallery figcaption { display: none !important; }
+
+/* Single image: the circular mask touches both horizontal page edges. */
+.photo-layout-circles .page-image {
+  display: block !important;
+  inset: auto !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: var(--layout-shape-single-size, 100%) !important;
+  max-width: none !important;
+  height: auto !important;
+  aspect-ratio: 1 !important;
+  transform: translate(-50%, -50%);
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  background: transparent !important;
+}
+.photo-layout-circles .page-image img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.photo-layout-circles .page-image figcaption { display: none !important; }
+
+/* ==========================================================
+   7. COLLAGE — count-aware scattered particle field (2–20 photos)
+   ========================================================== */
+.photo-layout-collage .page-gallery {
+  display: block !important;
+  padding: 0 !important;
+  gap: 0 !important;
+  background: var(--c1, #fff) !important;
+}
+.photo-layout-collage .page-gallery .gallery-image {
+  position: absolute !important;
+  inset: auto !important;
+  display: block !important;
+  left: var(--layout-collage-x, 50%) !important;
+  top: var(--layout-collage-y, 50%) !important;
+  width: var(--layout-collage-width, 50%) !important;
+  height: var(--layout-collage-height, 40%) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  transform: translate(-50%, -50%) rotate(var(--layout-collage-rotation, 0deg));
+  z-index: var(--layout-collage-z, 1);
+  box-shadow: 3px 5px 18px rgba(0,0,0,.28);
+}
+.photo-layout-collage .page-gallery .gallery-image img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+.photo-layout-collage .page-gallery figcaption { display: none !important; }
+
+/* A single image still participates in the scattered-card treatment. */
+.photo-layout-collage .page-image {
+  position: absolute !important;
+  inset: auto !important;
+  left: var(--layout-collage-single-x, 50%) !important;
+  top: 50% !important;
+  width: var(--layout-collage-single-width, 78%) !important;
+  height: var(--layout-collage-single-height, 64%) !important;
+  max-width: none !important;
+  overflow: hidden !important;
+  transform:
+    translate(-50%, -50%)
+    rotate(var(--layout-collage-single-rotation, 0deg));
+  box-shadow: 3px 5px 18px rgba(0,0,0,.28);
+}
+.photo-layout-collage .page-image img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+.photo-layout-collage .page-image figcaption { display: none !important; }
+
+/* ==========================================================
+   Text copy always above layout visuals
+   ========================================================== */
+[class*="photo-layout-"] .book-page-copy {
+  position: relative !important;
+  z-index: 10 !important;
+}

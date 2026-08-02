@@ -1,0 +1,143 @@
+/* =========================================================
+   Illustrated Encyclopedia Style Profile
+   Full interior spread rules
+   ========================================================= */
+
+/* === Core Variables === */
+.style-encyclopedia-reference,
+.style-scientific-journal {
+  --font-display: "Lora", "Cormorant Garamond", serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-accent: "IBM Plex Mono", monospace;
+  --enc-parchment: #f6f4ee;
+  --enc-ink: #1e242b;
+  --enc-border: #cbd5e1;
+  --enc-accent: #334155;
+  --c1: #f6f4ee;
+  --c2: #1e242b;
+  --c3: #cbd5e1;
+  --c4: #334155;
+}
+
+/* === Card Cover === */
+.style-encyclopedia-reference .cover,
+.style-encyclopedia-reference.detail-hero,
+.style-scientific-journal .cover {
+  background: var(--enc-parchment);
+  color: var(--enc-ink);
+}
+.style-encyclopedia-reference .cover-title,
+.style-encyclopedia-reference .detail-title,
+.style-scientific-journal .detail-title {
+  font: 600 clamp(20px, 3.5vw, 56px)/1.05 "Lora", serif;
+  color: var(--enc-ink);
+  letter-spacing: -.02em;
+}
+.style-encyclopedia-reference .cover-kicker {
+  color: var(--enc-accent);
+  font: 500 9px/1 "IBM Plex Mono", monospace;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+/* === Interior Book Page Base === */
+.style-encyclopedia-reference .book-page,
+.style-scientific-journal .book-page {
+  font-family: var(--font-body);
+  background: var(--enc-parchment);
+  color: var(--enc-ink);
+  border: 3px double var(--enc-border);
+}
+
+/* Inner margin rule */
+.style-encyclopedia-reference .book-page::after {
+  content: "";
+  position: absolute;
+  top: 8px; bottom: 8px;
+  left: 8px;
+  width: 2px;
+  background: var(--enc-border);
+}
+
+.style-encyclopedia-reference .book-page-type,
+.style-scientific-journal .book-page-type {
+  font: 500 9px/1 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+  color: var(--enc-accent);
+  border-bottom: 1px solid var(--enc-border);
+  padding-bottom: 4px;
+  display: block;
+}
+.style-encyclopedia-reference .book-page h4,
+.style-scientific-journal .book-page h4 {
+  font: 600 clamp(20px, 3.2vw, 50px)/1.1 "Lora", serif;
+  letter-spacing: -.02em;
+  color: var(--enc-ink);
+}
+.style-encyclopedia-reference .book-page .page-body,
+.style-scientific-journal .book-page .page-body {
+  font: 400 12px/1.8 "DM Sans", sans-serif;
+  color: rgba(30, 36, 43, .72);
+}
+.style-encyclopedia-reference .book-page-number,
+.style-scientific-journal .book-page-number {
+  font: 500 10px/1 "IBM Plex Mono", monospace;
+  color: var(--enc-accent);
+}
+
+/* === Layout Variations === */
+.style-encyclopedia-reference .book-page.layout-archive {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 0;
+  align-items: start;
+}
+.style-encyclopedia-reference .book-page.layout-minimal {
+  padding: clamp(32px, 5vw, 64px);
+}
+.style-encyclopedia-reference .book-page.layout-grid {
+  column-count: 2;
+  column-gap: 20px;
+}
+.style-encyclopedia-reference .book-page.layout-full .book-page-copy {
+  position: absolute;
+  bottom: 20px;
+  left: 24px;
+  right: 24px;
+  z-index: 5;
+  background: rgba(246,244,238,.9);
+  padding: 14px 16px;
+  border: 1px solid var(--enc-border);
+}
+
+/* === Image Treatments === */
+.style-encyclopedia-reference .book-page.has-image .page-image img {
+  filter: sepia(0.2) contrast(1.06) brightness(0.96);
+}
+.style-encyclopedia-reference .book-page.has-image .page-image::after {
+  background: linear-gradient(to top, rgba(30,36,43,.72) 0%, transparent 55%);
+}
+.style-scientific-journal .book-page.image-treatment-black-white-photo .page-image img {
+  filter: grayscale(1) contrast(1.1);
+}
+
+/* === Effects === */
+.style-encyclopedia-reference .book-page.effect-frame-within-frame {
+  outline: 2px double var(--enc-border);
+  outline-offset: 8px;
+}
+.style-encyclopedia-reference .book-page.effect-caption-rule figcaption {
+  border-top: 1px solid var(--enc-border);
+  padding-top: 6px;
+  font: 400 9px/1.5 "IBM Plex Mono", monospace;
+}
+.style-encyclopedia-reference .book-page.effect-oversized-number .book-page-number {
+  font-size: clamp(72px, 12vw, 160px);
+  line-height: .85;
+  color: rgba(30, 36, 43, .05);
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  font-weight: 600;
+}

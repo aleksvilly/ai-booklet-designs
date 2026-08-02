@@ -1,0 +1,609 @@
+/* =========================================================
+   Digital product and app-inspired booklet profiles
+
+   These profiles reproduce interface grammar with project-native CSS.
+   No logos, product icons, proprietary typefaces or copied UI assets.
+   ========================================================= */
+
+/* === Video platform interface === */
+.style-youtube-inspired {
+  --font-display: "Inter", "DM Sans", sans-serif;
+  --font-body: "DM Sans", "Inter", sans-serif;
+  --font-accent: "Inter", sans-serif;
+  --video-bg: #0f0f0f;
+  --video-surface: #272727;
+  --video-line: #3f3f3f;
+  --video-ink: #f1f1f1;
+  --video-muted: #aaa;
+  --video-accent: #ff3158;
+  --video-magenta: #d922bc;
+}
+
+.style-youtube-inspired .cover,
+.style-youtube-inspired.detail-hero {
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255, 49, 88, .22), transparent 26%),
+    var(--video-bg);
+  color: var(--video-ink);
+}
+
+.style-youtube-inspired .cover::after,
+.style-youtube-inspired.detail-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--video-accent), var(--video-magenta) 72%, var(--video-line) 72%);
+}
+
+.style-youtube-inspired .cover-title,
+.style-youtube-inspired .detail-title {
+  max-width: 84%;
+  font: 750 clamp(34px, 5.8vw, 92px)/.9 var(--font-display);
+  letter-spacing: -.055em;
+  color: var(--video-ink);
+}
+
+.style-youtube-inspired .cover-kicker,
+.style-youtube-inspired .detail-kicker {
+  display: inline-flex;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: var(--video-surface);
+  color: var(--video-ink);
+  font: 650 9px/1 var(--font-accent);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.style-youtube-inspired .book-page {
+  font-family: var(--font-body);
+  background: var(--video-bg);
+  color: var(--video-ink);
+  border: 1px solid var(--video-line);
+  border-radius: 14px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .32);
+}
+
+.style-youtube-inspired .book-page::after {
+  content: "";
+  position: absolute;
+  z-index: 8;
+  right: 14px;
+  bottom: 10px;
+  left: 14px;
+  height: 3px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--video-accent), var(--video-magenta) 38%, var(--video-line) 38%);
+  pointer-events: none;
+}
+
+.style-youtube-inspired .book-page-type {
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--video-surface);
+  color: var(--video-ink);
+  font: 650 8px/1 var(--font-accent);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.style-youtube-inspired .book-page h4 {
+  font: 750 clamp(25px, 4vw, 66px)/.98 var(--font-display);
+  letter-spacing: -.045em;
+  color: var(--video-ink);
+}
+
+.style-youtube-inspired .book-page .page-body {
+  font: 450 12px/1.64 var(--font-body);
+  color: var(--video-muted);
+}
+
+.style-youtube-inspired .book-page-number {
+  color: var(--video-muted);
+  font: 650 9px/1 var(--font-accent);
+}
+
+.style-youtube-inspired .book-page-copy {
+  border-radius: 12px;
+}
+
+.style-youtube-inspired .book-page.layout-full .book-page-copy {
+  position: absolute;
+  z-index: 6;
+  right: 16px;
+  bottom: 22px;
+  left: 16px;
+  padding: 18px 20px;
+  background: rgba(15, 15, 15, .9);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, .35);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.style-youtube-inspired .page-image,
+.style-youtube-inspired .gallery-image {
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--video-surface);
+}
+
+.style-youtube-inspired .page-image img,
+.style-youtube-inspired .gallery-image img {
+  filter: contrast(1.05) saturate(1.08);
+}
+
+.style-youtube-inspired .page-gallery {
+  gap: 10px;
+  padding: 10px;
+  background: var(--video-bg);
+}
+
+.style-youtube-inspired .page-image figcaption,
+.style-youtube-inspired .gallery-image figcaption {
+  background: rgba(15, 15, 15, .88);
+  color: var(--video-muted);
+}
+
+/* === Streaming music library === */
+.style-streaming-library {
+  --font-display: "DM Sans", "Inter", sans-serif;
+  --font-body: "DM Sans", "Inter", sans-serif;
+  --font-accent: "IBM Plex Mono", monospace;
+  --stream-bg: #121212;
+  --stream-surface: #242424;
+  --stream-soft: #303030;
+  --stream-ink: #f5f5f5;
+  --stream-muted: #b3b3b3;
+  --stream-accent: #1ed760;
+}
+
+.style-streaming-library .cover,
+.style-streaming-library.detail-hero {
+  background:
+    linear-gradient(150deg, rgba(30, 215, 96, .28), transparent 48%),
+    var(--stream-bg);
+  color: var(--stream-ink);
+}
+
+.style-streaming-library .cover::after,
+.style-streaming-library.detail-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  width: min(42%, 250px);
+  aspect-ratio: 1;
+  right: -8%;
+  bottom: -24%;
+  border: 30px solid rgba(30, 215, 96, .28);
+  border-radius: 50%;
+}
+
+.style-streaming-library .cover-title,
+.style-streaming-library .detail-title {
+  font: 800 42px/.9 var(--font-display);
+  letter-spacing: -.06em;
+  color: var(--stream-ink);
+}
+
+.style-streaming-library .cover-kicker,
+.style-streaming-library .detail-kicker {
+  color: var(--stream-accent);
+  font: 700 9px/1 var(--font-accent);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.style-streaming-library .book-page {
+  font-family: var(--font-body);
+  background:
+    linear-gradient(180deg, rgba(30, 215, 96, .09), transparent 38%),
+    var(--stream-bg);
+  color: var(--stream-ink);
+  border: 1px solid #343434;
+  border-radius: 16px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, .35);
+}
+
+.style-streaming-library .book-page::before {
+  content: "COLLECTION  /  NOW READING";
+  position: absolute;
+  z-index: 7;
+  top: 12px;
+  left: 16px;
+  color: var(--stream-muted);
+  font: 600 7px/1 var(--font-accent);
+  letter-spacing: .12em;
+}
+
+.style-streaming-library .book-page::after {
+  content: "";
+  position: absolute;
+  z-index: 8;
+  right: 18px;
+  bottom: 12px;
+  left: 18px;
+  height: 4px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--stream-accent) 54%, #535353 54%);
+}
+
+.style-streaming-library .book-page-type {
+  display: inline-flex;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: var(--stream-accent);
+  color: #08130c;
+  font: 750 8px/1 var(--font-body);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.style-streaming-library .book-page h4 {
+  font: 800 36px/.96 var(--font-display);
+  letter-spacing: -.055em;
+  color: var(--stream-ink);
+}
+
+.style-streaming-library .book-page .page-body {
+  color: var(--stream-muted);
+  font: 450 12px/1.62 var(--font-body);
+}
+
+.style-streaming-library .book-page-number {
+  color: var(--stream-accent);
+  font: 650 9px/1 var(--font-accent);
+}
+
+.style-streaming-library .book-page.layout-full .book-page-copy {
+  position: absolute;
+  z-index: 6;
+  right: 16px;
+  bottom: 24px;
+  left: 16px;
+  padding: 20px;
+  border-radius: 14px;
+  background: rgba(18, 18, 18, .88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.style-streaming-library .page-image,
+.style-streaming-library .gallery-image {
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--stream-surface);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, .28);
+}
+
+.style-streaming-library .page-image img,
+.style-streaming-library .gallery-image img {
+  filter: contrast(1.04) saturate(1.12) brightness(.86);
+}
+
+.style-streaming-library .page-gallery {
+  gap: 10px;
+  padding: 12px;
+  background: var(--stream-bg);
+}
+
+.style-streaming-library .gallery-image figcaption {
+  background: var(--stream-surface);
+  color: var(--stream-muted);
+}
+
+/* === Mobile social feed === */
+.style-mobile-social-feed {
+  --font-display: "Figtree", "DM Sans", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-accent: "Figtree", sans-serif;
+  --feed-paper: #fffaf7;
+  --feed-ink: #27243a;
+  --feed-muted: #777286;
+  --feed-coral: #ff6d7a;
+  --feed-violet: #8b7cff;
+  --feed-blue: #6cc7ff;
+}
+
+.style-mobile-social-feed .cover,
+.style-mobile-social-feed.detail-hero {
+  background:
+    radial-gradient(circle at 84% 18%, rgba(108, 199, 255, .55), transparent 23%),
+    radial-gradient(circle at 15% 86%, rgba(255, 109, 122, .35), transparent 28%),
+    var(--feed-paper);
+  color: var(--feed-ink);
+}
+
+.style-mobile-social-feed .cover::after,
+.style-mobile-social-feed.detail-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  top: 12%;
+  right: 8%;
+  width: clamp(52px, 8vw, 110px);
+  aspect-ratio: 1;
+  border: 12px solid rgba(139, 124, 255, .3);
+  border-radius: 30%;
+  transform: rotate(12deg);
+}
+
+.style-mobile-social-feed .cover-title,
+.style-mobile-social-feed .detail-title {
+  max-width: 80%;
+  font: 800 clamp(34px, 5.4vw, 86px)/.92 var(--font-display);
+  letter-spacing: -.055em;
+  color: var(--feed-ink);
+}
+
+.style-mobile-social-feed .cover-kicker,
+.style-mobile-social-feed .detail-kicker {
+  color: var(--feed-violet);
+  font: 700 9px/1 var(--font-accent);
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.style-mobile-social-feed .book-page {
+  font-family: var(--font-body);
+  background:
+    linear-gradient(135deg, rgba(255, 109, 122, .08), transparent 32%),
+    var(--feed-paper);
+  color: var(--feed-ink);
+  border: 1px solid rgba(39, 36, 58, .12);
+  border-radius: 22px;
+  box-shadow: 0 18px 46px rgba(66, 54, 92, .13);
+}
+
+.style-mobile-social-feed .book-page::before {
+  content: "";
+  position: absolute;
+  z-index: 8;
+  top: 10px;
+  left: 50%;
+  width: 18%;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(39, 36, 58, .18);
+  transform: translateX(-50%);
+}
+
+.style-mobile-social-feed .book-page-type {
+  display: inline-flex;
+  padding: 5px 10px;
+  border: 1px solid rgba(139, 124, 255, .25);
+  border-radius: 999px;
+  background: rgba(139, 124, 255, .1);
+  color: var(--feed-violet);
+  font: 750 8px/1 var(--font-accent);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.style-mobile-social-feed .book-page h4 {
+  font: 800 clamp(25px, 4vw, 64px)/.98 var(--font-display);
+  letter-spacing: -.045em;
+  color: var(--feed-ink);
+}
+
+.style-mobile-social-feed .book-page .page-body {
+  color: var(--feed-muted);
+  font: 450 12px/1.68 var(--font-body);
+}
+
+.style-mobile-social-feed .book-page-number {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--feed-coral);
+  color: #fff;
+  font: 700 9px/1 var(--font-accent);
+}
+
+.style-mobile-social-feed .book-page.layout-full .book-page-copy {
+  position: absolute;
+  z-index: 6;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, .72);
+  border-radius: 18px;
+  background: rgba(255, 250, 247, .9);
+  box-shadow: 0 10px 28px rgba(39, 36, 58, .14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.style-mobile-social-feed .page-image,
+.style-mobile-social-feed .gallery-image {
+  overflow: hidden;
+  border-radius: 18px;
+  background: #f1ecf6;
+}
+
+.style-mobile-social-feed .page-image img,
+.style-mobile-social-feed .gallery-image img {
+  filter: saturate(1.08) contrast(1.02);
+}
+
+.style-mobile-social-feed .page-gallery {
+  gap: 9px;
+  padding: 10px;
+}
+
+.style-mobile-social-feed .gallery-image:nth-child(3n + 1) {
+  transform: rotate(-1deg);
+}
+
+.style-mobile-social-feed .gallery-image:nth-child(3n + 3) {
+  transform: rotate(1deg);
+}
+
+/* === Analytics dashboard === */
+.style-analytics-dashboard {
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-body: "Inter", "DM Sans", sans-serif;
+  --font-accent: "IBM Plex Mono", monospace;
+  --dash-paper: #f7f8fc;
+  --dash-ink: #172033;
+  --dash-muted: #677189;
+  --dash-line: #dfe4f2;
+  --dash-accent: #635bff;
+  --dash-cyan: #22c7d6;
+}
+
+.style-analytics-dashboard .cover,
+.style-analytics-dashboard.detail-hero {
+  background:
+    linear-gradient(rgba(99, 91, 255, .08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 91, 255, .08) 1px, transparent 1px),
+    var(--dash-paper);
+  background-size: 26px 26px;
+  color: var(--dash-ink);
+}
+
+.style-analytics-dashboard .cover::after,
+.style-analytics-dashboard.detail-hero::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  right: 7%;
+  bottom: 12%;
+  width: 30%;
+  height: 22%;
+  border: 1px solid var(--dash-line);
+  border-radius: 12px;
+  background:
+    linear-gradient(135deg, transparent 22%, var(--dash-accent) 23% 25%, transparent 26% 42%, var(--dash-cyan) 43% 45%, transparent 46%),
+    rgba(255, 255, 255, .88);
+  box-shadow: 0 16px 34px rgba(23, 32, 51, .1);
+}
+
+.style-analytics-dashboard .cover-title,
+.style-analytics-dashboard .detail-title {
+  max-width: 74%;
+  font: 700 clamp(34px, 5.4vw, 86px)/.92 var(--font-display);
+  letter-spacing: -.055em;
+  color: var(--dash-ink);
+}
+
+.style-analytics-dashboard .cover-kicker,
+.style-analytics-dashboard .detail-kicker {
+  color: var(--dash-accent);
+  font: 650 9px/1 var(--font-accent);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.style-analytics-dashboard .book-page {
+  font-family: var(--font-body);
+  background:
+    linear-gradient(rgba(99, 91, 255, .05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(99, 91, 255, .05) 1px, transparent 1px),
+    var(--dash-paper);
+  background-size: 22px 22px;
+  color: var(--dash-ink);
+  border: 1px solid var(--dash-line);
+  border-radius: 12px;
+  box-shadow: 0 16px 38px rgba(23, 32, 51, .1);
+}
+
+.style-analytics-dashboard .book-page::before {
+  content: "LIVE DATA  •  UPDATED NOW";
+  position: absolute;
+  z-index: 7;
+  top: 12px;
+  right: 16px;
+  color: var(--dash-muted);
+  font: 600 7px/1 var(--font-accent);
+  letter-spacing: .08em;
+}
+
+.style-analytics-dashboard .book-page::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  right: 18px;
+  bottom: 18px;
+  width: 28%;
+  height: 18%;
+  border-right: 2px solid var(--dash-accent);
+  border-bottom: 2px solid var(--dash-accent);
+  opacity: .22;
+  transform: skewY(-16deg);
+  pointer-events: none;
+}
+
+.style-analytics-dashboard .book-page-type {
+  display: inline-flex;
+  padding: 5px 9px;
+  border: 1px solid rgba(99, 91, 255, .22);
+  border-radius: 7px;
+  background: rgba(99, 91, 255, .08);
+  color: var(--dash-accent);
+  font: 650 8px/1 var(--font-accent);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.style-analytics-dashboard .book-page h4 {
+  font: 700 clamp(24px, 3.8vw, 60px)/.98 var(--font-display);
+  letter-spacing: -.045em;
+  color: var(--dash-ink);
+}
+
+.style-analytics-dashboard .book-page .page-body {
+  color: var(--dash-muted);
+  font: 450 12px/1.68 var(--font-body);
+}
+
+.style-analytics-dashboard .book-page-number {
+  color: var(--dash-accent);
+  font: 650 9px/1 var(--font-accent);
+}
+
+.style-analytics-dashboard .book-page-copy {
+  padding: clamp(16px, 2vw, 26px);
+  border: 1px solid var(--dash-line);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, .9);
+  box-shadow: 0 8px 24px rgba(23, 32, 51, .07);
+}
+
+.style-analytics-dashboard .book-page.layout-full .book-page-copy {
+  position: absolute;
+  z-index: 6;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+}
+
+.style-analytics-dashboard .page-image,
+.style-analytics-dashboard .gallery-image {
+  overflow: hidden;
+  border: 1px solid var(--dash-line);
+  border-radius: 10px;
+  background: #fff;
+}
+
+.style-analytics-dashboard .page-image img,
+.style-analytics-dashboard .gallery-image img {
+  filter: saturate(.82) contrast(1.04);
+}
+
+.style-analytics-dashboard .page-gallery {
+  gap: 9px;
+  padding: 10px;
+}
+
+.style-analytics-dashboard .gallery-image figcaption {
+  background: rgba(255, 255, 255, .92);
+  color: var(--dash-muted);
+}

@@ -1,0 +1,139 @@
+/* =========================================================
+   Wedding Editorial Style Profile
+   Full interior spread rules
+   ========================================================= */
+
+/* === Core Variables === */
+.style-wedding-editorial,
+.style-luxury-editorial {
+  --font-display: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-accent: "Cormorant Garamond", serif;
+  --wedding-cream: #fbf7f0;
+  --wedding-rose: #d8b9ad;
+  --wedding-mink: #5b514c;
+  --wedding-gold: #b28f58;
+  --c1: #fbf7f0;
+  --c2: #d8b9ad;
+  --c3: #5b514c;
+  --c4: #b28f58;
+}
+
+/* === Card Cover === */
+.style-wedding-editorial .cover,
+.style-wedding-editorial.detail-hero {
+  background: var(--wedding-cream);
+  color: var(--wedding-mink);
+}
+.style-wedding-editorial .cover-title,
+.style-wedding-editorial .detail-title {
+  font: 400 clamp(22px, 4vw, 68px)/1.05 "Cormorant Garamond", serif;
+  font-style: italic;
+  letter-spacing: .01em;
+  color: var(--wedding-mink);
+}
+.style-wedding-editorial .cover-kicker {
+  color: var(--wedding-rose);
+  font: 400 10px/1 "DM Sans", sans-serif;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+}
+
+/* === Interior Book Page Base === */
+.style-wedding-editorial .book-page {
+  font-family: var(--font-body);
+  background: var(--wedding-cream);
+  color: var(--wedding-mink);
+  border: 1px solid var(--wedding-rose);
+  box-shadow: 0 12px 40px rgba(91, 81, 76, 0.07);
+}
+
+/* Double-line inset border frame */
+.style-wedding-editorial .book-page::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(178, 143, 88, .28);
+  pointer-events: none;
+}
+
+.style-wedding-editorial .book-page-type {
+  font: 400 9px/1 "Cormorant Garamond", serif;
+  font-style: italic;
+  color: var(--wedding-rose);
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--wedding-rose);
+  padding-bottom: 4px;
+  display: inline-block;
+}
+.style-wedding-editorial .book-page h4 {
+  font: 400 clamp(24px, 4vw, 64px)/1.05 "Cormorant Garamond", serif;
+  font-style: italic;
+  letter-spacing: .01em;
+  color: var(--wedding-mink);
+}
+.style-wedding-editorial .book-page .page-body {
+  font: 400 13px/1.82 "DM Sans", sans-serif;
+  color: rgba(91, 81, 76, .72);
+  max-width: 380px;
+}
+.style-wedding-editorial .book-page-number {
+  font: 400 10px/1 "Cormorant Garamond", serif;
+  font-style: italic;
+  color: var(--wedding-rose);
+}
+
+/* === Layout Variations === */
+.style-wedding-editorial .book-page.layout-minimal {
+  padding: clamp(40px, 6vw, 80px);
+}
+.style-wedding-editorial .book-page.layout-split {
+  border-right: 3px solid var(--wedding-rose);
+}
+.style-wedding-editorial .book-page.layout-full .book-page-copy {
+  position: absolute;
+  bottom: 28px;
+  left: 28px;
+  right: 28px;
+  z-index: 5;
+  background: rgba(251, 247, 240, .88);
+  padding: 20px 24px;
+  border: 1px solid var(--wedding-rose);
+}
+
+/* === Image Treatments === */
+.style-wedding-editorial .book-page.has-image .page-image::after {
+  background: linear-gradient(to top, rgba(91,81,76,.72) 0%, transparent 60%);
+}
+.style-wedding-editorial .book-page.image-treatment-grainy-photo .page-image img {
+  filter: brightness(0.96) contrast(1.04) saturate(0.82);
+}
+.style-wedding-editorial .book-page.image-treatment-black-white-photo .page-image img {
+  filter: grayscale(1) contrast(1.06) brightness(1.04);
+}
+
+/* === Effects === */
+.style-wedding-editorial .book-page.effect-soft-shadow {
+  box-shadow: 0 20px 60px rgba(91, 81, 76, .12), 0 4px 16px rgba(91,81,76,.07);
+}
+.style-wedding-editorial .book-page.effect-floating-caption figcaption {
+  background: rgba(251, 247, 240, .88);
+  color: var(--wedding-mink);
+  padding: 6px 14px;
+  font-style: italic;
+  font-family: "Cormorant Garamond", serif;
+}
+.style-wedding-editorial .book-page.effect-empty-space {
+  padding: clamp(50px, 8vw, 100px);
+}
+.style-wedding-editorial .book-page.effect-oversized-number .book-page-number {
+  font-size: clamp(72px, 12vw, 160px);
+  line-height: .85;
+  color: rgba(178, 143, 88, .10);
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  font-style: italic;
+  font-weight: 400;
+}

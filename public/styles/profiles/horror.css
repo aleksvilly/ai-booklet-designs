@@ -1,0 +1,147 @@
+/* =========================================================
+   Horror & Slasher Zine Style Profile
+   Full interior spread rules
+   ========================================================= */
+
+/* === Core Variables === */
+.style-horror-slasher {
+  --font-display: "Barlow Condensed", "Impact", sans-serif;
+  --font-body: "Barlow Condensed", sans-serif;
+  --font-accent: "IBM Plex Mono", monospace;
+  --horror-red: #e11d48;
+  --horror-dark: #08080a;
+  --horror-bone: #f1e8d3;
+  --c1: #08080a;
+  --c2: #e11d48;
+  --c3: #991b1b;
+  --c4: #f1e8d3;
+}
+
+/* === Card Cover === */
+.style-horror-slasher .cover,
+.style-horror-slasher.detail-hero {
+  background: #08080a;
+  color: #f1e8d3;
+}
+.style-horror-slasher .cover-title,
+.style-horror-slasher .detail-title {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  color: #e11d48;
+  text-shadow: 3px 3px 0 #000, 0 0 30px rgba(225,29,72,.4);
+  letter-spacing: -.02em;
+}
+.style-horror-slasher .cover-kicker {
+  color: #e11d48;
+  font: 700 9px/1 "IBM Plex Mono", monospace;
+  letter-spacing: .16em;
+}
+
+/* === Interior Book Page Base === */
+.style-horror-slasher .book-page {
+  font-family: var(--font-body);
+  background: #08080a;
+  color: #f1e8d3;
+  border: 2px solid #e11d48;
+  box-shadow: 0 0 0 1px #000, inset 0 0 60px rgba(0,0,0,.6);
+}
+.style-horror-slasher .book-page::before {
+  content: "⚙ ⚙ ⚙";
+  position: absolute;
+  top: 8px;
+  left: 14px;
+  font: 700 7px/1 monospace;
+  color: rgba(225, 29, 72, .5);
+  letter-spacing: 4px;
+}
+.style-horror-slasher .book-page-type {
+  color: #e11d48;
+  font: 700 9px/1 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .18em;
+}
+.style-horror-slasher .book-page h4 {
+  font: 800 44px/1.0 "Barlow Condensed", sans-serif;
+  text-transform: uppercase;
+  color: #f1e8d3;
+  text-shadow: 3px 3px 0 #e11d48;
+  letter-spacing: -.02em;
+}
+.style-horror-slasher .book-page .page-body {
+  font: 400 12px/1.7 "Barlow Condensed", sans-serif;
+  color: rgba(241, 232, 211, .75);
+  letter-spacing: .02em;
+}
+.style-horror-slasher .book-page-number {
+  color: rgba(225, 29, 72, .8);
+  font: 700 11px/1 "IBM Plex Mono", monospace;
+}
+
+/* === Layout Variations === */
+.style-horror-slasher .book-page.layout-full {
+  background: #08080a;
+}
+.style-horror-slasher .book-page.layout-full .book-page-copy {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  z-index: 5;
+  padding: 24px 20px;
+  background: linear-gradient(to top, rgba(8,8,10,.98) 0%, transparent 100%);
+}
+.style-horror-slasher .book-page.layout-split {
+  border-left: 4px solid #e11d48;
+}
+.style-horror-slasher .book-page.layout-cinematic {
+  border-top: 4px solid #e11d48;
+  border-bottom: 4px solid #e11d48;
+  border-left: 0;
+  border-right: 0;
+}
+
+/* === Image Treatments === */
+.style-horror-slasher .book-page.has-image .page-image img {
+  filter: contrast(1.2) saturate(0.4) brightness(0.8);
+}
+.style-horror-slasher .book-page.has-image .page-image::after {
+  background: linear-gradient(to top, rgba(8,8,10,.95) 0%, rgba(8,8,10,.2) 50%, transparent 100%);
+}
+.style-horror-slasher .book-page.image-treatment-duotone-photo .page-image img {
+  filter: contrast(1.4) saturate(0) brightness(0.7);
+  mix-blend-mode: luminosity;
+}
+
+/* === Effects === */
+.style-horror-slasher .book-page.effect-film-grain {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.06'/%3E%3C/svg%3E");
+}
+.style-horror-slasher .book-page.effect-hard-shadow h4 {
+  text-shadow: 5px 5px 0 #e11d48, 10px 10px 0 rgba(225,29,72,.3);
+}
+.style-horror-slasher .book-page.effect-torn-edge::after {
+  content: "";
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 8px;
+  background:
+    radial-gradient(ellipse 10px 8px at 5% 0%, transparent 50%, #e11d48 50%),
+    radial-gradient(ellipse 10px 8px at 15% 0%, transparent 50%, #e11d48 50%),
+    radial-gradient(ellipse 10px 8px at 25% 0%, transparent 50%, #e11d48 50%),
+    radial-gradient(ellipse 10px 8px at 35% 0%, transparent 50%, #e11d48 50%),
+    radial-gradient(ellipse 10px 8px at 45% 0%, transparent 50%, #e11d48 50%),
+    radial-gradient(ellipse 10px 8px at 55% 0%, transparent 50%, #e11d48 50%),
+    radial-gradient(ellipse 10px 8px at 65% 0%, transparent 50%, #e11d48 50%),
+    radial-gradient(ellipse 10px 8px at 75% 0%, transparent 50%, #e11d48 50%),
+    radial-gradient(ellipse 10px 8px at 85% 0%, transparent 50%, #e11d48 50%),
+    radial-gradient(ellipse 10px 8px at 95% 0%, transparent 50%, #e11d48 50%);
+  pointer-events: none;
+  z-index: 6;
+}
+.style-horror-slasher .book-page.effect-oversized-number .book-page-number {
+  font-size: 96px;
+  line-height: .85;
+  color: rgba(225, 29, 72, .07);
+  position: absolute;
+  bottom: 6px;
+  right: 10px;
+  font-weight: 900;
+}

@@ -1,0 +1,200 @@
+/* =========================================================
+   GQ — Luxury Fashion & Culture Editorial Profile
+   Gentlemen's Quarterly inspired visual system
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Montserrat:ital,wght@0,300..800;1,300..800&display=swap');
+
+/* === Core Variables === */
+.style-gq-editorial,
+.style-gq {
+  --font-display: "Bodoni Moda", "Playfair Display", Didot, serif;
+  --font-body: "Montserrat", "Inter", sans-serif;
+  --font-accent: "Montserrat", sans-serif;
+  --gq-black: #0a0a0a;
+  --gq-white: #fcfcfc;
+  --gq-gold: #c5a059;
+  --gq-gold-hover: #dfb66c;
+  --gq-dark-panel: #141414;
+  --gq-grey-line: rgba(255, 255, 255, 0.12);
+  --c1: #0a0a0a;
+  --c2: #fcfcfc;
+  --c3: #c5a059;
+  --c4: #141414;
+}
+
+/* === Card Cover === */
+.style-gq-editorial .cover,
+.style-gq-editorial.detail-hero,
+.style-gq .cover,
+.style-gq.detail-hero {
+  background: #0a0a0a;
+  color: #fcfcfc;
+  border: 1px solid #222222;
+}
+
+.style-gq-editorial .cover-title,
+.style-gq-editorial .detail-title,
+.style-gq .cover-title,
+.style-gq .detail-title {
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -.025em;
+  color: #ffffff;
+  line-height: 0.98;
+}
+
+.style-gq-editorial .cover-kicker,
+.style-gq .cover-kicker {
+  color: var(--gq-gold);
+  font-family: var(--font-accent);
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .25em;
+  border-bottom: 1px solid var(--gq-gold);
+  padding-bottom: 4px;
+  display: inline-block;
+}
+
+/* === Interior Book Page Base === */
+.style-gq-editorial .book-page,
+.style-gq .book-page {
+  font-family: var(--font-body);
+  background: #0a0a0a;
+  color: #e5e5e5;
+  border: 1px solid #1f1f1f;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  position: relative;
+}
+
+/* Top GQ Header Bar Watermark */
+.style-gq-editorial .book-page::before,
+.style-gq .book-page::before {
+  content: "GQ EDITORIAL  //  MAGAZINE";
+  position: absolute;
+  top: 14px;
+  right: 20px;
+  font: 700 8px/1 "Montserrat", sans-serif;
+  letter-spacing: .24em;
+  color: var(--gq-gold);
+  opacity: 0.85;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.style-gq-editorial .book-page-type,
+.style-gq .book-page-type {
+  color: var(--gq-gold);
+  font: 700 9px/1 "Montserrat", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: .22em;
+  border-bottom: 1px solid var(--gq-grey-line);
+  padding-bottom: 6px;
+  margin-bottom: 12px;
+}
+
+.style-gq-editorial .book-page h4,
+.style-gq .book-page h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(28px, 9.5cqw, 52px);
+  line-height: 1.02;
+  letter-spacing: -.03em;
+  color: #ffffff;
+  margin-bottom: 16px;
+}
+
+.style-gq-editorial .book-page .page-body,
+.style-gq .book-page .page-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.72;
+  color: #cccccc;
+}
+
+/* Elegant Drop Cap for Body Paragraphs */
+.style-gq-editorial .book-page .page-body > p:first-of-type::first-letter,
+.style-gq-editorial .book-page .page-body::first-letter,
+.style-gq .book-page .page-body > p:first-of-type::first-letter,
+.style-gq .book-page .page-body::first-letter {
+  font-family: var(--font-display);
+  font-size: 3.2em;
+  line-height: 0.78;
+  float: left;
+  margin-right: 10px;
+  margin-top: 4px;
+  color: var(--gq-gold);
+  font-weight: 700;
+}
+
+.style-gq-editorial .book-page-number,
+.style-gq .book-page-number {
+  font: 600 10px/1 "Montserrat", sans-serif;
+  color: #777777;
+  letter-spacing: .12em;
+}
+
+/* === Editorial Callouts & Quotes === */
+.style-gq-editorial .book-page blockquote,
+.style-gq .book-page blockquote {
+  border-left: 2px solid var(--gq-gold);
+  padding-left: 16px;
+  margin: 20px 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.4;
+  color: #ffffff;
+}
+
+/* === Layout Variations === */
+.style-gq-editorial .book-page.layout-split,
+.style-gq .book-page.layout-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 20px;
+}
+
+.style-gq-editorial .book-page.layout-split .page-image,
+.style-gq .book-page.layout-split .page-image {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  border: 1px solid #1a1a1a;
+}
+
+.style-gq-editorial .book-page.layout-full .book-page-copy,
+.style-gq .book-page.layout-full .book-page-copy {
+  position: absolute;
+  bottom: 24px;
+  left: 24px;
+  right: 24px;
+  z-index: 5;
+  background: rgba(10, 10, 10, 0.88);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 20px 24px;
+  border: 1px solid var(--gq-grey-line);
+}
+
+.style-gq-editorial .book-page.layout-full h4,
+.style-gq .book-page.layout-full h4 {
+  color: #ffffff;
+}
+
+/* Media handling */
+.style-gq-editorial .book-page.has-image .page-image img,
+.style-gq .book-page.has-image .page-image img {
+  filter: contrast(1.08) brightness(0.92);
+  transition: transform 0.4s ease;
+}
+
+.style-gq-editorial .book-page.has-image .page-image:hover img,
+.style-gq .book-page.has-image .page-image:hover img {
+  transform: scale(1.02);
+}
