@@ -1,4 +1,5 @@
 import { escapeHtml } from './utils.js';
+import { getLanguage } from './i18n.js';
 
 let generatorCatalog = null;
 let settingTopicFromCatalog = false;
@@ -8,7 +9,8 @@ export function getGeneratorCatalog() {
 }
 
 export function catalogLabel(item) {
-  return item?.labels?.en || item?.label || item?.id || '';
+  const lang = getLanguage();
+  return item?.labels?.[lang] || item?.labels?.en || item?.label || item?.id || '';
 }
 
 export function flattenTopicCatalog(nodes, parents = []) {

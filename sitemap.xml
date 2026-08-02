@@ -1,9 +1,49 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://aleksvilly.github.io/ai-booklet-designs/</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aleksvilly.github.io/ai-booklet-designs/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://aleksvilly.github.io/ai-booklet-designs/"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aleksvilly.github.io/ai-booklet-designs/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://aleksvilly.github.io/ai-booklet-designs/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://aleksvilly.github.io/ai-booklet-designs/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://aleksvilly.github.io/ai-booklet-designs/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://aleksvilly.github.io/ai-booklet-designs/"/>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://aleksvilly.github.io/ai-booklet-designs/wedding.html</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aleksvilly.github.io/ai-booklet-designs/wedding.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://aleksvilly.github.io/ai-booklet-designs/wedding.html"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aleksvilly.github.io/ai-booklet-designs/wedding.html"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://aleksvilly.github.io/ai-booklet-designs/menu.html</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aleksvilly.github.io/ai-booklet-designs/menu.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://aleksvilly.github.io/ai-booklet-designs/menu.html"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aleksvilly.github.io/ai-booklet-designs/menu.html"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://aleksvilly.github.io/ai-booklet-designs/gifts.html</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aleksvilly.github.io/ai-booklet-designs/gifts.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://aleksvilly.github.io/ai-booklet-designs/gifts.html"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aleksvilly.github.io/ai-booklet-designs/gifts.html"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://aleksvilly.github.io/ai-booklet-designs/events.html</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://aleksvilly.github.io/ai-booklet-designs/events.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://aleksvilly.github.io/ai-booklet-designs/events.html"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://aleksvilly.github.io/ai-booklet-designs/events.html"/>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://aleksvilly.github.io/ai-booklet-designs/privacy.html</loc>

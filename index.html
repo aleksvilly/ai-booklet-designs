@@ -4,17 +4,66 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="AI-generated editorial booklets for any person and any occasion — birthday gifts, café menus, event programmes, wedding booklets. Free, automatic, print-ready.">
+  <meta name="keywords" content="AI booklet generator, editorial design, print-ready booklet, ИИ буклеты, генератор буклетов, folletos IA, AI Broschüren, brochure design, free booklet maker, booklet templates">
   <meta name="theme-color" content="#f3f0e8" id="theme-color">
   <title>AI Booklet Designs — unique editorial booklets for any occasion</title>
+  <link rel="canonical" href="https://aleksvilly.github.io/ai-booklet-designs/">
+
   <meta property="og:title" content="AI Booklet Designs — unique editorial booklets for any occasion">
   <meta property="og:description" content="Birthday gift for a jazz fan. Opening menu for a café. Event booklet for a wedding. Describe the idea — a unique editorial booklet is generated automatically. Free.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://aleksvilly.github.io/ai-booklet-designs/">
   <meta property="og:site_name" content="AI Booklet Designs">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:locale:alternate" content="ru_RU">
+  <meta property="og:locale:alternate" content="es_ES">
+  <meta property="og:locale:alternate" content="de_DE">
+  <meta property="og:locale:alternate" content="fr_FR">
+  <meta property="og:locale:alternate" content="zh_CN">
+
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="AI Booklet Designs — free AI-generated editorial booklets">
   <meta name="twitter:description" content="Any person. Any occasion. Birthday, café, event, wedding — describe the idea and get a unique print-ready booklet automatically.">
+
+  <link rel="alternate" hreflang="x-default" href="https://aleksvilly.github.io/ai-booklet-designs/">
+  <link rel="alternate" hreflang="en" href="https://aleksvilly.github.io/ai-booklet-designs/">
+  <link rel="alternate" hreflang="ru" href="https://aleksvilly.github.io/ai-booklet-designs/">
+  <link rel="alternate" hreflang="es" href="https://aleksvilly.github.io/ai-booklet-designs/">
+  <link rel="alternate" hreflang="de" href="https://aleksvilly.github.io/ai-booklet-designs/">
+  <link rel="alternate" hreflang="fr" href="https://aleksvilly.github.io/ai-booklet-designs/">
+  <link rel="alternate" hreflang="zh" href="https://aleksvilly.github.io/ai-booklet-designs/">
+
   <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Booklet Designs",
+    "url": "https://aleksvilly.github.io/ai-booklet-designs/",
+    "description": "AI-generated editorial booklets for any person and any occasion — birthday gifts, café menus, event programmes, wedding booklets. Free, automatic, print-ready.",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "featureList": [
+      "Automated editorial design generation",
+      "PDF print-ready export",
+      "Live typography & photo layout editor",
+      "Multilingual support"
+    ],
+    "author": {
+      "@type": "Organization",
+      "name": "AI Booklet Designs",
+      "url": "https://aleksvilly.github.io/ai-booklet-designs/"
+    }
+  }
+  </script>
+
   <script>
     (() => {
       const savedTheme = localStorage.getItem('theme');
@@ -51,9 +100,9 @@
     </a>
     <nav class="site-nav" id="site-nav" aria-label="Main navigation">
       <a href="./">Home</a>
-      <a href="#collection">Collection</a>
-      <a href="#generate">Generate</a>
-      <a href="#contact">Contacts</a>
+      <a href="#collection" data-i18n="nav_collection">Collection</a>
+      <a href="#generate" data-i18n="nav_create">Create</a>
+      <a href="#contact" data-i18n="nav_contact">Contacts</a>
     </nav>
     <div class="header-tools">
       <div class="header-meta">
@@ -66,6 +115,20 @@
         <span></span>
         <span></span>
       </button>
+      <div class="lang-picker" id="lang-picker">
+        <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Select language" aria-expanded="false">
+          <span id="lang-current-flag">🇬🇧</span>
+          <span id="lang-current-code">EN</span>
+        </button>
+        <div class="lang-dropdown" id="lang-dropdown" hidden>
+          <button class="lang-option active" type="button" data-lang="en"><span>🇬🇧</span> English</button>
+          <button class="lang-option" type="button" data-lang="ru"><span>🇷🇺</span> Русский</button>
+          <button class="lang-option" type="button" data-lang="es"><span>🇪🇸</span> Español</button>
+          <button class="lang-option" type="button" data-lang="de"><span>🇩🇪</span> Deutsch</button>
+          <button class="lang-option" type="button" data-lang="fr"><span>🇫🇷</span> Français</button>
+          <button class="lang-option" type="button" data-lang="zh"><span>🇨🇳</span> 中文</button>
+        </div>
+      </div>
       <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
         <span class="theme-toggle-icon" aria-hidden="true"></span>
         <span class="theme-toggle-label">Dark</span>
@@ -76,28 +139,28 @@
   <main>
     <section class="hero" id="generate">
       <div class="hero-intro">
-        <p class="eyebrow">AI-generated editorial booklets — free, automatic, unique</p>
-        <h1>Any person.<br><em>Any occasion.</em></h1>
-        <p class="hero-copy">Birthday gift for a jazz fan. Opening menu for a café. Programme for a gallery night. Event booklet for a wedding. Describe the idea — a unique editorial booklet is generated automatically.</p>
+        <p class="eyebrow" data-i18n="hero_eyebrow">AI-generated editorial booklets — free, automatic, unique</p>
+        <h1 data-i18n="hero_title">Any person.<br><em>Any occasion.</em></h1>
+        <p class="hero-copy" data-i18n="hero_copy">Birthday gift for a jazz fan. Opening menu for a café. Programme for a gallery night. Event booklet for a wedding. Describe the idea — a unique editorial booklet is generated automatically.</p>
         <ul class="hero-usecases" aria-label="Example use cases">
-          <li>🎁 <strong>Gift</strong> — birthday, anniversary, graduation</li>
-          <li>☕ <strong>Business</strong> — café menu, brand story, product launch</li>
-          <li>🎉 <strong>Event</strong> — wedding, conference, gallery opening</li>
-          <li>🎨 <strong>Passion</strong> — cinema, music, architecture, sport</li>
+          <li data-i18n="usecase_gift">🎁 <strong>Gift</strong> — birthday, anniversary, graduation</li>
+          <li data-i18n="usecase_business">☕ <strong>Business</strong> — café menu, brand story, product launch</li>
+          <li data-i18n="usecase_event">🎉 <strong>Event</strong> — wedding, conference, gallery opening</li>
+          <li data-i18n="usecase_passion">🎨 <strong>Passion</strong> — cinema, music, architecture, sport</li>
         </ul>
         <div class="hero-actions">
-          <a class="primary-button" href="#generation-form">Create a booklet — free</a>
-          <a class="secondary-button" href="#collection">See examples</a>
-          <button class="text-button" id="surprise-button" type="button">Surprise me ↗</button>
+          <a class="primary-button" href="#generation-form" data-i18n="btn_create">Create a booklet — free</a>
+          <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">See examples</a>
+          <button class="text-button" id="surprise-button" type="button" data-i18n="btn_surprise">Surprise me ↗</button>
         </div>
       </div>
       <form class="request-form hero-generator" id="generation-form" action="https://ntfy.sh/ai-booklet-8bcc753d24dacb6d280ae36b" method="post">
         <div class="generator-heading">
           <div>
-            <p class="eyebrow">Generate now</p>
-            <h2>Request a booklet</h2>
+            <p class="eyebrow" data-i18n="form_eyebrow">Generate now</p>
+            <h2 data-i18n="form_title">Request a booklet</h2>
           </div>
-          <span class="automation-badge"><i aria-hidden="true"></i> Automatic</span>
+          <span class="automation-badge"><i aria-hidden="true"></i> <span data-i18n="form_badge">Automatic</span></span>
         </div>
 
         <input type="hidden" name="request_type" value="booklet_generation">
@@ -106,30 +169,30 @@
 
         <div class="request-fields">
           <label class="field-wide">
-            <span>Booklet topic</span>
-            <input id="booklet-topic" name="topic" type="text" maxlength="140" placeholder="Optional — type anything or browse the topic encyclopedia">
+            <span data-i18n="lbl_topic">Booklet topic</span>
+            <input id="booklet-topic" name="topic" type="text" maxlength="140" data-i18n-ph="ph_topic" placeholder="Optional — type anything or browse the topic encyclopedia">
           </label>
           <input id="topic-path" name="topic_path" type="hidden" value="">
           <details class="topic-explorer field-wide" id="topic-explorer">
             <summary>
-              <span>Browse topic encyclopedia</span>
-              <small>Category → topic → subtopic</small>
+              <span data-i18n="summary_explorer">Browse topic encyclopedia</span>
+              <small data-i18n="summary_explorer_sub">Category → topic → subtopic</small>
             </summary>
             <div class="topic-explorer-panel">
               <label class="topic-search-label">
-                <span>Find a topic</span>
-                <input id="topic-catalog-search" type="search" placeholder="Try tennis, wedding, AI…" autocomplete="off">
+                <span data-i18n="lbl_find_topic">Find a topic</span>
+                <input id="topic-catalog-search" type="search" data-i18n-ph="ph_search_topic" placeholder="Try tennis, wedding, AI…" autocomplete="off">
               </label>
               <div class="topic-wheel" id="topic-wheel" aria-label="Topic path"></div>
-              <p class="topic-path-preview" id="topic-path-preview">Choose any level. The deepest selection becomes the booklet topic.</p>
+              <p class="topic-path-preview" id="topic-path-preview" data-i18n="topic_preview_default">Choose any level. The deepest selection becomes the booklet topic.</p>
               <div class="topic-search-results" id="topic-search-results" hidden></div>
             </div>
           </details>
           <label class="field-wide range-field" id="style-profile-label">
-            <span>Editorial profile</span>
-            <output id="style-profile-output">Automatic / no brand profile</output>
+            <span data-i18n="lbl_editorial_profile">Editorial profile</span>
+            <output id="style-profile-output" data-i18n="auto_profile">Automatic / no brand profile</output>
             <select id="style-profile-select" name="style" required>
-              <option value="auto">Automatic / no brand profile</option>
+              <option value="auto" data-i18n="auto_profile">Automatic / no brand profile</option>
             </select>
           </label>
           <label>

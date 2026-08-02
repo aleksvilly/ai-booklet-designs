@@ -1,6 +1,7 @@
 import { ITEMS_PER_PAGE } from './config.js';
 import { initThemeAndNav } from './theme.js';
-import { loadGeneratorCatalogs } from './catalog.js';
+import { loadGeneratorCatalogs, getGeneratorCatalog, appendCatalogStyles, renderCatalogEffects } from './catalog.js';
+import { initI18n, setLanguage, getLanguage, SUPPORTED_LANGUAGES } from './i18n.js';
 import {
   initCollection,
   getAllBooklets,
@@ -16,7 +17,63 @@ import { setupEditorEventListeners } from './editor.js';
 import { setupPdfEvents } from './pdf-exporter.js';
 import { initQueueSystem } from './queue.js';
 
+function setupLanguagePicker() {
+  const langToggle = document.querySelector('#lang-toggle');
+  const langDropdown = document.querySelector('#lang-dropdown');
+  const langFlag = document.querySelector('#lang-current-flag');
+  const langCode = document.querySelector('#lang-current-code');
+  if (!langToggle || !langDropdown) return;
+
+  function updateActiveUI(code) {
+    const found = SUPPORTED_LANGUAGES.find(l => l.code === code) || SUPPORTED_LANGUAGES[0];
+    if (langFlag) langFlag.textContent = found.flag;
+    if (langCode) langCode.textContent = found.code.toUpperCase();
+    langDropdown.querySelectorAll('.lang-option').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === code);
+    });
+  }
+
+  updateActiveUI(getLanguage());
+
+  langToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = langDropdown.hasAttribute('hidden');
+    if (isHidden) {
+      langDropdown.removeAttribute('hidden');
+      langToggle.setAttribute('aria-expanded', 'true');
+    } else {
+      langDropdown.setAttribute('hidden', '');
+      langToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!langDropdown.contains(e.target) && e.target !== langToggle) {
+      langDropdown.setAttribute('hidden', '');
+      langToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  langDropdown.querySelectorAll('.lang-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const code = btn.dataset.lang;
+      setLanguage(code);
+      updateActiveUI(code);
+      langDropdown.setAttribute('hidden', '');
+      langToggle.setAttribute('aria-expanded', 'false');
+
+      const catalog = getGeneratorCatalog();
+      if (catalog) {
+        appendCatalogStyles(catalog.styles);
+        renderCatalogEffects(catalog.effects);
+      }
+    });
+  });
+}
+
 export async function initApp() {
+  initI18n();
+  setupLanguagePicker();
   initThemeAndNav();
   initQueueSystem();
   setupEditorEventListeners();

@@ -35,9 +35,31 @@ export function isPublished(item) {
 }
 
 export function visibleBooklets() {
+  const categoryFilter = document.body?.dataset?.categoryFilter;
   return allBooklets
     .filter(isPublished)
-    .filter(item => activeFilter === 'All' || item.category === activeFilter)
+    .filter(item => {
+      if (categoryFilter) {
+        const itemCat = String(item.category || '').toLowerCase();
+        const itemTopic = String(item.topic || '').toLowerCase();
+        const itemStyle = String(item.style || '').toLowerCase();
+        const filter = categoryFilter.toLowerCase();
+
+        if (filter === 'wedding') {
+          return itemCat.includes('wedding') || itemTopic.includes('wedding') || itemTopic.includes('свадьб') || itemStyle.includes('wedding');
+        }
+        if (filter === 'menu') {
+          return itemCat.includes('menu') || itemCat.includes('business') || itemTopic.includes('café') || itemTopic.includes('menu') || itemTopic.includes('меню');
+        }
+        if (filter === 'gifts') {
+          return itemCat.includes('gift') || itemTopic.includes('birthday') || itemTopic.includes('gift') || itemTopic.includes('подарок') || itemTopic.includes('юбилей');
+        }
+        if (filter === 'events') {
+          return itemCat.includes('event') || itemTopic.includes('gallery') || itemTopic.includes('exhibition') || itemTopic.includes('выставк') || itemTopic.includes('фестивал');
+        }
+      }
+      return activeFilter === 'All' || item.category === activeFilter;
+    })
     .sort((a, b) => b.publishDate.localeCompare(a.publishDate));
 }
 
