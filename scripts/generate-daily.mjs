@@ -413,7 +413,7 @@ const PROFILE_CONTRACTS = {
     covers: ['magazine', 'split-object', 'negative-space', 'full-photo']
   }
 };
-const MINIMAL_STYLE_IDS = new Set(['civic-nonprofit', 'eu-institutional', 'public-department', 'dw-inspired', 'scientific-journal', 'encyclopedia-reference', 'facebook-inspired', 'swiss-modernism', 'luxury-editorial', 'museum-clean', 'documentary-clean', 'minimal-poetic']);
+const MINIMAL_STYLE_IDS = new Set(['civic-nonprofit', 'eu-institutional', 'public-department', 'dw-inspired', 'scientific-journal', 'encyclopedia-reference', 'facebook-inspired', 'swiss-modernism', 'luxury-editorial', 'gq-editorial', 'museum-clean', 'documentary-clean', 'minimal-poetic']);
 const ABSTRACT_STYLE_IDS = new Set(['gaming-editorial', 'tiktok-inspired', 'instagram-inspired', 'psychedelic-70s', 'memphis-play', 'soft-3d-surreal', 'organic-futurism', 'surreal-absurd', 'cinematic-color-field', 'glassmorphism-editorial', 'kinetic-type']);
 
 const SURPRISE_ELEMENTS = [

@@ -13,7 +13,7 @@
 - [x] Modular ES architecture (`src/config.js`, `src/utils.js`, `src/catalog.js`, `src/collection.js`, `src/detail-modal.js`, `src/editor.js`, `src/pdf-exporter.js`, `src/queue.js`, `src/main.js`).
 - [x] PDF two-page per sheet landscape export alignment.
 - [x] Text container overflow protection & -webkit-line-clamp heading/body safety.
-- [x] High-contrast dedicated visual design rules for all style profiles (Wedding, Kids Party, Halloween Noir, Sports Broadcast, Gaming Tech, Scientific Journal, Encyclopedia).
+- [x] High-contrast dedicated visual design rules for all style profiles (Wedding, Kids Party, Halloween Noir, Sports Broadcast, Gaming Tech, Scientific Journal, Encyclopedia, GQ Editorial).
 - [x] Two named visual-reference pilots with explicit provenance and no copied
       brand assets: Nike Athletic Campaign and Amazon Modular Marketplace.
 - [x] Four selectable digital-product profiles with strict visual contracts:

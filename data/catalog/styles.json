@@ -40,6 +40,53 @@
       }
     },
     {
+      "id": "gq-editorial",
+      "groupId": "editorial-media",
+      "labels": { "en": "GQ — luxury fashion & culture", "ru": "GQ — журнал моды и культуры" },
+      "topicAffinity": ["arts-culture", "arts-culture/fashion", "arts-culture/design", "society"],
+      "lockUntilChaos": 5,
+      "source": {
+        "kind": "inspired",
+        "url": "https://www.gq.com/",
+        "reference": "GQ Magazine editorial visual research",
+        "accessedAt": "2026-08-02",
+        "license": {
+          "assets": "not-included",
+          "code": "not-copied",
+          "implementation": "project-native"
+        }
+      },
+      "generator": {
+        "weight": 7,
+        "eras": ["2000s", "2020–2024", "2026"],
+        "layouts": ["minimal", "split", "full", "grid"],
+        "typography": ["huge-serif", "condensed-headlines", "clean-sans"],
+        "colors": ["black-white", "high-contrast", "one-accent"],
+        "effects": ["text-behind-image", "floating-caption", "oversized-number", "soft-shadow"]
+      },
+      "contract": {
+        "archetypes": ["editorial-magazine", "visual-diary", "poster-book"],
+        "palette": ["#0a0a0a", "#fcfcfc", "#c5a059", "#1e1e1e", "#e60000"],
+        "typography": ["huge-serif", "condensed-headlines", "clean-sans"],
+        "fonts": ["Bodoni Moda", "Playfair Display", "Montserrat", "Inter"],
+        "layouts": ["minimal", "split", "full", "grid"],
+        "layoutSystems": ["full-bleed", "asymmetric-modern", "split-layout", "white-space-minimal", "single-hero-image"],
+        "imageTreatments": ["clean-photo", "black-white-photo", "photo-with-text-overlay", "duotone-photo"],
+        "shapeLanguages": ["geometric", "sharp", "rectilinear"],
+        "backgrounds": ["dark-field", "pure"],
+        "rhythms": ["slow-luxury", "cinematic", "dynamic"],
+        "printFeels": ["glossy-magazine", "matte-book"],
+        "contentModes": ["conceptual", "factual", "poetic"],
+        "referenceCultures": ["Italian", "French", "global-digital"],
+        "effects": ["text-behind-image", "floating-caption", "oversized-number", "soft-shadow", "frame-within-frame"],
+        "covers": ["magazine", "luxury-minimal", "full-photo", "kinetic-type"]
+      },
+      "fontRecommendations": {
+        "free": ["Bodoni Moda", "Playfair Display", "Montserrat", "Inter"],
+        "licensed": ["Didot", "Bodoni MT", "Futura Bold"]
+      }
+    },
+    {
       "id": "encyclopedia-reference",
       "groupId": "knowledge",
       "labels": { "en": "Illustrated encyclopedia", "ru": "Иллюстрированная энциклопедия" },

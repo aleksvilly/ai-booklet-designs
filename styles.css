@@ -11,6 +11,7 @@
 @import url('./styles/profiles/base-editorial.css');
 @import url('./styles/profiles/extended.css');
 @import url('./styles/profiles/app-interfaces.css');
+@import url('./styles/profiles/gq.css');
 @import url('./styles/photo-layouts.css');
 
 :root {
@@ -1911,19 +1912,19 @@ footer a { text-underline-offset: 3px; }
 .booklet-editor-heading {
   display: flex;
   justify-content: space-between;
-  align-items: start;
-  gap: 18px;
-  padding: 22px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px;
   border-bottom: 1px solid var(--line);
 }
 
-.booklet-editor-heading .eyebrow { margin: 0 0 7px; }
-.booklet-editor-heading h2 { margin: 0; font-size: 25px; letter-spacing: -.04em; }
+.booklet-editor-heading .eyebrow { margin: 0 0 2px; font-size: 10px; }
+.booklet-editor-heading h2 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -.03em; }
 .booklet-editor-heading-actions { display: flex; align-items: center; gap: 8px; }
 .editor-compact-scope { display: none; }
 .booklet-editor-mode {
-  min-height: 34px;
-  padding: 0 11px;
+  min-height: 28px;
+  padding: 0 10px;
   border: 1px solid var(--line);
   border-radius: 999px;
   background: transparent;
@@ -1933,23 +1934,26 @@ footer a { text-underline-offset: 3px; }
 }
 .booklet-editor-close {
   flex: 0 0 auto;
-  width: 34px;
-  height: 34px;
+  width: 28px;
+  height: 28px;
   border: 1px solid var(--line);
   border-radius: 50%;
   background: transparent;
   color: inherit;
-  font-size: 23px;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
   cursor: pointer;
 }
 
 .editor-target-card {
-  padding: 16px 22px;
+  padding: 10px 18px;
   border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  background: color-mix(in srgb, var(--ink) 3%, transparent);
 }
 
-.editor-target-card label,
 .editor-group > label:not(.editor-visibility label),
 .editor-font-family-control,
 .editor-font-weight-control {
@@ -1957,7 +1961,20 @@ footer a { text-underline-offset: 3px; }
   gap: 7px;
 }
 
-.editor-target-card label > span,
+.editor-target-card label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.editor-target-card label > span {
+  font: 500 10px/1.2 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  white-space: nowrap;
+}
+
 .editor-group label > span,
 .editor-font-family-control > span,
 .editor-font-weight-control > span {
@@ -1966,7 +1983,21 @@ footer a { text-underline-offset: 3px; }
   letter-spacing: .08em;
 }
 
-.editor-target-card select,
+.editor-target-card select {
+  width: auto;
+  min-height: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 500;
+  flex: 1;
+  max-width: 165px;
+}
+
 .editor-group select {
   width: 100%;
   min-height: 40px;
@@ -1978,9 +2009,10 @@ footer a { text-underline-offset: 3px; }
 }
 
 .editor-target-card p {
-  margin: 8px 0 0;
+  margin: 4px 0 0;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
+  line-height: 1.2;
 }
 
 .booklet-editor-scroll {
@@ -2483,31 +2515,42 @@ footer a { text-underline-offset: 3px; }
 }
 
 .booklet-editor-footer {
-  padding: 15px 22px 19px;
+  padding: 10px 18px 12px;
   border-top: 1px solid var(--line);
   background: var(--paper);
 }
 
 .booklet-editor-footer p {
-  min-height: 16px;
-  margin: 0 0 11px;
+  min-height: auto;
+  margin: 0 0 6px;
   color: var(--muted);
-  font-size: 11px;
+  font-size: 10px;
+  line-height: 1.2;
+  text-align: center;
 }
 
 .booklet-editor-footer > div {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 8px;
+  gap: 6px;
 }
 
 .booklet-editor-footer button {
-  min-height: 38px;
-  padding: 0 9px;
+  min-height: 30px;
+  height: 30px;
+  padding: 0 8px;
   border: 1px solid var(--line);
+  border-radius: 4px;
   background: transparent;
   color: inherit;
+  font-size: 11px;
+  font-weight: 500;
   cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.booklet-editor-footer button:hover {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
 }
 
 .book-page.editor-selected-page {
