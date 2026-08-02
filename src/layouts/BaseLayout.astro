@@ -165,6 +165,26 @@ const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
 
   <slot name="footer" />
 
-  <script type="module" src={`${import.meta.env.BASE_URL}/src/main.js`}></script>
+  <template id="booklet-card-template">
+    <article class="booklet-card">
+      <button class="cover" type="button" aria-label="Open booklet concept">
+        <span class="cover-kicker"></span>
+        <span class="cover-title"></span>
+        <span class="cover-number"></span>
+        <span class="shape shape-a"></span>
+        <span class="shape shape-b"></span>
+        <span class="shape shape-c"></span>
+      </button>
+      <div class="card-copy">
+        <p class="card-audience"></p>
+        <h3 class="card-title"></h3>
+        <p class="card-direction"></p>
+      </div>
+    </article>
+  </template>
+
+  <script is:inline src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/vendor/html-to-image.min.js`}></script>
+  <script is:inline src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/vendor/jspdf.umd.min.js`}></script>
+  <script type="module" src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/src/main.js`}></script>
 </body>
 </html>
