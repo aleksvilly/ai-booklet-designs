@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+<BaseLayout title="AI Booklet Designs — KI-generierte redaktionelle Broschüren" description="KI-generierte redaktionelle Broschüren für jeden Anlass — Geburtstagsgeschenke, Speisekarten, Eventprogramme, Hochzeitsbroschüren. Kostenlos, automatisch, druckfertig." lang="de">
+  <Header slot="header" lang="de" activeNav="home" />
+
+  <section class="hero" id="generate">
+    <div class="hero-intro">
+      <p class="eyebrow" data-i18n="hero_eyebrow">KI-generierte redaktionelle Broschüren — kostenlos, automatisch, einzigartig</p>
+      <h1 data-i18n="hero_title">Für jede Person.<br><em>Für jeden Anlass.</em></h1>
+      <p class="hero-copy" data-i18n="hero_copy">Geburtstagsgeschenk für einen Jazz-Fan. Speisekarte für ein Café. Programm für einen Galerieabend. Hochzeitsbroschüre. Beschreiben Sie die Idee — eine einzigartige Broschüre wird automatisch erstellt.</p>
+      <div class="hero-actions">
+        <a class="primary-button" href="#generation-form" data-i18n="btn_create">Broschüre erstellen — kostenlos</a>
+        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">Beispiele ansehen</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <h2 data-i18n="collection_title">Redaktionelle Broschüren-Kollektion</h2>
+        <p data-i18n="collection_subtitle">Durchsuchen Sie druckfertige Broschüren.</p>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid"></div>
+    <nav class="pagination" id="pagination" aria-label="Booklet navigation"></nav>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

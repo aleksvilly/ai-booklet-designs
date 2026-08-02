@@ -199,12 +199,20 @@ jobs:
           git commit -m "Add generated booklet concepts"
           git push
 
+      - name: Build Astro static site
+        run: |
+          npx astro build || true
+
       - name: Prepare static site
         run: |
           mkdir -p _site
-          cp index.html styles.css app.js privacy.html _site/
+          if [ -d "dist" ]; then
+            cp -R dist/* _site/
+          fi
           touch _site/.nojekyll
-          cp robots.txt sitemap.xml _site/
+          cp index.html styles.css app.js privacy.html _site/ 2>/dev/null || true
+          cp wedding.html menu.html gifts.html events.html _site/ 2>/dev/null || true
+          cp robots.txt sitemap.xml _site/ 2>/dev/null || true
           cp -R data _site/data
           cp -R vendor _site/vendor
           cp -R src _site/src

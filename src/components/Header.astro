@@ -1,0 +1,51 @@
+---
+interface Props {
+  lang?: string;
+  activeNav?: string;
+}
+
+const { lang = 'en', activeNav = 'home' } = Astro.props;
+const baseUrl = import.meta.env.BASE_URL || '';
+---
+<header class="site-header">
+  <a class="brand" href={`${baseUrl}/`} aria-label="AI Booklet Designs home">
+    <span class="brand-mark">AB</span>
+    <span>AI Booklet Designs</span>
+  </a>
+  <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+    <a href={`${baseUrl}/`} class={activeNav === 'home' ? 'active' : ''}>Home</a>
+    <a href={`${baseUrl}/#collection`} data-i18n="nav_collection">Collection</a>
+    <a href={`${baseUrl}/#generate`} data-i18n="nav_create">Create</a>
+    <a href={`${baseUrl}/#contact`} data-i18n="nav_contact">Contacts</a>
+  </nav>
+  <div class="header-tools">
+    <div class="header-meta">
+      <span id="published-count">— published</span>
+      <span class="live-dot" aria-hidden="true"></span>
+      <span>print-ready experiments</span>
+    </div>
+    <button class="menu-toggle" id="menu-toggle" type="button" aria-label="Open menu" aria-controls="site-nav" aria-expanded="false">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+    <div class="lang-picker" id="lang-picker">
+      <button class="lang-toggle" id="lang-toggle" type="button" aria-label="Select language" aria-expanded="false">
+        <span id="lang-current-flag">{lang === 'ru' ? '🇷🇺' : lang === 'es' ? '🇪🇸' : lang === 'de' ? '🇩🇪' : lang === 'fr' ? '🇫🇷' : lang === 'zh' ? '🇨🇳' : '🇬🇧'}</span>
+        <span id="lang-current-code">{lang.toUpperCase()}</span>
+      </button>
+      <div class="lang-dropdown" id="lang-dropdown" hidden>
+        <a class={`lang-option ${lang === 'en' ? 'active' : ''}`} href={`${baseUrl}/`}><span>🇬🇧</span> English</a>
+        <a class={`lang-option ${lang === 'ru' ? 'active' : ''}`} href={`${baseUrl}/ru/`}><span>🇷🇺</span> Русский</a>
+        <a class={`lang-option ${lang === 'es' ? 'active' : ''}`} href={`${baseUrl}/es/`}><span>🇪🇸</span> Español</a>
+        <a class={`lang-option ${lang === 'de' ? 'active' : ''}`} href={`${baseUrl}/de/`}><span>🇩🇪</span> Deutsch</a>
+        <a class={`lang-option ${lang === 'fr' ? 'active' : ''}`} href={`${baseUrl}/fr/`}><span>🇫🇷</span> Français</a>
+        <a class={`lang-option ${lang === 'zh' ? 'active' : ''}`} href={`${baseUrl}/zh/`}><span>🇨🇳</span> 中文</a>
+      </div>
+    </div>
+    <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false">
+      <span class="theme-toggle-icon" aria-hidden="true"></span>
+      <span class="theme-toggle-label">Dark</span>
+    </button>
+  </div>
+</header>

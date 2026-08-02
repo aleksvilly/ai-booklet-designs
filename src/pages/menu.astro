@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<BaseLayout title="Free AI Café Menu & Restaurant Booklet Generator — Editorial Menu Designs" description="Free AI café menu & restaurant booklet generator. Create stunning editorial menus, coffee shop booklets, wine lists, and brand stories. Print-ready, automatic, customizable." lang="en" categoryFilter="menu">
+  <Header slot="header" lang="en" activeNav="menu" />
+
+  <section class="hero" id="menu-hero">
+    <div class="hero-intro">
+      <p class="eyebrow">AI Culinary &amp; Hospitality Editorial System</p>
+      <h1>Café Menu &amp; Culinary<br><em>Booklet Designs</em></h1>
+      <p class="hero-copy">Design beautiful opening menus, coffee shop booklets, craft beverage lists, and brand stories. Professional layout grid, price list styling, and print-ready PDF export.</p>
+      <div class="hero-actions">
+        <a class="primary-button" href={`${import.meta.env.BASE_URL}/#generation-form`}>Generate Menu Booklet — Free</a>
+        <a class="secondary-button" href="#collection">Browse Examples</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <h2>Café &amp; Restaurant Menu Collection</h2>
+        <p>Editorial booklet designs tailored for coffee shops, restaurants, and hospitality brands.</p>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid"></div>
+    <nav class="pagination" id="pagination" aria-label="Booklet navigation"></nav>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

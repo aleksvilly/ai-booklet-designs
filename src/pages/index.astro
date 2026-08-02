@@ -1,0 +1,173 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<BaseLayout title="AI Booklet Designs — unique editorial booklets for any occasion" lang="en">
+  <Header slot="header" lang="en" activeNav="home" />
+
+  <section class="hero" id="generate">
+    <div class="hero-intro">
+      <p class="eyebrow" data-i18n="hero_eyebrow">AI-generated editorial booklets — free, automatic, unique</p>
+      <h1 data-i18n="hero_title">Any person.<br><em>Any occasion.</em></h1>
+      <p class="hero-copy" data-i18n="hero_copy">Birthday gift for a jazz fan. Opening menu for a café. Programme for a gallery night. Event booklet for a wedding. Describe the idea — a unique editorial booklet is generated automatically.</p>
+      <ul class="hero-usecases" aria-label="Example use cases">
+        <li data-i18n="usecase_gift">🎁 <strong>Gift</strong> — birthday, anniversary, graduation</li>
+        <li data-i18n="usecase_business">☕ <strong>Business</strong> — café menu, brand story, product launch</li>
+        <li data-i18n="usecase_event">🎉 <strong>Event</strong> — wedding, conference, gallery opening</li>
+        <li data-i18n="usecase_passion">🎨 <strong>Passion</strong> — cinema, music, architecture, sport</li>
+      </ul>
+      <div class="hero-actions">
+        <a class="primary-button" href="#generation-form" data-i18n="btn_create">Create a booklet — free</a>
+        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">See examples</a>
+        <button class="text-button" id="surprise-button" type="button" data-i18n="btn_surprise">Surprise me ↗</button>
+      </div>
+    </div>
+    <form class="request-form hero-generator" id="generation-form" action="https://ntfy.sh/ai-booklet-8bcc753d24dacb6d280ae36b" method="post">
+      <div class="generator-heading">
+        <div>
+          <p class="eyebrow" data-i18n="form_eyebrow">Generate now</p>
+          <h2 data-i18n="form_title">Request a booklet</h2>
+        </div>
+        <span class="automation-badge"><i aria-hidden="true"></i> <span data-i18n="form_badge">Automatic</span></span>
+      </div>
+
+      <input type="hidden" name="request_type" value="booklet_generation">
+      <input type="hidden" name="count" value="1">
+      <input class="form-honeypot" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+
+      <div class="request-fields">
+        <label class="field-wide">
+          <span data-i18n="lbl_topic">Booklet topic</span>
+          <input id="booklet-topic" name="topic" type="text" maxlength="140" data-i18n-ph="ph_topic" placeholder="Optional — type anything or browse the topic encyclopedia">
+        </label>
+        <input id="topic-path" name="topic_path" type="hidden" value="">
+        <details class="topic-explorer field-wide" id="topic-explorer">
+          <summary>
+            <span data-i18n="summary_explorer">Browse topic encyclopedia</span>
+            <small data-i18n="summary_explorer_sub">Category → topic → subtopic</small>
+          </summary>
+          <div class="topic-explorer-panel">
+            <label class="topic-search-label">
+              <span data-i18n="lbl_find_topic">Find a topic</span>
+              <input id="topic-catalog-search" type="search" data-i18n-ph="ph_search_topic" placeholder="Try tennis, wedding, AI…" autocomplete="off">
+            </label>
+            <div class="topic-wheel" id="topic-wheel" aria-label="Topic path"></div>
+            <p class="topic-path-preview" id="topic-path-preview" data-i18n="topic_preview_default">Choose any level. The deepest selection becomes the booklet topic.</p>
+            <div class="topic-search-results" id="topic-search-results" hidden></div>
+          </div>
+        </details>
+        <label class="field-wide range-field" id="style-profile-label">
+          <span data-i18n="lbl_editorial_profile">Editorial profile</span>
+          <output id="style-profile-output" data-i18n="auto_profile">Automatic / no brand profile</output>
+          <select id="style-profile-select" name="style" required>
+            <option value="auto" data-i18n="auto_profile">Automatic / no brand profile</option>
+          </select>
+        </label>
+        <label>
+          <span data-i18n="lbl_visual_language">Visual language</span>
+          <select name="visual_mode">
+            <option value="auto" selected data-i18n="opt_auto">Automatic</option>
+            <option value="minimal" data-i18n="opt_minimal">Minimal editorial</option>
+            <option value="abstract" data-i18n="opt_abstract">Abstract / experimental</option>
+            <option value="mixed" data-i18n="opt_mixed">Mix minimal + abstract</option>
+          </select>
+        </label>
+        <label class="range-field">
+          <span data-i18n="lbl_chaos">Design chaos level</span>
+          <output id="chaos-output">0 — Strict &amp; safe</output>
+          <select id="chaos-level-select" name="chaos_level">
+            <option value="-1">Auto (smart matching)</option>
+            <option value="0" selected>0 — Strict &amp; safe</option>
+            <option value="1">1 — Balanced editorial</option>
+            <option value="2">2 — Expressive layout</option>
+            <option value="3">3 — Wild typography</option>
+            <option value="4">4 — Radical grid breaks</option>
+            <option value="5">5 — Full experimental chaos</option>
+          </select>
+        </label>
+        <label>
+          <span data-i18n="lbl_fonts">Max font families</span>
+          <select name="max_fonts">
+            <option value="2" selected>2 fonts (recommended)</option>
+            <option value="3">3 fonts</option>
+            <option value="4">4 fonts</option>
+          </select>
+        </label>
+        <label class="field-wide">
+          <span data-i18n="lbl_custom_style">Custom style directions</span>
+          <input name="custom_style" type="text" maxlength="120" data-i18n-ph="ph_custom_style" placeholder="e.g. 1970s magazine layout, high contrast black &amp; white">
+        </label>
+        <label>
+          <span data-i18n="lbl_ai_engine">AI text engine</span>
+          <select name="ai_provider">
+            <option value="auto" selected data-i18n="opt_ai_auto">Auto (smart selection)</option>
+            <option value="openai-first">OpenAI (GPT-4o)</option>
+            <option value="gemini-first">Google Gemini</option>
+            <option value="local" data-i18n="opt_ai_local">Local fast generator</option>
+          </select>
+        </label>
+        <label>
+          <span data-i18n="lbl_custom_fonts">Custom Google Fonts</span>
+          <input name="custom_fonts" type="text" maxlength="80" data-i18n-ph="ph_custom_fonts" placeholder="e.g. Playfair Display, Space Grotesk">
+        </label>
+        <label class="field-wide">
+          <span data-i18n="lbl_extra_details">Extra details or wish list</span>
+          <textarea name="description" rows="2" maxlength="280" data-i18n-ph="ph_extra_details" placeholder="e.g. Include 4 chapters, emphasis on photos, warm tone"></textarea>
+        </label>
+      </div>
+
+      <div class="form-actions">
+        <button class="primary-button field-wide" id="request-submit-button" type="submit" data-i18n="btn_submit_request">Submit booklet request →</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <h2 data-i18n="collection_title">Editorial booklet collection</h2>
+        <p data-i18n="collection_subtitle">Browse print-ready generated editorial booklets. Open any design to inspect spreads, edit typography, or export PDF.</p>
+      </div>
+      <div class="collection-controls">
+        <label class="search-box">
+          <span class="sr-only">Search booklets</span>
+          <input id="collection-search" type="search" placeholder="Search by topic, style, date…">
+        </label>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid"></div>
+    <nav class="pagination" id="pagination" aria-label="Booklet navigation"></nav>
+  </section>
+
+  <section class="contact-section" id="contact">
+    <div class="contact-card">
+      <div class="contact-intro">
+        <p class="eyebrow" data-i18n="contact_eyebrow">Get in touch</p>
+        <h2 data-i18n="contact_title">Contact &amp; feedback</h2>
+        <p data-i18n="contact_copy">Have questions, custom requests, or partnership ideas? Send a message directly.</p>
+      </div>
+      <form class="contact-form" id="contact-form" action="https://formspree.io/f/meeyvjjd" method="POST">
+        <label>
+          <span data-i18n="lbl_name">Your name</span>
+          <input name="name" type="text" required data-i18n-ph="ph_name" placeholder="Name or studio">
+        </label>
+        <label>
+          <span data-i18n="lbl_email">Email address</span>
+          <input name="_replyto" type="email" required data-i18n-ph="ph_email" placeholder="name@example.com">
+        </label>
+        <label>
+          <span data-i18n="lbl_phone">Phone number (optional)</span>
+          <input name="phone" type="tel" data-i18n-ph="ph_phone" placeholder="+1 234 567 8900">
+        </label>
+        <label class="field-wide">
+          <span data-i18n="lbl_message">Message</span>
+          <textarea name="message" rows="4" required data-i18n-ph="ph_message" placeholder="How can we help you?"></textarea>
+        </label>
+        <button class="primary-button field-wide" type="submit" data-i18n="btn_send_message">Send message →</button>
+      </form>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

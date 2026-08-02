@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+<BaseLayout title="Генератор меню для кафе и ресторанов на ИИ — Дизайны буклетов меню" description="Бесплатный ИИ генератор меню для кафе и ресторанов. Создавайте журнальные меню, карты напитков и истории брендов. Готово к печати." lang="ru" categoryFilter="menu">
+  <Header slot="header" lang="ru" activeNav="menu" />
+
+  <section class="hero" id="menu-hero">
+    <div class="hero-intro">
+      <p class="eyebrow">ИИ Верстка Меню для Кафе и Ресторанов</p>
+      <h1>Меню Кафе &amp; Ресторанов<br><em>Дизайны Буклетов</em></h1>
+      <p class="hero-copy">Создавайте меню открытий, буклеты для кофеен, винные карты и истории брендов. Профессиональная сетка, верстка ценников и экспорт в PDF для печати.</p>
+      <div class="hero-actions">
+        <a class="primary-button" href={`${import.meta.env.BASE_URL}/ru/#generation-form`}>Создать меню — Бесплатно</a>
+        <a class="secondary-button" href="#collection">Смотреть примеры</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <h2>Коллекция меню для кафе и ресторанов</h2>
+        <p>Дизайны буклетов для кофеен, ресторанов и гастрономических проектов.</p>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid"></div>
+    <nav class="pagination" id="pagination" aria-label="Навигация буклетов"></nav>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

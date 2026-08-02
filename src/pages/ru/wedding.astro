@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+<BaseLayout title="Генератор свадебных буклетов на ИИ — Свадебные и юбилейные журналы" description="Бесплатный ИИ генератор свадебных буклетов. Создавайте уникальные свадебные журналы, памятные альбомы и романтические истории. Готово к печати." lang="ru" categoryFilter="wedding">
+  <Header slot="header" lang="ru" activeNav="wedding" />
+
+  <section class="hero" id="wedding-hero">
+    <div class="hero-intro">
+      <p class="eyebrow">ИИ Верстка Свадебных и Романтических Буклетов</p>
+      <h1>Свадебные &amp; Юбилейные<br><em>Дизайны Буклетов</em></h1>
+      <p class="hero-copy">Создавайте элегантные свадебные буклеты, романтические журналы и памятные альбомы к юбилеям. Профессиональная типографика, роскошная палитра и автоматическая верстка.</p>
+      <div class="hero-actions">
+        <a class="primary-button" href={`${import.meta.env.BASE_URL}/ru/#generation-form`}>Создать свадебный буклет — Бесплатно</a>
+        <a class="secondary-button" href="#collection">Смотреть примеры</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <h2>Коллекция свадебных буклетов</h2>
+        <p>Дизайны буклетов для свадеб, праздничных вечеров и историй любви.</p>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid"></div>
+    <nav class="pagination" id="pagination" aria-label="Навигация буклетов"></nav>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

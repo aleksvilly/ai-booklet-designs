@@ -1,0 +1,170 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+  categoryFilter?: string;
+}
+
+const {
+  title = "AI Booklet Designs — unique editorial booklets for any occasion",
+  description = "AI-generated editorial booklets for any person and any occasion — birthday gifts, café menus, event programmes, wedding booklets. Free, automatic, print-ready.",
+  lang = "en",
+  categoryFilter = ""
+} = Astro.props;
+
+const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
+---
+<!doctype html>
+<html lang={lang}>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content={description}>
+  <meta name="keywords" content="AI booklet generator, editorial design, print-ready booklet, ИИ буклеты, генератор буклетов, folletos IA, AI Broschüren, brochure design, free booklet maker, booklet templates">
+  <meta name="theme-color" content="#f3f0e8" id="theme-color">
+  <title>{title}</title>
+  <link rel="canonical" href={`${baseUrl}/`}>
+
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={`${baseUrl}/`}>
+  <meta property="og:site_name" content="AI Booklet Designs">
+  <meta property="og:locale" content={lang === 'ru' ? 'ru_RU' : 'en_US'}>
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+
+  <link rel="alternate" hreflang="x-default" href={`${baseUrl}/`}>
+  <link rel="alternate" hreflang="en" href={`${baseUrl}/`}>
+  <link rel="alternate" hreflang="ru" href={`${baseUrl}/ru/`}>
+  <link rel="alternate" hreflang="es" href={`${baseUrl}/es/`}>
+  <link rel="alternate" hreflang="de" href={`${baseUrl}/de/`}>
+  <link rel="alternate" hreflang="fr" href={`${baseUrl}/fr/`}>
+  <link rel="alternate" hreflang="zh" href={`${baseUrl}/zh/`}>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+
+  <script type="application/ld+json" is:inline>
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "AI Booklet Designs",
+    "url": "https://aleksvilly.github.io/ai-booklet-designs/",
+    "description": "AI-generated editorial booklets for any person and any occasion — birthday gifts, café menus, event programmes, wedding booklets. Free, automatic, print-ready.",
+    "applicationCategory": "DesignApplication",
+    "operatingSystem": "All",
+    "browserRequirements": "Requires JavaScript. Requires HTML5.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Organization",
+      "name": "AI Booklet Designs",
+      "url": "https://aleksvilly.github.io/ai-booklet-designs/"
+    }
+  }
+  </script>
+
+  <script is:inline>
+    (() => {
+      const savedTheme = localStorage.getItem('theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.dataset.theme = savedTheme || (prefersDark ? 'dark' : 'light');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,700;0,800;1,700;1,800&family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@400;500;600;700&family=Fredoka:wght@600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&family=Lora:ital,wght@0,500;1,500&family=Orbitron:wght@600;800&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,600;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href={`${import.meta.env.BASE_URL}/styles.css`}>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-B9CKVDK7WX" is:inline></script>
+  <script is:inline>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-B9CKVDK7WX');
+  </script>
+  <!-- Microsoft Clarity -->
+  <script type="text/javascript" is:inline>
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "xu4n6rz192");
+  </script>
+</head>
+<body data-category-filter={categoryFilter}>
+  <slot name="header" />
+
+  <main>
+    <slot />
+  </main>
+
+  <dialog class="booklet-dialog" id="booklet-dialog" aria-label="Booklet detail view">
+    <div class="booklet-dialog-shell">
+      <div class="booklet-stage-toolbar" id="booklet-stage-toolbar">
+        <button class="booklet-stage-btn" id="editor-toggle-button" type="button">Edit booklet</button>
+        <div class="editor-view-switch" id="editor-view-switch">
+          <button class="editor-view-btn active" id="editor-view-full" type="button">Full View</button>
+          <button class="editor-view-btn" id="editor-view-compact" type="button">Compact View</button>
+        </div>
+        <button class="booklet-stage-btn" id="pdf-export-button" type="button">Export PDF</button>
+        <div class="editor-page-zoom-control">
+          <span class="editor-page-zoom-icon" aria-hidden="true">🔍</span>
+          <input id="editor-page-zoom-range" type="range" min="1" max="3" step="1" value="1" aria-label="Page display mode">
+          <output id="editor-page-zoom-output" for="editor-page-zoom-range">1 page</output>
+        </div>
+      </div>
+      <aside class="booklet-editor" id="booklet-editor" aria-label="Booklet editor" hidden>
+        <div class="booklet-editor-heading">
+          <div>
+            <p class="eyebrow">Live editor</p>
+            <h2>Adjust the booklet</h2>
+          </div>
+          <div class="booklet-editor-heading-actions">
+            <button class="booklet-editor-close" id="booklet-editor-close" type="button" aria-label="Close editor">×</button>
+          </div>
+        </div>
+        <div class="editor-target-card">
+          <label>
+            <span>Apply changes to</span>
+            <select id="editor-scope" aria-label="Apply changes to">
+              <option value="booklet">Entire booklet</option>
+              <option value="spread">Current spread</option>
+              <option value="page">Current page</option>
+            </select>
+          </label>
+          <p id="editor-target-label">Booklet defaults</p>
+        </div>
+        <div class="booklet-editor-scroll">
+          <fieldset class="editor-group">
+            <legend>Design system</legend>
+            <label data-editor-parameter="profile">
+              <span>Editorial profile</span>
+              <select id="editor-profile"></select>
+            </label>
+          </fieldset>
+        </div>
+        <div class="booklet-editor-footer">
+          <p id="editor-save-status">Changes are saved on this device.</p>
+          <div>
+            <button id="editor-reset-scope" type="button">Reset this level</button>
+            <button id="editor-reset-all" type="button">Reset all</button>
+          </div>
+        </div>
+      </aside>
+      <div class="booklet-dialog-content" id="booklet-dialog-content"></div>
+      <button class="booklet-dialog-close" id="booklet-dialog-close" type="button" aria-label="Close detail view">×</button>
+    </div>
+  </dialog>
+
+  <slot name="footer" />
+
+  <script type="module" src={`${import.meta.env.BASE_URL}/src/main.js`}></script>
+</body>
+</html>

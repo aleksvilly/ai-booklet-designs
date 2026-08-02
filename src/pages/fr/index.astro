@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+<BaseLayout title="AI Booklet Designs — Livrets éditoriaux generés par IA" description="Livrets éditoriaux generés par IA pour chaque personne et occasion — cadeaux d'anniversaire, menus de café, programmes d'événements, livrets de mariage. Gratuits, automatiques, prêts à imprimer." lang="fr">
+  <Header slot="header" lang="fr" activeNav="home" />
+
+  <section class="hero" id="generate">
+    <div class="hero-intro">
+      <p class="eyebrow" data-i18n="hero_eyebrow">Livrets éditoriaux generés par IA — gratuits, automatiques, uniques</p>
+      <h1 data-i18n="hero_title">Pour chaque personne.<br><em>Pour cada occasion.</em></h1>
+      <p class="hero-copy" data-i18n="hero_copy">Cadeau d’anniversaire pour un fan de jazz. Menu d’ouverture pour un café. Programme d’une soirée de galerie. Livret de mariage. Décrivez l’idée — un livret éditorial unique est généré automatiquement.</p>
+      <div class="hero-actions">
+        <a class="primary-button" href="#generation-form" data-i18n="btn_create">Créer un livret — gratuit</a>
+        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">Voir les exemples</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <h2 data-i18n="collection_title">Collection de livrets éditoriaux</h2>
+        <p data-i18n="collection_subtitle">Parcourez des livrets prêts à imprimer.</p>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid"></div>
+    <nav class="pagination" id="pagination" aria-label="Booklet navigation"></nav>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

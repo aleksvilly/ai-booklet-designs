@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+<BaseLayout title="AI Booklet Designs — Folletos editoriales generados por IA" description="Folletos editoriales creados por IA para cualquier persona y ocasión — regalos de cumpleaños, menús de café, programas de eventos, folletos de boda. Gratis, automáticos, listos para imprimir." lang="es">
+  <Header slot="header" lang="es" activeNav="home" />
+
+  <section class="hero" id="generate">
+    <div class="hero-intro">
+      <p class="eyebrow" data-i18n="hero_eyebrow">Folletos editoriales creados por IA — gratis, automáticos, únicos</p>
+      <h1 data-i18n="hero_title">Para cualquier persona.<br><em>Para cualquier ocasión.</em></h1>
+      <p class="hero-copy" data-i18n="hero_copy">Regalo de cumpleaños para un fan del jazz. Menú de apertura para un café. Programa de una noche de galería. Folleto para una boda. Describe la idea: un folleto editorial único se genera automáticamente.</p>
+      <div class="hero-actions">
+        <a class="primary-button" href="#generation-form" data-i18n="btn_create">Crear folleto — gratis</a>
+        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">Ver ejemplos</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <h2 data-i18n="collection_title">Colección de folletos editoriales</h2>
+        <p data-i18n="collection_subtitle">Explora folletos editoriales listos para imprimir.</p>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid"></div>
+    <nav class="pagination" id="pagination" aria-label="Booklet navigation"></nav>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

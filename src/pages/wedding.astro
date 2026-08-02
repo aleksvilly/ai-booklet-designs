@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<BaseLayout title="Free AI Wedding Booklet Maker — Wedding & Anniversary Editorial Designs" description="Free AI wedding booklet generator. Create unique editorial wedding booklets, anniversary keepsakes, and romantic story designs. Print-ready, automatic, customizable." lang="en" categoryFilter="wedding">
+  <Header slot="header" lang="en" activeNav="wedding" />
+
+  <section class="hero" id="wedding-hero">
+    <div class="hero-intro">
+      <p class="eyebrow">AI Wedding &amp; Romance Editorial System</p>
+      <h1>Wedding &amp; Anniversary<br><em>Booklet Designs</em></h1>
+      <p class="hero-copy">Create elegant, print-ready wedding booklets, romantic keepsakes, and anniversary tribute albums. Professional typography, soft luxury palettes, and automatic layout generation.</p>
+      <div class="hero-actions">
+        <a class="primary-button" href={`${import.meta.env.BASE_URL}/#generation-form`}>Generate Wedding Booklet — Free</a>
+        <a class="secondary-button" href="#collection">Browse Examples</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <h2>Wedding &amp; Romance Collection</h2>
+        <p>Editorial booklet designs tailored for weddings, celebrations, and love stories.</p>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid"></div>
+    <nav class="pagination" id="pagination" aria-label="Booklet navigation"></nav>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

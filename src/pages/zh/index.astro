@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+---
+<BaseLayout title="AI Booklet Designs — AI 生成的出版物手册" description="AI 生成的出版物手册 — 适合任何人与任何场合。免费、全自动、符合印刷标准。" lang="zh">
+  <Header slot="header" lang="zh" activeNav="home" />
+
+  <section class="hero" id="generate">
+    <div class="hero-intro">
+      <p class="eyebrow" data-i18n="hero_eyebrow">AI 生成的出版物手册 — 免费、自动、独一无二</p>
+      <h1 data-i18n="hero_title">适合任何人。<br><em>适合任何场合。</em></h1>
+      <p class="hero-copy" data-i18n="hero_copy">爵士乐迷的生日礼物。咖啡馆开业菜单。画廊之夜活动手册。婚礼小册子。描述您的想法 — 自动生成独特且符合印刷标准的精美手册。</p>
+      <div class="hero-actions">
+        <a class="primary-button" href="#generation-form" data-i18n="btn_create">免费生成手册</a>
+        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">查看示例</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="collection-section" id="collection">
+    <div class="collection-header">
+      <div>
+        <h2 data-i18n="collection_title">编辑手册作品集</h2>
+        <p data-i18n="collection_subtitle">浏览可直接印刷的手册设计。</p>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid"></div>
+    <nav class="pagination" id="pagination" aria-label="Booklet navigation"></nav>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

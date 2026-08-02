@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+<BaseLayout title="Privacy Policy — AI Booklet Designs" description="Privacy policy and data protection details for AI Booklet Designs." lang="en">
+  <Header slot="header" lang="en" />
+
+  <section class="privacy-section">
+    <div class="privacy-container">
+      <h1>Privacy Policy</h1>
+      <p class="privacy-updated">Last updated: August 2026</p>
+      
+      <h2>1. Overview</h2>
+      <p>AI Booklet Designs values your privacy. This policy outlines how information is collected, used, and protected across our platform.</p>
+
+      <h2>2. Generation Requests</h2>
+      <p>Public generation requests submitted through our generator form contain no personal contact data, passwords, or private briefs. Topics and design parameters are processed publicly for automated booklet generation.</p>
+
+      <h2>3. Contact Form</h2>
+      <p>Private inquiries submitted via our contact form (powered by Formspree) may collect your name, email, and message to respond to your inquiry directly. We do not sell or share your contact data.</p>
+
+      <h2>4. Analytics</h2>
+      <p>We use Google Analytics and Microsoft Clarity to understand aggregate usage patterns and improve user experience. All analytics are handled anonymously.</p>
+
+      <p><a href={`${import.meta.env.BASE_URL}/`} class="primary-button">← Back to Home</a></p>
+    </div>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>
