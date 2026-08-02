@@ -1,4 +1,4 @@
-import { escapeHtml } from './utils.js';
+import { escapeHtml, resolveRootUrl } from './utils.js';
 import { getLanguage } from './i18n.js';
 
 let generatorCatalog = null;
@@ -229,10 +229,10 @@ export async function loadGeneratorCatalogs() {
   const topicCatalogSearch = document.querySelector('#topic-catalog-search');
 
   const [topicsResponse, stylesResponse, effectsResponse, fontsResponse] = await Promise.all([
-    fetch('./data/catalog/topics.json', { cache: 'no-store' }),
-    fetch('./data/catalog/styles.json', { cache: 'no-store' }),
-    fetch('./data/catalog/effects.json', { cache: 'no-store' }),
-    fetch('./data/catalog/fonts.json', { cache: 'no-store' })
+    fetch(resolveRootUrl('data/catalog/topics.json'), { cache: 'no-store' }),
+    fetch(resolveRootUrl('data/catalog/styles.json'), { cache: 'no-store' }),
+    fetch(resolveRootUrl('data/catalog/effects.json'), { cache: 'no-store' }),
+    fetch(resolveRootUrl('data/catalog/fonts.json'), { cache: 'no-store' })
   ]);
 
   if (![topicsResponse, stylesResponse, effectsResponse, fontsResponse].every(response => response.ok)) {

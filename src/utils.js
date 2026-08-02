@@ -193,3 +193,20 @@ export async function copyText(text) {
   input.remove();
   return copied;
 }
+
+export function resolveRootUrl(relativePath = '') {
+  const cleanPath = relativePath.replace(/^\.\//, '').replace(/^\//, '');
+  const canonical = document.querySelector('link[rel="canonical"]')?.getAttribute('href');
+  if (canonical) {
+    try {
+      const url = new URL(canonical);
+      const basePath = url.pathname.endsWith('/') ? url.pathname : url.pathname + '/';
+      return `${basePath}${cleanPath}`;
+    } catch {
+      // Fallback below
+    }
+  }
+  const base = window.BASE_URL || '/ai-booklet-designs';
+  const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
+  return `${cleanBase}/${cleanPath}`;
+}

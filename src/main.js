@@ -1,3 +1,4 @@
+import { resolveRootUrl } from './utils.js';
 import { ITEMS_PER_PAGE } from './config.js';
 import { initThemeAndNav } from './theme.js';
 import { loadGeneratorCatalogs, getGeneratorCatalog, appendCatalogStyles, renderCatalogEffects } from './catalog.js';
@@ -82,7 +83,7 @@ export async function initApp() {
 
   await loadGeneratorCatalogs().catch(error => console.warn(error));
 
-  const response = await fetch('./data/booklets.json', { cache: 'no-store' });
+  const response = await fetch(resolveRootUrl('data/booklets.json'), { cache: 'no-store' });
   if (!response.ok) throw new Error(`Failed to load booklets: ${response.status}`);
   const booklets = await response.json();
 
