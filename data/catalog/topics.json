@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "defaultLocale": "en",
-  "updatedAt": "2026-07-27",
+  "updatedAt": "2026-08-04",
   "groups": [
     {
       "id": "arts-culture",
@@ -169,31 +169,11 @@
           "labels": { "en": "Tennis", "ru": "Теннис" },
           "recommendedStyleIds": ["sports-broadcast", "encyclopedia-reference"],
           "children": [
-            {
-              "id": "equipment",
-              "labels": { "en": "Equipment", "ru": "Экипировка" },
-              "prompt": "Tennis equipment: rackets, strings, balls, shoes and how their design affects play"
-            },
-            {
-              "id": "athletes",
-              "labels": { "en": "Athletes", "ru": "Спортсмены" },
-              "prompt": "Tennis athletes, playing styles, careers and defining matches"
-            },
-            {
-              "id": "competitions",
-              "labels": { "en": "Competitions", "ru": "Соревнования" },
-              "prompt": "Tennis competitions: Grand Slams, tours, formats and famous venues"
-            },
-            {
-              "id": "results",
-              "labels": { "en": "Results & records", "ru": "Результаты и рекорды" },
-              "prompt": "Tennis results, records and the numbers that changed the sport"
-            },
-            {
-              "id": "rules",
-              "labels": { "en": "Rules", "ru": "Правила" },
-              "prompt": "A visual guide to tennis rules, scoring, court geometry and match formats"
-            }
+            { "id": "equipment", "labels": { "en": "Equipment", "ru": "Экипировка" }, "prompt": "Tennis equipment: rackets, strings, balls, shoes and how their design affects play" },
+            { "id": "athletes", "labels": { "en": "Athletes", "ru": "Спортсмены" }, "prompt": "Tennis athletes, playing styles, careers and defining matches" },
+            { "id": "competitions", "labels": { "en": "Competitions", "ru": "Соревнования" }, "prompt": "Tennis competitions: Grand Slams, tours, formats and famous venues" },
+            { "id": "results", "labels": { "en": "Results & records", "ru": "Результаты и рекорды" }, "prompt": "Tennis results, records and the numbers that changed the sport" },
+            { "id": "rules", "labels": { "en": "Rules", "ru": "Правила" }, "prompt": "A visual guide to tennis rules, scoring, court geometry and match formats" }
           ]
         },
         {
@@ -205,6 +185,26 @@
             { "id": "players", "labels": { "en": "Players", "ru": "Игроки" } },
             { "id": "tactics", "labels": { "en": "Tactics", "ru": "Тактика" } },
             { "id": "history", "labels": { "en": "History", "ru": "История" } }
+          ]
+        },
+        {
+          "id": "basketball",
+          "labels": { "en": "Basketball", "ru": "Баскетбол" },
+          "recommendedStyleIds": ["sports-broadcast", "neo-brutalism"],
+          "children": [
+            { "id": "nba", "labels": { "en": "NBA", "ru": "NBA" } },
+            { "id": "players", "labels": { "en": "Players", "ru": "Игроки" } },
+            { "id": "history", "labels": { "en": "History", "ru": "История" } }
+          ]
+        },
+        {
+          "id": "athletics",
+          "labels": { "en": "Athletics", "ru": "Лёгкая атлетика" },
+          "recommendedStyleIds": ["sports-broadcast", "documentary-clean"],
+          "children": [
+            { "id": "olympic-games", "labels": { "en": "Olympic games", "ru": "Олимпийские игры" } },
+            { "id": "world-records", "labels": { "en": "World records", "ru": "Мировые рекорды" } },
+            { "id": "marathon", "labels": { "en": "Marathon", "ru": "Марафон" } }
           ]
         }
       ]
@@ -234,6 +234,198 @@
             { "id": "worlds", "labels": { "en": "Game worlds", "ru": "Игровые миры" } },
             { "id": "characters", "labels": { "en": "Characters", "ru": "Персонажи" } },
             { "id": "design", "labels": { "en": "Game design", "ru": "Геймдизайн" } }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "cities",
+      "labels": { "en": "Cities of the world", "ru": "Города мира" },
+      "aliases": ["city", "urban", "город", "мегаполис"],
+      "children": [
+        {
+          "id": "asia-cities",
+          "labels": { "en": "Asian cities", "ru": "Города Азии" },
+          "recommendedStyleIds": ["documentary-clean", "neo-tech-interface", "local-folk-future"],
+          "children": [
+            { "id": "tokyo", "labels": { "en": "Tokyo", "ru": "Токио" }, "prompt": "Tokyo: a booklet exploring the city's contrasts — neon Shibuya, quiet temples, street food, transport systems and urban poetry" },
+            { "id": "seoul", "labels": { "en": "Seoul", "ru": "Сеул" }, "prompt": "Seoul: K-pop energy, ancient palaces, street food markets and a city that reinvented itself" },
+            { "id": "shanghai", "labels": { "en": "Shanghai", "ru": "Шанхай" }, "prompt": "Shanghai: the Bund at night, skyscrapers, tea houses and a city between tradition and the future" },
+            { "id": "singapore", "labels": { "en": "Singapore", "ru": "Сингапур" }, "prompt": "Singapore: the city-state where gardens grow from skyscrapers and every street is a design statement" },
+            { "id": "mumbai", "labels": { "en": "Mumbai", "ru": "Мумбаи" }, "prompt": "Mumbai: Bollywood, street chaos, colonial architecture and the city that never stops" },
+            { "id": "bangkok", "labels": { "en": "Bangkok", "ru": "Бангкок" }, "prompt": "Bangkok: golden temples, night markets, tuk-tuks and a city of infinite layers" },
+            { "id": "dubai", "labels": { "en": "Dubai", "ru": "Дубай" }, "prompt": "Dubai: desert meets ultra-modern — the world's most ambitious city, built at speed" }
+          ]
+        },
+        {
+          "id": "europe-cities",
+          "labels": { "en": "European cities", "ru": "Города Европы" },
+          "recommendedStyleIds": ["gq-editorial", "museum-clean", "documentary-clean"],
+          "children": [
+            { "id": "paris", "labels": { "en": "Paris", "ru": "Париж" }, "prompt": "Paris: boulevards, brasseries, art museums, fashion weeks and a city that demands to be walked slowly" },
+            { "id": "berlin", "labels": { "en": "Berlin", "ru": "Берлин" }, "prompt": "Berlin: techno clubs, Cold War relics, contemporary art and a city still becoming itself" },
+            { "id": "amsterdam", "labels": { "en": "Amsterdam", "ru": "Амстердам" }, "prompt": "Amsterdam: canals, bicycles, Rijksmuseum and a city built on tolerance and water" },
+            { "id": "rome", "labels": { "en": "Rome", "ru": "Рим" }, "prompt": "Rome: the Colosseum, piazzas, gelato, 2000 years of history layered under one city" },
+            { "id": "barcelona", "labels": { "en": "Barcelona", "ru": "Барселона" }, "prompt": "Barcelona: Gaudí's architecture, beach culture, Catalan identity and football passion" },
+            { "id": "lisbon", "labels": { "en": "Lisbon", "ru": "Лиссабон" }, "prompt": "Lisbon: fado music, tram 28, pastel de nata and a city on seven hills above the Atlantic" },
+            { "id": "vienna", "labels": { "en": "Vienna", "ru": "Вена" }, "prompt": "Vienna: imperial grandeur, coffeehouse culture, Mozart and a city that set the standard for European elegance" },
+            { "id": "london", "labels": { "en": "London", "ru": "Лондон" }, "prompt": "London: the Thames, Soho, Tate Modern, multicultural street food and the world's most visited city" },
+            { "id": "stockholm", "labels": { "en": "Stockholm", "ru": "Стокгольм" }, "prompt": "Stockholm: Scandinavian design, archipelago islands, ABBA and a city built on water" },
+            { "id": "athens", "labels": { "en": "Athens", "ru": "Афины" }, "prompt": "Athens: the Acropolis, street art, souvlaki and a city where ancient and modern collide" }
+          ]
+        },
+        {
+          "id": "americas-cities",
+          "labels": { "en": "Cities of the Americas", "ru": "Города Америки" },
+          "recommendedStyleIds": ["documentary-clean", "neo-brutalism", "tiktok-inspired"],
+          "children": [
+            { "id": "new-york", "labels": { "en": "New York", "ru": "Нью-Йорк" }, "prompt": "New York: Manhattan skyline, subway art, Broadway, pizza slices and the city that defines ambition" },
+            { "id": "los-angeles", "labels": { "en": "Los Angeles", "ru": "Лос-Анджелес" }, "prompt": "Los Angeles: Hollywood, Venice Beach, car culture and a city of reinvention" },
+            { "id": "mexico-city", "labels": { "en": "Mexico City", "ru": "Мехико" }, "prompt": "Mexico City: muralism, street tacos, Frida Kahlo and the megacity with the richest cultural heritage" },
+            { "id": "buenos-aires", "labels": { "en": "Buenos Aires", "ru": "Буэнос-Айрес" }, "prompt": "Buenos Aires: tango, steak, European architecture and a passionate South American capital" },
+            { "id": "sao-paulo", "labels": { "en": "São Paulo", "ru": "Сан-Паулу" }, "prompt": "São Paulo: street art explosion, fine dining, business towers and Brazil's cultural engine" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "food-cuisine",
+      "labels": { "en": "Food & cuisine", "ru": "Еда и кухня" },
+      "aliases": ["food", "cooking", "еда", "кулинария", "кухня"],
+      "children": [
+        {
+          "id": "world-cuisines",
+          "labels": { "en": "World cuisines", "ru": "Кухни мира" },
+          "recommendedStyleIds": ["gq-editorial", "local-folk-future", "scrapbook-memory"],
+          "children": [
+            { "id": "japanese-cuisine", "labels": { "en": "Japanese cuisine", "ru": "Японская кухня" }, "prompt": "Japanese cuisine: ramen, sushi, kaiseki rituals and the philosophy of eating with all senses" },
+            { "id": "italian-cuisine", "labels": { "en": "Italian cuisine", "ru": "Итальянская кухня" }, "prompt": "Italian cuisine: pasta shapes, regional variations, olive oil and the slow food revolution" },
+            { "id": "mexican-cuisine", "labels": { "en": "Mexican cuisine", "ru": "Мексиканская кухня" }, "prompt": "Mexican cuisine: mole, tacos, chillies and a UNESCO culinary heritage" },
+            { "id": "indian-cuisine", "labels": { "en": "Indian cuisine", "ru": "Индийская кухня" }, "prompt": "Indian cuisine: spice trade routes, regional diversity from Kerala to Punjab and street food culture" },
+            { "id": "french-cuisine", "labels": { "en": "French cuisine", "ru": "Французская кухня" }, "prompt": "French cuisine: from baguettes to haute cuisine, why France defined how the world eats formally" }
+          ]
+        },
+        {
+          "id": "cafe-restaurant",
+          "labels": { "en": "Café & restaurant", "ru": "Кафе и рестораны" },
+          "recommendedStyleIds": ["receipt-editorial", "gq-editorial", "museum-clean"],
+          "children": [
+            { "id": "coffee", "labels": { "en": "Coffee culture", "ru": "Кофейная культура" }, "prompt": "Coffee culture: from Ethiopian origins to specialty third-wave espresso bars" },
+            { "id": "cocktails", "labels": { "en": "Cocktails & drinks", "ru": "Коктейли и напитки" }, "prompt": "Cocktail culture: classic recipes, modern mixology and the stories behind iconic drinks" },
+            { "id": "street-food", "labels": { "en": "Street food", "ru": "Уличная еда" }, "prompt": "Street food: the world's best eating happens on the pavement — from Bangkok night markets to NYC hot dogs" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "internet-culture",
+      "labels": { "en": "Internet & digital culture", "ru": "Интернет и цифровая культура" },
+      "aliases": ["internet", "social media", "youtube", "tiktok", "интернет", "соцсети"],
+      "children": [
+        {
+          "id": "platforms",
+          "labels": { "en": "Platforms & media", "ru": "Платформы и медиа" },
+          "recommendedStyleIds": ["tiktok-inspired", "instagram-inspired", "neo-tech-interface"],
+          "children": [
+            { "id": "youtube", "labels": { "en": "YouTube", "ru": "YouTube" }, "prompt": "YouTube: from viral cat videos to billion-dollar creators — the platform that changed what it means to broadcast" },
+            { "id": "tiktok", "labels": { "en": "TikTok", "ru": "TikTok" }, "prompt": "TikTok: the algorithm that conquered attention, 15-second culture and the new creative economy" },
+            { "id": "instagram", "labels": { "en": "Instagram", "ru": "Instagram" }, "prompt": "Instagram: aesthetic culture, influencer economy and how a photo app reshaped fashion, travel and food" },
+            { "id": "twitch", "labels": { "en": "Twitch & streaming", "ru": "Twitch и стриминг" }, "prompt": "Twitch and live streaming: how watching other people play games became a global phenomenon" },
+            { "id": "podcasts", "labels": { "en": "Podcasts", "ru": "Подкасты" }, "prompt": "Podcasts: the audio renaissance, from true crime obsessions to knowledge communities" }
+          ]
+        },
+        {
+          "id": "meme-culture",
+          "labels": { "en": "Memes & viral culture", "ru": "Мемы и вирусная культура" },
+          "recommendedStyleIds": ["tiktok-inspired", "early-web-maximalism", "comic-pop"],
+          "children": [
+            { "id": "memes", "labels": { "en": "Meme history", "ru": "История мемов" }, "prompt": "Meme history: from Rickrolling to Drake memes — how internet jokes became cultural language" },
+            { "id": "viral", "labels": { "en": "Viral moments", "ru": "Вирусные моменты" }, "prompt": "Viral moments: the videos, tweets and events that stopped the internet for a day" }
+          ]
+        },
+        {
+          "id": "creators",
+          "labels": { "en": "Creator economy", "ru": "Экономика создателей" },
+          "recommendedStyleIds": ["gq-editorial", "tiktok-inspired", "neo-tech-interface"],
+          "children": [
+            { "id": "influencers", "labels": { "en": "Influencers", "ru": "Инфлюенсеры" }, "prompt": "Influencer culture: how individuals became media empires and changed advertising forever" },
+            { "id": "newsletter", "labels": { "en": "Newsletters & Substack", "ru": "Рассылки и Substack" }, "prompt": "Newsletter revolution: why writers abandoned magazines for direct subscriber relationships" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "music-genres",
+      "labels": { "en": "Music genres", "ru": "Музыкальные жанры" },
+      "aliases": ["jazz", "rock", "hiphop", "джаз", "рок", "хип-хоп"],
+      "children": [
+        {
+          "id": "jazz",
+          "labels": { "en": "Jazz", "ru": "Джаз" },
+          "recommendedStyleIds": ["black-white-noir", "cinematic-color-field"],
+          "children": [
+            { "id": "jazz-history", "labels": { "en": "Jazz history", "ru": "История джаза" }, "prompt": "Jazz: from New Orleans speakeasies to Miles Davis and the music that invented improvisation" },
+            { "id": "jazz-legends", "labels": { "en": "Jazz legends", "ru": "Легенды джаза" }, "prompt": "Jazz legends: Coltrane, Davis, Monk, Holiday — the artists who made silence as important as sound" },
+            { "id": "jazz-clubs", "labels": { "en": "Jazz clubs", "ru": "Джазовые клубы" }, "prompt": "Jazz clubs: the intimate spaces where the music lives — Blue Note, Ronnie Scott's, Duc des Lombards" }
+          ]
+        },
+        {
+          "id": "hip-hop",
+          "labels": { "en": "Hip-hop", "ru": "Хип-хоп" },
+          "recommendedStyleIds": ["neo-brutalism", "tiktok-inspired", "post-punk-zine"],
+          "children": [
+            { "id": "hip-hop-history", "labels": { "en": "Hip-hop origins", "ru": "Истоки хип-хопа" }, "prompt": "Hip-hop: from the Bronx block parties of 1973 to the world's most consumed music genre" },
+            { "id": "rap-artists", "labels": { "en": "Rap artists", "ru": "Рэп-артисты" }, "prompt": "Rap artists: Tupac, Biggie, Jay-Z, Kendrick — the voices that defined their eras" },
+            { "id": "streetwear", "labels": { "en": "Hip-hop & streetwear", "ru": "Хип-хоп и стритвир" }, "prompt": "Hip-hop fashion: how the Bronx invented a global visual language from sneakers to luxury collabs" }
+          ]
+        },
+        {
+          "id": "electronic",
+          "labels": { "en": "Electronic music", "ru": "Электронная музыка" },
+          "recommendedStyleIds": ["rave-system", "neo-tech-interface", "glassmorphism-editorial"],
+          "children": [
+            { "id": "techno", "labels": { "en": "Techno", "ru": "Техно" }, "prompt": "Techno: Detroit factories, Berlin bunkers and the music built for 4am" },
+            { "id": "house", "labels": { "en": "House music", "ru": "Хаус" }, "prompt": "House music: Chicago warehouses, Roland 808s and the rhythm that connected communities" },
+            { "id": "ambient", "labels": { "en": "Ambient", "ru": "Эмбиент" }, "prompt": "Ambient music: Brian Eno, airports, meditation and the art of music that disappears into space" }
+          ]
+        },
+        {
+          "id": "rock",
+          "labels": { "en": "Rock", "ru": "Рок" },
+          "recommendedStyleIds": ["post-punk-zine", "grunge-90s", "black-white-noir"],
+          "children": [
+            { "id": "classic-rock", "labels": { "en": "Classic rock", "ru": "Классический рок" }, "prompt": "Classic rock: Led Zeppelin, The Rolling Stones, Pink Floyd and the era when rock ruled the world" },
+            { "id": "punk", "labels": { "en": "Punk", "ru": "Панк" }, "prompt": "Punk: 1977, three chords, ripped jeans, political rage and the movement that never really ended" },
+            { "id": "indie", "labels": { "en": "Indie", "ru": "Инди" }, "prompt": "Indie music: bedroom recordings, small labels and the artists who invented a different way to be famous" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nature-deep",
+      "labels": { "en": "Natural wonders", "ru": "Природные явления" },
+      "aliases": ["landscape", "climate", "пейзаж", "климат", "природа"],
+      "children": [
+        {
+          "id": "landscapes",
+          "labels": { "en": "Landscapes", "ru": "Ландшафты" },
+          "recommendedStyleIds": ["documentary-clean", "cinematic-color-field"],
+          "children": [
+            { "id": "deserts", "labels": { "en": "Deserts", "ru": "Пустыни" }, "prompt": "Deserts: Sahara, Atacama, Gobi — landscapes of extremes, survival and strange beauty" },
+            { "id": "mountains", "labels": { "en": "Mountains", "ru": "Горы" }, "prompt": "Mountains: Himalayas, Andes, Alps — the peaks that defined exploration and humbled civilisations" },
+            { "id": "arctic", "labels": { "en": "Arctic & Antarctic", "ru": "Арктика и Антарктика" }, "prompt": "Polar regions: ice sheets, aurora borealis, polar bears and the planet's frozen memory" },
+            { "id": "rainforests", "labels": { "en": "Rainforests", "ru": "Тропические леса" }, "prompt": "Rainforests: Amazon, Congo, Borneo — the lungs of the planet and the most biodiverse places on Earth" },
+            { "id": "volcanoes", "labels": { "en": "Volcanoes", "ru": "Вулканы" }, "prompt": "Volcanoes: the raw power beneath the Earth's surface — eruptions, lava flows and landscapes reborn" }
+          ]
+        },
+        {
+          "id": "ocean-life",
+          "labels": { "en": "Ocean life", "ru": "Жизнь океана" },
+          "recommendedStyleIds": ["documentary-clean", "organic-futurism"],
+          "children": [
+            { "id": "coral-reefs", "labels": { "en": "Coral reefs", "ru": "Коралловые рифы" }, "prompt": "Coral reefs: the ocean's cities — technicolour ecosystems that shelter a quarter of all sea life" },
+            { "id": "deep-sea", "labels": { "en": "Deep sea", "ru": "Глубокое море" }, "prompt": "Deep sea: bioluminescent creatures, hydrothermal vents and the 95% of the ocean we've never seen" },
+            { "id": "whales", "labels": { "en": "Whales & marine giants", "ru": "Киты и гиганты моря" }, "prompt": "Whales: the largest animals ever to exist and what their songs tell us about ocean health" }
           ]
         }
       ]
