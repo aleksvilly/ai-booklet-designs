@@ -249,6 +249,7 @@ export async function loadGeneratorCatalogs() {
   renderTopicWheel();
   appendCatalogStyles(generatorCatalog.styles);
   renderCatalogEffects(generatorCatalog.effects);
+  bindStyleSlider(document.querySelector('#layout-system-select'));
 
   topicCatalogSearch?.addEventListener('input', event => renderTopicSearch(event.target.value));
   bookletTopicInput?.addEventListener('input', () => {

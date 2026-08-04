@@ -73,6 +73,28 @@ import Footer from '../components/Footer.astro';
             <option value="mixed" data-i18n="opt_mixed">Mix minimal + abstract</option>
           </select>
         </label>
+        <label class="range-field field-wide" id="layout-system-label">
+          <span data-i18n="lbl_layout_system">Page layout system</span>
+          <output id="layout-system-output" data-i18n="auto_layout">Automatic</output>
+          <select id="layout-system-select" name="layout_system">
+            <option value="auto" selected>Automatic</option>
+            <option value="single-hero-image">Single hero image — one dominant photo per page</option>
+            <option value="split-layout">Split layout — content in two columns</option>
+            <option value="strict-grid">Strict grid — structured modular composition</option>
+            <option value="image-heavy-magazine">Image-heavy magazine — photos lead, text supports</option>
+            <option value="text-heavy-editorial">Text-heavy editorial — long reads, dense copy</option>
+            <option value="white-space-minimal">White space minimal — breathing room, luxury feel</option>
+            <option value="full-bleed">Full bleed — images edge to edge</option>
+            <option value="asymmetric-modern">Asymmetric modern — off-axis, dynamic balance</option>
+            <option value="layered-overlap">Layered overlap — elements on top of each other</option>
+            <option value="framed-gallery">Framed gallery — images with visible borders/frames</option>
+            <option value="chaotic-collage">Chaotic collage — torn, scattered, maximal</option>
+            <option value="poster-layout">Poster layout — single graphic statement per page</option>
+            <option value="modular-cards">Modular cards — discrete info blocks</option>
+            <option value="timeline-flow">Timeline flow — chronological narrative</option>
+            <option value="vertical-rhythm">Vertical rhythm — reading flow top to bottom</option>
+          </select>
+        </label>
         <label class="range-field">
           <span data-i18n="lbl_chaos">Design chaos level</span>
           <output id="chaos-output">0 — Strict &amp; safe</output>

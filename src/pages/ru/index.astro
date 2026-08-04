@@ -73,6 +73,28 @@ import Footer from '../../components/Footer.astro';
             <option value="mixed" data-i18n="opt_mixed">Смешанный</option>
           </select>
         </label>
+        <label class="range-field field-wide" id="layout-system-label">
+          <span data-i18n="lbl_layout_system">Система верстки страниц</span>
+          <output id="layout-system-output" data-i18n="auto_layout">Автоматически</output>
+          <select id="layout-system-select" name="layout_system">
+            <option value="auto" selected>Автоматически</option>
+            <option value="single-hero-image">Один герой — одно большое фото на страницу</option>
+            <option value="split-layout">Разделённый — контент в двух колонках</option>
+            <option value="strict-grid">Строгая сетка — модульная композиция</option>
+            <option value="image-heavy-magazine">Журнал с акцентом на фото — фото ведут, текст поддерживает</option>
+            <option value="text-heavy-editorial">Текстовый — длинные тексты, плотный набор</option>
+            <option value="white-space-minimal">Воздух и минимализм — люксовое ощущение</option>
+            <option value="full-bleed">Полный разворот — фото от края до края</option>
+            <option value="asymmetric-modern">Асимметрия — смещённые оси, динамика</option>
+            <option value="layered-overlap">Наложение слоёв — элементы друг на друге</option>
+            <option value="framed-gallery">Галерея в рамках — фото с видимыми рамками</option>
+            <option value="chaotic-collage">Хаотичный коллаж — рваный, максимальный</option>
+            <option value="poster-layout">Постер — одна графическая идея на страницу</option>
+            <option value="modular-cards">Карточки — дискретные блоки информации</option>
+            <option value="timeline-flow">Хронология — нарратив во времени</option>
+            <option value="vertical-rhythm">Вертикальный ритм — чтение сверху вниз</option>
+          </select>
+        </label>
         <label class="range-field">
           <span data-i18n="lbl_chaos">Уровень хаоса дизайна</span>
           <output id="chaos-output">0 — Строгий и безопасный</output>
