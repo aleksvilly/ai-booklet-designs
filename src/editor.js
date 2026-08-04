@@ -103,6 +103,7 @@ function getEditorControls() {
     editorPhotoLayout: document.querySelector('#editor-photo-layout'),
     editorPhotoLayoutVariant: document.querySelector('#editor-photo-layout-variant'),
     editorPhotoLayoutVariantOutput: document.querySelector('#editor-photo-layout-variant-output'),
+    editorLayoutSystem: document.querySelector('#editor-layout-system'),
     editorSaveStatus: document.querySelector('#editor-save-status'),
     editorResetScope: document.querySelector('#editor-reset-scope'),
     editorResetAll: document.querySelector('#editor-reset-all'),
@@ -311,7 +312,7 @@ export function availableEditorParameters() {
     editorImageCount, editorTextAmount, editorContentPosition, editorFontScale,
     editorTypographyTargetList,
     editorSpacing, editorEffectLevel, editorVisibilityOptions,
-    editorPhotoLayout, editorPhotoLayoutVariant
+    editorPhotoLayout, editorPhotoLayoutVariant, editorLayoutSystem
   } = getEditorControls();
 
   const editorParameters = [
@@ -321,6 +322,7 @@ export function availableEditorParameters() {
     { key: 'imageCount', label: 'Images', control: editorImageCount },
     { key: 'photoLayout', label: 'Photo layout', control: editorPhotoLayout },
     { key: 'photoLayoutVariant', label: 'Layout intensity', control: editorPhotoLayoutVariant },
+    { key: 'layoutSystem', label: 'Page layout system', control: editorLayoutSystem },
     { key: 'textAmount', label: 'Text amount', control: editorTextAmount },
     { key: 'contentPosition', label: 'Content position', control: editorContentPosition },
     { key: 'fontScale', label: 'Font scale', control: editorFontScale },
@@ -1352,6 +1354,10 @@ export function syncBookletEditorControls() {
   if (controls.editorPhotoLayoutVariantOutput && controls.editorPhotoLayoutVariant) {
     controls.editorPhotoLayoutVariantOutput.value = controls.editorPhotoLayoutVariant.value;
   }
+  if (controls.editorLayoutSystem) {
+    controls.editorLayoutSystem.value = get('layoutSystem') || 'auto';
+    syncEditorSliderSelect(controls.editorLayoutSystem);
+  }
   if (controls.editorContentPosition) {
     controls.editorContentPosition.value = get('contentPosition');
     syncEditorSliderSelect(controls.editorContentPosition);
@@ -1671,6 +1677,9 @@ export function initializeBookletEditor(item) {
   if (controls.editorPhotoLayout) {
     bindStyleSlider(controls.editorPhotoLayout);
   }
+  if (controls.editorLayoutSystem) {
+    bindStyleSlider(controls.editorLayoutSystem);
+  }
   if (controls.editorContentPosition) {
     bindStyleSlider(controls.editorContentPosition);
   }
@@ -1794,6 +1803,7 @@ export function setupEditorEventListeners() {
     [controls.editorImageCount, 'imageCount', Number],
     [controls.editorPhotoLayout, 'photoLayout', value => value],
     [controls.editorPhotoLayoutVariant, 'photoLayoutVariant', Number],
+    [controls.editorLayoutSystem, 'layoutSystem', value => value],
     [controls.editorTextAmount, 'textAmount', Number],
     [controls.editorContentPosition, 'contentPosition', value => value],
     [controls.editorFontScale, 'fontScale', Number],

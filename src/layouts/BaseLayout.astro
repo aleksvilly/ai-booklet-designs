@@ -205,6 +205,27 @@ const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
             <span>Layout intensity <output id="editor-photo-layout-variant-output">0</output>%</span>
             <input id="editor-photo-layout-variant" type="range" min="-100" max="100" value="0" step="5">
           </label>
+          <label class="editor-range editor-layout-system-control" data-editor-parameter="layoutSystem">
+            <span>Page layout system</span>
+            <select id="editor-layout-system">
+              <option value="auto">Auto (original)</option>
+              <option value="single-hero-image">Single hero image</option>
+              <option value="split-layout">Split layout</option>
+              <option value="strict-grid">Strict grid</option>
+              <option value="image-heavy-magazine">Image-heavy magazine</option>
+              <option value="text-heavy-editorial">Text-heavy editorial</option>
+              <option value="white-space-minimal">White space minimal</option>
+              <option value="full-bleed">Full bleed</option>
+              <option value="asymmetric-modern">Asymmetric modern</option>
+              <option value="layered-overlap">Layered overlap</option>
+              <option value="framed-gallery">Framed gallery</option>
+              <option value="chaotic-collage">Chaotic collage</option>
+              <option value="poster-layout">Poster layout</option>
+              <option value="modular-cards">Modular cards</option>
+              <option value="timeline-flow">Timeline flow</option>
+              <option value="vertical-rhythm">Vertical rhythm</option>
+            </select>
+          </label>
           <label class="editor-range" data-editor-parameter="textAmount">
             <span>Text amount <output id="editor-text-output">2</output> / 5</span>
             <input id="editor-text-amount" type="range" min="1" max="5" value="2">
