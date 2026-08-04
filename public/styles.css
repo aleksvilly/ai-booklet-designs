@@ -2700,6 +2700,50 @@ footer a { text-underline-offset: 3px; }
 .book-page.editor-effects-0::before,
 .book-page.editor-effects-0::after,
 .book-page.editor-effects-0.effect-scribble-lines::after { display: none !important; }
+
+/* === Live Page Layout System CSS Overrides === */
+.book-page.editor-ls-single-hero-image .page-gallery { position: absolute; inset: 0; z-index: 1; opacity: 0.88; }
+.book-page.editor-ls-single-hero-image .book-page-copy { position: relative; z-index: 2; margin-top: auto; background: rgba(15, 23, 42, 0.85); color: #fff; padding: 18px; border-radius: 12px; backdrop-filter: blur(8px); }
+
+.book-page.editor-ls-split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: center; padding: 16px; }
+.book-page.editor-ls-split-layout .page-gallery { height: 100%; }
+.book-page.editor-ls-split-layout .book-page-copy { position: relative; inset: auto; }
+
+.book-page.editor-ls-strict-grid { display: grid; grid-template-rows: auto 1fr; gap: 12px; padding: 16px; border: 2px solid currentColor; }
+.book-page.editor-ls-strict-grid .book-page-copy { position: relative; inset: auto; padding: 12px; border: 1px solid currentColor; }
+
+.book-page.editor-ls-white-space-minimal { padding: 44px 32px; text-align: center; justify-content: center; }
+.book-page.editor-ls-white-space-minimal .book-page-copy { position: relative; inset: auto; margin: 0 auto; max-width: 85%; }
+.book-page.editor-ls-white-space-minimal .page-gallery { max-height: 40%; margin: 0 auto; border-radius: 8px; }
+
+.book-page.editor-ls-layered-overlap .page-gallery { position: absolute; inset: 0; z-index: 1; }
+.book-page.editor-ls-layered-overlap .book-page-copy { position: absolute; bottom: 20px; left: 20px; right: 20px; z-index: 3; background: #0f172a; color: #f8fafc; padding: 20px; border-radius: 16px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); }
+.book-page.editor-ls-layered-overlap .book-page-copy h4 { color: #ffffff !important; }
+
+.book-page.editor-ls-modular-cards .book-page-copy { position: relative; inset: auto; background: rgba(15, 23, 42, 0.92); color: #fff; padding: 20px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); }
+.book-page.editor-ls-modular-cards .book-page-copy h4 { color: #fff !important; }
+.book-page.editor-ls-modular-cards .book-page-type { background: #10b981; color: #000; padding: 4px 10px; border-radius: 20px; font-weight: 700; display: inline-block; width: fit-content; margin-bottom: 8px; }
+
+.book-page.editor-ls-poster-layout { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 30px; background: #090d16; color: #f1f5f9; }
+.book-page.editor-ls-poster-layout h4 { font-size: 42px !important; line-height: 0.9; text-transform: uppercase; letter-spacing: -0.03em; }
+.book-page.editor-ls-poster-layout .book-page-copy { position: relative; inset: auto; align-items: center; text-align: center; }
+
+.book-page.editor-ls-chaotic-collage { transform: rotate(-1.5deg); }
+.book-page.editor-ls-chaotic-collage .book-page-copy { transform: rotate(3deg); background: #fef08a; color: #1e293b; padding: 18px; border: 2px solid #000; box-shadow: 6px 6px 0 #000; }
+.book-page.editor-ls-chaotic-collage .book-page-copy h4 { color: #000 !important; }
+
+.book-page.editor-ls-full-bleed .page-gallery { position: absolute; inset: 0; width: 100%; height: 100%; }
+.book-page.editor-ls-full-bleed .book-page-copy { position: absolute; bottom: 0; left: 0; right: 0; padding: 24px; background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); color: #fff; }
+
+.book-page.editor-ls-asymmetric-modern .book-page-copy { position: absolute; top: 15%; right: 5%; width: 70%; background: #ffffff; color: #0f172a; padding: 22px; border-radius: 4px; box-shadow: -10px 10px 30px rgba(0,0,0,0.15); border-left: 5px solid #0172f0; z-index: 4; }
+.book-page.editor-ls-asymmetric-modern .book-page-copy h4 { color: #0f172a !important; }
+
+.book-page.editor-ls-text-heavy-editorial { padding: 28px; background: #faf9f6; color: #1c1917; }
+.book-page.editor-ls-text-heavy-editorial .page-gallery { height: 25%; margin-bottom: 14px; }
+.book-page.editor-ls-text-heavy-editorial .book-page-copy { position: relative; inset: auto; max-width: 100%; }
+
+.book-page.editor-ls-framed-gallery .page-gallery { padding: 14px; background: #fff; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 8px; }
+
 .book-page.editor-effects-0 .page-image,
 .book-page.editor-effects-0 .book-page-copy {
   transform: none !important;

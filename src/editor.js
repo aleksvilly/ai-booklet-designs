@@ -322,6 +322,7 @@ export function availableEditorParameters() {
     { key: 'imageCount', label: 'Images', control: editorImageCount },
     { key: 'photoLayout', label: 'Photo layout', control: editorPhotoLayout },
     { key: 'photoLayoutVariant', label: 'Layout intensity', control: editorPhotoLayoutVariant },
+    { key: 'layoutSystem', label: 'Page layout system', control: editorLayoutSystem },
     { key: 'textAmount', label: 'Text amount', control: editorTextAmount },
     { key: 'contentPosition', label: 'Content position', control: editorContentPosition },
     { key: 'fontScale', label: 'Font scale', control: editorFontScale },
@@ -597,6 +598,15 @@ export function applyEditorPage(pageNode, page, pageIndex) {
   replaceEditorLevelClass(pageNode, 'editor-font-', values.fontScale, hasEditorOverride('fontScale', pageIndex));
   replaceEditorLevelClass(pageNode, 'editor-spacing-', values.spacing, hasEditorOverride('spacing', pageIndex));
   replaceEditorLevelClass(pageNode, 'editor-effects-', values.effectLevel, hasEditorOverride('effectLevel', pageIndex));
+
+  // Layout system override
+  const layoutSystemValue = hasEditorOverride('layoutSystem', pageIndex) ? String(values.layoutSystem || 'auto') : 'auto';
+  [...pageNode.classList]
+    .filter(c => c.startsWith('editor-ls-'))
+    .forEach(c => pageNode.classList.remove(c));
+  if (layoutSystemValue && layoutSystemValue !== 'auto') {
+    pageNode.classList.add(`editor-ls-${safeClass(layoutSystemValue)}`);
+  }
 
   // Photo layout family and variant (-100…+100)
   const photoLayoutValue = hasEditorOverride('photoLayout', pageIndex) ? String(values.photoLayout || 'auto') : 'auto';
@@ -1354,6 +1364,10 @@ export function syncBookletEditorControls() {
   if (controls.editorPhotoLayoutVariantOutput && controls.editorPhotoLayoutVariant) {
     controls.editorPhotoLayoutVariantOutput.value = controls.editorPhotoLayoutVariant.value;
   }
+  if (controls.editorLayoutSystem) {
+    controls.editorLayoutSystem.value = get('layoutSystem') || 'auto';
+    syncEditorSliderSelect(controls.editorLayoutSystem);
+  }
   if (controls.editorContentPosition) {
     controls.editorContentPosition.value = get('contentPosition');
     syncEditorSliderSelect(controls.editorContentPosition);
@@ -1799,6 +1813,7 @@ export function setupEditorEventListeners() {
     [controls.editorImageCount, 'imageCount', Number],
     [controls.editorPhotoLayout, 'photoLayout', value => value],
     [controls.editorPhotoLayoutVariant, 'photoLayoutVariant', Number],
+    [controls.editorLayoutSystem, 'layoutSystem', value => value],
     [controls.editorTextAmount, 'textAmount', Number],
     [controls.editorContentPosition, 'contentPosition', value => value],
     [controls.editorFontScale, 'fontScale', Number],
