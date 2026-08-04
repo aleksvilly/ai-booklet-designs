@@ -619,6 +619,80 @@
         "free": ["Space Grotesk", "IBM Plex Mono", "Inter"],
         "licensed": []
       }
+    },
+    {
+      "id": "soft-3d-surreal",
+      "groupId": "digital-products",
+      "labels": {
+        "en": "Soft 3D surrealism & dreamscape",
+        "ru": "Soft 3D сюрреализм и абстракция",
+        "es": "Surrealismo 3D suave y fantasía",
+        "de": "Weicher 3D-Surrealismus",
+        "fr": "Surréalisme 3D doux et rêveur",
+        "zh": "柔和 3D 超现实主义"
+      },
+      "topicAffinity": ["technology/artificial-intelligence", "arts-culture/design", "digital-products"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original", "url": "https://aleksvilly.github.io/ai-booklet-designs/" },
+      "generator": {
+        "weight": 6,
+        "eras": ["2020–2024", "2025", "2026"],
+        "layouts": ["cinematic", "overlap", "full"],
+        "typography": ["clean-sans", "huge-serif"],
+        "colors": ["pastel", "dreamy", "full-color"],
+        "effects": ["micro-3d-layering", "floating-object", "blurred-depth"]
+      },
+      "contract": {
+        "archetypes": ["digital-brochure", "creative-album"],
+        "palette": ["#f7f5ff", "#e0b0ff", "#7b52b9", "#1d192b"],
+        "typography": ["clean-sans"],
+        "fonts": ["DM Sans", "Inter", "Fredoka"],
+        "layouts": ["cinematic", "overlap", "full", "minimal"],
+        "layoutSystems": ["split-layout", "single-hero-image", "layered-depth"],
+        "imageTreatments": ["clean-photo", "blurred-edges"],
+        "shapeLanguages": ["rounded-soft"],
+        "backgrounds": ["pastel-gradient", "pure"],
+        "rhythms": ["dynamic", "fluid"],
+        "effects": ["floating-caption", "micro-3d-layering", "blurred-depth"],
+        "covers": ["full-photo", "magazine", "split-object"]
+      }
+    },
+    {
+      "id": "scrapbook-memory",
+      "groupId": "occasions",
+      "labels": {
+        "en": "Scrapbook memory collage",
+        "ru": "Скрапбукинг и коллаж воспоминаний",
+        "es": "Collage de álbum de recuerdos",
+        "de": "Scrapbook-Erinnerungscollage",
+        "fr": "Collage d'album de souvenirs",
+        "zh": "手作剪贴簿记忆拼贴"
+      },
+      "topicAffinity": ["family-history", "celebrations", "arts-culture/photography", "personal-tribute"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "inspired", "url": "https://aleksvilly.github.io/ai-booklet-designs/" },
+      "generator": {
+        "weight": 7,
+        "eras": ["1970s", "1990s", "2026"],
+        "layouts": ["archive", "overlap", "asymmetric"],
+        "typography": ["handwritten-accent", "typewriter", "mixed-serif-sans"],
+        "colors": ["warm-analog", "muted", "full-color"],
+        "effects": ["tape-strips", "torn-edge", "tilted-photo"]
+      },
+      "contract": {
+        "archetypes": ["photo-journal", "memory-album"],
+        "palette": ["#f4efe6", "#c88d61", "#5c4033", "#221d19"],
+        "typography": ["mixed-serif-sans"],
+        "fonts": ["Patrick Hand", "Cormorant Garamond", "Lora", "Space Mono"],
+        "layouts": ["overlap", "asymmetric", "minimal"],
+        "layoutSystems": ["collage-layout", "tape-strips", "asymmetric-grid"],
+        "imageTreatments": ["clean-photo", "vintage-polaroid", "tilted-frame"],
+        "shapeLanguages": ["organic-handcrafted"],
+        "backgrounds": ["craft-paper", "warm-tint"],
+        "rhythms": ["expressive", "dynamic"],
+        "effects": ["tape-strips", "torn-edge", "tilted-photo", "handwritten-notes"],
+        "covers": ["photo-collage", "scrapbook", "polaroid-cover"]
+      }
     }
   ]
 }

@@ -1,0 +1,67 @@
+/* Profile: Scrapbook Memory Collage */
+.style-scrapbook-memory,
+.style-scrapbook {
+  --c1: #f4efe6;
+  --c2: #c88d61;
+  --c3: #5c4033;
+  --c4: #221d19;
+  --font-display: "Patrick Hand", "Cormorant Garamond", cursive, serif;
+  --font-body: "Lora", "DM Sans", serif;
+}
+
+.style-scrapbook-memory .book-page,
+.style-scrapbook .book-page {
+  background: #f4efe6;
+  background-image: radial-gradient(#e0d6c5 1px, transparent 0);
+  background-size: 24px 24px;
+}
+
+.style-scrapbook-memory .book-page h4,
+.style-scrapbook .book-page h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.25em;
+  color: var(--c4);
+}
+
+.style-scrapbook-memory .cover,
+.style-scrapbook .cover {
+  background: #ede6d8;
+  border: 2px dashed #c88d61;
+  box-shadow: 0 10px 30px rgba(92, 64, 51, 0.12);
+}
+
+.style-scrapbook-memory .cover-title,
+.style-scrapbook .cover-title {
+  font-family: "Patrick Hand", cursive;
+  color: var(--c3);
+  transform: rotate(-1.5deg);
+}
+
+.style-scrapbook-memory .gallery-image,
+.style-scrapbook .gallery-image {
+  position: relative;
+  padding: 8px 8px 24px 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transform: rotate(var(--scrapbook-angle, -1.5deg));
+}
+
+.style-scrapbook-memory .gallery-image:nth-child(even),
+.style-scrapbook .gallery-image:nth-child(even) {
+  --scrapbook-angle: 2deg;
+}
+
+.style-scrapbook-memory .gallery-image::before,
+.style-scrapbook .gallery-image::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%) rotate(-3deg);
+  width: 50px;
+  height: 16px;
+  background: rgba(230, 220, 195, 0.75);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  z-index: 5;
+}

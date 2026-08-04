@@ -1,0 +1,53 @@
+/* Profile: Soft 3D Surrealism & Dreamscape */
+.style-soft-3d-surreal,
+.style-soft-3d {
+  --c1: #f7f5ff;
+  --c2: #e0b0ff;
+  --c3: #7b52b9;
+  --c4: #1d192b;
+  --font-display: "Fredoka", "DM Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
+}
+
+.style-soft-3d-surreal .book-page,
+.style-soft-3d .book-page {
+  border-radius: 20px;
+  background: radial-gradient(circle at 20% 20%, #ffffff, #f1eaff);
+  box-shadow: 0 16px 36px rgba(123, 82, 185, 0.08), inset 0 2px 4px rgba(255, 255, 255, 0.9);
+}
+
+.style-soft-3d-surreal .book-page h4,
+.style-soft-3d .book-page h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--c3);
+  text-shadow: 0 4px 12px rgba(123, 82, 185, 0.15);
+}
+
+.style-soft-3d-surreal .cover,
+.style-soft-3d .cover {
+  border-radius: 24px;
+  background: linear-gradient(135deg, #f7f5ff 0%, #e0b0ff 50%, #d09cf5 100%);
+  box-shadow: 0 20px 50px rgba(123, 82, 185, 0.18);
+}
+
+.style-soft-3d-surreal .cover-title,
+.style-soft-3d .cover-title {
+  font-family: "Fredoka", sans-serif;
+  font-weight: 700;
+  color: var(--c4);
+  text-shadow: 0 6px 18px rgba(123, 82, 185, 0.25);
+}
+
+.style-soft-3d-surreal .gallery-image img,
+.style-soft-3d .gallery-image img {
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(29, 25, 43, 0.12);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.style-soft-3d-surreal .gallery-image:hover img,
+.style-soft-3d .gallery-image:hover img {
+  transform: translateY(-6px) scale(1.02);
+}
