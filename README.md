@@ -4,82 +4,82 @@
 [![GitHub Actions](https://img.shields.io/badge/automation-GitHub%20Actions-2088FF?style=for-the-badge&logo=github-actions&logoColor=white)](https://github.com/aleksvilly/ai-booklet-designs/actions)
 [![Astro Build](https://img.shields.io/badge/framework-Astro%20SSG-ff5d01?style=for-the-badge&logo=astro&logoColor=white)](https://astro.build/)
 
-Публичный веб-сервис и открытый эксперимент по автоматической генерации печатных editorial-буклетов для любых персон и событий: подарков на день рождения, меню для кафе, свадебных программ, фестивалей и художественных монографий.
+An automated editorial booklet design generator, live browser editor, and public request pipeline. Create print-ready editorial booklets for any occasion — birthday gifts, café menus, wedding programs, gallery exhibitions, and monographs.
 
-**Сайт проекта**: [aleksvilly.github.io/ai-booklet-designs](https://aleksvilly.github.io/ai-booklet-designs/)
-
----
-
-## 🌟 Ключевые возможности
-
-- **Живая коллекция буклетов**: Просмотр уникальных автоматически сгенерированных editorial-буклетов с поддержкой фильтрации по категориям (`Wedding`, `Menu`, `Gifts`, `Events`) и мгновенным поиском.
-- **Публичная очередь генерации**: Форма заказа буклетов на сайте. Заявка отправляется через ntfy, встаёт в публичную очередь GitHub Issues и автоматически исполняется GitHub Actions.
-- **Интерактивный онлайн-редактор (`src/editor.js`)**: Прямо в модальном окне буклета можно менять стили, раскладки фото (до 20 снимков на страницу), типографику (шрифты, трекинг, интерлиньяж, начертания) и видимость элементов с немедленным сохранением в `localStorage`.
-- **Экспорт в PDF**: Генерация вектроного PDF-файла непосредственно из браузера с полным сохранением используемых шрифтов и геометрии макета.
-- **Мультиязычная архитектура**: Поддержка английского, русского, испанского, немецкого, французского и китайского языков на статических роутах Astro.
-- **Расширяемая система каталогов (`data/catalog/`)**:
-  - `topics.json` — Иерархический энциклопедический дерево-каталог тем.
-  - `styles.json` — 21 семейство стилей с правилами и цветовыми контрактами.
-  - `effects.json` — 20 дизайн-эффектов (micro-3D, polaroid, paper-cut, tape-strips, xerox и др.).
-  - `fonts.json` — 89 типографических шрифтовых гарнитур.
+**Production Site**: [aleksvilly.github.io/ai-booklet-designs](https://aleksvilly.github.io/ai-booklet-designs/)
 
 ---
 
-## 🏗 Архитектура проекта
+## 🌟 Key Features
+
+- **Live Editorial Collection**: Browse generated booklets categorized by `Wedding`, `Menu`, `Gifts`, and `Events`, with instant real-time search filtering.
+- **Public Request Queue**: Submit custom booklet requests directly via the web form. Requests are delivered through `ntfy`, tracked in GitHub Issues, and generated automatically via GitHub Actions.
+- **In-Browser Live Editor (`src/editor.js`)**: Fine-tune editorial profiles, photo layouts (supporting up to 20 images), typography (title/subtitle/body fonts, letter spacing, line height), and element visibility with instant local persistence.
+- **Vector PDF Export**: Export high-resolution PDF files straight from the browser while retaining all visual typography, effects, and page positioning.
+- **Multilingual Architecture**: Static multi-language pages built with Astro SSG for English, Russian, Spanish, German, French, and Chinese (`/`, `/ru/`, `/es/`, `/de/`, `/fr/`, `/zh/`).
+- **Extensible Catalog System (`data/catalog/`)**:
+  - `topics.json` — Recursive encyclopedic topic tree.
+  - `styles.json` — 21 extensible style families with design contracts & color palettes.
+  - `effects.json` — 20 visual effects (micro-3D, polaroid, paper-cut, tape-strips, xerox, etc.).
+  - `fonts.json` — 89 typography font families.
+
+---
+
+## 🏗 High-Level Architecture
 
 ```text
-Браузер (Astro SSG + Vanilla JS/CSS)
-  ├─ Статическая коллекция (data/booklets.json)
-  ├─ Форма обратной связи → Formspree
-  └─ Форма публичной генерации → ntfy.sh
+Browser (Astro SSG + Vanilla JS/CSS)
+  ├─ Static Collection (data/booklets.json)
+  ├─ Private Contact Form → Formspree
+  └─ Public Generation Request → ntfy.sh
                                   │
                                   ▼
                  poll-public-queue.yml (Cron / Dispatch)
                                   │
                                   ▼
-                    Создание GitHub Issue с меткой очереди
+                    GitHub Issue with Queue Status Label
                                   │
                                   ▼
-                         publish.yml (Генератор Node.js)
+                         publish.yml (Node.js Generator)
                                   │
-                 Добавление в data/booklets.json & Деплой Pages
+                 Prepend to data/booklets.json & Pages Deploy
                                   │
                                   ▼
-               Закрытие Issue с отправкой ссылки result_url
+               Close Issue & Comment direct result_url
 ```
 
 ---
 
-## 🛠 Команды для локальной разработки
+## 🛠 Local Development Commands
 
-### 1. Запуск локального сервера
+### 1. Start Local Server
 ```bash
 npm run serve
 ```
-Открывает локальный сервер для просмотра сайта на `http://localhost:3000`.
+Launches a local static server on `http://localhost:3000`.
 
-### 2. Сборка Astro
+### 2. Build Astro Static Site
 ```bash
 npm run build
 ```
-Собирает мультиязычный статический сайт в папку `dist/`.
+Compiles localized static HTML pages into `dist/`.
 
-### 3. Генерация буклетов
+### 3. Run Booklet Generator
 ```bash
-# Локальный тестовый запуск без API-ключей
+# Offline dry-run generation test
 BOOKLET_COUNT=1 FORCE_GENERATE=true USE_AI=false SKIP_ENRICHMENT=true npm run generate
 ```
 
-### 4. Проверка валидности каталогов
+### 4. Validate Catalog Schemas
 ```bash
 npm run test:catalog
 ```
-Проверяет схемы и связи тем, стилей и эффектов в `data/catalog/`.
+Validates JSON topic trees, style contracts, effects, and font references.
 
 ---
 
-## 🔐 Безопасность и правила сохранения данных
+## 🔐 Data Safety & Security Rules
 
-1. `data/booklets.json` содержит ценную историю сгенерированных буклетов и **никогда не очищается/не перезаписывается целиком**.
-2. Все публичные запросы проходят через валидацию и лимитирование (не более 3 принятых запросов в час).
-3. API-ключи OpenAI, Gemini, Unsplash, Pexels и Pixabay хранятся исключительно в GitHub Secrets и никогда не попадают в клиентский код.
+1. `data/booklets.json` stores user booklet history and is **never deleted or truncated as a side effect**.
+2. Public requests are rate-limited to 3 accepted requests per rolling hour to protect AI usage.
+3. Private API keys (OpenAI, Gemini, Unsplash, Pexels, Pixabay) are stored securely in GitHub Secrets and never exposed in client scripts.
