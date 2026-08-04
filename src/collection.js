@@ -36,9 +36,26 @@ export function isPublished(item) {
 
 export function visibleBooklets() {
   const categoryFilter = document.body?.dataset?.categoryFilter;
+  const searchInput = document.querySelector('#collection-search');
+  const searchQuery = String(searchInput?.value || '').trim().toLowerCase();
+
   return allBooklets
     .filter(isPublished)
     .filter(item => {
+      if (searchQuery) {
+        const searchable = [
+          item.title,
+          item.topic,
+          item.style,
+          item.category,
+          item.direction,
+          item.audience,
+          item.publishDate,
+          item.description
+        ].join(' ').toLowerCase();
+        if (!searchable.includes(searchQuery)) return false;
+      }
+
       if (categoryFilter) {
         const itemCat = String(item.category || '').toLowerCase();
         const itemTopic = String(item.topic || '').toLowerCase();
@@ -272,6 +289,17 @@ export function initCollection(booklets) {
   const totalPages = Math.ceil(visibleBooklets().length / ITEMS_PER_PAGE);
   currentPage = pageFromUrl(totalPages);
   updatePageUrl(currentPage, true);
+
+  const searchInput = document.querySelector('#collection-search');
+  if (searchInput && !searchInput.dataset.searchBound) {
+    searchInput.dataset.searchBound = 'true';
+    searchInput.addEventListener('input', () => {
+      currentPage = 1;
+      renderCards();
+      renderPagination();
+    });
+  }
+
   renderFilters();
   renderCards();
   renderPagination();

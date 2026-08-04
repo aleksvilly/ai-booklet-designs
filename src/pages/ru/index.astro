@@ -123,21 +123,24 @@ import Footer from '../../components/Footer.astro';
     </form>
   </section>
 
-  <section class="collection-section" id="collection">
-    <div class="collection-header">
+  <section class="collection" id="collection">
+    <div class="section-heading">
       <div>
+        <p class="eyebrow" data-i18n="collection_eyebrow">Коллекция буклетов</p>
         <h2 data-i18n="collection_title">Коллекция буклетов</h2>
         <p data-i18n="collection_subtitle">Просматривайте готовые editorial-буклеты. Открывайте любой дизайн для настройки типографики, фотосеток или экспорта в PDF.</p>
       </div>
       <div class="collection-controls">
+        <div class="filters" id="filters" aria-label="Фильтры буклетов"></div>
         <label class="search-box">
           <span class="sr-only">Поиск буклетов</span>
-          <input id="collection-search" type="search" placeholder="Поиск по теме, стилю, дате…">
+          <input id="collection-search" type="search" placeholder="Поиск по теме, стилю, дате…" autocomplete="off">
         </label>
       </div>
     </div>
-    <div class="booklet-grid" id="booklet-grid"></div>
-    <nav class="pagination" id="pagination" aria-label="Booklet navigation"></nav>
+    <div class="booklet-grid" id="booklet-grid" aria-live="polite"></div>
+    <p class="empty-state" id="empty-state" hidden>Пока нет концептов, соответствующих этому фильтру.</p>
+    <nav class="pagination" id="pagination" aria-label="Навигация буклетов"></nav>
   </section>
 
   <section class="contact-section" id="contact">

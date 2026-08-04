@@ -123,20 +123,23 @@ import Footer from '../components/Footer.astro';
     </form>
   </section>
 
-  <section class="collection-section" id="collection">
-    <div class="collection-header">
+  <section class="collection" id="collection">
+    <div class="section-heading">
       <div>
+        <p class="eyebrow" data-i18n="collection_eyebrow">Current collection</p>
         <h2 data-i18n="collection_title">Editorial booklet collection</h2>
         <p data-i18n="collection_subtitle">Browse print-ready generated editorial booklets. Open any design to inspect spreads, edit typography, or export PDF.</p>
       </div>
       <div class="collection-controls">
+        <div class="filters" id="filters" aria-label="Filter booklets"></div>
         <label class="search-box">
           <span class="sr-only">Search booklets</span>
-          <input id="collection-search" type="search" placeholder="Search by topic, style, date…">
+          <input id="collection-search" type="search" placeholder="Search by topic, style, date…" autocomplete="off">
         </label>
       </div>
     </div>
-    <div class="booklet-grid" id="booklet-grid"></div>
+    <div class="booklet-grid" id="booklet-grid" aria-live="polite"></div>
+    <p class="empty-state" id="empty-state" hidden>No concepts match this filter yet.</p>
     <nav class="pagination" id="pagination" aria-label="Booklet navigation"></nav>
   </section>
 
