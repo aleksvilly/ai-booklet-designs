@@ -106,6 +106,18 @@ const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
   </main>
 
   <dialog class="booklet-dialog" id="booklet-dialog" aria-label="Booklet detail view">
+    <button class="dialog-close booklet-dialog-close" id="dialog-close" type="button" aria-label="Close">×</button>
+    <button class="dialog-edit" id="dialog-edit" type="button" hidden>Edit booklet</button>
+    <div class="link-popover" id="link-popover" hidden>
+      <a class="link-popover-action" id="link-popover-action" href="#" target="_blank" rel="noopener">
+        <span>Open link</span>
+        <svg class="link-popover-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+          <polyline points="15 3 21 3 21 9"></polyline>
+          <line x1="10" y1="14" x2="21" y2="3"></line>
+        </svg>
+      </a>
+    </div>
     <div class="booklet-dialog-shell">
       <div class="booklet-stage-toolbar" id="booklet-stage-toolbar">
         <button class="booklet-stage-btn" id="editor-toggle-button" type="button">Edit booklet</button>
@@ -158,7 +170,7 @@ const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
           </div>
         </div>
       </aside>
-      <div class="booklet-dialog-content" id="booklet-dialog-content"></div>
+      <div class="booklet-dialog-content" id="dialog-content"></div>
       <button class="booklet-dialog-close" id="booklet-dialog-close" type="button" aria-label="Close detail view">×</button>
     </div>
   </dialog>

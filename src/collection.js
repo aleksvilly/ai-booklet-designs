@@ -258,8 +258,11 @@ export function renderCards() {
     card.querySelector('.card-title').textContent = item.title;
     card.querySelector('.card-direction').textContent = item.direction;
 
-    createCardCoverMedia(cover, item, firstPage, index);
     cover.addEventListener('click', () => openBooklet(item));
+    card.addEventListener('click', (event) => {
+      if (event.target.closest('a, button')) return;
+      openBooklet(item);
+    });
     grid.append(card);
   });
 }
