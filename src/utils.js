@@ -196,8 +196,19 @@ export async function copyText(text) {
 
 export function resolveRootUrl(relativePath = '') {
   const cleanPath = relativePath.replace(/^\.\//, '').replace(/^\//, '');
+  if (window.BASE_URL) {
+    const cleanBase = window.BASE_URL.endsWith('/') ? window.BASE_URL.slice(0, -1) : window.BASE_URL;
+    return `${cleanBase}/${cleanPath}`;
+  }
+
+  const hostname = window.location.hostname || '';
+  const isLocalHost = ['localhost', '127.0.0.1', '[::]', '::1'].includes(hostname) || hostname.endsWith('.local');
+  if (isLocalHost && !window.location.pathname.startsWith('/ai-booklet-designs')) {
+    return cleanPath;
+  }
+
   const canonical = document.querySelector('link[rel="canonical"]')?.getAttribute('href');
-  if (canonical) {
+  if (canonical && !isLocalHost) {
     try {
       const url = new URL(canonical);
       const basePath = url.pathname.endsWith('/') ? url.pathname : url.pathname + '/';
@@ -206,7 +217,8 @@ export function resolveRootUrl(relativePath = '') {
       // Fallback below
     }
   }
-  const base = window.BASE_URL || '/ai-booklet-designs';
+
+  const base = window.location.pathname.startsWith('/ai-booklet-designs') ? '/ai-booklet-designs' : '';
   const cleanBase = base.endsWith('/') ? base.slice(0, -1) : base;
-  return `${cleanBase}/${cleanPath}`;
+  return cleanBase ? `${cleanBase}/${cleanPath}` : cleanPath;
 }

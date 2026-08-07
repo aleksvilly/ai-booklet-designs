@@ -3163,24 +3163,46 @@ footer a { text-underline-offset: 3px; }
     transform var(--editor-compact-motion-duration) var(--editor-compact-close-easing),
     border-color var(--editor-compact-motion-duration) ease;
 }
+.editor-parameter-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: currentColor;
+}
+.editor-parameter-icon svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
 .booklet-editor.editor-compact .editor-parameter-summary {
   position: relative;
-  display: grid;
-  place-content: center;
-  gap: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   min-width: 0;
-  padding: 7px 12px;
+  padding: 6px 12px;
   font: inherit;
-  text-align: center;
+  text-align: left;
+}
+.booklet-editor.editor-compact .editor-parameter-summary-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+  overflow: hidden;
 }
 .booklet-editor.editor-compact .editor-mini-navigation strong,
-.booklet-editor.editor-compact .editor-mini-navigation span {
+.booklet-editor.editor-compact .editor-mini-navigation span:not(.editor-parameter-icon) {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .booklet-editor.editor-compact .editor-mini-navigation strong { font-size: 13px; }
-.booklet-editor.editor-compact .editor-mini-navigation span { color: var(--muted); font-size: 10px; }
+.booklet-editor.editor-compact .editor-mini-navigation span:not(.editor-parameter-icon) { color: var(--muted); font-size: 10px; }
 .editor-parameter-menu { display: none; }
 
 /* ─── Compact page stage — core layout (all screen sizes) ─────────────────── */
@@ -3462,7 +3484,7 @@ footer a { text-underline-offset: 3px; }
   }
   .booklet-editor.editor-compact .editor-parameter-menu button {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto 18px;
+    grid-template-columns: 20px minmax(0, 1fr) auto 18px;
     align-items: center;
     gap: 10px;
     min-height: 42px;
@@ -3489,7 +3511,7 @@ footer a { text-underline-offset: 3px; }
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .booklet-editor.editor-compact .editor-parameter-menu button span {
+  .booklet-editor.editor-compact .editor-parameter-menu button span:not(.editor-parameter-icon) {
     overflow: hidden;
     max-width: 130px;
     color: var(--muted);
@@ -3497,7 +3519,7 @@ footer a { text-underline-offset: 3px; }
     text-overflow: ellipsis;
     white-space: nowrap;
   }
-  .booklet-editor.editor-compact .editor-parameter-menu button.is-active span {
+  .booklet-editor.editor-compact .editor-parameter-menu button.is-active span:not(.editor-parameter-icon) {
     color: color-mix(in srgb, var(--paper) 68%, transparent);
   }
   .booklet-editor.editor-compact .editor-parameter-menu button i {

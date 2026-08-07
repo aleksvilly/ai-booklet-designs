@@ -37,6 +37,23 @@ const editorLoremSentences = [
   'Cras mattis consectetur purus sit amet fermentum.'
 ];
 
+const PARAM_ICONS = {
+  profile: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M9 6h6"/><path d="M9 10h6"/></svg>`,
+  visualMode: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.92 0 1.7-.6 1.9-1.5.24-1.1.9-2 2.1-2h2c2.2 0 4-1.8 4-4 0-4.5-4.5-12.5-10-12.5z"/></svg>`,
+  layoutComplexity: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/><path d="M15 21V9"/></svg>`,
+  imageCount: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg>`,
+  photoLayout: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18"/><path d="M12 3v18"/></svg>`,
+  photoLayoutVariant: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21v-7"/><path d="M4 10V3"/><path d="M12 21v-9"/><path d="M12 8V3"/><path d="M20 21v-5"/><path d="M20 12V3"/><path d="M1 14h6"/><path d="M9 8h6"/><path d="M17 16h6"/></svg>`,
+  layoutSystem: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3h16a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M4 9h16"/><path d="M10 9v12"/></svg>`,
+  textAmount: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17 6H3"/><path d="M21 12H3"/><path d="M15 18H3"/></svg>`,
+  contentPosition: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="m8 7 4-4 4 4"/><path d="m8 17 4 4 4-4"/><rect x="6" y="9" width="12" height="6" rx="1"/></svg>`,
+  fontScale: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V6.5a2.5 2.5 0 0 1 5 0V19"/><path d="M4 14h5"/><path d="M14 19v-7.5a2 2 0 0 1 4 0V19"/><path d="M14 15h4"/></svg>`,
+  advancedTypography: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3"/><path d="M9 20h6"/><path d="M12 4v16"/></svg>`,
+  spacing: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21 6H3"/><path d="M21 18H3"/><path d="M12 9v6"/><path d="m9 11 3-3 3 3"/><path d="m9 13 3 3 3-3"/></svg>`,
+  effectLevel: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3L12 3z"/><path d="M5 3v4"/><path d="M3 5h4"/><path d="M19 17v4"/><path d="M17 19h4"/></svg>`,
+  visibleContent: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>`
+};
+
 function getEditorControls() {
   return {
     dialog: document.querySelector('#booklet-dialog'),
@@ -56,6 +73,7 @@ function getEditorControls() {
     editorParameterNext: document.querySelector('#editor-parameter-next'),
     editorParameterMenu: document.querySelector('#editor-parameter-menu'),
     editorParameterMenuToggle: document.querySelector('#editor-parameter-menu-toggle'),
+    editorParameterIcon: document.querySelector('#editor-parameter-icon'),
     editorParameterLabel: document.querySelector('#editor-parameter-label'),
     editorParameterValue: document.querySelector('#editor-parameter-value'),
     editorScope: document.querySelector('#editor-scope'),
@@ -1261,6 +1279,7 @@ function renderEditorParameterMenu() {
   const fragment = document.createDocumentFragment();
   available.forEach((parameter, index) => {
     const button = document.createElement('button');
+    const icon = document.createElement('span');
     const label = document.createElement('strong');
     const value = document.createElement('span');
     const arrow = document.createElement('i');
@@ -1268,11 +1287,14 @@ function renderEditorParameterMenu() {
     button.type = 'button';
     button.dataset.editorParameterKey = parameter.key;
     button.classList.toggle('is-active', index === editorParameterIndex);
+    icon.className = 'editor-parameter-icon';
+    icon.innerHTML = PARAM_ICONS[parameter.key] || '';
+    icon.setAttribute('aria-hidden', 'true');
     label.textContent = parameter.label;
     value.textContent = editorParameterValueText(parameter);
     arrow.textContent = '→';
     arrow.setAttribute('aria-hidden', 'true');
-    button.append(label, value, arrow);
+    button.append(icon, label, value, arrow);
     fragment.append(button);
   });
 
@@ -1295,7 +1317,7 @@ function setEditorParameterMenu(open) {
 }
 
 export function updateEditorCompactParameter(renderMenu = true) {
-  const { bookletEditor, editorParameterLabel, editorParameterValue, bookletEditorMode } = getEditorControls();
+  const { bookletEditor, editorParameterIcon, editorParameterLabel, editorParameterValue, bookletEditorMode } = getEditorControls();
   if (!bookletEditor) return;
 
   const available = availableEditorParameters();
@@ -1310,6 +1332,7 @@ export function updateEditorCompactParameter(renderMenu = true) {
     group.classList.toggle('editor-group-active', Boolean(group.querySelector('.editor-parameter-active')));
   });
 
+  if (editorParameterIcon) editorParameterIcon.innerHTML = PARAM_ICONS[active.key] || '';
   if (editorParameterLabel) editorParameterLabel.textContent = active.label;
   if (editorParameterValue) editorParameterValue.textContent = editorParameterValueText(active);
   if (bookletEditorMode) {
