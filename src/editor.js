@@ -31,6 +31,7 @@ let editorCompactLastTapTime = 0;
 let editorCompactScrollSelectionLockedUntil = 0;
 let editorPhotoSearchController = null;
 const editorPhotoObjectUrls = new Map();
+let editorPlaceholderPhoto = null;
 const editorCompactPageAnimations = new WeakMap();
 let editorCompactMode = localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === null
   ? window.matchMedia('(max-width: 900px)').matches
@@ -598,6 +599,38 @@ function resolvedPhoto(image = {}) {
   return localUrl ? { ...image, url: localUrl } : image;
 }
 
+function placeholderPhoto() {
+  if (editorPlaceholderPhoto) return editorPlaceholderPhoto;
+  const canvas = document.createElement('canvas');
+  canvas.width = 960;
+  canvas.height = 640;
+  const context = canvas.getContext('2d');
+  const gradient = context.createLinearGradient(0, 0, canvas.width, canvas.height);
+  gradient.addColorStop(0, '#d9d4c8');
+  gradient.addColorStop(.48, '#777b82');
+  gradient.addColorStop(1, '#20242b');
+  context.fillStyle = gradient;
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.globalAlpha = .48;
+  context.fillStyle = '#f4efe4';
+  context.beginPath();
+  context.arc(715, 185, 175, 0, Math.PI * 2);
+  context.fill();
+  context.fillStyle = '#e05d3c';
+  context.fillRect(80, 420, 630, 76);
+  context.globalAlpha = 1;
+  editorPlaceholderPhoto = {
+    id: 'editor-layout-placeholder',
+    url: canvas.toDataURL('image/jpeg', .82),
+    alt: 'Layout placeholder',
+    creator: 'AI Booklet Designs',
+    source: 'Layout placeholder',
+    license: 'Local preview',
+    isPlaceholder: true
+  };
+  return editorPlaceholderPhoto;
+}
+
 function pagePhotos(pageIndex = editorSession?.activePageIndex || 0) {
   if (!editorSession) return [];
   const page = editorSession.pages[pageIndex];
@@ -617,7 +650,7 @@ function allBookletPhotos() {
     .map(resolvedPhoto)
     .filter(image => {
       const key = photoIdentity(image);
-      if (!key || !image.url || seen.has(key)) return false;
+      if (!key || !image.url || image.isPlaceholder || seen.has(key)) return false;
       seen.add(key);
       return true;
     });
@@ -655,9 +688,16 @@ function updatePagePhotos(images, message = '') {
   if (!editorSession) return;
   const pageIndex = editorSession.activePageIndex;
   const bucket = editorSession.state.pages[String(pageIndex)] || {};
-  const next = images.slice(0, 20).map(storedPhoto);
+  const slotCount = Math.min(20, images.length);
+  const seen = new Set();
+  const next = images.slice(0, 20).filter(image => {
+    const key = photoIdentity(image);
+    if (!key || image.isPlaceholder || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  }).map(storedPhoto);
   bucket.images = next;
-  bucket.imageCount = next.length;
+  bucket.imageCount = slotCount;
   editorSession.state.pages[String(pageIndex)] = bucket;
   editorSession.pageNodes[pageIndex]?.removeAttribute('data-editor-image-count');
   refreshEditorImagePool();
@@ -858,7 +898,7 @@ export function imagesForEditorCount(page, count, pool, pageIndex = 0) {
     seen.add(key);
     selected.push(image);
   });
-  if (!selected.length) return [];
+  if (!selected.length) selected.push(placeholderPhoto());
   const reusable = [...selected];
   while (selected.length < count) selected.push(reusable[selected.length % reusable.length]);
   return selected.slice(0, count);

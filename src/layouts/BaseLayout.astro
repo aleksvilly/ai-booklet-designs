@@ -317,7 +317,7 @@ const photoCopy = isRussian ? {
               <strong><output id="editor-image-output">0</output> {photoCopy.photos}</strong>
               <small>{photoCopy.assignedHint}</small>
             </div>
-            <input id="editor-image-count" type="hidden" value="0">
+            <input id="editor-image-count" type="range" min="0" max="20" value="0" aria-label="Photo slots on selected page">
             <button class="editor-manage-photos" id="editor-manage-photos" type="button">＋ {photoCopy.manage}</button>
           </div>
           <label class="editor-range editor-photo-layout-control" data-editor-parameter="photoLayout">

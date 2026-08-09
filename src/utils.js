@@ -16,6 +16,9 @@ export function safeUrl(value = '') {
 }
 
 export function safeImageUrl(value = '') {
+  if (/^data:image\/(?:png|jpe?g|webp|gif);base64,[a-z0-9+/=\s]+$/i.test(String(value))) {
+    return String(value);
+  }
   try {
     const url = new URL(value);
     return ['http:', 'https:', 'blob:'].includes(url.protocol) ? url.href : '#';
@@ -116,6 +119,7 @@ export function coverTitle(title = '') {
 }
 
 export function imageCredit(image, compact = false) {
+  if (image?.isPlaceholder) return 'Layout placeholder';
   const creator = escapeHtml(image.creator || 'Creator');
   const source = escapeHtml(image.source || 'Source');
   const creatorUrl = safeUrl(image.creatorUrl || image.sourceUrl);
