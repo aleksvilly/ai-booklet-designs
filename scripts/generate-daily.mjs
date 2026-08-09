@@ -643,25 +643,24 @@ function choosePalette(mode, seed) {
 }
 
 const PAGE_COUNT_OPTIONS = [
-  { value: 6, weight: 10 },
-  { value: 8, weight: 22 },
-  { value: 10, weight: 26 },
-  { value: 12, weight: 24 },
-  { value: 14, weight: 12 },
-  { value: 16, weight: 6 }
+  { value: 4, weight: 4 },
+  { value: 8, weight: 28 },
+  { value: 12, weight: 38 },
+  { value: 16, weight: 22 },
+  { value: 20, weight: 8 }
 ];
 
 function pageCountFor(archetype, seed) {
-  // Every booklet now has at least 6 and at most 16 pages.
-  // Most concepts land between 8 and 12 pages, while archetype modifiers
-  // gently favor shorter or longer formats without allowing 4-page results.
+  // Printed saddle-stitched booklets are built from complete four-page
+  // signatures. Most concepts land between 8 and 16 pages, with 4 and 20
+  // reserved for deliberately concise or expansive formats.
   const archetypeWeights = {
-    'poster-book': { 6: 2.2, 8: 1.7, 10: 0.9, 12: 0.45, 14: 0.2, 16: 0.1 },
-    'children-storybook': { 6: 1.2, 8: 1.5, 10: 1.5, 12: 1.2, 14: 0.55, 16: 0.3 },
-    'museum-brochure': { 6: 0.35, 8: 1.0, 10: 1.35, 12: 1.5, 14: 1.1, 16: 0.65 },
-    'fact-book': { 6: 0.2, 8: 0.75, 10: 1.15, 12: 1.5, 14: 1.45, 16: 1.15 },
-    'visual-diary': { 6: 1.0, 8: 1.35, 10: 1.35, 12: 1.0, 14: 0.55, 16: 0.3 },
-    'futurist-dossier': { 6: 0.7, 8: 1.15, 10: 1.4, 12: 1.25, 14: 0.75, 16: 0.45 }
+    'poster-book': { 4: 1.8, 8: 1.7, 12: 0.65, 16: 0.22, 20: 0.1 },
+    'children-storybook': { 4: 0.8, 8: 1.5, 12: 1.5, 16: 0.7, 20: 0.3 },
+    'museum-brochure': { 4: 0.25, 8: 0.9, 12: 1.5, 16: 1.15, 20: 0.55 },
+    'fact-book': { 4: 0.15, 8: 0.65, 12: 1.35, 16: 1.55, 20: 1.2 },
+    'visual-diary': { 4: 0.7, 8: 1.4, 12: 1.25, 16: 0.65, 20: 0.3 },
+    'futurist-dossier': { 4: 0.4, 8: 1.0, 12: 1.45, 16: 1.0, 20: 0.55 }
   };
 
   const modifiers = archetypeWeights[archetype] || {};
@@ -1330,7 +1329,7 @@ function aiSchema(itemCount) {
       title: { type: 'string' },
       direction: { type: 'string' },
       description: { type: 'string' },
-      pages: { type: 'array', minItems: 6, maxItems: 16, items: page }
+      pages: { type: 'array', minItems: 4, maxItems: 20, items: page }
     },
     required: ['title', 'direction', 'description', 'pages']
   };
@@ -1427,7 +1426,7 @@ Rules:
 - Do not imitate one living designer or copy a particular published layout.
 - Do not reuse title patterns, sentence structures or page wording across the booklets.
 - Each booklet must contain exactly the number of pages specified by its pageCount and pagePlan.
-- Never return fewer than 6 pages or more than 16 pages.
+- Return 4, 8, 12, 16 or 20 pages only; never return a partial print signature.
 - The cover and closing page are included in the page count.
 - Every additional page must have a distinct purpose; never pad the booklet with repetitive generic copy.
 
@@ -1791,8 +1790,8 @@ function normalizeBooklet(item, index, additions) {
   const id = uniqueId(base, additions);
   const palette = Array.isArray(item.palette) && item.palette.length === 4 ? item.palette : PALETTES[index % PALETTES.length].colors;
   const dna = item.designDna || {};
-  const pages = Array.isArray(item.pages) && item.pages.length >= 6
-    ? item.pages.slice(0, 16).map((page, pageIndex) => ({
+  const pages = Array.isArray(item.pages) && item.pages.length >= 4
+    ? item.pages.slice(0, 20).map((page, pageIndex) => ({
         ...page,
         editorVariants: {
           ...(page.editorVariants || {}),

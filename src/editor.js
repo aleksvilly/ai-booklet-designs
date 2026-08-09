@@ -1,7 +1,7 @@
 import { EDITOR_STORAGE_PREFIX, EDITOR_COMPACT_STORAGE_KEY } from './config.js';
 import { safeUrl, safeClass, fontStack, loadGoogleFonts } from './utils.js';
 import { pagesFor, imagesForPage } from './collection.js';
-import { mediaMarkup, loadDialogImages } from './detail-modal.js';
+import { mediaMarkup, spreadsMarkup, loadDialogImages, activateGeneratedEffects } from './detail-modal.js';
 import { bindStyleSlider, getGeneratorCatalog } from './catalog.js';
 import {
   prepareLocalPhoto,
@@ -36,6 +36,9 @@ let editorPlaceholderPhoto = null;
 let editorPhotoFocusIndex = null;
 let editorPhotoReplaceIndex = null;
 const editorCompactPageAnimations = new WeakMap();
+const EDITOR_MIN_PAGES = 4;
+const EDITOR_MAX_PAGES = 20;
+const EDITOR_PAGE_STEP = 4;
 let editorCompactMode = localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === null
   ? window.matchMedia('(max-width: 900px)').matches
   : localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === 'true';
@@ -433,15 +436,84 @@ export function editorStorageKey(item) {
 }
 
 export function emptyEditorState() {
-  return { version: 2, booklet: {}, spreads: {}, pages: {}, photoLibrary: [] };
+  return { version: 3, pageCount: null, booklet: {}, spreads: {}, pages: {}, photoLibrary: [] };
+}
+
+function normalizedEditorPageCount(value, fallback = EDITOR_MIN_PAGES) {
+  const requested = Number.isFinite(Number(value)) && Number(value) > 0 ? Number(value) : Number(fallback);
+  const signatureCount = Math.ceil(requested / EDITOR_PAGE_STEP) * EDITOR_PAGE_STEP;
+  return Math.max(EDITOR_MIN_PAGES, Math.min(EDITOR_MAX_PAGES, signatureCount));
+}
+
+function cloneEditorValue(value) {
+  if (value === undefined || value === null) return value;
+  if (typeof structuredClone === 'function') return structuredClone(value);
+  return JSON.parse(JSON.stringify(value));
+}
+
+function editorAddedPage(basePages, index) {
+  const russian = document.documentElement.lang === 'ru';
+  const source = basePages.find(page => !['cover', 'closing'].includes(page.type))
+    || basePages[index % Math.max(1, basePages.length)]
+    || {};
+  const page = cloneEditorValue(source);
+  const pairIndex = Math.floor(index / 2);
+  return {
+    ...page,
+    type: 'editorial',
+    module: 'micro_essay',
+    title: russian ? `НОВАЯ СТРАНИЦА ${index + 1}` : `NEW PAGE ${index + 1}`,
+    body: russian
+      ? 'Нажмите на текст, чтобы изменить его, или на свободную область страницы, чтобы добавить фотографии.'
+      : 'Click the text to rewrite it, or click an empty area of the page to add photos.',
+    caption: '',
+    source: null,
+    spreadId: `editor-added-spread-${pairIndex}`,
+    spreadKind: 'standard',
+    spreadRole: index % 2 === 0 ? 'left' : 'right'
+  };
+}
+
+function editorPagesForState(basePages, state) {
+  const count = normalizedEditorPageCount(state.pageCount, basePages.length);
+  const pages = Array.from({ length: count }, (_, index) => {
+    const page = index < basePages.length
+      ? cloneEditorValue(basePages[index])
+      : editorAddedPage(basePages, index);
+    const overrides = state.pages?.[String(index)];
+    if (!overrides || typeof overrides !== 'object') return page;
+    ['title', 'subtitle', 'body', 'caption', 'source'].forEach(key => {
+      if (Object.prototype.hasOwnProperty.call(overrides, key)) page[key] = cloneEditorValue(overrides[key]);
+    });
+    return page;
+  });
+  state.pageCount = count;
+  return pages;
+}
+
+function editorPageStructureMarkup(pageCount) {
+  const atMaximum = pageCount >= EDITOR_MAX_PAGES;
+  const atMinimum = pageCount <= EDITOR_MIN_PAGES;
+  return `<aside class="editor-page-structure" aria-label="Booklet page controls">
+    <button class="editor-add-pages" type="button" ${atMaximum ? 'disabled' : ''}>
+      <span class="editor-add-pages-plus" aria-hidden="true">+</span>
+      <strong>${atMaximum ? 'Maximum reached' : 'Add 4 pages'}</strong>
+      <small>${atMaximum ? 'This booklet already has 20 pages.' : 'One complete print signature'}</small>
+    </button>
+    <div class="editor-page-structure-meta">
+      <span><strong>${pageCount}</strong> / ${EDITOR_MAX_PAGES} pages</span>
+      <button class="editor-remove-pages" type="button" ${atMinimum ? 'disabled' : ''}>Remove last 4</button>
+    </div>
+  </aside>`;
 }
 
 export function loadEditorState(item) {
   try {
     const stored = JSON.parse(localStorage.getItem(editorStorageKey(item)) || 'null');
-    if (!stored || ![1, 2].includes(stored.version)) return emptyEditorState();
+    if (!stored || ![1, 2, 3].includes(stored.version)) return emptyEditorState();
     const state = {
-      version: 2,
+      version: 3,
+      pageCount: Number.isFinite(Number(stored.pageCount)) ? Number(stored.pageCount) : null,
       booklet: stored.booklet && typeof stored.booklet === 'object' ? stored.booklet : {},
       spreads: stored.spreads && typeof stored.spreads === 'object' ? stored.spreads : {},
       pages: stored.pages && typeof stored.pages === 'object' ? stored.pages : {},
@@ -2159,7 +2231,7 @@ export function closeTextEditor(save = false) {
     else if (fieldKey === 'body') pageOverrides.body = page.body;
     else if (fieldKey === 'caption') pageOverrides.caption = page.caption;
     else if (fieldKey === 'source') pageOverrides.source = page.source;
-    saveEditorState();
+    scheduleEditorSave();
   }
 
   controls.bookletEditor?.classList.remove('editor-text-editing-active');
@@ -2211,63 +2283,25 @@ export function closeBookletEditor() {
   updateEditorSelection();
 }
 
-export function initializeBookletEditor(item) {
+function selectEditorPage(index, scrollIntoView = true) {
   const controls = getEditorControls();
-  const pages = pagesFor(item);
-  editorTypographyTarget = 'title';
-  resetEditorTypographyCascade();
+  if (!editorSession || controls.bookletEditor?.hidden || !editorSession.pages[index]) return;
+  const pageChanged = editorSession.activePageIndex !== index;
+  editorSession.activePageIndex = index;
+  editorSession.activeSpreadIndex = Math.floor(index / 2);
+  if (pageChanged) {
+    updateEditorSelection();
+    syncBookletEditorControls();
+    if (!controls.editorPhotoManager?.hidden) renderPhotoManager();
+  }
+  if (scrollIntoView && isCompactPageStageActive() && editorCompactPageZoom <= 2) {
+    scrollCompactPageIntoView('smooth');
+  }
+}
 
-  editorPhotoObjectUrls.forEach(url => URL.revokeObjectURL(url));
-  editorPhotoObjectUrls.clear();
-  editorSession = {
-    item,
-    pages,
-    state: loadEditorState(item),
-    imagePool: uniqueEditorImages(pages),
-    textVariants: pages.map(editorTextVariantsFor),
-    originalSettings: pages.map(page => originalEditorSettings(item, page)),
-    pageNodes: [...(controls.dialogContent?.querySelectorAll('.book-page:not(.blank-page)') || [])],
-    spreadNodes: [...(controls.dialogContent?.querySelectorAll('.print-spread') || [])],
-    activePageIndex: 0,
-    activeSpreadIndex: 0
-  };
-
-  const sourceProfile = controls.generationForm?.querySelector('[name="style"]');
-  if (sourceProfile && controls.editorProfile && !controls.editorProfile.options.length) {
-    controls.editorProfile.innerHTML = sourceProfile.innerHTML;
-  }
-  if (controls.editorProfile && ![...controls.editorProfile.options].some(option => option.value === editorSession.originalSettings[0].profile)) {
-    controls.editorProfile.add(new Option(editorSession.originalSettings[0].profile, editorSession.originalSettings[0].profile));
-  }
-  if (controls.editorProfile) {
-    bindStyleSlider(controls.editorProfile);
-  }
-  if (controls.editorPhotoLayout) {
-    bindStyleSlider(controls.editorPhotoLayout);
-  }
-  if (controls.editorLayoutSystem) {
-    bindStyleSlider(controls.editorLayoutSystem);
-  }
-  if (controls.editorContentPosition) {
-    bindStyleSlider(controls.editorContentPosition);
-  }
-  populateEditorFontControl();
-
-  const selectPage = (index, scrollIntoView = true) => {
-    if (controls.bookletEditor?.hidden) return;
-    const pageChanged = editorSession.activePageIndex !== index;
-    editorSession.activePageIndex = index;
-    editorSession.activeSpreadIndex = Math.floor(index / 2);
-    if (pageChanged) {
-      updateEditorSelection();
-      syncBookletEditorControls();
-      if (!controls.editorPhotoManager?.hidden) renderPhotoManager();
-    }
-    if (scrollIntoView && isCompactPageStageActive() && editorCompactPageZoom <= 2) {
-      scrollCompactPageIntoView('smooth');
-    }
-  };
-
+function bindEditorPageInteractions() {
+  if (!editorSession) return;
+  const controls = getEditorControls();
   editorSession.pageNodes.forEach((node, index) => {
     node.dataset.pageIndex = String(index);
     node.addEventListener('click', event => {
@@ -2294,10 +2328,8 @@ export function initializeBookletEditor(item) {
       }
 
       if (event.target.closest('a')) event.preventDefault();
-      if (isCompactPageStageActive() && editorCompactPageZoom >= 2) {
-        event.preventDefault();
-      }
-      selectPage(index);
+      if (isCompactPageStageActive() && editorCompactPageZoom >= 2) event.preventDefault();
+      selectEditorPage(index);
       if (!textTarget && controls.bookletEditor && !controls.bookletEditor.hidden && editorCompactPageZoom <= 2) {
         event.preventDefault();
         openPhotoManager({ focusIndex: photoIndexFromPageTarget(node, event.target) });
@@ -2306,17 +2338,14 @@ export function initializeBookletEditor(item) {
     node.addEventListener('dblclick', event => {
       if (event.target.closest('a')) return;
       event.preventDefault();
-      selectPage(index);
-      if (isCompactPageStageActive() && editorCompactPageZoom > 2) {
-        zoomIntoCompactPage(index);
-      }
+      selectEditorPage(index);
+      if (isCompactPageStageActive() && editorCompactPageZoom > 2) zoomIntoCompactPage(index);
     });
     node.addEventListener('pointerup', event => {
       if (event.pointerType === 'mouse') return;
       if (!isCompactPageStageActive() || editorCompactPageZoom < 2) return;
 
       event.preventDefault();
-
       const wasAlreadyActive = editorSession.activePageIndex === index;
       const textTarget = event.target.closest('h4, .book-page-type, .page-body, .page-caption, .page-source');
 
@@ -2339,22 +2368,117 @@ export function initializeBookletEditor(item) {
       const isDoubleTap = editorCompactLastTapPage === index && now - editorCompactLastTapTime < 360;
       editorCompactLastTapPage = isDoubleTap ? -1 : index;
       editorCompactLastTapTime = isDoubleTap ? 0 : now;
-
-      selectPage(index);
+      selectEditorPage(index);
 
       if (!textTarget && editorCompactPageZoom <= 2) {
         openPhotoManager({ focusIndex: photoIndexFromPageTarget(node, event.target) });
       }
-
-      // Only double-tap at zoom > 2 zooms into Level 1
-      if (isDoubleTap && editorCompactPageZoom > 2) {
-        zoomIntoCompactPage(index);
-      }
+      if (isDoubleTap && editorCompactPageZoom > 2) zoomIntoCompactPage(index);
     });
   });
   editorSession.spreadNodes.forEach((node, index) => {
     node.dataset.spreadIndex = String(index);
   });
+}
+
+function renderEditorPageStage(activePageIndex = 0, applyState = true) {
+  if (!editorSession) return;
+  const controls = getEditorControls();
+  const pageCount = editorSession.pages.length;
+  if (!controls.spreadsList) return;
+
+  controls.spreadsList.innerHTML = `${spreadsMarkup(editorSession.pages, editorSession.item)}${editorPageStructureMarkup(pageCount)}`;
+  editorSession.textVariants = editorSession.pages.map(editorTextVariantsFor);
+  editorSession.originalSettings = editorSession.pages.map(page => originalEditorSettings(editorSession.item, page));
+  editorSession.pageNodes = [...controls.spreadsList.querySelectorAll('.book-page:not(.blank-page)')];
+  editorSession.spreadNodes = [...controls.spreadsList.querySelectorAll('.print-spread')];
+  editorSession.activePageIndex = Math.max(0, Math.min(pageCount - 1, activePageIndex));
+  editorSession.activeSpreadIndex = Math.floor(editorSession.activePageIndex / 2);
+  bindEditorPageInteractions();
+
+  controls.spreadsList.querySelector('.editor-add-pages')?.addEventListener('click', () => changeEditorPageCount(EDITOR_PAGE_STEP));
+  controls.spreadsList.querySelector('.editor-remove-pages')?.addEventListener('click', () => changeEditorPageCount(-EDITOR_PAGE_STEP));
+
+  if (applyState) {
+    refreshEditorImagePool();
+    applyBookletEditorState();
+    syncBookletEditorControls();
+    loadDialogImages(controls.spreadsList);
+    activateGeneratedEffects(controls.spreadsList);
+    setCompactPageZoom(editorCompactPageZoom, false);
+    requestAnimationFrame(() => scrollCompactPageIntoView('smooth'));
+  }
+}
+
+function changeEditorPageCount(delta) {
+  if (!editorSession) return;
+  const previousCount = editorSession.pages.length;
+  const nextCount = Math.max(EDITOR_MIN_PAGES, Math.min(EDITOR_MAX_PAGES, previousCount + delta));
+  if (nextCount === previousCount) return;
+
+  closePhotoManager();
+  closeTextEditor(false);
+  editorSession.state.pageCount = nextCount;
+  editorSession.pages = editorPagesForState(editorSession.basePages, editorSession.state);
+  const activePageIndex = delta > 0
+    ? previousCount
+    : Math.min(editorSession.activePageIndex, nextCount - 1);
+  renderEditorPageStage(activePageIndex);
+  const controls = getEditorControls();
+  if (controls.editorSaveStatus) {
+    controls.editorSaveStatus.textContent = delta > 0
+      ? `4 pages added · ${nextCount} total.`
+      : `Last 4 pages removed · ${nextCount} total.`;
+  }
+  scheduleEditorSave();
+}
+
+export function initializeBookletEditor(item) {
+  const controls = getEditorControls();
+  const basePages = pagesFor(item);
+  const state = loadEditorState(item);
+  const pages = editorPagesForState(basePages, state);
+  editorTypographyTarget = 'title';
+  resetEditorTypographyCascade();
+
+  editorPhotoObjectUrls.forEach(url => URL.revokeObjectURL(url));
+  editorPhotoObjectUrls.clear();
+  editorSession = {
+    item,
+    basePages,
+    pages,
+    state,
+    imagePool: uniqueEditorImages(pages),
+    textVariants: [],
+    originalSettings: [],
+    pageNodes: [],
+    spreadNodes: [],
+    activePageIndex: 0,
+    activeSpreadIndex: 0
+  };
+  renderEditorPageStage(0, false);
+
+  const sourceProfile = controls.generationForm?.querySelector('[name="style"]');
+  if (sourceProfile && controls.editorProfile && !controls.editorProfile.options.length) {
+    controls.editorProfile.innerHTML = sourceProfile.innerHTML;
+  }
+  if (controls.editorProfile && ![...controls.editorProfile.options].some(option => option.value === editorSession.originalSettings[0].profile)) {
+    controls.editorProfile.add(new Option(editorSession.originalSettings[0].profile, editorSession.originalSettings[0].profile));
+  }
+  if (controls.editorProfile) {
+    bindStyleSlider(controls.editorProfile);
+  }
+  if (controls.editorPhotoLayout) {
+    bindStyleSlider(controls.editorPhotoLayout);
+  }
+  if (controls.editorLayoutSystem) {
+    bindStyleSlider(controls.editorLayoutSystem);
+  }
+  if (controls.editorContentPosition) {
+    bindStyleSlider(controls.editorContentPosition);
+  }
+  populateEditorFontControl();
+
   controls.spreadsList?.addEventListener('scroll', queueCompactScrollSelection, { passive: true });
   controls.dialogContent?.addEventListener('click', event => {
     if (!editorActiveTextSession) return;
@@ -2605,11 +2729,9 @@ export function setupEditorEventListeners() {
   controls.editorResetAll?.addEventListener('click', () => {
     if (!editorSession) return;
     editorSession.state = emptyEditorState();
+    editorSession.pages = editorPagesForState(editorSession.basePages, editorSession.state);
     localStorage.removeItem(editorStorageKey(editorSession.item));
-    editorSession.pageNodes.forEach(node => node.removeAttribute('data-editor-image-count'));
-    refreshEditorImagePool();
-    applyBookletEditorState();
-    syncBookletEditorControls();
+    renderEditorPageStage(0);
     if (!controls.editorPhotoManager?.hidden) renderPhotoManager();
     if (controls.editorSaveStatus) controls.editorSaveStatus.textContent = 'All local adjustments were reset.';
   });

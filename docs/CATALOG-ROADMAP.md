@@ -42,6 +42,10 @@
       actions; clicking an empty page opens the same sheet in add mode. Search
       results use provider-native pagination with an incremental Load more flow
       for Openverse pages and Wikimedia continuation tokens.
+- [x] Four-page print signatures in the live editor: a page-shaped `+` card at
+      the end adds four editable pages, the companion action removes the last
+      four, and the 4–20 page limits are enforced. Future generation now uses
+      only 4/8/12/16/20-page formats; existing booklet data remains untouched.
 
 ## In progress
 

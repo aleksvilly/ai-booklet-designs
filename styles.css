@@ -1859,6 +1859,66 @@ footer a { text-underline-offset: 3px; }
   background:linear-gradient(180deg,transparent,rgba(0,0,0,.2),transparent);
   pointer-events:none;
 }
+.editor-page-structure {
+  display: none;
+  position: relative;
+  width: min(100%, 430px);
+  aspect-ratio: 148 / 210;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--c4) 20%, transparent);
+  border-radius: 2px;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--c1) 94%, white), color-mix(in srgb, var(--c2) 12%, var(--c1)));
+  color: var(--c4);
+  box-shadow: 0 20px 55px rgba(24,21,17,.14);
+  box-sizing: border-box;
+}
+.booklet-dialog.editor-is-open .editor-page-structure { display: grid; grid-template-rows: 1fr auto; }
+.editor-add-pages {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 0;
+  padding: 28px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+.editor-add-pages-plus {
+  display: grid;
+  place-items: center;
+  width: 74px;
+  aspect-ratio: 1;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font: 300 48px/1 "DM Sans", sans-serif;
+  transition: transform .22s ease, background .22s ease, color .22s ease;
+}
+.editor-add-pages strong { font-size: 18px; letter-spacing: -.02em; }
+.editor-add-pages small { max-width: 180px; color: var(--muted); font: 500 9px/1.4 "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .08em; }
+.editor-add-pages:not(:disabled):hover .editor-add-pages-plus,
+.editor-add-pages:not(:disabled):focus-visible .editor-add-pages-plus { transform: rotate(90deg) scale(1.06); background: var(--c4); color: var(--c1); }
+.editor-add-pages:focus-visible { outline: 2px solid var(--c3); outline-offset: -5px; }
+.editor-add-pages:disabled { cursor: default; opacity: .56; }
+.editor-page-structure-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px;
+  border-top: 1px solid color-mix(in srgb, var(--c4) 14%, transparent);
+  font: 500 9px/1.2 "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.editor-remove-pages { padding: 7px 9px; border: 1px solid currentColor; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+.editor-remove-pages:not(:disabled):hover,
+.editor-remove-pages:not(:disabled):focus-visible { background: var(--c4); color: var(--c1); }
+.editor-remove-pages:disabled { opacity: .28; cursor: not-allowed; }
 .book-page {
   --page-font:var(--font-body);
   --page-weight:600;
@@ -3816,6 +3876,16 @@ footer a { text-underline-offset: 3px; }
     box-shadow .38s ease;
 }
 
+.booklet-dialog.editor-compact-open .editor-page-structure {
+  flex: 0 0 var(--compact-page-base-width);
+  width: var(--compact-page-base-width);
+  max-width: none;
+  height: auto;
+  zoom: var(--compact-page-scale, 1);
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+}
+
 .booklet-dialog.editor-compact-open .book-page.editor-selected-page {
   opacity: 1;
   filter: none;
@@ -3861,6 +3931,15 @@ footer a { text-underline-offset: 3px; }
   scroll-snap-align: none;
   touch-action: manipulation;
   cursor: zoom-in;
+}
+
+.booklet-dialog.editor-compact-open:is(
+  [data-compact-page-zoom="3"],
+  [data-compact-page-zoom="4"],
+  [data-compact-page-zoom="5"],
+  [data-compact-page-zoom="6"]
+) .editor-page-structure {
+  scroll-snap-align: none;
 }
 
 .booklet-dialog.editor-compact-open[data-compact-page-zoom="3"] .print-spread {
