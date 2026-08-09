@@ -2383,6 +2383,10 @@ footer a { text-underline-offset: 3px; }
   border: 1px solid var(--line);
   border-radius: 9px;
 }
+.editor-photo-page-card.is-target {
+  border-color: var(--ink);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ink) 14%, transparent);
+}
 .editor-photo-page-card figure,
 .editor-photo-library-card figure,
 .editor-photo-search-card figure { margin: 0; overflow: hidden; background: color-mix(in srgb, var(--ink) 7%, transparent); }
@@ -2395,7 +2399,7 @@ footer a { text-underline-offset: 3px; }
 .editor-photo-page-card small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .editor-photo-page-card strong { font-size: 10px; }
 .editor-photo-page-card small { color: var(--muted); font-size: 8px; }
-.editor-photo-card-actions { display: flex; gap: 2px; }
+.editor-photo-card-actions { display: grid; grid-template-columns: repeat(2, 25px); gap: 2px; }
 .editor-photo-card-actions button {
   width: 25px;
   height: 27px;
@@ -3584,7 +3588,7 @@ footer a { text-underline-offset: 3px; }
   border-radius: 999px;
 }
 .booklet-editor.editor-compact.editor-photo-manager-open {
-  height: min(680px, calc(100dvh - 20px));
+  height: min(420px, calc(100dvh - 120px));
 }
 .booklet-editor.editor-compact.editor-photo-manager-open .editor-photo-manager {
   border-radius: 17px;

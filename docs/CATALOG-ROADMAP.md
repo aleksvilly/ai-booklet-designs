@@ -37,7 +37,9 @@
       Photo Layout and layout intensity are page-only controls with legacy
       booklet/spread settings migrated into equivalent per-page overrides. A
       page-only slot slider repeats available images or renders a local layout
-      placeholder when the booklet has no photos yet.
+      placeholder when the booklet has no photos yet. Clicking page media opens
+      a compact contextual photo sheet with per-slot replace, remove and order
+      actions; clicking an empty page opens the same sheet in add mode.
 
 ## In progress
 

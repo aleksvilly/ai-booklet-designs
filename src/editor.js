@@ -32,6 +32,8 @@ let editorCompactScrollSelectionLockedUntil = 0;
 let editorPhotoSearchController = null;
 const editorPhotoObjectUrls = new Map();
 let editorPlaceholderPhoto = null;
+let editorPhotoFocusIndex = null;
+let editorPhotoReplaceIndex = null;
 const editorCompactPageAnimations = new WeakMap();
 let editorCompactMode = localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === null
   ? window.matchMedia('(max-width: 900px)').matches
@@ -595,6 +597,7 @@ function photoIdentity(image = {}) {
 }
 
 function resolvedPhoto(image = {}) {
+  if (image.isPlaceholder) return placeholderPhoto();
   const localUrl = image.localBlobId ? editorPhotoObjectUrls.get(image.localBlobId) : '';
   return localUrl ? { ...image, url: localUrl } : image;
 }
@@ -669,12 +672,16 @@ function photoStatus(message = '', kind = '') {
 }
 
 function storedPhoto(image = {}) {
+  if (image.isPlaceholder) {
+    return { id: 'editor-layout-placeholder', url: '', alt: 'Layout placeholder', isPlaceholder: true };
+  }
   const { thumbnailUrl, ...serializable } = image;
   return { ...serializable, url: image.localBlobId ? '' : image.url };
 }
 
 function rememberPhoto(image) {
   if (!editorSession) return;
+  if (image.isPlaceholder) return;
   const saved = storedPhoto(image);
   const key = photoIdentity(saved);
   if (!key) return;
@@ -689,13 +696,7 @@ function updatePagePhotos(images, message = '') {
   const pageIndex = editorSession.activePageIndex;
   const bucket = editorSession.state.pages[String(pageIndex)] || {};
   const slotCount = Math.min(20, images.length);
-  const seen = new Set();
-  const next = images.slice(0, 20).filter(image => {
-    const key = photoIdentity(image);
-    if (!key || image.isPlaceholder || seen.has(key)) return false;
-    seen.add(key);
-    return true;
-  }).map(storedPhoto);
+  const next = images.slice(0, 20).filter(image => photoIdentity(image)).map(storedPhoto);
   bucket.images = next;
   bucket.imageCount = slotCount;
   editorSession.state.pages[String(pageIndex)] = bucket;
@@ -712,6 +713,16 @@ function addPhotoToCurrentPage(image) {
   if (!editorSession) return;
   const current = pagePhotos();
   const key = photoIdentity(image);
+  if (Number.isInteger(editorPhotoReplaceIndex) && current[editorPhotoReplaceIndex]) {
+    const replaceIndex = editorPhotoReplaceIndex;
+    const next = [...current];
+    next[replaceIndex] = image;
+    rememberPhoto(image);
+    editorPhotoFocusIndex = replaceIndex;
+    editorPhotoReplaceIndex = null;
+    updatePagePhotos(next, `Photo ${replaceIndex + 1} replaced.`);
+    return;
+  }
   if (current.some(item => photoIdentity(item) === key)) {
     photoStatus('This photo is already on the current page.', 'notice');
     return;
@@ -740,6 +751,7 @@ function renderCurrentPagePhotos(controls) {
   controls.editorPhotoPageList?.replaceChildren(...photos.map((image, index) => {
     const card = document.createElement('article');
     card.className = 'editor-photo-page-card';
+    card.classList.toggle('is-target', index === editorPhotoFocusIndex);
     card.append(photoThumbnail(image, `Photo ${index + 1}`));
 
     const meta = document.createElement('div');
@@ -771,12 +783,27 @@ function renderCurrentPagePhotos(controls) {
       [next[index], next[index + 1]] = [next[index + 1], next[index]];
       updatePagePhotos(next);
     });
+    const replace = document.createElement('button');
+    replace.type = 'button';
+    replace.textContent = '↻';
+    replace.ariaLabel = `Replace photo ${index + 1}`;
+    replace.title = 'Replace';
+    replace.addEventListener('click', () => {
+      editorPhotoFocusIndex = index;
+      editorPhotoReplaceIndex = index;
+      renderPhotoManager();
+      photoStatus(`Choose a photo below to replace slot ${index + 1}.`, 'notice');
+    });
     const remove = document.createElement('button');
     remove.type = 'button';
     remove.textContent = '×';
     remove.ariaLabel = 'Remove photo from this page';
-    remove.addEventListener('click', () => updatePagePhotos(pagePhotos().filter((_, photoIndex) => photoIndex !== index), 'Photo removed from this page.'));
-    actions.append(moveBack, moveForward, remove);
+    remove.addEventListener('click', () => {
+      editorPhotoFocusIndex = null;
+      editorPhotoReplaceIndex = null;
+      updatePagePhotos(pagePhotos().filter((_, photoIndex) => photoIndex !== index), 'Photo removed from this page.');
+    });
+    actions.append(moveBack, moveForward, replace, remove);
     card.append(meta, actions);
     return card;
   }));
@@ -807,6 +834,11 @@ function renderPhotoManager() {
   if (controls.editorPhotoPageLabel) controls.editorPhotoPageLabel.textContent = `Page ${editorSession.activePageIndex + 1}`;
   renderCurrentPagePhotos(controls);
   renderPhotoLibrary(controls);
+  if (Number.isInteger(editorPhotoFocusIndex)) {
+    requestAnimationFrame(() => {
+      controls.editorPhotoPageList?.children[editorPhotoFocusIndex]?.scrollIntoView({ block: 'nearest' });
+    });
+  }
 }
 
 function renderPhotoSearchResults(results = []) {
@@ -844,14 +876,21 @@ function setPhotoAddMode(mode) {
   if (showSearch) requestAnimationFrame(() => controls.editorPhotoSearch?.focus());
 }
 
-function openPhotoManager() {
+function openPhotoManager({ focusIndex = null } = {}) {
   const controls = getEditorControls();
   if (!editorSession || !controls.editorPhotoManager || !controls.bookletEditor) return;
+  const photos = pagePhotos();
+  editorPhotoFocusIndex = Number.isInteger(focusIndex) && photos[focusIndex] ? focusIndex : null;
+  editorPhotoReplaceIndex = null;
   setEditorParameterMenu(false);
   controls.editorPhotoManager.hidden = false;
   controls.bookletEditor.classList.add('editor-photo-manager-open');
-  photoStatus('');
   renderPhotoManager();
+  photoStatus(Number.isInteger(editorPhotoFocusIndex)
+    ? `Photo ${editorPhotoFocusIndex + 1} selected. Replace, reorder or remove it.`
+    : photos.length
+      ? 'Manage the photos on this page.'
+      : 'This page is empty. Add its first photo below.', 'notice');
   requestAnimationFrame(() => controls.editorPhotoClose?.focus());
 }
 
@@ -859,9 +898,19 @@ function closePhotoManager() {
   const controls = getEditorControls();
   editorPhotoSearchController?.abort();
   editorPhotoSearchController = null;
+  editorPhotoFocusIndex = null;
+  editorPhotoReplaceIndex = null;
   if (controls.editorPhotoManager) controls.editorPhotoManager.hidden = true;
   controls.bookletEditor?.classList.remove('editor-photo-manager-open');
   setPhotoAddMode('');
+}
+
+function photoIndexFromPageTarget(pageNode, target) {
+  const figure = target.closest('.page-image, .gallery-image');
+  if (!figure || !pageNode.contains(figure)) return null;
+  const figures = [...pageNode.querySelectorAll(':scope > .page-image, :scope > .page-gallery > .gallery-image')];
+  const index = figures.indexOf(figure);
+  return index >= 0 ? index : null;
 }
 
 async function hydrateLocalPhotos() {
@@ -892,7 +941,14 @@ export function imagesForEditorCount(page, count, pool, pageIndex = 0) {
   const seen = new Set();
   const assigned = editorSession?.state.pages[String(pageIndex)]?.images;
   const pageImages = Array.isArray(assigned) ? assigned.map(resolvedPhoto) : imagesForPage(page);
-  [...pageImages, ...pool].forEach(image => {
+  pageImages.forEach(image => {
+    const key = photoIdentity(image);
+    if (selected.length >= count || !image?.url) return;
+    if (!Array.isArray(assigned) && seen.has(key)) return;
+    seen.add(key);
+    selected.push(image);
+  });
+  pool.forEach(image => {
     const key = photoIdentity(image);
     if (selected.length >= count || !image?.url || seen.has(key)) return;
     seen.add(key);
@@ -2169,6 +2225,10 @@ export function initializeBookletEditor(item) {
         event.preventDefault();
       }
       selectPage(index);
+      if (!textTarget && controls.bookletEditor && !controls.bookletEditor.hidden && editorCompactPageZoom <= 2) {
+        event.preventDefault();
+        openPhotoManager({ focusIndex: photoIndexFromPageTarget(node, event.target) });
+      }
     });
     node.addEventListener('dblclick', event => {
       if (event.target.closest('a')) return;
@@ -2208,6 +2268,10 @@ export function initializeBookletEditor(item) {
       editorCompactLastTapTime = isDoubleTap ? 0 : now;
 
       selectPage(index);
+
+      if (!textTarget && editorCompactPageZoom <= 2) {
+        openPhotoManager({ focusIndex: photoIndexFromPageTarget(node, event.target) });
+      }
 
       // Only double-tap at zoom > 2 zooms into Level 1
       if (isDoubleTap && editorCompactPageZoom > 2) {
