@@ -52,6 +52,10 @@ const starterCopy = isRussian ? {
 };
 const photoCopy = isRussian ? {
   manage: "Управлять фото",
+  group: "Фото страницы",
+  pageOnly: "Только выбранная страница",
+  assignedHint: "Фото, их порядок и раскладка не затрагивают другие страницы.",
+  photos: "фото",
   title: "Фото страницы",
   close: "Закрыть менеджер фотографий",
   intro: "Добавляйте фото на выбранную страницу или повторно используйте изображения из буклета.",
@@ -71,6 +75,10 @@ const photoCopy = isRussian ? {
   searchEmpty: "Введите запрос — здесь появятся фотографии Openverse и Wikimedia."
 } : {
   manage: "Manage photos",
+  group: "Page photos",
+  pageOnly: "Selected page only",
+  assignedHint: "Photos, their order and layout do not affect other pages.",
+  photos: "photos",
   title: "Page photos",
   close: "Close photo manager",
   intro: "Add photos to the selected page or reuse any image already in this booklet.",
@@ -260,28 +268,6 @@ const photoCopy = isRussian ? {
             <span>Page complexity <output id="editor-layout-output">2</output> / 5</span>
             <input id="editor-layout-complexity" type="range" min="1" max="5" value="2">
           </label>
-          <div class="editor-range editor-images-control" data-editor-parameter="imageCount">
-            <label for="editor-image-count">Images <output id="editor-image-output">1</output> / 20</label>
-            <input id="editor-image-count" type="range" min="0" max="20" value="1">
-            <button class="editor-manage-photos" id="editor-manage-photos" type="button">{photoCopy.manage}</button>
-          </div>
-          <label class="editor-range editor-photo-layout-control" data-editor-parameter="photoLayout">
-            <span>Photo layout</span>
-            <select id="editor-photo-layout">
-              <option value="auto">Auto (original)</option>
-              <option value="full">Fullscreen fill</option>
-              <option value="split-v">Vertical split (left · right)</option>
-              <option value="split-h">Horizontal split (top · bottom)</option>
-              <option value="diagonal">Diagonal / angled</option>
-              <option value="masonry">Grid / Masonry</option>
-              <option value="circles">Circles &amp; shapes</option>
-              <option value="collage">Scattered collage</option>
-            </select>
-          </label>
-          <label class="editor-range" data-editor-parameter="photoLayoutVariant">
-            <span>Layout intensity <output id="editor-photo-layout-variant-output">0</output>%</span>
-            <input id="editor-photo-layout-variant" type="range" min="-100" max="100" value="0" step="5">
-          </label>
           <label class="editor-range editor-layout-system-control" data-editor-parameter="layoutSystem">
             <span>Page layout system</span>
             <select id="editor-layout-system">
@@ -320,6 +306,36 @@ const photoCopy = isRussian ? {
               <option value="bottom-center">Bottom centre</option>
               <option value="bottom-right">Bottom right</option>
             </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="editor-group editor-page-photo-group">
+          <legend>{photoCopy.group} <small>{photoCopy.pageOnly}</small></legend>
+          <div class="editor-images-control" data-editor-parameter="imageCount">
+            <div class="editor-image-summary">
+              <span id="editor-photo-control-page">Page 1</span>
+              <strong><output id="editor-image-output">0</output> {photoCopy.photos}</strong>
+              <small>{photoCopy.assignedHint}</small>
+            </div>
+            <input id="editor-image-count" type="hidden" value="0">
+            <button class="editor-manage-photos" id="editor-manage-photos" type="button">＋ {photoCopy.manage}</button>
+          </div>
+          <label class="editor-range editor-photo-layout-control" data-editor-parameter="photoLayout">
+            <span>Photo layout <small>{photoCopy.pageOnly}</small></span>
+            <select id="editor-photo-layout">
+              <option value="auto">Auto (original)</option>
+              <option value="full">Fullscreen fill</option>
+              <option value="split-v">Vertical split (left · right)</option>
+              <option value="split-h">Horizontal split (top · bottom)</option>
+              <option value="diagonal">Diagonal / angled</option>
+              <option value="masonry">Grid / Masonry</option>
+              <option value="circles">Circles &amp; shapes</option>
+              <option value="collage">Scattered collage</option>
+            </select>
+          </label>
+          <label class="editor-range" data-editor-parameter="photoLayoutVariant">
+            <span>Layout intensity <output id="editor-photo-layout-variant-output">0</output>% <small>{photoCopy.pageOnly}</small></span>
+            <input id="editor-photo-layout-variant" type="range" min="-100" max="100" value="0" step="5">
           </label>
         </fieldset>
 

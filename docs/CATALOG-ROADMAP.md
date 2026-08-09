@@ -33,7 +33,9 @@
       zoom control.
 - [x] Photo manager V1 for the selected page: device uploads in IndexedDB,
       URL imports, Openverse/Wikimedia search, booklet-wide reuse, ordering and
-      removal without changing published booklet data.
+      removal without changing published booklet data. Photo assignment,
+      Photo Layout and layout intensity are page-only controls with legacy
+      booklet/spread settings migrated into equivalent per-page overrides.
 
 ## In progress
 

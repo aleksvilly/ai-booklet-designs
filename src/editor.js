@@ -93,6 +93,7 @@ function getEditorControls() {
     editorVisualMode: document.querySelector('#editor-visual-mode'),
     editorLayoutComplexity: document.querySelector('#editor-layout-complexity'),
     editorImageCount: document.querySelector('#editor-image-count'),
+    editorPhotoControlPage: document.querySelector('#editor-photo-control-page'),
     editorManagePhotos: document.querySelector('#editor-manage-photos'),
     editorPhotoManager: document.querySelector('#editor-photo-manager'),
     editorPhotoClose: document.querySelector('#editor-photo-close'),
@@ -368,7 +369,7 @@ export function availableEditorParameters() {
     { key: 'profile', label: 'Editorial profile', control: editorProfile },
     { key: 'visualMode', label: 'Visual language', control: editorVisualMode },
     { key: 'layoutComplexity', label: 'Page complexity', control: editorLayoutComplexity },
-    { key: 'imageCount', label: 'Images', control: editorImageCount },
+    { key: 'imageCount', label: 'Page photos', control: editorImageCount },
     { key: 'photoLayout', label: 'Photo layout', control: editorPhotoLayout },
     { key: 'photoLayoutVariant', label: 'Layout intensity', control: editorPhotoLayoutVariant },
     { key: 'layoutSystem', label: 'Page layout system', control: editorLayoutSystem },
@@ -434,13 +435,41 @@ export function loadEditorState(item) {
   try {
     const stored = JSON.parse(localStorage.getItem(editorStorageKey(item)) || 'null');
     if (!stored || ![1, 2].includes(stored.version)) return emptyEditorState();
-    return {
+    const state = {
       version: 2,
       booklet: stored.booklet && typeof stored.booklet === 'object' ? stored.booklet : {},
       spreads: stored.spreads && typeof stored.spreads === 'object' ? stored.spreads : {},
       pages: stored.pages && typeof stored.pages === 'object' ? stored.pages : {},
       photoLibrary: Array.isArray(stored.photoLibrary) ? stored.photoLibrary.slice(0, 200) : []
     };
+    const pageOnlyKeys = ['imageCount', 'photoLayout', 'photoLayoutVariant'];
+    pagesFor(item).forEach((page, pageIndex) => {
+      const pageKey = String(pageIndex);
+      const spreadKey = String(Math.floor(pageIndex / 2));
+      const savedPageState = state.pages[pageKey];
+      const pageState = savedPageState && typeof savedPageState === 'object' && !Array.isArray(savedPageState)
+        ? savedPageState
+        : {};
+      const spreadState = state.spreads[spreadKey] && typeof state.spreads[spreadKey] === 'object'
+        ? state.spreads[spreadKey]
+        : {};
+      pageOnlyKeys.forEach(key => {
+        if (Object.prototype.hasOwnProperty.call(pageState, key)) return;
+        if (Object.prototype.hasOwnProperty.call(spreadState, key)) {
+          pageState[key] = spreadState[key];
+        } else if (Object.prototype.hasOwnProperty.call(state.booklet, key)) {
+          pageState[key] = state.booklet[key];
+        }
+      });
+      if (Object.keys(pageState).length) state.pages[pageKey] = pageState;
+    });
+    pageOnlyKeys.forEach(key => {
+      delete state.booklet[key];
+      Object.values(state.spreads).forEach(spread => {
+        if (spread && typeof spread === 'object') delete spread[key];
+      });
+    });
+    return state;
   } catch {
     return emptyEditorState();
   }
@@ -571,9 +600,12 @@ function resolvedPhoto(image = {}) {
 
 function pagePhotos(pageIndex = editorSession?.activePageIndex || 0) {
   if (!editorSession) return [];
-  const stored = editorSession.state.pages[String(pageIndex)]?.images;
-  const source = Array.isArray(stored) ? stored : imagesForPage(editorSession.pages[pageIndex]);
-  return source.map(resolvedPhoto).filter(image => image?.url);
+  const page = editorSession.pages[pageIndex];
+  const originalCount = imagesForPage(page).length;
+  const count = hasEditorOverride('imageCount', pageIndex)
+    ? Math.max(0, Math.min(20, Number(resolvedEditorSetting('imageCount', pageIndex))))
+    : originalCount;
+  return imagesForEditorCount(page, count, editorSession.imagePool, pageIndex);
 }
 
 function allBookletPhotos() {
@@ -1547,6 +1579,10 @@ function zoomIntoCompactPage(pageIndex) {
 export function editorParameterValueText(parameter) {
   const control = parameter.control;
   if (!control) return '';
+  if (parameter.key === 'imageCount') {
+    const count = Number(control.value) || 0;
+    return `${count} photo${count === 1 ? '' : 's'} · Page ${(editorSession?.activePageIndex || 0) + 1}`;
+  }
   if (parameter.key === 'advancedTypography') return 'Title · Subtitle · Body';
   if (parameter.key === 'visibleContent') {
     const toggles = [...control.querySelectorAll('input[type="checkbox"]')];
@@ -1666,7 +1702,9 @@ export function syncBookletEditorControls() {
   if (controls.editorProfile) controls.editorProfile.value = get('profile');
   if (controls.editorVisualMode) controls.editorVisualMode.value = get('visualMode');
   if (controls.editorLayoutComplexity) controls.editorLayoutComplexity.value = get('layoutComplexity');
-  if (controls.editorImageCount) controls.editorImageCount.value = get('imageCount');
+  const activePagePhotoCount = pagePhotos(index).length;
+  if (controls.editorImageCount) controls.editorImageCount.value = String(activePagePhotoCount);
+  if (controls.editorPhotoControlPage) controls.editorPhotoControlPage.textContent = `Page ${index + 1}`;
   if (controls.editorPhotoLayout) {
     controls.editorPhotoLayout.value = get('photoLayout') || 'auto';
     syncEditorSliderSelect(controls.editorPhotoLayout);
@@ -1717,7 +1755,7 @@ export function syncBookletEditorControls() {
   if (controls.editorShowImageCaptions) controls.editorShowImageCaptions.checked = Boolean(get('showImageCaptions'));
 
   if (controls.editorLayoutOutput && controls.editorLayoutComplexity) controls.editorLayoutOutput.value = controls.editorLayoutComplexity.value;
-  if (controls.editorImageOutput && controls.editorImageCount) controls.editorImageOutput.value = controls.editorImageCount.value;
+  if (controls.editorImageOutput) controls.editorImageOutput.value = String(activePagePhotoCount);
   if (controls.editorPhotoLayoutVariantOutput && controls.editorPhotoLayoutVariant) controls.editorPhotoLayoutVariantOutput.value = controls.editorPhotoLayoutVariant.value;
   if (controls.editorTextOutput && controls.editorTextAmount) controls.editorTextOutput.value = controls.editorTextAmount.value;
   if (controls.editorFontOutput && controls.editorFontScale) controls.editorFontOutput.value = controls.editorFontScale.value;
@@ -1770,7 +1808,17 @@ export function setEditorTypographyForTargets(suffix, value) {
 
 export function setEditorValue(key, value) {
   if (!editorSession) return;
-  const bucket = key === 'profile' ? editorSession.state.booklet : activeEditorBucket();
+  const pageOnly = new Set(['imageCount', 'photoLayout', 'photoLayoutVariant']);
+  let bucket;
+  if (key === 'profile') {
+    bucket = editorSession.state.booklet;
+  } else if (pageOnly.has(key)) {
+    const pageKey = String(editorSession.activePageIndex);
+    if (!editorSession.state.pages[pageKey]) editorSession.state.pages[pageKey] = {};
+    bucket = editorSession.state.pages[pageKey];
+  } else {
+    bucket = activeEditorBucket();
+  }
   if (bucket) bucket[key] = value;
   applyBookletEditorState();
   syncBookletEditorControls();
