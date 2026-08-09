@@ -2481,6 +2481,20 @@ footer a { text-underline-offset: 3px; }
 .editor-photo-search-card:hover,
 .editor-photo-library-card:hover { border-color: var(--ink); transform: translateY(-1px); }
 .editor-photo-search-empty { margin-top: 10px; }
+.editor-photo-load-more[hidden] { display: none; }
+.editor-photo-load-more {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 9px;
+  border: 1px solid var(--ink);
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font: 650 10px/1 "DM Sans", sans-serif;
+  cursor: pointer;
+}
+.editor-photo-load-more:hover { background: var(--ink); color: var(--paper); }
+.editor-photo-load-more:disabled { opacity: .5; cursor: wait; }
 .editor-photo-status { min-height: 14px; margin: 9px 0 0; color: var(--muted); font-size: 9px; line-height: 1.35; }
 .editor-photo-status[data-kind="error"] { color: #b52c21; }
 .editor-photo-status[data-kind="success"] { color: #21804b; }

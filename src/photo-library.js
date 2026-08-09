@@ -121,15 +121,16 @@ function httpsUrl(value = '') {
   }
 }
 
-async function searchOpenverse(query, signal) {
+async function searchOpenverse(query, page, signal) {
   const url = new URL('https://api.openverse.org/v1/images/');
   url.searchParams.set('q', query);
   url.searchParams.set('page_size', String(SEARCH_LIMIT));
+  url.searchParams.set('page', String(Math.max(1, Number(page) || 1)));
   url.searchParams.set('mature', 'false');
   const response = await fetch(url, { signal, headers: { Accept: 'application/json' } });
   if (!response.ok) throw new Error('Openverse search is temporarily unavailable.');
   const data = await response.json();
-  return (data.results || []).map(photo => ({
+  const results = (data.results || []).map(photo => ({
     id: `openverse-${photo.id}`,
     url: httpsUrl(photo.url),
     thumbnailUrl: httpsUrl(photo.thumbnail || photo.url),
@@ -141,9 +142,12 @@ async function searchOpenverse(query, signal) {
     license: text([photo.license, photo.license_version].filter(Boolean).join(' '), 'Open licence'),
     licenseUrl: httpsUrl(photo.license_url)
   })).filter(photo => photo.url && photo.thumbnailUrl);
+  const currentPage = Math.max(1, Number(data.page) || Number(page) || 1);
+  const pageCount = Math.max(currentPage, Number(data.page_count) || currentPage);
+  return { results, nextPage: currentPage < pageCount ? currentPage + 1 : null };
 }
 
-async function searchWikimedia(query, signal) {
+async function searchWikimedia(query, continuation, signal) {
   const url = new URL('https://commons.wikimedia.org/w/api.php');
   const params = {
     action: 'query', format: 'json', origin: '*', generator: 'search',
@@ -151,10 +155,11 @@ async function searchWikimedia(query, signal) {
     prop: 'imageinfo', iiprop: 'url|extmetadata', iiurlwidth: '720'
   };
   Object.entries(params).forEach(([key, value]) => url.searchParams.set(key, value));
+  Object.entries(continuation || {}).forEach(([key, value]) => url.searchParams.set(key, String(value)));
   const response = await fetch(url, { signal, headers: { Accept: 'application/json' } });
   if (!response.ok) throw new Error('Wikimedia search is temporarily unavailable.');
   const data = await response.json();
-  return Object.values(data.query?.pages || {}).map(page => {
+  const results = Object.values(data.query?.pages || {}).map(page => {
     const info = page.imageinfo?.[0] || {};
     const metadata = info.extmetadata || {};
     const pageUrl = `https://commons.wikimedia.org/?curid=${page.pageid}`;
@@ -171,21 +176,42 @@ async function searchWikimedia(query, signal) {
       licenseUrl: httpsUrl(metadata.LicenseUrl?.value) || pageUrl
     };
   }).filter(photo => photo.url);
+  return { results, continuation: data.continue || null };
 }
 
-export async function searchPhotoProviders(query, provider = 'all', signal) {
+export async function searchPhotoProviders(query, provider = 'all', signal, cursor = null) {
   const cleanQuery = String(query || '').trim().slice(0, 120);
   if (cleanQuery.length < 2) throw new Error('Enter at least two characters.');
 
   const searches = [];
-  if (provider === 'all' || provider === 'openverse') searches.push(searchOpenverse(cleanQuery, signal));
-  if (provider === 'all' || provider === 'wikimedia') searches.push(searchWikimedia(cleanQuery, signal));
-  const settled = await Promise.allSettled(searches);
-  const results = settled.flatMap(result => result.status === 'fulfilled' ? result.value : []);
+  const includeOpenverse = provider === 'all' || provider === 'openverse';
+  const includeWikimedia = provider === 'all' || provider === 'wikimedia';
+  if (includeOpenverse && (!cursor || cursor.openversePage)) {
+    searches.push({ source: 'openverse', promise: searchOpenverse(cleanQuery, cursor?.openversePage || 1, signal) });
+  }
+  if (includeWikimedia && (!cursor || cursor.wikimediaContinue)) {
+    searches.push({ source: 'wikimedia', promise: searchWikimedia(cleanQuery, cursor?.wikimediaContinue || null, signal) });
+  }
+  if (!searches.length) return { results: [], nextCursor: null, hasMore: false };
+
+  const settled = await Promise.allSettled(searches.map(search => search.promise));
+  const results = settled.flatMap(result => result.status === 'fulfilled' ? result.value.results : []);
   if (!results.length && settled.every(result => result.status === 'rejected')) {
     throw new Error('Photo search is temporarily unavailable. Try a URL or local upload.');
   }
-  return results.slice(0, provider === 'all' ? SEARCH_LIMIT * 2 : SEARCH_LIMIT);
+
+  const nextCursor = { openversePage: null, wikimediaContinue: null };
+  settled.forEach((result, index) => {
+    if (result.status !== 'fulfilled') return;
+    if (searches[index].source === 'openverse') nextCursor.openversePage = result.value.nextPage;
+    if (searches[index].source === 'wikimedia') nextCursor.wikimediaContinue = result.value.continuation;
+  });
+  const hasMore = Boolean(nextCursor.openversePage || nextCursor.wikimediaContinue);
+  return {
+    results: results.slice(0, provider === 'all' ? SEARCH_LIMIT * 2 : SEARCH_LIMIT),
+    nextCursor: hasMore ? nextCursor : null,
+    hasMore
+  };
 }
 
 export function validateRemotePhotoUrl(value = '') {

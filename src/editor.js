@@ -30,6 +30,7 @@ let editorCompactLastTapPage = -1;
 let editorCompactLastTapTime = 0;
 let editorCompactScrollSelectionLockedUntil = 0;
 let editorPhotoSearchController = null;
+let editorPhotoSearchState = null;
 const editorPhotoObjectUrls = new Map();
 let editorPlaceholderPhoto = null;
 let editorPhotoFocusIndex = null;
@@ -114,6 +115,7 @@ function getEditorControls() {
     editorPhotoSearch: document.querySelector('#editor-photo-search'),
     editorPhotoProvider: document.querySelector('#editor-photo-provider'),
     editorPhotoSearchResults: document.querySelector('#editor-photo-search-results'),
+    editorPhotoLoadMore: document.querySelector('#editor-photo-load-more'),
     editorPhotoSearchEmpty: document.querySelector('#editor-photo-search-empty'),
     editorPhotoStatus: document.querySelector('#editor-photo-status'),
     editorPhotoLibrary: document.querySelector('#editor-photo-library'),
@@ -841,26 +843,97 @@ function renderPhotoManager() {
   }
 }
 
-function renderPhotoSearchResults(results = []) {
+function createPhotoSearchCard(image) {
+  const button = document.createElement('button');
+  button.className = 'editor-photo-search-card';
+  button.type = 'button';
+  button.append(photoThumbnail(image, image.alt || 'Search result'));
+  const caption = document.createElement('span');
+  const title = document.createElement('strong');
+  title.textContent = image.alt || 'Untitled photo';
+  const credit = document.createElement('small');
+  credit.textContent = `${image.creator || 'Unknown creator'} · ${image.source}`;
+  caption.append(title, credit);
+  button.append(caption);
+  button.addEventListener('click', () => addPhotoToCurrentPage(image));
+  return button;
+}
+
+function renderPhotoSearchResults(results = [], append = false) {
   const controls = getEditorControls();
-  controls.editorPhotoSearchResults?.replaceChildren(...results.map(image => {
-    const button = document.createElement('button');
-    button.className = 'editor-photo-search-card';
-    button.type = 'button';
-    button.append(photoThumbnail(image, image.alt || 'Search result'));
-    const caption = document.createElement('span');
-    const title = document.createElement('strong');
-    title.textContent = image.alt || 'Untitled photo';
-    const credit = document.createElement('small');
-    credit.textContent = `${image.creator || 'Unknown creator'} · ${image.source}`;
-    caption.append(title, credit);
-    button.append(caption);
-    button.addEventListener('click', () => addPhotoToCurrentPage(image));
-    return button;
-  }));
+  const cards = results.map(createPhotoSearchCard);
+  if (append) controls.editorPhotoSearchResults?.append(...cards);
+  else controls.editorPhotoSearchResults?.replaceChildren(...cards);
+  const total = controls.editorPhotoSearchResults?.children.length || 0;
   if (controls.editorPhotoSearchEmpty) {
-    controls.editorPhotoSearchEmpty.hidden = results.length > 0;
-    if (!results.length) controls.editorPhotoSearchEmpty.textContent = 'No photos found. Try a broader search.';
+    controls.editorPhotoSearchEmpty.hidden = total > 0;
+    if (!total) controls.editorPhotoSearchEmpty.textContent = 'No photos found. Try a broader search.';
+  }
+}
+
+async function performPhotoSearch(append = false) {
+  const controls = getEditorControls();
+  const query = String(controls.editorPhotoSearch?.value || '').trim();
+  const provider = controls.editorPhotoProvider?.value || 'all';
+  if (append && (!editorPhotoSearchState
+    || editorPhotoSearchState.query !== query
+    || editorPhotoSearchState.provider !== provider
+    || !editorPhotoSearchState.cursor)) return;
+
+  editorPhotoSearchController?.abort();
+  const controller = new AbortController();
+  editorPhotoSearchController = controller;
+  if (!append) {
+    editorPhotoSearchState = { query, provider, results: [], cursor: null };
+    controls.editorPhotoSearchResults?.replaceChildren();
+    if (controls.editorPhotoSearchEmpty) {
+      controls.editorPhotoSearchEmpty.hidden = false;
+      controls.editorPhotoSearchEmpty.textContent = 'Searching…';
+    }
+  }
+  if (controls.editorPhotoLoadMore) {
+    controls.editorPhotoLoadMore.dataset.defaultLabel ||= controls.editorPhotoLoadMore.textContent;
+    controls.editorPhotoLoadMore.hidden = true;
+    controls.editorPhotoLoadMore.disabled = true;
+    controls.editorPhotoLoadMore.textContent = append ? 'Loading more…' : controls.editorPhotoLoadMore.dataset.defaultLabel;
+  }
+  photoStatus(append ? 'Loading more photos…' : 'Searching Openverse and Wikimedia…');
+
+  try {
+    const page = await searchPhotoProviders(
+      query,
+      provider,
+      controller.signal,
+      append ? editorPhotoSearchState.cursor : null
+    );
+    if (controller.signal.aborted) return;
+    const known = new Set(editorPhotoSearchState.results.map(image => photoIdentity(image)));
+    const fresh = page.results.filter(image => {
+      const key = photoIdentity(image);
+      if (!key || known.has(key)) return false;
+      known.add(key);
+      return true;
+    });
+    editorPhotoSearchState.results.push(...fresh);
+    editorPhotoSearchState.cursor = page.nextCursor;
+    renderPhotoSearchResults(append ? fresh : editorPhotoSearchState.results, append);
+    const canLoadMore = page.hasMore && editorPhotoSearchState.results.length < 180;
+    if (controls.editorPhotoLoadMore) controls.editorPhotoLoadMore.hidden = !canLoadMore;
+    photoStatus(
+      `${editorPhotoSearchState.results.length} photos loaded${canLoadMore ? '. More are available.' : '.'}`,
+      editorPhotoSearchState.results.length ? 'success' : 'notice'
+    );
+  } catch (error) {
+    if (error.name !== 'AbortError') {
+      if (!append) renderPhotoSearchResults([]);
+      photoStatus(error.message || 'Photo search failed.', 'error');
+    }
+  } finally {
+    if (editorPhotoSearchController === controller) editorPhotoSearchController = null;
+    if (controls.editorPhotoLoadMore) {
+      controls.editorPhotoLoadMore.disabled = false;
+      controls.editorPhotoLoadMore.textContent = controls.editorPhotoLoadMore.dataset.defaultLabel || 'Load more photos ↓';
+    }
   }
 }
 
@@ -2348,33 +2421,21 @@ export function setupEditorEventListeners() {
       photoStatus(error.message || 'Could not add this URL.', 'error');
     }
   });
-  controls.editorPhotoSearchForm?.addEventListener('submit', async event => {
+  controls.editorPhotoSearchForm?.addEventListener('submit', event => {
     event.preventDefault();
-    editorPhotoSearchController?.abort();
-    editorPhotoSearchController = new AbortController();
-    photoStatus('Searching Openverse and Wikimedia…');
-    if (controls.editorPhotoSearchEmpty) {
-      controls.editorPhotoSearchEmpty.hidden = false;
-      controls.editorPhotoSearchEmpty.textContent = 'Searching…';
-    }
-    controls.editorPhotoSearchResults?.replaceChildren();
-    try {
-      const results = await searchPhotoProviders(
-        controls.editorPhotoSearch?.value,
-        controls.editorPhotoProvider?.value || 'all',
-        editorPhotoSearchController.signal
-      );
-      renderPhotoSearchResults(results);
-      photoStatus(`${results.length} photos found. Select one to add it.`, results.length ? 'success' : 'notice');
-    } catch (error) {
-      if (error.name !== 'AbortError') {
-        renderPhotoSearchResults([]);
-        photoStatus(error.message || 'Photo search failed.', 'error');
-      }
-    } finally {
-      editorPhotoSearchController = null;
-    }
+    performPhotoSearch(false);
   });
+  controls.editorPhotoLoadMore?.addEventListener('click', () => performPhotoSearch(true));
+  const hideStaleLoadMore = () => {
+    if (!editorPhotoSearchState || !controls.editorPhotoLoadMore) return;
+    const query = String(controls.editorPhotoSearch?.value || '').trim();
+    const provider = controls.editorPhotoProvider?.value || 'all';
+    if (query !== editorPhotoSearchState.query || provider !== editorPhotoSearchState.provider) {
+      controls.editorPhotoLoadMore.hidden = true;
+    }
+  };
+  controls.editorPhotoSearch?.addEventListener('input', hideStaleLoadMore);
+  controls.editorPhotoProvider?.addEventListener('change', hideStaleLoadMore);
 
   [
     [controls.editorProfile, 'profile', value => value],

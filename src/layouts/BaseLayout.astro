@@ -70,6 +70,7 @@ const photoCopy = isRussian ? {
   addUrl: "Добавить",
   searchPlaceholder: "Например: архитектура, джаз, море…",
   searchButton: "Искать",
+  loadMore: "Загрузить ещё фото ↓",
   allSources: "Все источники",
   localNote: "Загрузки сохраняются только в этом браузере. До 20 фото на страницу.",
   searchEmpty: "Введите запрос — здесь появятся фотографии Openverse и Wikimedia."
@@ -93,6 +94,7 @@ const photoCopy = isRussian ? {
   addUrl: "Add",
   searchPlaceholder: "Try architecture, jazz, ocean…",
   searchButton: "Search",
+  loadMore: "Load more photos ↓",
   allSources: "All sources",
   localNote: "Uploads stay in this browser. Up to 20 photos per page.",
   searchEmpty: "Enter a query to search Openverse and Wikimedia."
@@ -509,6 +511,7 @@ const photoCopy = isRussian ? {
               <button type="submit">{photoCopy.searchButton}</button>
             </div>
             <div class="editor-photo-search-results" id="editor-photo-search-results"></div>
+            <button class="editor-photo-load-more" id="editor-photo-load-more" type="button" hidden>{photoCopy.loadMore}</button>
             <p class="editor-photo-search-empty" id="editor-photo-search-empty">{photoCopy.searchEmpty}</p>
           </form>
           <p class="editor-photo-status" id="editor-photo-status" role="status" aria-live="polite"></p>
