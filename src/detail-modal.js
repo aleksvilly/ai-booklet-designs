@@ -1,6 +1,7 @@
 import {
   escapeHtml,
   safeUrl,
+  safeImageUrl,
   safeClass,
   fontStack,
   fontsFor,
@@ -20,7 +21,7 @@ import { initializeBookletEditor, openBookletEditor, closeBookletEditor } from '
 import { openPrintSettings, closePrintSettings, setPrintExportItem } from './pdf-exporter.js';
 
 export function imageMarkup(image, page, index, total) {
-  const imageUrl = safeUrl(image?.url || '');
+  const imageUrl = safeImageUrl(image?.url || '');
   if (imageUrl === '#') return '';
   const alt = escapeHtml(image.alt || page.title || 'Booklet image');
   const label = escapeHtml(String(image.alt || `Image ${index + 1}`).slice(0, 58));
@@ -37,7 +38,7 @@ export function mediaMarkup(page) {
   if (images.length === 1) {
     const image = images[0];
     return `<figure class="page-image">
-      <img data-src="${escapeHtml(safeUrl(image.url))}" alt="${escapeHtml(image.alt || page.title)}" decoding="async">
+      <img data-src="${escapeHtml(safeImageUrl(image.url))}" alt="${escapeHtml(image.alt || page.title)}" decoding="async">
       <figcaption>${imageCredit(image)}</figcaption>
     </figure>`;
   }
@@ -111,7 +112,7 @@ export function coverVisualMarkup(item, page) {
   const images = imagesForPage(page).slice(0, 20);
   if (!images.length) return '<span class="detail-cover-art detail-cover-art-a"></span><span class="detail-cover-art detail-cover-art-b"></span>';
   return `<div class="detail-cover-media detail-cover-media-${images.length}">
-    ${images.map((image, index) => `<figure><img data-src="${escapeHtml(safeUrl(image.url))}" alt="${escapeHtml(image.alt || item.title)}" decoding="async"><figcaption>${imageCredit(image, true)}</figcaption></figure>`).join('')}
+    ${images.map((image, index) => `<figure><img data-src="${escapeHtml(safeImageUrl(image.url))}" alt="${escapeHtml(image.alt || item.title)}" decoding="async"><figcaption>${imageCredit(image, true)}</figcaption></figure>`).join('')}
   </div>`;
 }
 
@@ -149,7 +150,7 @@ export function detailHtml(item) {
       <div class="spreads-list">${spreadsMarkup(pages, item)}</div>
       <div class="detail-actions">
         <button type="button" data-action="edit">Edit booklet</button>
-        <button type="button" data-action="copy">Copy share link</button>
+        ${item.isStarterDraft ? '' : '<button type="button" data-action="copy">Copy share link</button>'}
         <button type="button" data-action="print">Download PDF</button>
         <button type="button" data-action="close">Back to collection</button>
       </div>
@@ -300,7 +301,13 @@ export function openBooklet(item, updateUrl = true) {
   const dialog = document.querySelector('#booklet-dialog');
   const dialogContent = document.querySelector('#dialog-content');
   const dialogEdit = document.querySelector('#dialog-edit');
+  const starterGenerateButton = document.querySelector('#starter-generate-button');
+  const starterRequestPanel = document.querySelector('#starter-request-panel');
   if (!dialog || !dialogContent) return;
+
+  dialog.classList.toggle('starter-draft-open', Boolean(item.isStarterDraft));
+  if (starterGenerateButton) starterGenerateButton.hidden = !item.isStarterDraft;
+  if (starterRequestPanel) starterRequestPanel.hidden = true;
 
   setPrintExportItem(item);
   loadGoogleFonts(fontsFor(item), `booklet-${safeClass(item.id)}`);
@@ -371,10 +378,15 @@ export function showLinkPopover(anchorNode) {
 export function closeDialog() {
   const dialog = document.querySelector('#booklet-dialog');
   const dialogEdit = document.querySelector('#dialog-edit');
+  const starterGenerateButton = document.querySelector('#starter-generate-button');
+  const starterRequestPanel = document.querySelector('#starter-request-panel');
 
   hideLinkPopover();
   closePrintSettings();
   closeBookletEditor();
+  dialog?.classList.remove('starter-draft-open');
+  if (starterGenerateButton) starterGenerateButton.hidden = true;
+  if (starterRequestPanel) starterRequestPanel.hidden = true;
   if (dialogEdit) dialogEdit.hidden = true;
   if (dialog) dialog.close();
   resetDialogScroll();

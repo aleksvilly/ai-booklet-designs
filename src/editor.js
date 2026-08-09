@@ -3,6 +3,14 @@ import { safeUrl, safeClass, fontStack, loadGoogleFonts } from './utils.js';
 import { pagesFor, imagesForPage } from './collection.js';
 import { mediaMarkup, loadDialogImages } from './detail-modal.js';
 import { bindStyleSlider, getGeneratorCatalog } from './catalog.js';
+import {
+  prepareLocalPhoto,
+  readLocalPhoto,
+  searchPhotoProviders,
+  storeLocalPhoto,
+  testRemotePhoto,
+  validateRemotePhotoUrl
+} from './photo-library.js';
 
 let editorSession = null;
 let editorSaveTimer = null;
@@ -21,6 +29,8 @@ let editorCompactSnapUnlockTimer = null;
 let editorCompactLastTapPage = -1;
 let editorCompactLastTapTime = 0;
 let editorCompactScrollSelectionLockedUntil = 0;
+let editorPhotoSearchController = null;
+const editorPhotoObjectUrls = new Map();
 const editorCompactPageAnimations = new WeakMap();
 let editorCompactMode = localStorage.getItem(EDITOR_COMPACT_STORAGE_KEY) === null
   ? window.matchMedia('(max-width: 900px)').matches
@@ -83,6 +93,27 @@ function getEditorControls() {
     editorVisualMode: document.querySelector('#editor-visual-mode'),
     editorLayoutComplexity: document.querySelector('#editor-layout-complexity'),
     editorImageCount: document.querySelector('#editor-image-count'),
+    editorManagePhotos: document.querySelector('#editor-manage-photos'),
+    editorPhotoManager: document.querySelector('#editor-photo-manager'),
+    editorPhotoClose: document.querySelector('#editor-photo-close'),
+    editorPhotoPageLabel: document.querySelector('#editor-photo-page-label'),
+    editorPhotoPageCount: document.querySelector('#editor-photo-page-count'),
+    editorPhotoPageList: document.querySelector('#editor-photo-page-list'),
+    editorPhotoPageEmpty: document.querySelector('#editor-photo-page-empty'),
+    editorPhotoUploadButton: document.querySelector('#editor-photo-upload-button'),
+    editorPhotoFile: document.querySelector('#editor-photo-file'),
+    editorPhotoUrlToggle: document.querySelector('#editor-photo-url-toggle'),
+    editorPhotoUrlForm: document.querySelector('#editor-photo-url-form'),
+    editorPhotoUrl: document.querySelector('#editor-photo-url'),
+    editorPhotoSearchToggle: document.querySelector('#editor-photo-search-toggle'),
+    editorPhotoSearchForm: document.querySelector('#editor-photo-search-form'),
+    editorPhotoSearch: document.querySelector('#editor-photo-search'),
+    editorPhotoProvider: document.querySelector('#editor-photo-provider'),
+    editorPhotoSearchResults: document.querySelector('#editor-photo-search-results'),
+    editorPhotoSearchEmpty: document.querySelector('#editor-photo-search-empty'),
+    editorPhotoStatus: document.querySelector('#editor-photo-status'),
+    editorPhotoLibrary: document.querySelector('#editor-photo-library'),
+    editorPhotoLibraryCount: document.querySelector('#editor-photo-library-count'),
     editorTextAmount: document.querySelector('#editor-text-amount'),
     editorContentPosition: document.querySelector('#editor-content-position'),
     editorFontScale: document.querySelector('#editor-font-scale'),
@@ -396,18 +427,19 @@ export function editorStorageKey(item) {
 }
 
 export function emptyEditorState() {
-  return { version: 1, booklet: {}, spreads: {}, pages: {} };
+  return { version: 2, booklet: {}, spreads: {}, pages: {}, photoLibrary: [] };
 }
 
 export function loadEditorState(item) {
   try {
     const stored = JSON.parse(localStorage.getItem(editorStorageKey(item)) || 'null');
-    if (!stored || stored.version !== 1) return emptyEditorState();
+    if (!stored || ![1, 2].includes(stored.version)) return emptyEditorState();
     return {
-      version: 1,
+      version: 2,
       booklet: stored.booklet && typeof stored.booklet === 'object' ? stored.booklet : {},
       spreads: stored.spreads && typeof stored.spreads === 'object' ? stored.spreads : {},
-      pages: stored.pages && typeof stored.pages === 'object' ? stored.pages : {}
+      pages: stored.pages && typeof stored.pages === 'object' ? stored.pages : {},
+      photoLibrary: Array.isArray(stored.photoLibrary) ? stored.photoLibrary.slice(0, 200) : []
     };
   } catch {
     return emptyEditorState();
@@ -528,13 +560,269 @@ export function replaceEditorLevelClass(node, prefix, value, enabled) {
   if (enabled) node.classList.add(`${prefix}${value}`);
 }
 
-export function imagesForEditorCount(page, count, pool) {
+function photoIdentity(image = {}) {
+  return String(image.localBlobId || image.id || image.url || '').trim();
+}
+
+function resolvedPhoto(image = {}) {
+  const localUrl = image.localBlobId ? editorPhotoObjectUrls.get(image.localBlobId) : '';
+  return localUrl ? { ...image, url: localUrl } : image;
+}
+
+function pagePhotos(pageIndex = editorSession?.activePageIndex || 0) {
+  if (!editorSession) return [];
+  const stored = editorSession.state.pages[String(pageIndex)]?.images;
+  const source = Array.isArray(stored) ? stored : imagesForPage(editorSession.pages[pageIndex]);
+  return source.map(resolvedPhoto).filter(image => image?.url);
+}
+
+function allBookletPhotos() {
+  if (!editorSession) return [];
+  const seen = new Set();
+  const original = editorSession.pages.flatMap(imagesForPage);
+  const assigned = editorSession.pages.flatMap((page, index) => pagePhotos(index));
+  return [...assigned, ...editorSession.state.photoLibrary, ...original]
+    .map(resolvedPhoto)
+    .filter(image => {
+      const key = photoIdentity(image);
+      if (!key || !image.url || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+}
+
+function refreshEditorImagePool() {
+  if (!editorSession) return;
+  editorSession.imagePool = allBookletPhotos();
+}
+
+function photoStatus(message = '', kind = '') {
+  const { editorPhotoStatus } = getEditorControls();
+  if (!editorPhotoStatus) return;
+  editorPhotoStatus.textContent = message;
+  editorPhotoStatus.dataset.kind = kind;
+}
+
+function storedPhoto(image = {}) {
+  const { thumbnailUrl, ...serializable } = image;
+  return { ...serializable, url: image.localBlobId ? '' : image.url };
+}
+
+function rememberPhoto(image) {
+  if (!editorSession) return;
+  const saved = storedPhoto(image);
+  const key = photoIdentity(saved);
+  if (!key) return;
+  const index = editorSession.state.photoLibrary.findIndex(item => photoIdentity(item) === key);
+  if (index >= 0) editorSession.state.photoLibrary[index] = saved;
+  else editorSession.state.photoLibrary.unshift(saved);
+  editorSession.state.photoLibrary = editorSession.state.photoLibrary.slice(0, 200);
+}
+
+function updatePagePhotos(images, message = '') {
+  if (!editorSession) return;
+  const pageIndex = editorSession.activePageIndex;
+  const bucket = editorSession.state.pages[String(pageIndex)] || {};
+  const next = images.slice(0, 20).map(storedPhoto);
+  bucket.images = next;
+  bucket.imageCount = next.length;
+  editorSession.state.pages[String(pageIndex)] = bucket;
+  editorSession.pageNodes[pageIndex]?.removeAttribute('data-editor-image-count');
+  refreshEditorImagePool();
+  applyEditorPage(editorSession.pageNodes[pageIndex], editorSession.pages[pageIndex], pageIndex);
+  syncBookletEditorControls();
+  renderPhotoManager();
+  scheduleEditorSave();
+  if (message) photoStatus(message, 'success');
+}
+
+function addPhotoToCurrentPage(image) {
+  if (!editorSession) return;
+  const current = pagePhotos();
+  const key = photoIdentity(image);
+  if (current.some(item => photoIdentity(item) === key)) {
+    photoStatus('This photo is already on the current page.', 'notice');
+    return;
+  }
+  if (current.length >= 20) {
+    photoStatus('This page already has 20 photos.', 'error');
+    return;
+  }
+  rememberPhoto(image);
+  updatePagePhotos([...current, image], 'Photo added to this page.');
+}
+
+function photoThumbnail(image, label) {
+  const figure = document.createElement('figure');
+  const img = document.createElement('img');
+  img.src = image.thumbnailUrl || image.url;
+  img.alt = image.alt || label;
+  img.loading = 'lazy';
+  img.decoding = 'async';
+  figure.append(img);
+  return figure;
+}
+
+function renderCurrentPagePhotos(controls) {
+  const photos = pagePhotos();
+  controls.editorPhotoPageList?.replaceChildren(...photos.map((image, index) => {
+    const card = document.createElement('article');
+    card.className = 'editor-photo-page-card';
+    card.append(photoThumbnail(image, `Photo ${index + 1}`));
+
+    const meta = document.createElement('div');
+    const title = document.createElement('strong');
+    title.textContent = image.alt || `Photo ${index + 1}`;
+    const source = document.createElement('small');
+    source.textContent = image.source || 'Photo';
+    meta.append(title, source);
+
+    const actions = document.createElement('div');
+    actions.className = 'editor-photo-card-actions';
+    const moveBack = document.createElement('button');
+    moveBack.type = 'button';
+    moveBack.textContent = '←';
+    moveBack.ariaLabel = 'Move photo earlier';
+    moveBack.disabled = index === 0;
+    moveBack.addEventListener('click', () => {
+      const next = [...pagePhotos()];
+      [next[index - 1], next[index]] = [next[index], next[index - 1]];
+      updatePagePhotos(next);
+    });
+    const moveForward = document.createElement('button');
+    moveForward.type = 'button';
+    moveForward.textContent = '→';
+    moveForward.ariaLabel = 'Move photo later';
+    moveForward.disabled = index === photos.length - 1;
+    moveForward.addEventListener('click', () => {
+      const next = [...pagePhotos()];
+      [next[index], next[index + 1]] = [next[index + 1], next[index]];
+      updatePagePhotos(next);
+    });
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.textContent = '×';
+    remove.ariaLabel = 'Remove photo from this page';
+    remove.addEventListener('click', () => updatePagePhotos(pagePhotos().filter((_, photoIndex) => photoIndex !== index), 'Photo removed from this page.'));
+    actions.append(moveBack, moveForward, remove);
+    card.append(meta, actions);
+    return card;
+  }));
+  if (controls.editorPhotoPageCount) controls.editorPhotoPageCount.textContent = `${photos.length} / 20`;
+  if (controls.editorPhotoPageEmpty) controls.editorPhotoPageEmpty.hidden = photos.length > 0;
+}
+
+function renderPhotoLibrary(controls) {
+  const photos = allBookletPhotos();
+  controls.editorPhotoLibrary?.replaceChildren(...photos.map(image => {
+    const button = document.createElement('button');
+    button.className = 'editor-photo-library-card';
+    button.type = 'button';
+    button.title = `Add ${image.alt || 'photo'} to this page`;
+    button.append(photoThumbnail(image, image.alt || 'Booklet photo'));
+    const caption = document.createElement('span');
+    caption.textContent = image.source || 'Booklet';
+    button.append(caption);
+    button.addEventListener('click', () => addPhotoToCurrentPage(image));
+    return button;
+  }));
+  if (controls.editorPhotoLibraryCount) controls.editorPhotoLibraryCount.textContent = String(photos.length);
+}
+
+function renderPhotoManager() {
+  if (!editorSession) return;
+  const controls = getEditorControls();
+  if (controls.editorPhotoPageLabel) controls.editorPhotoPageLabel.textContent = `Page ${editorSession.activePageIndex + 1}`;
+  renderCurrentPagePhotos(controls);
+  renderPhotoLibrary(controls);
+}
+
+function renderPhotoSearchResults(results = []) {
+  const controls = getEditorControls();
+  controls.editorPhotoSearchResults?.replaceChildren(...results.map(image => {
+    const button = document.createElement('button');
+    button.className = 'editor-photo-search-card';
+    button.type = 'button';
+    button.append(photoThumbnail(image, image.alt || 'Search result'));
+    const caption = document.createElement('span');
+    const title = document.createElement('strong');
+    title.textContent = image.alt || 'Untitled photo';
+    const credit = document.createElement('small');
+    credit.textContent = `${image.creator || 'Unknown creator'} · ${image.source}`;
+    caption.append(title, credit);
+    button.append(caption);
+    button.addEventListener('click', () => addPhotoToCurrentPage(image));
+    return button;
+  }));
+  if (controls.editorPhotoSearchEmpty) {
+    controls.editorPhotoSearchEmpty.hidden = results.length > 0;
+    if (!results.length) controls.editorPhotoSearchEmpty.textContent = 'No photos found. Try a broader search.';
+  }
+}
+
+function setPhotoAddMode(mode) {
+  const controls = getEditorControls();
+  const showUrl = mode === 'url' && controls.editorPhotoUrlForm?.hidden;
+  const showSearch = mode === 'search' && controls.editorPhotoSearchForm?.hidden;
+  if (controls.editorPhotoUrlForm) controls.editorPhotoUrlForm.hidden = !showUrl;
+  if (controls.editorPhotoSearchForm) controls.editorPhotoSearchForm.hidden = !showSearch;
+  controls.editorPhotoUrlToggle?.setAttribute('aria-expanded', String(Boolean(showUrl)));
+  controls.editorPhotoSearchToggle?.setAttribute('aria-expanded', String(Boolean(showSearch)));
+  if (showUrl) requestAnimationFrame(() => controls.editorPhotoUrl?.focus());
+  if (showSearch) requestAnimationFrame(() => controls.editorPhotoSearch?.focus());
+}
+
+function openPhotoManager() {
+  const controls = getEditorControls();
+  if (!editorSession || !controls.editorPhotoManager || !controls.bookletEditor) return;
+  setEditorParameterMenu(false);
+  controls.editorPhotoManager.hidden = false;
+  controls.bookletEditor.classList.add('editor-photo-manager-open');
+  photoStatus('');
+  renderPhotoManager();
+  requestAnimationFrame(() => controls.editorPhotoClose?.focus());
+}
+
+function closePhotoManager() {
+  const controls = getEditorControls();
+  editorPhotoSearchController?.abort();
+  editorPhotoSearchController = null;
+  if (controls.editorPhotoManager) controls.editorPhotoManager.hidden = true;
+  controls.bookletEditor?.classList.remove('editor-photo-manager-open');
+  setPhotoAddMode('');
+}
+
+async function hydrateLocalPhotos() {
+  if (!editorSession) return;
+  const localIds = new Set([
+    ...editorSession.state.photoLibrary,
+    ...Object.values(editorSession.state.pages).flatMap(page => Array.isArray(page?.images) ? page.images : [])
+  ].map(image => image?.localBlobId).filter(Boolean));
+  await Promise.all([...localIds].map(async id => {
+    if (editorPhotoObjectUrls.has(id)) return;
+    try {
+      const record = await readLocalPhoto(id);
+      if (record?.blob) editorPhotoObjectUrls.set(id, URL.createObjectURL(record.blob));
+    } catch {
+      // A missing device-local file should not prevent the rest of the editor loading.
+    }
+  }));
+  if (!editorSession) return;
+  refreshEditorImagePool();
+  editorSession.pageNodes.forEach(node => node.removeAttribute('data-editor-image-count'));
+  applyBookletEditorState();
+  if (!getEditorControls().editorPhotoManager?.hidden) renderPhotoManager();
+}
+
+export function imagesForEditorCount(page, count, pool, pageIndex = 0) {
   if (count <= 0) return [];
   const selected = [];
   const seen = new Set();
-  [...imagesForPage(page), ...pool].forEach(image => {
-    const key = safeUrl(image?.url || '');
-    if (selected.length >= count || key === '#' || seen.has(key)) return;
+  const assigned = editorSession?.state.pages[String(pageIndex)]?.images;
+  const pageImages = Array.isArray(assigned) ? assigned.map(resolvedPhoto) : imagesForPage(page);
+  [...pageImages, ...pool].forEach(image => {
+    const key = photoIdentity(image);
+    if (selected.length >= count || !image?.url || seen.has(key)) return;
     seen.add(key);
     selected.push(image);
   });
@@ -544,9 +832,9 @@ export function imagesForEditorCount(page, count, pool) {
   return selected.slice(0, count);
 }
 
-export function renderEditorMedia(pageNode, page, count) {
+export function renderEditorMedia(pageNode, page, count, pageIndex = 0) {
   pageNode.querySelectorAll(':scope > .page-image, :scope > .page-gallery, :scope > .page-art').forEach(node => node.remove());
-  const images = imagesForEditorCount(page, count, editorSession.imagePool);
+  const images = imagesForEditorCount(page, count, editorSession.imagePool, pageIndex);
   const previewPage = { ...page, images, image: null };
   const copy = pageNode.querySelector('.book-page-copy');
   copy?.insertAdjacentHTML('beforebegin', mediaMarkup(previewPage));
@@ -607,7 +895,7 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     ? Math.max(0, Math.min(20, Number(values.imageCount)))
     : imagesForPage(page).length;
   if (Number(pageNode.dataset.editorImageCount) !== requestedImageCount) {
-    renderEditorMedia(pageNode, page, requestedImageCount);
+    renderEditorMedia(pageNode, page, requestedImageCount, pageIndex);
     pageNode.dataset.editorImageCount = String(requestedImageCount);
   }
 
@@ -1489,6 +1777,33 @@ export function setEditorValue(key, value) {
   scheduleEditorSave();
 }
 
+export function editorGenerationSettings() {
+  if (!editorSession) return null;
+
+  const pageIndex = editorSession.activePageIndex || 0;
+  const value = key => resolvedEditorSetting(key, pageIndex);
+  const fonts = ['titleFont', 'subtitleFont', 'bodyFont']
+    .map(key => String(value(key) || '').trim())
+    .filter((family, index, items) => family && items.indexOf(family) === index);
+  const direction = [
+    `photo layout ${value('photoLayout') || 'auto'}`,
+    `layout intensity ${value('photoLayoutVariant') ?? 0}`,
+    `page system ${value('layoutSystem') || 'auto'}`,
+    `content ${value('contentPosition') || 'auto'}`,
+    `font scale ${value('fontScale') || 3}`,
+    `spacing ${value('spacing') || 3}`
+  ].join('; ');
+
+  return {
+    style: String(value('profile') || 'auto'),
+    visualMode: String(value('visualMode') || 'auto'),
+    layoutComplexity: String(value('layoutComplexity') || 2),
+    effectLevel: String(value('effectLevel') ?? 2),
+    customFonts: fonts.join(', '),
+    customStyle: `Live editor direction: ${direction}`.slice(0, 180)
+  };
+}
+
 function syncResponsiveEditorMode(persist = false) {
   const isSmallScreen = window.matchMedia('(max-width: 900px)').matches;
   setEditorCompactMode(isSmallScreen, persist);
@@ -1668,6 +1983,7 @@ export function closeBookletEditor() {
   const { bookletEditor, dialog } = getEditorControls();
   if (!bookletEditor || !dialog) return;
 
+  closePhotoManager();
   closeTextEditor(false);
   resetEditorTypographyCascade();
   setEditorParameterMenu(false);
@@ -1684,6 +2000,8 @@ export function initializeBookletEditor(item) {
   editorTypographyTarget = 'title';
   resetEditorTypographyCascade();
 
+  editorPhotoObjectUrls.forEach(url => URL.revokeObjectURL(url));
+  editorPhotoObjectUrls.clear();
   editorSession = {
     item,
     pages,
@@ -1726,6 +2044,7 @@ export function initializeBookletEditor(item) {
     if (pageChanged) {
       updateEditorSelection();
       syncBookletEditorControls();
+      if (!controls.editorPhotoManager?.hidden) renderPhotoManager();
     }
     if (scrollIntoView && isCompactPageStageActive() && editorCompactPageZoom <= 2) {
       scrollCompactPageIntoView('smooth');
@@ -1824,10 +2143,86 @@ export function initializeBookletEditor(item) {
   closeBookletEditor();
   applyBookletEditorState();
   syncBookletEditorControls();
+  hydrateLocalPhotos();
 }
 
 export function setupEditorEventListeners() {
   const controls = getEditorControls();
+
+  controls.editorManagePhotos?.addEventListener('click', openPhotoManager);
+  controls.editorPhotoClose?.addEventListener('click', closePhotoManager);
+  controls.editorPhotoUploadButton?.addEventListener('click', () => controls.editorPhotoFile?.click());
+  controls.editorPhotoUrlToggle?.addEventListener('click', () => setPhotoAddMode('url'));
+  controls.editorPhotoSearchToggle?.addEventListener('click', () => setPhotoAddMode('search'));
+  controls.editorPhotoFile?.addEventListener('change', async () => {
+    const files = [...(controls.editorPhotoFile.files || [])].slice(0, 20);
+    if (!files.length) return;
+    photoStatus(`Preparing ${files.length} photo${files.length === 1 ? '' : 's'}…`);
+    let added = 0;
+    for (const file of files) {
+      if (pagePhotos().length >= 20) break;
+      try {
+        const { record, image } = await prepareLocalPhoto(file);
+        await storeLocalPhoto(record);
+        editorPhotoObjectUrls.set(record.id, URL.createObjectURL(record.blob));
+        addPhotoToCurrentPage(image);
+        added += 1;
+      } catch (error) {
+        photoStatus(error.message || 'Could not add this photo.', 'error');
+      }
+    }
+    controls.editorPhotoFile.value = '';
+    if (added) photoStatus(`${added} photo${added === 1 ? '' : 's'} added to this page.`, 'success');
+  });
+  controls.editorPhotoUrlForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+    try {
+      const url = validateRemotePhotoUrl(controls.editorPhotoUrl?.value);
+      photoStatus('Checking the image…');
+      await testRemotePhoto(url);
+      addPhotoToCurrentPage({
+        id: `url-${crypto.randomUUID?.() || Date.now()}`,
+        url,
+        alt: 'Image added by URL',
+        creator: 'External source',
+        source: new URL(url).hostname,
+        sourceUrl: url,
+        license: 'Check source licence',
+        licenseUrl: url
+      });
+      controls.editorPhotoUrl.value = '';
+      setPhotoAddMode('');
+    } catch (error) {
+      photoStatus(error.message || 'Could not add this URL.', 'error');
+    }
+  });
+  controls.editorPhotoSearchForm?.addEventListener('submit', async event => {
+    event.preventDefault();
+    editorPhotoSearchController?.abort();
+    editorPhotoSearchController = new AbortController();
+    photoStatus('Searching Openverse and Wikimedia…');
+    if (controls.editorPhotoSearchEmpty) {
+      controls.editorPhotoSearchEmpty.hidden = false;
+      controls.editorPhotoSearchEmpty.textContent = 'Searching…';
+    }
+    controls.editorPhotoSearchResults?.replaceChildren();
+    try {
+      const results = await searchPhotoProviders(
+        controls.editorPhotoSearch?.value,
+        controls.editorPhotoProvider?.value || 'all',
+        editorPhotoSearchController.signal
+      );
+      renderPhotoSearchResults(results);
+      photoStatus(`${results.length} photos found. Select one to add it.`, results.length ? 'success' : 'notice');
+    } catch (error) {
+      if (error.name !== 'AbortError') {
+        renderPhotoSearchResults([]);
+        photoStatus(error.message || 'Photo search failed.', 'error');
+      }
+    } finally {
+      editorPhotoSearchController = null;
+    }
+  });
 
   [
     [controls.editorProfile, 'profile', value => value],
@@ -1957,6 +2352,11 @@ export function setupEditorEventListeners() {
   });
   controls.bookletEditor?.addEventListener('keydown', event => {
     if (event.key !== 'Escape') return;
+    if (!controls.editorPhotoManager?.hidden) {
+      event.stopPropagation();
+      closePhotoManager();
+      return;
+    }
     if (editorActiveTextSession) {
       event.stopPropagation();
       closeTextEditor(false);
@@ -1981,8 +2381,11 @@ export function setupEditorEventListeners() {
     if (controls.editorScope.value === 'booklet') editorSession.state.booklet = {};
     else if (controls.editorScope.value === 'spread') delete editorSession.state.spreads[String(editorSession.activeSpreadIndex)];
     else delete editorSession.state.pages[String(editorSession.activePageIndex)];
+    editorSession.pageNodes.forEach(node => node.removeAttribute('data-editor-image-count'));
+    refreshEditorImagePool();
     applyBookletEditorState();
     syncBookletEditorControls();
+    if (!controls.editorPhotoManager?.hidden) renderPhotoManager();
     scheduleEditorSave();
   });
 
@@ -1990,8 +2393,11 @@ export function setupEditorEventListeners() {
     if (!editorSession) return;
     editorSession.state = emptyEditorState();
     localStorage.removeItem(editorStorageKey(editorSession.item));
+    editorSession.pageNodes.forEach(node => node.removeAttribute('data-editor-image-count'));
+    refreshEditorImagePool();
     applyBookletEditorState();
     syncBookletEditorControls();
+    if (!controls.editorPhotoManager?.hidden) renderPhotoManager();
     if (controls.editorSaveStatus) controls.editorSaveStatus.textContent = 'All local adjustments were reset.';
   });
 }

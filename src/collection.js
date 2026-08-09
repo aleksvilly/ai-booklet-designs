@@ -1,6 +1,7 @@
 import { ITEMS_PER_PAGE } from './config.js';
 import {
   safeUrl,
+  safeImageUrl,
   safeClass,
   applyPalette,
   designClasses,
@@ -101,7 +102,7 @@ export function imagesForPage(page = {}) {
     : page.image
       ? [page.image]
       : [];
-  return images.filter(image => safeUrl(image?.url || '') !== '#');
+  return images.filter(image => safeImageUrl(image?.url || '') !== '#');
 }
 
 export function createCardCoverMedia(cover, item, page, index) {
@@ -113,7 +114,7 @@ export function createCardCoverMedia(cover, item, page, index) {
 
   images.slice(0, 20).forEach((image, imageIndex) => {
     const img = document.createElement('img');
-    img.src = safeUrl(image.url);
+    img.src = safeImageUrl(image.url);
     img.alt = image.alt || item.title;
     img.decoding = 'async';
     img.loading = index < 3 ? 'eager' : 'lazy';

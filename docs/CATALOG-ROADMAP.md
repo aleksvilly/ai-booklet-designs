@@ -31,6 +31,9 @@
 - [x] Desktop Full View split into separate page-stage and floating editor
       surfaces with a visible gap, responsive page sizing and a content-aligned
       zoom control.
+- [x] Photo manager V1 for the selected page: device uploads in IndexedDB,
+      URL imports, Openverse/Wikimedia search, booklet-wide reuse, ordering and
+      removal without changing published booklet data.
 
 ## In progress
 
@@ -46,6 +49,10 @@
 - [ ] Add effect controls to the live booklet/spread/page editor.
 - [ ] Add per-property inheritance indicators and a one-tap “return to parent”.
 - [ ] Save an edited booklet as a reusable personal template.
+- [ ] Photo manager V2: protected Unsplash/Pexels search proxy with provider
+      attribution and required download tracking.
+- [ ] Photo manager V3: drag-and-drop ordering, crop/focal-point controls and
+      text-aware image recommendations.
 - [ ] Import permissively licensed style packs from GitHub with attribution.
 - [ ] Add a repeatable visual-reference intake checklist covering provenance,
       asset/code exclusion, public naming and similarity review.
@@ -57,6 +64,8 @@
 
 - [ ] API/database adapter with the same JSON contract.
 - [ ] Cloud image storage and asset deduplication.
+- [ ] Evaluate Pixabay only with owned image storage; permanent API hotlinking
+      is not permitted by the provider.
 - [ ] Wikipedia/Wikidata/OpenAlex topic adapters.
 - [ ] User collections, private brand systems and custom template packs.
 - [ ] Element-level editor beneath booklet → spread → page.

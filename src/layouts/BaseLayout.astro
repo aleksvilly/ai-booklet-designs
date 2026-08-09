@@ -14,6 +14,81 @@ const {
 } = Astro.props;
 
 const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
+const isRussian = lang === "ru";
+const starterCopy = isRussian ? {
+  generate: "Сгенерировать",
+  close: "Закрыть форму генерации",
+  eyebrow: "Последний шаг",
+  title: "Создать по этому дизайну",
+  copy: "Настройки редактора уже перенесены. Добавьте тему — остальное можно оставить автоматическим.",
+  topic: "О чём будет буклет?",
+  topicPlaceholder: "Например: подарок джазовому фанату, меню кафе, свадьба…",
+  browse: "Выбрать тему из каталога",
+  browseHint: "Категория → тема → подтема",
+  search: "Найти тему",
+  searchPlaceholder: "Например: теннис, свадьба, ИИ…",
+  topicDefault: "Выберите любой уровень. Самый глубокий выбранный уровень станет темой буклета.",
+  details: "Дополнительные детали (необязательно)",
+  detailsPlaceholder: "Аудитория, настроение, важные факты и чего стоит избегать…",
+  submit: "Запустить генерацию →",
+  note: "Без регистрации · запрос попадёт в публичную очередь"
+} : {
+  generate: "Generate",
+  close: "Close generation form",
+  eyebrow: "Final step",
+  title: "Create from this design",
+  copy: "Your editor choices are already included. Add a topic and leave everything else automatic.",
+  topic: "What is the booklet about?",
+  topicPlaceholder: "Birthday gift for a jazz fan, café menu, wedding…",
+  browse: "Choose from the topic catalog",
+  browseHint: "Category → topic → subtopic",
+  search: "Find a topic",
+  searchPlaceholder: "Try tennis, wedding, AI…",
+  topicDefault: "Choose any level. The deepest selection becomes the booklet topic.",
+  details: "Extra details (optional)",
+  detailsPlaceholder: "Audience, mood, important facts and anything to avoid…",
+  submit: "Start generation →",
+  note: "No account needed · your request enters the public queue"
+};
+const photoCopy = isRussian ? {
+  manage: "Управлять фото",
+  title: "Фото страницы",
+  close: "Закрыть менеджер фотографий",
+  intro: "Добавляйте фото на выбранную страницу или повторно используйте изображения из буклета.",
+  current: "На этой странице",
+  empty: "На этой странице пока нет фотографий.",
+  booklet: "В этом буклете",
+  bookletHint: "Нажмите на фото, чтобы добавить его на текущую страницу.",
+  upload: "С устройства",
+  url: "По URL",
+  search: "Найти",
+  urlPlaceholder: "https://example.com/photo.jpg",
+  addUrl: "Добавить",
+  searchPlaceholder: "Например: архитектура, джаз, море…",
+  searchButton: "Искать",
+  allSources: "Все источники",
+  localNote: "Загрузки сохраняются только в этом браузере. До 20 фото на страницу.",
+  searchEmpty: "Введите запрос — здесь появятся фотографии Openverse и Wikimedia."
+} : {
+  manage: "Manage photos",
+  title: "Page photos",
+  close: "Close photo manager",
+  intro: "Add photos to the selected page or reuse any image already in this booklet.",
+  current: "On this page",
+  empty: "This page has no photos yet.",
+  booklet: "In this booklet",
+  bookletHint: "Select a photo to add it to the current page.",
+  upload: "From device",
+  url: "From URL",
+  search: "Search",
+  urlPlaceholder: "https://example.com/photo.jpg",
+  addUrl: "Add",
+  searchPlaceholder: "Try architecture, jazz, ocean…",
+  searchButton: "Search",
+  allSources: "All sources",
+  localNote: "Uploads stay in this browser. Up to 20 photos per page.",
+  searchEmpty: "Enter a query to search Openverse and Wikimedia."
+};
 ---
 <!doctype html>
 <html lang={lang}>
@@ -137,6 +212,7 @@ const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
           <h2>Adjust the booklet</h2>
         </div>
         <div class="booklet-editor-heading-actions">
+          <button class="starter-generate-button" id="starter-generate-button" type="button" hidden>{starterCopy.generate}</button>
           <label class="editor-compact-scope">
             <select id="editor-scope-compact" aria-label="Apply changes to">
               <option value="booklet">Entire booklet</option>
@@ -184,10 +260,11 @@ const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
             <span>Page complexity <output id="editor-layout-output">2</output> / 5</span>
             <input id="editor-layout-complexity" type="range" min="1" max="5" value="2">
           </label>
-          <label class="editor-range" data-editor-parameter="imageCount">
-            <span>Images <output id="editor-image-output">1</output> / 20</span>
+          <div class="editor-range editor-images-control" data-editor-parameter="imageCount">
+            <label for="editor-image-count">Images <output id="editor-image-output">1</output> / 20</label>
             <input id="editor-image-count" type="range" min="0" max="20" value="1">
-          </label>
+            <button class="editor-manage-photos" id="editor-manage-photos" type="button">{photoCopy.manage}</button>
+          </div>
           <label class="editor-range editor-photo-layout-control" data-editor-parameter="photoLayout">
             <span>Photo layout</span>
             <select id="editor-photo-layout">
@@ -374,6 +451,129 @@ const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
           <button class="editor-text-save-btn" id="editor-text-save-btn" type="button">Save text</button>
         </div>
       </div>
+
+      <section class="editor-photo-manager" id="editor-photo-manager" aria-labelledby="editor-photo-title" hidden>
+        <header class="editor-photo-heading">
+          <div>
+            <p class="eyebrow" id="editor-photo-page-label">Page 1</p>
+            <h3 id="editor-photo-title">{photoCopy.title}</h3>
+          </div>
+          <button id="editor-photo-close" type="button" aria-label={photoCopy.close}>×</button>
+        </header>
+        <p class="editor-photo-intro">{photoCopy.intro}</p>
+
+        <section class="editor-photo-section">
+          <div class="editor-photo-section-heading">
+            <h4>{photoCopy.current}</h4>
+            <span id="editor-photo-page-count">0 / 20</span>
+          </div>
+          <div class="editor-photo-page-list" id="editor-photo-page-list"></div>
+          <p class="editor-photo-empty" id="editor-photo-page-empty">{photoCopy.empty}</p>
+        </section>
+
+        <section class="editor-photo-section editor-photo-add-section">
+          <div class="editor-photo-add-actions" role="group" aria-label="Add a photo">
+            <button id="editor-photo-upload-button" type="button">＋ {photoCopy.upload}</button>
+            <button id="editor-photo-url-toggle" type="button" aria-expanded="false">↗ {photoCopy.url}</button>
+            <button id="editor-photo-search-toggle" type="button" aria-expanded="false">⌕ {photoCopy.search}</button>
+          </div>
+          <input id="editor-photo-file" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple hidden>
+          <form class="editor-photo-inline-form" id="editor-photo-url-form" hidden>
+            <input id="editor-photo-url" type="url" inputmode="url" placeholder={photoCopy.urlPlaceholder} aria-label={photoCopy.url}>
+            <button type="submit">{photoCopy.addUrl}</button>
+          </form>
+          <form class="editor-photo-search-form" id="editor-photo-search-form" hidden>
+            <div>
+              <input id="editor-photo-search" type="search" placeholder={photoCopy.searchPlaceholder} aria-label={photoCopy.search}>
+              <select id="editor-photo-provider" aria-label="Photo source">
+                <option value="all">{photoCopy.allSources}</option>
+                <option value="openverse">Openverse</option>
+                <option value="wikimedia">Wikimedia</option>
+              </select>
+              <button type="submit">{photoCopy.searchButton}</button>
+            </div>
+            <div class="editor-photo-search-results" id="editor-photo-search-results"></div>
+            <p class="editor-photo-search-empty" id="editor-photo-search-empty">{photoCopy.searchEmpty}</p>
+          </form>
+          <p class="editor-photo-status" id="editor-photo-status" role="status" aria-live="polite"></p>
+          <p class="editor-photo-note">{photoCopy.localNote}</p>
+        </section>
+
+        <section class="editor-photo-section">
+          <div class="editor-photo-section-heading editor-photo-library-heading">
+            <div>
+              <h4>{photoCopy.booklet}</h4>
+              <p>{photoCopy.bookletHint}</p>
+            </div>
+            <span id="editor-photo-library-count">0</span>
+          </div>
+          <div class="editor-photo-library" id="editor-photo-library"></div>
+        </section>
+      </section>
+
+      <section class="starter-request-panel" id="starter-request-panel" aria-labelledby="starter-request-title" hidden>
+        <header>
+          <div>
+            <p class="eyebrow">{starterCopy.eyebrow}</p>
+            <h3 id="starter-request-title">{starterCopy.title}</h3>
+          </div>
+          <button id="starter-request-close" type="button" aria-label={starterCopy.close}>×</button>
+        </header>
+        <p class="starter-request-copy">{starterCopy.copy}</p>
+        <form class="request-form starter-request-form" id="generation-form" action="https://ntfy.sh/ai-booklet-8bcc753d24dacb6d280ae36b" method="post">
+          <input type="hidden" name="request_type" value="booklet_generation">
+          <input type="hidden" name="count" value="1">
+          <input class="form-honeypot" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
+
+          <label class="starter-topic-field">
+            <span>{starterCopy.topic}</span>
+            <input id="booklet-topic" name="topic" type="text" maxlength="140" placeholder={starterCopy.topicPlaceholder}>
+          </label>
+          <input id="topic-path" name="topic_path" type="hidden" value="">
+
+          <details class="topic-explorer" id="topic-explorer">
+            <summary>
+              <span>{starterCopy.browse}</span>
+              <small>{starterCopy.browseHint}</small>
+            </summary>
+            <div class="topic-explorer-panel">
+              <label class="topic-search-label">
+                <span>{starterCopy.search}</span>
+                <input id="topic-catalog-search" type="search" placeholder={starterCopy.searchPlaceholder} autocomplete="off">
+              </label>
+              <div class="topic-wheel" id="topic-wheel" aria-label="Topic path"></div>
+              <p class="topic-path-preview" id="topic-path-preview">{starterCopy.topicDefault}</p>
+              <div class="topic-search-results" id="topic-search-results" hidden></div>
+            </div>
+          </details>
+
+          <label class="starter-details-field">
+            <span>{starterCopy.details}</span>
+            <textarea name="description" rows="3" maxlength="800" placeholder={starterCopy.detailsPlaceholder}></textarea>
+          </label>
+
+          <div class="starter-form-settings-source" hidden>
+            <label id="style-profile-label">
+              <select id="style-profile-select" name="style">
+                <option value="auto">Automatic / no brand profile</option>
+              </select>
+            </label>
+            <input name="visual_mode" type="hidden" value="auto">
+            <input name="layout_complexity" type="hidden" value="2">
+            <input name="effect_level" type="hidden" value="2">
+            <input name="effects" type="hidden" value="">
+            <input name="chaos_level" type="hidden" value="-1">
+            <input name="max_fonts" type="hidden" value="20">
+            <input name="custom_style" type="hidden" value="">
+            <input name="ai_provider" type="hidden" value="auto">
+            <input name="custom_fonts" type="hidden" value="">
+          </div>
+
+          <button class="primary-button starter-request-submit" type="submit">{starterCopy.submit}</button>
+          <p class="form-status" id="generation-form-status" role="status" aria-live="polite"></p>
+          <p class="starter-request-note">{starterCopy.note}</p>
+        </form>
+      </section>
 
       <div class="editor-parameter-menu" id="editor-parameter-menu" aria-hidden="true"></div>
 

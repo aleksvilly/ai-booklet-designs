@@ -15,6 +15,15 @@ export function safeUrl(value = '') {
   }
 }
 
+export function safeImageUrl(value = '') {
+  try {
+    const url = new URL(value);
+    return ['http:', 'https:', 'blob:'].includes(url.protocol) ? url.href : '#';
+  } catch {
+    return '#';
+  }
+}
+
 export function safeClass(value = '') {
   return String(value).toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '');
 }

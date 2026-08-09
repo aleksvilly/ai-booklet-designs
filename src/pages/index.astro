@@ -18,131 +18,37 @@ import Footer from '../components/Footer.astro';
         <li><a href="wedding.html">💍 <strong>Wedding</strong> — ceremonies, anniversaries, love stories</a></li>
       </ul>
       <div class="hero-actions">
-        <a class="primary-button" href="#generation-form" data-i18n="btn_create">Create a booklet — free</a>
+        <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">Create a booklet — free</button>
         <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">See examples</a>
         <button class="text-button" id="surprise-button" type="button" data-i18n="btn_surprise">Surprise me ↗</button>
       </div>
     </div>
-    <form class="request-form hero-generator" id="generation-form" action="https://ntfy.sh/ai-booklet-8bcc753d24dacb6d280ae36b" method="post">
-      <div class="generator-heading">
-        <div>
-          <p class="eyebrow" data-i18n="form_eyebrow">Generate now</p>
-          <h2 data-i18n="form_title">Request a booklet</h2>
-        </div>
-        <span class="automation-badge"><i aria-hidden="true"></i> <span data-i18n="form_badge">Automatic</span></span>
-      </div>
 
-      <input type="hidden" name="request_type" value="booklet_generation">
-      <input type="hidden" name="count" value="1">
-      <input class="form-honeypot" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
-
-      <div class="request-fields">
-        <label class="field-wide">
-          <span data-i18n="lbl_topic">Booklet topic</span>
-          <input id="booklet-topic" name="topic" type="text" maxlength="140" data-i18n-ph="ph_topic" placeholder="Optional — type anything or browse the topic encyclopedia">
-        </label>
-        <input id="topic-path" name="topic_path" type="hidden" value="">
-        <details class="topic-explorer field-wide" id="topic-explorer">
-          <summary>
-            <span data-i18n="summary_explorer">Browse topic encyclopedia</span>
-            <small data-i18n="summary_explorer_sub">Category → topic → subtopic</small>
-          </summary>
-          <div class="topic-explorer-panel">
-            <label class="topic-search-label">
-              <span data-i18n="lbl_find_topic">Find a topic</span>
-              <input id="topic-catalog-search" type="search" data-i18n-ph="ph_search_topic" placeholder="Try tennis, wedding, AI…" autocomplete="off">
-            </label>
-            <div class="topic-wheel" id="topic-wheel" aria-label="Topic path"></div>
-            <p class="topic-path-preview" id="topic-path-preview" data-i18n="topic_preview_default">Choose any level. The deepest selection becomes the booklet topic.</p>
-            <div class="topic-search-results" id="topic-search-results" hidden></div>
-          </div>
-        </details>
-        <label class="field-wide range-field" id="style-profile-label">
-          <span data-i18n="lbl_editorial_profile">Editorial profile</span>
-          <output id="style-profile-output" data-i18n="auto_profile">Automatic / no brand profile</output>
-          <select id="style-profile-select" name="style" required>
-            <option value="auto" data-i18n="auto_profile">Automatic / no brand profile</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="lbl_visual_language">Visual language</span>
-          <select name="visual_mode">
-            <option value="auto" selected data-i18n="opt_auto">Automatic</option>
-            <option value="minimal" data-i18n="opt_minimal">Minimal editorial</option>
-            <option value="abstract" data-i18n="opt_abstract">Abstract / experimental</option>
-            <option value="mixed" data-i18n="opt_mixed">Mix minimal + abstract</option>
-          </select>
-        </label>
-        <label class="range-field field-wide" id="layout-system-label">
-          <span data-i18n="lbl_layout_system">Page layout system</span>
-          <output id="layout-system-output" data-i18n="auto_layout">Automatic</output>
-          <select id="layout-system-select" name="layout_system">
-            <option value="auto" selected>Automatic</option>
-            <option value="single-hero-image">Single hero image — one dominant photo per page</option>
-            <option value="split-layout">Split layout — content in two columns</option>
-            <option value="strict-grid">Strict grid — structured modular composition</option>
-            <option value="image-heavy-magazine">Image-heavy magazine — photos lead, text supports</option>
-            <option value="text-heavy-editorial">Text-heavy editorial — long reads, dense copy</option>
-            <option value="white-space-minimal">White space minimal — breathing room, luxury feel</option>
-            <option value="full-bleed">Full bleed — images edge to edge</option>
-            <option value="asymmetric-modern">Asymmetric modern — off-axis, dynamic balance</option>
-            <option value="layered-overlap">Layered overlap — elements on top of each other</option>
-            <option value="framed-gallery">Framed gallery — images with visible borders/frames</option>
-            <option value="chaotic-collage">Chaotic collage — torn, scattered, maximal</option>
-            <option value="poster-layout">Poster layout — single graphic statement per page</option>
-            <option value="modular-cards">Modular cards — discrete info blocks</option>
-            <option value="timeline-flow">Timeline flow — chronological narrative</option>
-            <option value="vertical-rhythm">Vertical rhythm — reading flow top to bottom</option>
-          </select>
-        </label>
-        <label class="range-field">
-          <span data-i18n="lbl_chaos">Design chaos level</span>
-          <output id="chaos-output">0 — Strict &amp; safe</output>
-          <select id="chaos-level-select" name="chaos_level">
-            <option value="-1">Auto (smart matching)</option>
-            <option value="0" selected>0 — Strict &amp; safe</option>
-            <option value="1">1 — Balanced editorial</option>
-            <option value="2">2 — Expressive layout</option>
-            <option value="3">3 — Wild typography</option>
-            <option value="4">4 — Radical grid breaks</option>
-            <option value="5">5 — Full experimental chaos</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="lbl_fonts">Max font families</span>
-          <select name="max_fonts">
-            <option value="2" selected>2 fonts (recommended)</option>
-            <option value="3">3 fonts</option>
-            <option value="4">4 fonts</option>
-          </select>
-        </label>
-        <label class="field-wide">
-          <span data-i18n="lbl_custom_style">Custom style directions</span>
-          <input name="custom_style" type="text" maxlength="120" data-i18n-ph="ph_custom_style" placeholder="e.g. 1970s magazine layout, high contrast black &amp; white">
-        </label>
-        <label>
-          <span data-i18n="lbl_ai_engine">AI text engine</span>
-          <select name="ai_provider">
-            <option value="auto" selected data-i18n="opt_ai_auto">Auto (smart selection)</option>
-            <option value="openai-first">OpenAI (GPT-4o)</option>
-            <option value="gemini-first">Google Gemini</option>
-            <option value="local" data-i18n="opt_ai_local">Local fast generator</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="lbl_custom_fonts">Custom Google Fonts</span>
-          <input name="custom_fonts" type="text" maxlength="80" data-i18n-ph="ph_custom_fonts" placeholder="e.g. Playfair Display, Space Grotesk">
-        </label>
-        <label class="field-wide">
-          <span data-i18n="lbl_extra_details">Extra details or wish list</span>
-          <textarea name="description" rows="2" maxlength="280" data-i18n-ph="ph_extra_details" placeholder="e.g. Include 4 chapters, emphasis on photos, warm tone"></textarea>
-        </label>
+    <div class="hero-booklet-entry">
+      <button class="hero-booklet-button" id="booklet-plus-btn" type="button" aria-label="Open a starter booklet in the live editor">
+        <span class="hero-booklet-shadow" aria-hidden="true"></span>
+        <span class="hero-booklet-spread" aria-hidden="true">
+          <span class="hero-booklet-page hero-booklet-copy">
+            <small>Start with a real template</small>
+            <strong>Make it<br><em>yours.</em></strong>
+            <span>Edit the pages before you generate.</span>
+            <i>Live preview · Print-ready</i>
+          </span>
+          <span class="hero-booklet-page hero-booklet-add">
+            <span class="hero-booklet-plus"></span>
+            <strong>Open editor</strong>
+            <span>Every slider works live</span>
+            <span class="hero-slider-preview"><i></i></span>
+          </span>
+        </span>
+      </button>
+      <div class="hero-booklet-meta">
+        <p><strong>One click.</strong> A starter booklet and the full edit menu open together.</p>
+        <button class="request-history-button" id="request-history-button" type="button" hidden>
+          Request history <span id="request-history-count">0</span>
+        </button>
       </div>
-
-      <div class="form-actions">
-        <button class="primary-button field-wide" id="request-submit-button" type="submit" data-i18n="btn_submit_request">Submit booklet request →</button>
-      </div>
-    </form>
+    </div>
   </section>
 
   <section class="collection" id="collection">

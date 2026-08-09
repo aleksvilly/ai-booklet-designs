@@ -18,131 +18,37 @@ import Footer from '../../components/Footer.astro';
         <li><a href="wedding.html">💍 <strong>Свадьба</strong> — церемонии, юбилеи, истории любви</a></li>
       </ul>
       <div class="hero-actions">
-        <a class="primary-button" href="#generation-form" data-i18n="btn_create">Создать буклет — бесплатно</a>
+        <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">Создать буклет — бесплатно</button>
         <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">Смотреть примеры</a>
         <button class="text-button" id="surprise-button" type="button" data-i18n="btn_surprise">Удиви меня ↗</button>
       </div>
     </div>
-    <form class="request-form hero-generator" id="generation-form" action="https://ntfy.sh/ai-booklet-8bcc753d24dacb6d280ae36b" method="post">
-      <div class="generator-heading">
-        <div>
-          <p class="eyebrow" data-i18n="form_eyebrow">Сгенерировать сейчас</p>
-          <h2 data-i18n="form_title">Запросить буклет</h2>
-        </div>
-        <span class="automation-badge"><i aria-hidden="true"></i> <span data-i18n="form_badge">Автоматически</span></span>
-      </div>
 
-      <input type="hidden" name="request_type" value="booklet_generation">
-      <input type="hidden" name="count" value="1">
-      <input class="form-honeypot" name="_gotcha" type="text" tabindex="-1" autocomplete="off">
-
-      <div class="request-fields">
-        <label class="field-wide">
-          <span data-i18n="lbl_topic">Тема буклета</span>
-          <input id="booklet-topic" name="topic" type="text" maxlength="140" data-i18n-ph="ph_topic" placeholder="Необязательно — введите тему или выберите из энциклопедии">
-        </label>
-        <input id="topic-path" name="topic_path" type="hidden" value="">
-        <details class="topic-explorer field-wide" id="topic-explorer">
-          <summary>
-            <span data-i18n="summary_explorer">Открыть энциклопедию тем</span>
-            <small data-i18n="summary_explorer_sub">Категория → тема → подтема</small>
-          </summary>
-          <div class="topic-explorer-panel">
-            <label class="topic-search-label">
-              <span data-i18n="lbl_find_topic">Найти тему</span>
-              <input id="topic-catalog-search" type="search" data-i18n-ph="ph_search_topic" placeholder="Например: теннис, свадьба, ИИ…" autocomplete="off">
-            </label>
-            <div class="topic-wheel" id="topic-wheel" aria-label="Topic path"></div>
-            <p class="topic-path-preview" id="topic-path-preview" data-i18n="topic_preview_default">Выберите любой уровень. Самый глубокий выбранный уровень станет темой буклета.</p>
-            <div class="topic-search-results" id="topic-search-results" hidden></div>
-          </div>
-        </details>
-        <label class="field-wide range-field" id="style-profile-label">
-          <span data-i18n="lbl_editorial_profile">Редакционный стиль</span>
-          <output id="style-profile-output" data-i18n="auto_profile">Автоматический / без профиля</output>
-          <select id="style-profile-select" name="style" required>
-            <option value="auto" data-i18n="auto_profile">Автоматический / без профиля</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="lbl_visual_language">Визуальный язык</span>
-          <select name="visual_mode">
-            <option value="auto" selected data-i18n="opt_auto">Автоматически</option>
-            <option value="minimal" data-i18n="opt_minimal">Минималистичный</option>
-            <option value="abstract" data-i18n="opt_abstract">Абстрактный / экспериментальный</option>
-            <option value="mixed" data-i18n="opt_mixed">Смешанный</option>
-          </select>
-        </label>
-        <label class="range-field field-wide" id="layout-system-label">
-          <span data-i18n="lbl_layout_system">Система верстки страниц</span>
-          <output id="layout-system-output" data-i18n="auto_layout">Автоматически</output>
-          <select id="layout-system-select" name="layout_system">
-            <option value="auto" selected>Автоматически</option>
-            <option value="single-hero-image">Один герой — одно большое фото на страницу</option>
-            <option value="split-layout">Разделённый — контент в двух колонках</option>
-            <option value="strict-grid">Строгая сетка — модульная композиция</option>
-            <option value="image-heavy-magazine">Журнал с акцентом на фото — фото ведут, текст поддерживает</option>
-            <option value="text-heavy-editorial">Текстовый — длинные тексты, плотный набор</option>
-            <option value="white-space-minimal">Воздух и минимализм — люксовое ощущение</option>
-            <option value="full-bleed">Полный разворот — фото от края до края</option>
-            <option value="asymmetric-modern">Асимметрия — смещённые оси, динамика</option>
-            <option value="layered-overlap">Наложение слоёв — элементы друг на друге</option>
-            <option value="framed-gallery">Галерея в рамках — фото с видимыми рамками</option>
-            <option value="chaotic-collage">Хаотичный коллаж — рваный, максимальный</option>
-            <option value="poster-layout">Постер — одна графическая идея на страницу</option>
-            <option value="modular-cards">Карточки — дискретные блоки информации</option>
-            <option value="timeline-flow">Хронология — нарратив во времени</option>
-            <option value="vertical-rhythm">Вертикальный ритм — чтение сверху вниз</option>
-          </select>
-        </label>
-        <label class="range-field">
-          <span data-i18n="lbl_chaos">Уровень хаоса дизайна</span>
-          <output id="chaos-output">0 — Строгий и безопасный</output>
-          <select id="chaos-level-select" name="chaos_level">
-            <option value="-1">Авто (умный выбор)</option>
-            <option value="0" selected>0 — Строгий и безопасный</option>
-            <option value="1">1 — Сбалансированный журнальный</option>
-            <option value="2">2 — Выразительная верстка</option>
-            <option value="3">3 — Дикая типографика</option>
-            <option value="4">4 — Радикальные ломаные сетки</option>
-            <option value="5">5 — Полный эксперимент</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="lbl_fonts">Макс. количество шрифтов</span>
-          <select name="max_fonts">
-            <option value="2" selected>2 шрифта (рекомендуется)</option>
-            <option value="3">3 шрифта</option>
-            <option value="4">4 шрифта</option>
-          </select>
-        </label>
-        <label class="field-wide">
-          <span data-i18n="lbl_custom_style">Пожелания к стилю</span>
-          <input name="custom_style" type="text" maxlength="120" data-i18n-ph="ph_custom_style" placeholder="Например: журнал 1970-х, высококонтрастный чёрно-белый">
-        </label>
-        <label>
-          <span data-i18n="lbl_ai_engine">ИИ движок текста</span>
-          <select name="ai_provider">
-            <option value="auto" selected data-i18n="opt_ai_auto">Авто (умный выбор)</option>
-            <option value="openai-first">OpenAI (GPT-4o)</option>
-            <option value="gemini-first">Google Gemini</option>
-            <option value="local" data-i18n="opt_ai_local">Локальный генератор</option>
-          </select>
-        </label>
-        <label>
-          <span data-i18n="lbl_custom_fonts">Свой Google Font</span>
-          <input name="custom_fonts" type="text" maxlength="80" data-i18n-ph="ph_custom_fonts" placeholder="Например: Playfair Display, Space Grotesk">
-        </label>
-        <label class="field-wide">
-          <span data-i18n="lbl_extra_details">Дополнительные детали</span>
-          <textarea name="description" rows="2" maxlength="280" data-i18n-ph="ph_extra_details" placeholder="Например: 4 главы, акцент на фото, тёплый тон"></textarea>
-        </label>
+    <div class="hero-booklet-entry">
+      <button class="hero-booklet-button" id="booklet-plus-btn" type="button" aria-label="Открыть стартовый буклет в редакторе">
+        <span class="hero-booklet-shadow" aria-hidden="true"></span>
+        <span class="hero-booklet-spread" aria-hidden="true">
+          <span class="hero-booklet-page hero-booklet-copy">
+            <small>Начните с готового шаблона</small>
+            <strong>Сделайте<br><em>по-своему.</em></strong>
+            <span>Настройте страницы до генерации.</span>
+            <i>Живое превью · Готово к печати</i>
+          </span>
+          <span class="hero-booklet-page hero-booklet-add">
+            <span class="hero-booklet-plus"></span>
+            <strong>Открыть редактор</strong>
+            <span>Все слайдеры работают сразу</span>
+            <span class="hero-slider-preview"><i></i></span>
+          </span>
+        </span>
+      </button>
+      <div class="hero-booklet-meta">
+        <p><strong>Один клик.</strong> Шаблон буклета и полное меню редактирования откроются вместе.</p>
+        <button class="request-history-button" id="request-history-button" type="button" hidden>
+          История запросов <span id="request-history-count">0</span>
+        </button>
       </div>
-
-      <div class="form-actions">
-        <button class="primary-button field-wide" id="request-submit-button" type="submit" data-i18n="btn_submit_request">Отправить запрос →</button>
-      </div>
-    </form>
+    </div>
   </section>
 
   <section class="collection" id="collection">
