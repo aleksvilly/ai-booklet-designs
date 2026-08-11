@@ -39,7 +39,9 @@
       page-only slot slider repeats available images or renders a local layout
       placeholder when the booklet has no photos yet. Clicking page media opens
       a compact contextual photo sheet with per-slot replace, remove and order
-      actions; clicking an empty page opens the same sheet in add mode. Search
+      actions; clicking the same selected photo again closes the sheet, while
+      clicking text switches directly into text editing. Clicking an empty page
+      opens the same sheet in add mode. Search
       results use provider-native pagination with an incremental Load more flow
       for Openverse pages and Wikimedia continuation tokens.
 - [x] Four-page print signatures in the live editor: a page-shaped `+` card at

@@ -28,6 +28,7 @@ let editorCompactPairSettleTimer = null;
 let editorCompactSnapUnlockTimer = null;
 let editorCompactLastTapPage = -1;
 let editorCompactLastTapTime = 0;
+let editorPageTouchClickSuppressedUntil = 0;
 let editorCompactScrollSelectionLockedUntil = 0;
 let editorPhotoSearchController = null;
 let editorPhotoSearchState = null;
@@ -1056,6 +1057,20 @@ function photoIndexFromPageTarget(pageNode, target) {
   const figures = [...pageNode.querySelectorAll(':scope > .page-image, :scope > .page-gallery > .gallery-image')];
   const index = figures.indexOf(figure);
   return index >= 0 ? index : null;
+}
+
+function togglePhotoManagerForPageTarget(pageNode, target, wasAlreadyActive) {
+  const controls = getEditorControls();
+  const focusIndex = photoIndexFromPageTarget(pageNode, target);
+  const samePhotoIsOpen = wasAlreadyActive
+    && Number.isInteger(focusIndex)
+    && !controls.editorPhotoManager?.hidden
+    && editorPhotoFocusIndex === focusIndex;
+  if (samePhotoIsOpen) {
+    closePhotoManager();
+    return;
+  }
+  openPhotoManager({ focusIndex });
 }
 
 async function hydrateLocalPhotos() {
@@ -2305,6 +2320,7 @@ function bindEditorPageInteractions() {
   editorSession.pageNodes.forEach((node, index) => {
     node.dataset.pageIndex = String(index);
     node.addEventListener('click', event => {
+      if (performance.now() < editorPageTouchClickSuppressedUntil) return;
       const wasAlreadyActive = editorSession.activePageIndex === index;
       const textTarget = event.target.closest('h4, .book-page-type, .page-body, .page-caption, .page-source');
 
@@ -2315,6 +2331,7 @@ function bindEditorPageInteractions() {
         return;
       }
 
+      if (textTarget && !controls.editorPhotoManager?.hidden) closePhotoManager();
       if (textTarget && wasAlreadyActive) {
         event.preventDefault();
         event.stopPropagation();
@@ -2332,7 +2349,7 @@ function bindEditorPageInteractions() {
       selectEditorPage(index);
       if (!textTarget && controls.bookletEditor && !controls.bookletEditor.hidden && editorCompactPageZoom <= 2) {
         event.preventDefault();
-        openPhotoManager({ focusIndex: photoIndexFromPageTarget(node, event.target) });
+        togglePhotoManagerForPageTarget(node, event.target, wasAlreadyActive);
       }
     });
     node.addEventListener('dblclick', event => {
@@ -2346,6 +2363,7 @@ function bindEditorPageInteractions() {
       if (!isCompactPageStageActive() || editorCompactPageZoom < 2) return;
 
       event.preventDefault();
+      editorPageTouchClickSuppressedUntil = performance.now() + 500;
       const wasAlreadyActive = editorSession.activePageIndex === index;
       const textTarget = event.target.closest('h4, .book-page-type, .page-body, .page-caption, .page-source');
 
@@ -2354,6 +2372,7 @@ function bindEditorPageInteractions() {
         return;
       }
 
+      if (textTarget && !controls.editorPhotoManager?.hidden) closePhotoManager();
       if (textTarget && wasAlreadyActive) {
         let fieldKey = 'body';
         if (textTarget.tagName === 'H4') fieldKey = 'title';
@@ -2371,7 +2390,7 @@ function bindEditorPageInteractions() {
       selectEditorPage(index);
 
       if (!textTarget && editorCompactPageZoom <= 2) {
-        openPhotoManager({ focusIndex: photoIndexFromPageTarget(node, event.target) });
+        togglePhotoManagerForPageTarget(node, event.target, wasAlreadyActive);
       }
       if (isDoubleTap && editorCompactPageZoom > 2) zoomIntoCompactPage(index);
     });
