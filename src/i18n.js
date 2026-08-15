@@ -14,9 +14,9 @@ export const SUPPORTED_LANGUAGES = [
 
 export const TRANSLATIONS = {
   en: {
-    hero_eyebrow: 'Open-source booklet engine',
-    hero_title: 'Generate Print-Ready Booklets',
-    hero_copy: 'Customize layouts, photos, and typography directly in your browser. Free and open source.',
+    hero_eyebrow: 'Booklet & Zine Creator',
+    hero_title: 'Create Print-Ready Booklets',
+    hero_copy: 'Customize layouts, photos, and typography directly in your browser. 225+ modular styles, ready to print.',
     usecase_gift: '🎁 <strong>Gift</strong> — birthday, anniversary, graduation',
     usecase_business: '☕ <strong>Business</strong> — café menu, brand story, product launch',
     usecase_event: '🎉 <strong>Event</strong> — wedding, conference, gallery opening',
@@ -81,9 +81,9 @@ export const TRANSLATIONS = {
     footer_text: '© AI Booklet Designs — Automated editorial design system.'
   },
   ru: {
-    hero_eyebrow: 'Open-source генератор буклетов',
+    hero_eyebrow: 'Генератор буклетов и зин-изданий',
     hero_title: 'Создавайте полиграфические буклеты',
-    hero_copy: 'Редактируйте сетки, фото и типографику прямо в браузере. Бесплатно и без регистрации.',
+    hero_copy: 'Настраивайте сетки вёрстки, фотографии и типографику прямо в браузере. 225+ комбинаций, готово к печати.',
     usecase_gift: '🎁 <strong>Подарок</strong> — день рождения, юбилей, выпускной',
     usecase_business: '☕ <strong>Бизнес</strong> — меню кафе, история бренда, запуск продукта',
     usecase_event: '🎉 <strong>Событие</strong> — свадьба, конференция, открытие галереи',
