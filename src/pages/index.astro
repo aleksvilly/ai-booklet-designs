@@ -7,43 +7,22 @@ import Footer from '../components/Footer.astro';
   <Header slot="header" lang="en" activeNav="home" />
 
   <section class="hero" id="generate">
-    <div class="hero-intro">
-      <p class="eyebrow" data-i18n="hero_eyebrow">AI-generated editorial booklets — free, automatic, open</p>
-      <h1 data-i18n="hero_title">Any person.<br><em>Any occasion.</em></h1>
+    <div class="hero-center">
+      <p class="eyebrow" data-i18n="hero_eyebrow">Open-Source AI Booklet Engine</p>
+      <h1 data-i18n="hero_title">Create editorial booklets.<br><em>Print-ready in minutes.</em></h1>
       <p class="hero-copy" data-i18n="hero_copy">A free browser tool for bespoke booklets, zines, café menus, gifts, and event programs. 225+ modular layout styles, live typography controls, instant export.</p>
 
       <div class="hero-actions">
-        <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">Create a booklet — free</button>
-        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">See examples</a>
-      </div>
-    </div>
-
-    <div class="hero-booklet-entry">
-      <button class="hero-booklet-button" id="booklet-plus-btn" type="button" aria-label="Open a starter booklet in the live editor">
-        <span class="hero-booklet-shadow" aria-hidden="true"></span>
-        <span class="hero-booklet-spread" aria-hidden="true">
-          <span class="hero-booklet-page hero-booklet-copy">
-            <small>Interactive Canvas</small>
-            <strong>Live<br><em>Editor.</em></strong>
-            <span>Inspect typography, photo layouts, and spreads.</span>
-            <i>Free · Instant preview</i>
-          </span>
-          <span class="hero-booklet-page hero-booklet-add">
-            <span class="hero-booklet-plus"></span>
-            <strong>Open editor</strong>
-            <span>All sliders active live</span>
-            <span class="hero-slider-preview"><i></i></span>
-          </span>
-        </span>
-      </button>
-      <div class="hero-booklet-meta">
-        <p><strong>Open source &amp; free.</strong> Click to launch the live booklet workbench.</p>
-        <button class="request-history-button" id="request-history-button" type="button" hidden>
-          Request history <span id="request-history-count">0</span>
+        <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">
+          <span>⚡ Launch Live Editor</span>
         </button>
+        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">
+          <span>Explore Booklets ↓</span>
+        </a>
       </div>
     </div>
   </section>
+
 
 
   <!-- CATEGORY QUICK EXPLORER -->

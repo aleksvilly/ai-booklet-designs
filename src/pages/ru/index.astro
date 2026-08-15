@@ -7,43 +7,22 @@ import Footer from '../../components/Footer.astro';
   <Header slot="header" lang="ru" activeNav="home" />
 
   <section class="hero" id="generate">
-    <div class="hero-intro">
-      <p class="eyebrow" data-i18n="hero_eyebrow">ИИ-буклеты — бесплатно, автоматически, открыто</p>
-      <h1 data-i18n="hero_title">Для любого человека.<br><em>К любому событию.</em></h1>
-      <p class="hero-copy" data-i18n="hero_copy">Бесплатный инструмент для создания полиграфических буклетов, меню кафе, подарков и программ. Выбирайте сетки верстки, настраивайте типографику и экспортируйте в PDF.</p>
+    <div class="hero-center">
+      <p class="eyebrow" data-i18n="hero_eyebrow">Open-Source движок верстки буклетов</p>
+      <h1 data-i18n="hero_title">Создавайте полиграфические буклеты.<br><em>В браузере, за пару минут.</em></h1>
+      <p class="hero-copy" data-i18n="hero_copy">Бесплатный инструмент для создания editorial-буклетов, меню кафе, подарков и программ. 225+ раскладок, живой визуальный редактор, готово к печати.</p>
 
       <div class="hero-actions">
-        <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">Создать буклет — бесплатно</button>
-        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">Смотреть примеры</a>
-      </div>
-    </div>
-
-    <div class="hero-booklet-entry">
-      <button class="hero-booklet-button" id="booklet-plus-btn" type="button" aria-label="Открыть стартовый буклет в редакторе">
-        <span class="hero-booklet-shadow" aria-hidden="true"></span>
-        <span class="hero-booklet-spread" aria-hidden="true">
-          <span class="hero-booklet-page hero-booklet-copy">
-            <small>Интерактивный холст</small>
-            <strong>Живой<br><em>редактор.</em></strong>
-            <span>Настраивайте типографику, сетки фото и развороты.</span>
-            <i>Бесплатно · Живое превью</i>
-          </span>
-          <span class="hero-booklet-page hero-booklet-add">
-            <span class="hero-booklet-plus"></span>
-            <strong>Открыть редактор</strong>
-            <span>Все слайдеры активны сразу</span>
-            <span class="hero-slider-preview"><i></i></span>
-          </span>
-        </span>
-      </button>
-      <div class="hero-booklet-meta">
-        <p><strong>Open source &amp; бесплатно.</strong> Кликните для запуска интерактивного воркбенча.</p>
-        <button class="request-history-button" id="request-history-button" type="button" hidden>
-          История запросов <span id="request-history-count">0</span>
+        <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">
+          <span>⚡ Запустить редактор</span>
         </button>
+        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">
+          <span>Смотреть примеры ↓</span>
+        </a>
       </div>
     </div>
   </section>
+
 
 
   <!-- БЛОК КАТЕГОРИЙ (Сразу после Hero) -->
