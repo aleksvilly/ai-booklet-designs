@@ -228,11 +228,12 @@ export async function loadGeneratorCatalogs() {
   const topicPathPreview = document.querySelector('#topic-path-preview');
   const topicCatalogSearch = document.querySelector('#topic-catalog-search');
 
-  const [topicsResponse, stylesResponse, effectsResponse, fontsResponse] = await Promise.all([
+  const [topicsResponse, stylesResponse, effectsResponse, fontsResponse, treatmentsResponse] = await Promise.all([
     fetch(resolveRootUrl('data/catalog/topics.json'), { cache: 'no-store' }),
     fetch(resolveRootUrl('data/catalog/styles.json'), { cache: 'no-store' }),
     fetch(resolveRootUrl('data/catalog/effects.json'), { cache: 'no-store' }),
-    fetch(resolveRootUrl('data/catalog/fonts.json'), { cache: 'no-store' })
+    fetch(resolveRootUrl('data/catalog/fonts.json'), { cache: 'no-store' }),
+    fetch(resolveRootUrl('data/catalog/page-treatments.json'), { cache: 'no-store' }).catch(() => null)
   ]);
 
   if (![topicsResponse, stylesResponse, effectsResponse, fontsResponse].every(response => response.ok)) {
@@ -251,6 +252,15 @@ export async function loadGeneratorCatalogs() {
   renderCatalogEffects(generatorCatalog.effects);
   bindStyleSlider(document.querySelector('#layout-system-select'));
 
+  // Load page treatments into editor selects
+  if (treatmentsResponse?.ok) {
+    const treatments = await treatmentsResponse.json();
+    appendTreatmentOptions(document.querySelector('#editor-text-treatment'), treatments.textTreatments || []);
+    appendTreatmentOptions(document.querySelector('#editor-photo-treatment'), treatments.photoTreatments || []);
+  }
+  bindStyleSlider(document.querySelector('#editor-text-treatment'));
+  bindStyleSlider(document.querySelector('#editor-photo-treatment'));
+
   topicCatalogSearch?.addEventListener('input', event => renderTopicSearch(event.target.value));
   bookletTopicInput?.addEventListener('input', () => {
     if (settingTopicFromCatalog || !topicPathInput?.value) return;
@@ -258,3 +268,14 @@ export async function loadGeneratorCatalogs() {
     if (topicPathPreview) topicPathPreview.textContent = 'Custom topic entered. The catalog path was cleared.';
   });
 }
+
+function appendTreatmentOptions(selectNode, items) {
+  if (!selectNode || !Array.isArray(items)) return;
+  const existing = new Set([...selectNode.options].map(o => o.value));
+  for (const item of items) {
+    if (!item.id || existing.has(item.id)) continue;
+    selectNode.append(new Option(item.label, item.id));
+    existing.add(item.id);
+  }
+}
+

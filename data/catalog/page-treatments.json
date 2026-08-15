@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "description": "Modular page treatments. textTreatments × photoTreatments = combinatorial layout space. AI adds 5–10 per day.",
+  "textTreatments": [
+    { "id": "default",         "label": "Default",                "description": "Original generator layout" },
+    { "id": "clip-photo",      "label": "Photo through text",      "description": "Photo visible through letterforms (background-clip: text)" },
+    { "id": "giant-left",      "label": "Giant — left",            "description": "Massive left-aligned headline, line-height ≤ 0.82" },
+    { "id": "giant-right",     "label": "Giant — right",           "description": "Massive right-aligned headline" },
+    { "id": "bottom-bar",      "label": "Bottom bar",              "description": "Text locked to bottom in opaque band" },
+    { "id": "inverted-block",  "label": "Inverted block",          "description": "White text on dark rectangle" },
+    { "id": "outline",         "label": "Outline only",            "description": "Stroked hollow text, color:transparent" },
+    { "id": "vertical",        "label": "Vertical stack",          "description": "Writing mode vertical-rl" },
+    { "id": "neon-glow",       "label": "Neon glow",               "description": "Glowing text on dark page" },
+    { "id": "mono",            "label": "Monospace stack",         "description": "IBM Plex Mono, structured grid feel" },
+    { "id": "minimal-center",  "label": "Minimal center",          "description": "Centred small editorial text" },
+    { "id": "screen-overlay",  "label": "Screen overlay",          "description": "Text in frosted glass pane" },
+    { "id": "stripe-cut",      "label": "Stripe cut",              "description": "Text in a white stripe across colored page" },
+    { "id": "hard-shadow",     "label": "Hard shadow",             "description": "Offset solid shadow, stroked outline" },
+    { "id": "top-small",       "label": "Top — small",             "description": "Small text anchored to top-left" }
+  ],
+  "photoTreatments": [
+    { "id": "default",         "label": "Default",                 "description": "Original generator position" },
+    { "id": "full-bleed",      "label": "Full bleed",              "description": "Photo fills entire page edge-to-edge" },
+    { "id": "half-top",        "label": "Half — top",              "description": "Photo occupies top 50%" },
+    { "id": "half-bottom",     "label": "Half — bottom",           "description": "Photo occupies bottom 50%" },
+    { "id": "half-left",       "label": "Half — left",             "description": "Photo on left, text on right" },
+    { "id": "half-right",      "label": "Half — right",            "description": "Photo on right, text on left" },
+    { "id": "strip-left",      "label": "Strip — left",            "description": "Thin vertical photo strip on left edge" },
+    { "id": "strip-right",     "label": "Strip — right",           "description": "Thin vertical photo strip on right edge" },
+    { "id": "circle-center",   "label": "Circle center",           "description": "Photo masked as centered circle" },
+    { "id": "corner-tr",       "label": "Corner — top right",      "description": "Photo in top-right corner with curved cut" },
+    { "id": "corner-bl",       "label": "Corner — bottom left",    "description": "Photo in bottom-left corner" },
+    { "id": "polaroid",        "label": "Polaroid",                "description": "Photo as tilted polaroid with white border" },
+    { "id": "diagonal",        "label": "Diagonal slash",          "description": "Photo behind diagonal clip-path" },
+    { "id": "hidden",          "label": "Hidden (text only)",      "description": "No photo shown" },
+    { "id": "border-frame",    "label": "Border frame",            "description": "Photo inset with thick accent border" }
+  ]
+}

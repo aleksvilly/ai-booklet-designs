@@ -163,6 +163,8 @@ function getEditorControls() {
     editorPhotoLayoutVariant: document.querySelector('#editor-photo-layout-variant'),
     editorPhotoLayoutVariantOutput: document.querySelector('#editor-photo-layout-variant-output'),
     editorLayoutSystem: document.querySelector('#editor-layout-system'),
+    editorTextTreatment: document.querySelector('#editor-text-treatment'),
+    editorPhotoTreatment: document.querySelector('#editor-photo-treatment'),
     editorSaveStatus: document.querySelector('#editor-save-status'),
     editorResetScope: document.querySelector('#editor-reset-scope'),
     editorResetAll: document.querySelector('#editor-reset-all'),
@@ -371,7 +373,8 @@ export function availableEditorParameters() {
     editorImageCount, editorTextAmount, editorContentPosition, editorFontScale,
     editorTypographyTargetList,
     editorSpacing, editorEffectLevel, editorVisibilityOptions,
-    editorPhotoLayout, editorPhotoLayoutVariant, editorLayoutSystem
+    editorPhotoLayout, editorPhotoLayoutVariant, editorLayoutSystem,
+    editorTextTreatment, editorPhotoTreatment
   } = getEditorControls();
 
   const editorParameters = [
@@ -384,6 +387,8 @@ export function availableEditorParameters() {
     { key: 'layoutSystem', label: 'Page layout system', control: editorLayoutSystem },
     { key: 'textAmount', label: 'Text amount', control: editorTextAmount },
     { key: 'contentPosition', label: 'Content position', control: editorContentPosition },
+    { key: 'textTreatment', label: 'Text treatment', control: editorTextTreatment },
+    { key: 'photoTreatment', label: 'Photo treatment', control: editorPhotoTreatment },
     { key: 'fontScale', label: 'Font scale', control: editorFontScale },
     { key: 'advancedTypography', label: 'Advanced typography', control: editorTypographyTargetList },
     { key: 'spacing', label: 'Page spacing', control: editorSpacing },
@@ -1160,6 +1165,8 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     photoLayout: resolvedEditorSetting('photoLayout', pageIndex),
     photoLayoutVariant: resolvedEditorSetting('photoLayoutVariant', pageIndex),
     layoutSystem: resolvedEditorSetting('layoutSystem', pageIndex),
+    textTreatment: resolvedEditorSetting('textTreatment', pageIndex),
+    photoTreatment: resolvedEditorSetting('photoTreatment', pageIndex),
     textAmount: resolvedEditorSetting('textAmount', pageIndex),
     contentPosition: resolvedEditorSetting('contentPosition', pageIndex),
     fontScale: resolvedEditorSetting('fontScale', pageIndex),
@@ -1200,6 +1207,33 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     .forEach(c => pageNode.classList.remove(c));
   if (layoutSystemValue && layoutSystemValue !== 'auto') {
     pageNode.classList.add(`editor-ls-${safeClass(layoutSystemValue)}`);
+  }
+
+  // Text treatment override (.tt-*)
+  const textTreatmentValue = hasEditorOverride('textTreatment', pageIndex) ? String(values.textTreatment || 'default') : 'default';
+  [...pageNode.classList]
+    .filter(c => c.startsWith('tt-'))
+    .forEach(c => pageNode.classList.remove(c));
+  if (textTreatmentValue && textTreatmentValue !== 'default') {
+    pageNode.classList.add(`tt-${safeClass(textTreatmentValue)}`);
+  }
+  // Special case: clip-photo needs image URL on h4 for background-clip: text
+  const h4El = pageNode.querySelector('h4');
+  if (textTreatmentValue === 'clip-photo' && h4El) {
+    const firstImg = pageNode.querySelector('.page-gallery img, .page-image img');
+    const imgSrc = firstImg?.currentSrc || firstImg?.src || '';
+    if (imgSrc) h4El.style.backgroundImage = `url(${JSON.stringify(imgSrc)})`;
+  } else if (h4El && h4El.style.backgroundImage) {
+    h4El.style.backgroundImage = '';
+  }
+
+  // Photo treatment override (.pt-*)
+  const photoTreatmentValue = hasEditorOverride('photoTreatment', pageIndex) ? String(values.photoTreatment || 'default') : 'default';
+  [...pageNode.classList]
+    .filter(c => c.startsWith('pt-'))
+    .forEach(c => pageNode.classList.remove(c));
+  if (photoTreatmentValue && photoTreatmentValue !== 'default') {
+    pageNode.classList.add(`pt-${safeClass(photoTreatmentValue)}`);
   }
 
   // Photo layout family and variant (-100…+100)
@@ -1973,6 +2007,14 @@ export function syncBookletEditorControls() {
     controls.editorLayoutSystem.value = get('layoutSystem') || 'auto';
     syncEditorSliderSelect(controls.editorLayoutSystem);
   }
+  if (controls.editorTextTreatment) {
+    controls.editorTextTreatment.value = get('textTreatment') || 'default';
+    syncEditorSliderSelect(controls.editorTextTreatment);
+  }
+  if (controls.editorPhotoTreatment) {
+    controls.editorPhotoTreatment.value = get('photoTreatment') || 'default';
+    syncEditorSliderSelect(controls.editorPhotoTreatment);
+  }
   if (controls.editorContentPosition) {
     controls.editorContentPosition.value = get('contentPosition');
     syncEditorSliderSelect(controls.editorContentPosition);
@@ -2493,6 +2535,12 @@ export function initializeBookletEditor(item) {
   if (controls.editorLayoutSystem) {
     bindStyleSlider(controls.editorLayoutSystem);
   }
+  if (controls.editorTextTreatment) {
+    bindStyleSlider(controls.editorTextTreatment);
+  }
+  if (controls.editorPhotoTreatment) {
+    bindStyleSlider(controls.editorPhotoTreatment);
+  }
   if (controls.editorContentPosition) {
     bindStyleSlider(controls.editorContentPosition);
   }
@@ -2588,6 +2636,8 @@ export function setupEditorEventListeners() {
     [controls.editorPhotoLayout, 'photoLayout', value => value],
     [controls.editorPhotoLayoutVariant, 'photoLayoutVariant', Number],
     [controls.editorLayoutSystem, 'layoutSystem', value => value],
+    [controls.editorTextTreatment, 'textTreatment', value => value],
+    [controls.editorPhotoTreatment, 'photoTreatment', value => value],
     [controls.editorTextAmount, 'textAmount', Number],
     [controls.editorContentPosition, 'contentPosition', value => value],
     [controls.editorFontScale, 'fontScale', Number],

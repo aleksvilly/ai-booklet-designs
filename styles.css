@@ -3344,6 +3344,281 @@ footer a { text-underline-offset: 3px; }
 
 .book-page.editor-ls-framed-gallery .page-gallery { padding: 14px; background: #fff; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-radius: 8px; }
 
+/* ===================================================================
+   TEXT TREATMENTS (.tt-*)
+   Each class controls HOW the text looks/is positioned.
+   Combinable with any Photo Treatment (.pt-*).
+   Add new treatments to data/catalog/page-treatments.json + CSS below.
+   =================================================================== */
+
+/* --- tt-giant-left: massive left-aligned headline --- */
+.book-page.tt-giant-left h4 {
+  font-size: clamp(48px, 18cqw, 120px) !important;
+  line-height: 0.82 !important;
+  letter-spacing: -0.04em !important;
+  text-align: left;
+}
+
+/* --- tt-giant-right: massive right-aligned headline --- */
+.book-page.tt-giant-right h4 {
+  font-size: clamp(48px, 18cqw, 120px) !important;
+  line-height: 0.82 !important;
+  letter-spacing: -0.04em !important;
+  text-align: right;
+}
+.book-page.tt-giant-right .book-page-copy { align-items: flex-end; }
+
+/* --- tt-bottom-bar: text locked in opaque band at bottom --- */
+.book-page.tt-bottom-bar .book-page-copy {
+  position: absolute !important;
+  inset: auto 0 0 0 !important;
+  padding: 18px 22px !important;
+  background: rgba(10, 10, 14, 0.92);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+.book-page.tt-bottom-bar .book-page-copy h4 { color: #fff !important; font-size: clamp(20px, 7cqw, 52px) !important; line-height: 0.95 !important; }
+.book-page.tt-bottom-bar .book-page-copy .page-body { color: rgba(255,255,255,0.72) !important; }
+
+/* --- tt-inverted-block: white text on dark floating rectangle --- */
+.book-page.tt-inverted-block .book-page-copy {
+  background: #0f172a !important;
+  color: #f1f5f9 !important;
+  padding: 24px !important;
+  border-radius: 10px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+  position: relative;
+  z-index: 3;
+}
+.book-page.tt-inverted-block .book-page-copy h4 { color: #ffffff !important; }
+.book-page.tt-inverted-block .book-page-copy .page-body { color: #94a3b8 !important; }
+
+/* --- tt-outline: stroked hollow text --- */
+.book-page.tt-outline h4 {
+  -webkit-text-stroke: 2px currentColor !important;
+  color: transparent !important;
+  font-size: clamp(42px, 15cqw, 100px) !important;
+  line-height: 0.88 !important;
+}
+
+/* --- tt-vertical: text rotated 90° using writing-mode --- */
+.book-page.tt-vertical .book-page-copy {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  max-width: none !important;
+  width: fit-content;
+  align-items: flex-start;
+  transform: rotate(180deg);
+}
+.book-page.tt-vertical h4 {
+  font-size: clamp(32px, 11cqw, 72px) !important;
+  letter-spacing: -0.02em !important;
+  line-height: 0.9 !important;
+}
+
+/* --- tt-neon-glow: luminous green text on very dark page --- */
+.book-page.tt-neon-glow {
+  background: #040810 !important;
+  color: #00ff87 !important;
+}
+.book-page.tt-neon-glow h4 {
+  color: #00ff87 !important;
+  text-shadow: 0 0 16px #00ff87, 0 0 50px #00ff8766, 0 0 100px #00ff8733 !important;
+  font-size: clamp(36px, 13cqw, 88px) !important;
+  line-height: 0.9 !important;
+}
+.book-page.tt-neon-glow .page-body { color: #a7f3d0 !important; }
+
+/* --- tt-mono: monospace grid, technical feel --- */
+.book-page.tt-mono h4 {
+  font-family: "IBM Plex Mono", "Courier New", monospace !important;
+  font-size: clamp(18px, 6.5cqw, 42px) !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.01em !important;
+  font-weight: 700;
+}
+.book-page.tt-mono .page-body { font-family: "IBM Plex Mono", monospace !important; font-size: 9px !important; line-height: 1.6 !important; }
+
+/* --- tt-minimal-center: centered small editorial text --- */
+.book-page.tt-minimal-center .book-page-copy {
+  width: 100% !important;
+  align-items: center !important;
+  text-align: center !important;
+}
+.book-page.tt-minimal-center h4 {
+  font-size: clamp(22px, 8cqw, 54px) !important;
+  line-height: 1.08 !important;
+  letter-spacing: 0 !important;
+  max-width: 18ch;
+  margin: 0 auto;
+}
+
+/* --- tt-screen-overlay: frosted glass pane over entire page --- */
+.book-page.tt-screen-overlay .book-page-copy {
+  position: absolute !important;
+  inset: 14px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(10px) saturate(1.4);
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.6);
+}
+.book-page.tt-screen-overlay h4 { font-size: clamp(26px, 10cqw, 68px) !important; }
+
+/* --- tt-stripe-cut: text in a white band crossing a colored page --- */
+.book-page.tt-stripe-cut { background: currentColor !important; }
+.book-page.tt-stripe-cut .book-page-copy {
+  background: var(--paper, #ffffff);
+  padding: 20px 22px !important;
+  margin: 25% 0;
+  position: relative;
+  z-index: 3;
+}
+.book-page.tt-stripe-cut .book-page-copy h4 { color: var(--ink, #111) !important; }
+.book-page.tt-stripe-cut .book-page-copy .page-body { color: var(--ink, #111) !important; opacity: 0.7; }
+
+/* --- tt-hard-shadow: offset solid shadow + stroked outline --- */
+.book-page.tt-hard-shadow h4 {
+  -webkit-text-stroke: 1.5px currentColor !important;
+  color: transparent !important;
+  text-shadow: 6px 6px 0 currentColor !important;
+  font-size: clamp(38px, 14cqw, 90px) !important;
+  line-height: 0.9 !important;
+}
+
+/* --- tt-top-small: small text pinned to top --- */
+.book-page.tt-top-small .book-page-copy {
+  position: absolute !important;
+  top: 18px; left: 18px; right: 18px; bottom: auto !important;
+  max-width: none !important;
+}
+.book-page.tt-top-small h4 {
+  font-size: clamp(14px, 5.5cqw, 32px) !important;
+  line-height: 1.15 !important;
+  letter-spacing: 0 !important;
+}
+
+/* --- tt-clip-photo: photo visible through text letterforms (Frame 1 Figma) ---
+   JavaScript in applyEditorToPage() copies the first img src to h4.style.backgroundImage.
+   CSS provides background-clip: text once JS has set the image. */
+.book-page.tt-clip-photo { background: #ffffff !important; }
+.book-page.tt-clip-photo .page-gallery { opacity: 0 !important; pointer-events: none; }
+.book-page.tt-clip-photo h4 {
+  font-size: clamp(54px, 19cqw, 130px) !important;
+  line-height: 0.82 !important;
+  letter-spacing: -0.04em !important;
+  background-size: cover !important;
+  background-position: center !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  background-color: transparent !important;
+}
+
+/* ===================================================================
+   PHOTO TREATMENTS (.pt-*)
+   Each class controls WHERE / HOW the photo is positioned.
+   Combinable with any Text Treatment (.tt-*).
+   =================================================================== */
+
+/* --- pt-full-bleed: photo fills entire page edge-to-edge (Frame 2 style) --- */
+.book-page.pt-full-bleed .page-gallery {
+  position: absolute; inset: 0; height: 100%; width: 100%; z-index: 0;
+}
+.book-page.pt-full-bleed .book-page-copy { position: relative; z-index: 2; }
+
+/* --- pt-half-top: photo in top half, text in bottom --- */
+.book-page.pt-half-top .page-gallery {
+  position: absolute; top: 0; left: 0; right: 0; height: 50%; z-index: 0;
+}
+.book-page.pt-half-top .book-page-copy {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 50%; padding: 18px; z-index: 2;
+}
+
+/* --- pt-half-bottom: photo in bottom half, text in top --- */
+.book-page.pt-half-bottom .page-gallery {
+  position: absolute; bottom: 0; left: 0; right: 0; height: 50%; z-index: 0;
+}
+.book-page.pt-half-bottom .book-page-copy {
+  position: absolute; top: 0; left: 0; right: 0; height: 50%; padding: 18px; z-index: 2;
+}
+
+/* --- pt-half-left: photo left half, text right --- */
+.book-page.pt-half-left { display: grid; grid-template-columns: 1fr 1fr; padding: 0; gap: 0; }
+.book-page.pt-half-left .page-gallery { height: 100%; order: 0; }
+.book-page.pt-half-left .book-page-copy { order: 1; padding: 18px; position: relative; inset: auto; }
+
+/* --- pt-half-right: photo right half, text left --- */
+.book-page.pt-half-right { display: grid; grid-template-columns: 1fr 1fr; padding: 0; gap: 0; }
+.book-page.pt-half-right .page-gallery { height: 100%; order: 1; }
+.book-page.pt-half-right .book-page-copy { order: 0; padding: 18px; position: relative; inset: auto; }
+
+/* --- pt-strip-left: thin vertical photo strip on left edge --- */
+.book-page.pt-strip-left { padding-left: 76px; }
+.book-page.pt-strip-left .page-gallery {
+  position: absolute; top: 0; left: 0; width: 68px; height: 100%; z-index: 1;
+}
+
+/* --- pt-strip-right: thin vertical photo strip on right edge --- */
+.book-page.pt-strip-right { padding-right: 76px; }
+.book-page.pt-strip-right .page-gallery {
+  position: absolute; top: 0; right: 0; width: 68px; height: 100%; z-index: 1;
+}
+
+/* --- pt-circle-center: photo as a centered circle --- */
+.book-page.pt-circle-center .page-gallery {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 68%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; z-index: 0;
+}
+.book-page.pt-circle-center .page-gallery .gallery-image { border-radius: 50%; }
+.book-page.pt-circle-center .book-page-copy { position: relative; z-index: 2; }
+
+/* --- pt-corner-tr: photo anchored to top-right corner --- */
+.book-page.pt-corner-tr .page-gallery {
+  position: absolute; top: 0; right: 0; width: 58%; height: 58%; z-index: 0;
+  border-radius: 0 0 0 50px; overflow: hidden;
+}
+.book-page.pt-corner-tr .book-page-copy { position: relative; z-index: 2; }
+
+/* --- pt-corner-bl: photo anchored to bottom-left corner --- */
+.book-page.pt-corner-bl .page-gallery {
+  position: absolute; bottom: 0; left: 0; width: 58%; height: 58%; z-index: 0;
+  border-radius: 0 50px 0 0; overflow: hidden;
+}
+.book-page.pt-corner-bl .book-page-copy { position: relative; z-index: 2; }
+
+/* --- pt-polaroid: photo presented as tilted polaroid --- */
+.book-page.pt-polaroid .page-gallery {
+  position: absolute; top: 18%; left: 50%; transform: translateX(-52%) rotate(-3.5deg);
+  width: 72%; z-index: 0;
+  background: #fff; padding: 10px 10px 36px;
+  box-shadow: 0 18px 42px rgba(0,0,0,0.28), 0 2px 6px rgba(0,0,0,0.12);
+}
+.book-page.pt-polaroid .book-page-copy { position: relative; z-index: 2; }
+
+/* --- pt-diagonal: photo behind diagonal clip-path slash --- */
+.book-page.pt-diagonal { overflow: hidden; }
+.book-page.pt-diagonal .page-gallery {
+  position: absolute; top: 0; right: 0; width: 62%; height: 100%; z-index: 0;
+  clip-path: polygon(18% 0, 100% 0, 100% 100%, 0% 100%);
+}
+.book-page.pt-diagonal .book-page-copy { position: relative; z-index: 2; max-width: 56%; }
+
+/* --- pt-hidden: no photo, pure text page --- */
+.book-page.pt-hidden .page-gallery { display: none !important; }
+.book-page.pt-hidden .book-page-copy { position: relative; inset: auto; padding: 28px; }
+
+/* --- pt-border-frame: photo inset with thick accent border --- */
+.book-page.pt-border-frame .page-gallery {
+  position: absolute; inset: 14px; height: calc(100% - 28px); z-index: 0;
+  outline: 6px solid var(--c2, currentColor); outline-offset: -6px;
+  padding: 6px;
+}
+.book-page.pt-border-frame .book-page-copy { position: relative; z-index: 2; }
+
 .book-page.editor-effects-0 .page-image,
 .book-page.editor-effects-0 .book-page-copy {
   transform: none !important;
