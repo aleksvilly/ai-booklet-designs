@@ -3346,27 +3346,110 @@ footer a { text-underline-offset: 3px; }
 
 /* ===================================================================
    TEXT TREATMENTS (.tt-*)
-   Each class controls HOW the text looks/is positioned.
+   Structural: position, scale, rotation, flow, line-break pattern.
+   Visual effects (glow, glitch, blur) belong in the Effects catalog.
    Combinable with any Photo Treatment (.pt-*).
-   Add new treatments to data/catalog/page-treatments.json + CSS below.
+   Add new entries to data/catalog/page-treatments.json + CSS below.
    =================================================================== */
 
-/* --- tt-giant-left: massive left-aligned headline --- */
+/* --- tt-giant-left --- */
 .book-page.tt-giant-left h4 {
-  font-size: clamp(48px, 18cqw, 120px) !important;
-  line-height: 0.82 !important;
-  letter-spacing: -0.04em !important;
+  font-size: clamp(50px, 20cqw, 130px) !important;
+  line-height: 0.80 !important;
+  letter-spacing: -0.05em !important;
   text-align: left;
 }
 
-/* --- tt-giant-right: massive right-aligned headline --- */
+/* --- tt-giant-right --- */
 .book-page.tt-giant-right h4 {
-  font-size: clamp(48px, 18cqw, 120px) !important;
-  line-height: 0.82 !important;
-  letter-spacing: -0.04em !important;
+  font-size: clamp(50px, 20cqw, 130px) !important;
+  line-height: 0.80 !important;
+  letter-spacing: -0.05em !important;
   text-align: right;
 }
 .book-page.tt-giant-right .book-page-copy { align-items: flex-end; }
+
+/* --- tt-giant-center --- */
+.book-page.tt-giant-center h4 {
+  font-size: clamp(44px, 17cqw, 116px) !important;
+  line-height: 0.84 !important;
+  letter-spacing: -0.04em !important;
+  text-align: center;
+}
+.book-page.tt-giant-center .book-page-copy { align-items: center; text-align: center; }
+
+/* --- tt-giant-scatter: Frame 2 style --- fills full page height, each word or pair on own line, staggered */
+.book-page.tt-giant-scatter { overflow: hidden; }
+.book-page.tt-giant-scatter .book-page-copy {
+  position: absolute !important;
+  inset: 0 !important;
+  max-width: none !important;
+  justify-content: space-between !important;
+  padding: 12px 14px !important;
+}
+.book-page.tt-giant-scatter h4 {
+  font-size: clamp(52px, 21cqw, 140px) !important;
+  line-height: 0.78 !important;
+  letter-spacing: -0.05em !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  width: 100%;
+}
+
+/* --- tt-word-per-line: each word on its own line, huge --- */
+.book-page.tt-word-per-line h4 {
+  font-size: clamp(40px, 15cqw, 96px) !important;
+  line-height: 0.86 !important;
+  letter-spacing: -0.04em !important;
+  word-spacing: 100vw;
+  word-break: break-word;
+}
+
+/* --- tt-oversized-crop: headline bleeds outside page edges --- */
+.book-page.tt-oversized-crop { overflow: hidden; }
+.book-page.tt-oversized-crop h4 {
+  font-size: clamp(80px, 32cqw, 220px) !important;
+  line-height: 0.76 !important;
+  letter-spacing: -0.06em !important;
+  white-space: nowrap;
+  overflow: visible;
+  width: auto;
+  max-width: none !important;
+}
+
+/* --- tt-diagonal-tilt: headline rotated ~12° across the page --- */
+.book-page.tt-diagonal-tilt { overflow: hidden; }
+.book-page.tt-diagonal-tilt .book-page-copy {
+  position: absolute !important;
+  inset: 0 !important;
+  justify-content: center !important;
+  align-items: flex-start !important;
+  transform: rotate(-12deg) scale(1.15);
+  transform-origin: center;
+  max-width: none !important;
+}
+.book-page.tt-diagonal-tilt h4 {
+  font-size: clamp(44px, 17cqw, 110px) !important;
+  line-height: 0.84 !important;
+  letter-spacing: -0.04em !important;
+  white-space: nowrap;
+}
+
+/* --- tt-newspaper-header: full-width all-caps spanning entire page width --- */
+.book-page.tt-newspaper-header .book-page-copy {
+  width: 100% !important; max-width: none !important;
+  align-items: stretch !important;
+}
+.book-page.tt-newspaper-header h4 {
+  font-size: clamp(28px, 11cqw, 72px) !important;
+  line-height: 1.0 !important;
+  letter-spacing: -0.01em !important;
+  text-align: justify !important;
+  text-transform: uppercase !important;
+  width: 100%;
+  word-spacing: 0.5em;
+}
 
 /* --- tt-bottom-bar: text locked in opaque band at bottom --- */
 .book-page.tt-bottom-bar .book-page-copy {
@@ -3380,6 +3463,18 @@ footer a { text-underline-offset: 3px; }
 }
 .book-page.tt-bottom-bar .book-page-copy h4 { color: #fff !important; font-size: clamp(20px, 7cqw, 52px) !important; line-height: 0.95 !important; }
 .book-page.tt-bottom-bar .book-page-copy .page-body { color: rgba(255,255,255,0.72) !important; }
+
+/* --- tt-top-bar: text locked in opaque band at top --- */
+.book-page.tt-top-bar .book-page-copy {
+  position: absolute !important;
+  inset: 0 0 auto 0 !important;
+  padding: 18px 22px !important;
+  background: rgba(10, 10, 14, 0.92);
+  color: #fff;
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.book-page.tt-top-bar .book-page-copy h4 { color: #fff !important; font-size: clamp(20px, 7cqw, 52px) !important; line-height: 0.95 !important; }
 
 /* --- tt-inverted-block: white text on dark floating rectangle --- */
 .book-page.tt-inverted-block .book-page-copy {
@@ -3398,226 +3493,224 @@ footer a { text-underline-offset: 3px; }
 .book-page.tt-outline h4 {
   -webkit-text-stroke: 2px currentColor !important;
   color: transparent !important;
-  font-size: clamp(42px, 15cqw, 100px) !important;
+  font-size: clamp(44px, 16cqw, 104px) !important;
   line-height: 0.88 !important;
 }
 
-/* --- tt-vertical: text rotated 90° using writing-mode --- */
-.book-page.tt-vertical .book-page-copy {
+/* --- tt-vertical-right: text rotated vertical-rl along right edge --- */
+.book-page.tt-vertical-right .book-page-copy {
+  position: absolute !important;
+  top: 0; right: 0; bottom: 0; left: auto !important;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   max-width: none !important;
   width: fit-content;
-  align-items: flex-start;
-  transform: rotate(180deg);
+  padding: 20px 12px !important;
+  justify-content: flex-end;
 }
-.book-page.tt-vertical h4 {
-  font-size: clamp(32px, 11cqw, 72px) !important;
+.book-page.tt-vertical-right h4 {
+  font-size: clamp(28px, 10cqw, 68px) !important;
   letter-spacing: -0.02em !important;
   line-height: 0.9 !important;
 }
 
-/* --- tt-neon-glow: luminous green text on very dark page --- */
-.book-page.tt-neon-glow {
-  background: #040810 !important;
-  color: #00ff87 !important;
+/* --- tt-vertical-left: text rotated vertical-rl along left edge --- */
+.book-page.tt-vertical-left .book-page-copy {
+  position: absolute !important;
+  top: 0; left: 0; bottom: 0; right: auto !important;
+  writing-mode: vertical-lr;
+  text-orientation: mixed;
+  max-width: none !important;
+  width: fit-content;
+  padding: 20px 12px !important;
+  transform: rotate(180deg);
+  justify-content: flex-end;
 }
-.book-page.tt-neon-glow h4 {
-  color: #00ff87 !important;
-  text-shadow: 0 0 16px #00ff87, 0 0 50px #00ff8766, 0 0 100px #00ff8733 !important;
-  font-size: clamp(36px, 13cqw, 88px) !important;
+.book-page.tt-vertical-left h4 {
+  font-size: clamp(28px, 10cqw, 68px) !important;
+  letter-spacing: -0.02em !important;
   line-height: 0.9 !important;
 }
-.book-page.tt-neon-glow .page-body { color: #a7f3d0 !important; }
+
+/* --- tt-minimal-center: small centered editorial text --- */
+.book-page.tt-minimal-center .book-page-copy {
+  width: 100% !important; align-items: center !important; text-align: center !important;
+}
+.book-page.tt-minimal-center h4 {
+  font-size: clamp(20px, 7cqw, 48px) !important;
+  line-height: 1.1 !important; letter-spacing: 0 !important;
+  max-width: 20ch; margin: 0 auto;
+}
 
 /* --- tt-mono: monospace grid, technical feel --- */
 .book-page.tt-mono h4 {
   font-family: "IBM Plex Mono", "Courier New", monospace !important;
-  font-size: clamp(18px, 6.5cqw, 42px) !important;
-  line-height: 1.12 !important;
-  letter-spacing: -0.01em !important;
-  font-weight: 700;
+  font-size: clamp(17px, 6cqw, 40px) !important;
+  line-height: 1.14 !important; letter-spacing: -0.01em !important; font-weight: 700;
 }
 .book-page.tt-mono .page-body { font-family: "IBM Plex Mono", monospace !important; font-size: 9px !important; line-height: 1.6 !important; }
 
-/* --- tt-minimal-center: centered small editorial text --- */
-.book-page.tt-minimal-center .book-page-copy {
-  width: 100% !important;
-  align-items: center !important;
-  text-align: center !important;
-}
-.book-page.tt-minimal-center h4 {
-  font-size: clamp(22px, 8cqw, 54px) !important;
-  line-height: 1.08 !important;
-  letter-spacing: 0 !important;
-  max-width: 18ch;
-  margin: 0 auto;
-}
-
 /* --- tt-screen-overlay: frosted glass pane over entire page --- */
 .book-page.tt-screen-overlay .book-page-copy {
-  position: absolute !important;
-  inset: 14px !important;
-  justify-content: center !important;
-  align-items: center !important;
-  text-align: center !important;
-  background: rgba(255, 255, 255, 0.82);
+  position: absolute !important; inset: 14px !important;
+  justify-content: center !important; align-items: center !important; text-align: center !important;
+  background: rgba(255,255,255,0.82);
   backdrop-filter: blur(10px) saturate(1.4);
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: 16px; border: 1px solid rgba(255,255,255,0.6);
 }
 .book-page.tt-screen-overlay h4 { font-size: clamp(26px, 10cqw, 68px) !important; }
 
 /* --- tt-stripe-cut: text in a white band crossing a colored page --- */
 .book-page.tt-stripe-cut { background: currentColor !important; }
 .book-page.tt-stripe-cut .book-page-copy {
-  background: var(--paper, #ffffff);
-  padding: 20px 22px !important;
-  margin: 25% 0;
-  position: relative;
-  z-index: 3;
+  background: var(--paper, #ffffff); padding: 20px 22px !important;
+  margin: 25% 0; position: relative; z-index: 3;
 }
 .book-page.tt-stripe-cut .book-page-copy h4 { color: var(--ink, #111) !important; }
 .book-page.tt-stripe-cut .book-page-copy .page-body { color: var(--ink, #111) !important; opacity: 0.7; }
 
-/* --- tt-hard-shadow: offset solid shadow + stroked outline --- */
-.book-page.tt-hard-shadow h4 {
-  -webkit-text-stroke: 1.5px currentColor !important;
-  color: transparent !important;
-  text-shadow: 6px 6px 0 currentColor !important;
-  font-size: clamp(38px, 14cqw, 90px) !important;
-  line-height: 0.9 !important;
-}
-
-/* --- tt-top-small: small text pinned to top --- */
+/* --- tt-top-small (caption top-left): small text pinned top-left --- */
 .book-page.tt-top-small .book-page-copy {
   position: absolute !important;
-  top: 18px; left: 18px; right: 18px; bottom: auto !important;
-  max-width: none !important;
+  top: 18px; left: 18px; right: 18px; bottom: auto !important; max-width: none !important;
 }
 .book-page.tt-top-small h4 {
-  font-size: clamp(14px, 5.5cqw, 32px) !important;
-  line-height: 1.15 !important;
-  letter-spacing: 0 !important;
+  font-size: clamp(14px, 5cqw, 30px) !important;
+  line-height: 1.18 !important; letter-spacing: 0 !important;
 }
 
-/* --- tt-clip-photo: photo visible through text letterforms (Frame 1 Figma) ---
-   JavaScript in applyEditorToPage() copies the first img src to h4.style.backgroundImage.
-   CSS provides background-clip: text once JS has set the image. */
+/* --- tt-stacked-columns: title in two side-by-side columns --- */
+.book-page.tt-stacked-columns .book-page-copy { width: 100% !important; max-width: none !important; }
+.book-page.tt-stacked-columns h4 {
+  column-count: 2; column-gap: 16px;
+  font-size: clamp(22px, 8cqw, 54px) !important;
+  line-height: 0.95 !important; letter-spacing: -0.03em !important;
+}
+
+/* --- tt-single-giant-char: only the first character, fills page --- */
+.book-page.tt-single-giant-char { overflow: hidden; }
+.book-page.tt-single-giant-char .book-page-copy {
+  position: absolute !important; inset: 0 !important;
+  justify-content: center !important; align-items: center !important;
+}
+.book-page.tt-single-giant-char h4 {
+  font-size: clamp(160px, 70cqw, 480px) !important;
+  line-height: 0.7 !important; letter-spacing: -0.06em !important;
+  overflow: hidden; text-overflow: clip;
+  /* Keep only first character via clip */
+  max-width: 1ch;
+}
+.book-page.tt-single-giant-char .page-body { display: none !important; }
+
+/* --- tt-clip-photo: photo visible through text letterforms (Frame 1) ---
+   JS in applyEditorToPage() sets h4.style.backgroundImage from first img src. */
 .book-page.tt-clip-photo { background: #ffffff !important; }
 .book-page.tt-clip-photo .page-gallery { opacity: 0 !important; pointer-events: none; }
 .book-page.tt-clip-photo h4 {
-  font-size: clamp(54px, 19cqw, 130px) !important;
-  line-height: 0.82 !important;
-  letter-spacing: -0.04em !important;
-  background-size: cover !important;
-  background-position: center !important;
-  -webkit-background-clip: text !important;
-  background-clip: text !important;
-  color: transparent !important;
-  background-color: transparent !important;
+  font-size: clamp(56px, 20cqw, 134px) !important;
+  line-height: 0.80 !important; letter-spacing: -0.05em !important;
+  background-size: cover !important; background-position: center !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  color: transparent !important; background-color: transparent !important;
 }
 
 /* ===================================================================
    PHOTO TREATMENTS (.pt-*)
-   Each class controls WHERE / HOW the photo is positioned.
+   Controls WHERE and HOW the photo is positioned on the page.
    Combinable with any Text Treatment (.tt-*).
    =================================================================== */
 
-/* --- pt-full-bleed: photo fills entire page edge-to-edge (Frame 2 style) --- */
-.book-page.pt-full-bleed .page-gallery {
-  position: absolute; inset: 0; height: 100%; width: 100%; z-index: 0;
-}
+/* --- pt-full-bleed: edge-to-edge (Frame 2 base) --- */
+.book-page.pt-full-bleed .page-gallery { position: absolute; inset: 0; height: 100%; width: 100%; z-index: 0; }
 .book-page.pt-full-bleed .book-page-copy { position: relative; z-index: 2; }
 
-/* --- pt-half-top: photo in top half, text in bottom --- */
-.book-page.pt-half-top .page-gallery {
-  position: absolute; top: 0; left: 0; right: 0; height: 50%; z-index: 0;
-}
-.book-page.pt-half-top .book-page-copy {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 50%; padding: 18px; z-index: 2;
-}
+/* --- pt-half-top / pt-half-bottom --- */
+.book-page.pt-half-top .page-gallery { position: absolute; top: 0; left: 0; right: 0; height: 50%; z-index: 0; }
+.book-page.pt-half-top .book-page-copy { position: absolute; bottom: 0; left: 0; right: 0; height: 50%; padding: 18px; z-index: 2; }
+.book-page.pt-half-bottom .page-gallery { position: absolute; bottom: 0; left: 0; right: 0; height: 50%; z-index: 0; }
+.book-page.pt-half-bottom .book-page-copy { position: absolute; top: 0; left: 0; right: 0; height: 50%; padding: 18px; z-index: 2; }
 
-/* --- pt-half-bottom: photo in bottom half, text in top --- */
-.book-page.pt-half-bottom .page-gallery {
-  position: absolute; bottom: 0; left: 0; right: 0; height: 50%; z-index: 0;
-}
-.book-page.pt-half-bottom .book-page-copy {
-  position: absolute; top: 0; left: 0; right: 0; height: 50%; padding: 18px; z-index: 2;
-}
-
-/* --- pt-half-left: photo left half, text right --- */
+/* --- pt-half-left / pt-half-right --- */
 .book-page.pt-half-left { display: grid; grid-template-columns: 1fr 1fr; padding: 0; gap: 0; }
 .book-page.pt-half-left .page-gallery { height: 100%; order: 0; }
 .book-page.pt-half-left .book-page-copy { order: 1; padding: 18px; position: relative; inset: auto; }
-
-/* --- pt-half-right: photo right half, text left --- */
 .book-page.pt-half-right { display: grid; grid-template-columns: 1fr 1fr; padding: 0; gap: 0; }
 .book-page.pt-half-right .page-gallery { height: 100%; order: 1; }
 .book-page.pt-half-right .book-page-copy { order: 0; padding: 18px; position: relative; inset: auto; }
 
-/* --- pt-strip-left: thin vertical photo strip on left edge --- */
+/* --- pt-third-left / pt-third-right (33% column) --- */
+.book-page.pt-third-left { display: grid; grid-template-columns: 1fr 2fr; padding: 0; gap: 0; }
+.book-page.pt-third-left .page-gallery { height: 100%; order: 0; }
+.book-page.pt-third-left .book-page-copy { order: 1; padding: 18px; position: relative; inset: auto; }
+.book-page.pt-third-right { display: grid; grid-template-columns: 2fr 1fr; padding: 0; gap: 0; }
+.book-page.pt-third-right .page-gallery { height: 100%; order: 1; }
+.book-page.pt-third-right .book-page-copy { order: 0; padding: 18px; position: relative; inset: auto; }
+
+/* --- pt-third-top / pt-third-bottom (33% row) --- */
+.book-page.pt-third-top .page-gallery { position: absolute; top: 0; left: 0; right: 0; height: 33%; z-index: 0; }
+.book-page.pt-third-top .book-page-copy { position: absolute; bottom: 0; left: 0; right: 0; height: 67%; padding: 18px; z-index: 2; }
+.book-page.pt-third-bottom .page-gallery { position: absolute; bottom: 0; left: 0; right: 0; height: 33%; z-index: 0; }
+.book-page.pt-third-bottom .book-page-copy { position: absolute; top: 0; left: 0; right: 0; height: 67%; padding: 18px; z-index: 2; }
+
+/* --- pt-strip-left / pt-strip-right --- */
 .book-page.pt-strip-left { padding-left: 76px; }
-.book-page.pt-strip-left .page-gallery {
-  position: absolute; top: 0; left: 0; width: 68px; height: 100%; z-index: 1;
-}
-
-/* --- pt-strip-right: thin vertical photo strip on right edge --- */
+.book-page.pt-strip-left .page-gallery { position: absolute; top: 0; left: 0; width: 68px; height: 100%; z-index: 1; }
 .book-page.pt-strip-right { padding-right: 76px; }
-.book-page.pt-strip-right .page-gallery {
-  position: absolute; top: 0; right: 0; width: 68px; height: 100%; z-index: 1;
-}
+.book-page.pt-strip-right .page-gallery { position: absolute; top: 0; right: 0; width: 68px; height: 100%; z-index: 1; }
 
-/* --- pt-circle-center: photo as a centered circle --- */
+/* --- pt-circle-center / pt-circle-top --- */
 .book-page.pt-circle-center .page-gallery {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   width: 68%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; z-index: 0;
 }
 .book-page.pt-circle-center .page-gallery .gallery-image { border-radius: 50%; }
 .book-page.pt-circle-center .book-page-copy { position: relative; z-index: 2; }
-
-/* --- pt-corner-tr: photo anchored to top-right corner --- */
-.book-page.pt-corner-tr .page-gallery {
-  position: absolute; top: 0; right: 0; width: 58%; height: 58%; z-index: 0;
-  border-radius: 0 0 0 50px; overflow: hidden;
+.book-page.pt-circle-top .page-gallery {
+  position: absolute; top: 10%; left: 50%; transform: translateX(-50%);
+  width: 60%; aspect-ratio: 1; border-radius: 50%; overflow: hidden; z-index: 0;
 }
+.book-page.pt-circle-top .page-gallery .gallery-image { border-radius: 50%; }
+.book-page.pt-circle-top .book-page-copy { position: absolute; bottom: 0; left: 0; right: 0; z-index: 2; padding: 18px; }
+
+/* --- pt-corner-tr / pt-corner-bl / pt-corner-tl --- */
+.book-page.pt-corner-tr .page-gallery { position: absolute; top: 0; right: 0; width: 58%; height: 58%; z-index: 0; border-radius: 0 0 0 50px; overflow: hidden; }
 .book-page.pt-corner-tr .book-page-copy { position: relative; z-index: 2; }
-
-/* --- pt-corner-bl: photo anchored to bottom-left corner --- */
-.book-page.pt-corner-bl .page-gallery {
-  position: absolute; bottom: 0; left: 0; width: 58%; height: 58%; z-index: 0;
-  border-radius: 0 50px 0 0; overflow: hidden;
-}
+.book-page.pt-corner-bl .page-gallery { position: absolute; bottom: 0; left: 0; width: 58%; height: 58%; z-index: 0; border-radius: 0 50px 0 0; overflow: hidden; }
 .book-page.pt-corner-bl .book-page-copy { position: relative; z-index: 2; }
+.book-page.pt-corner-tl .page-gallery { position: absolute; top: 0; left: 0; width: 58%; height: 58%; z-index: 0; border-radius: 0 0 50px 0; overflow: hidden; }
+.book-page.pt-corner-tl .book-page-copy { position: relative; z-index: 2; }
 
-/* --- pt-polaroid: photo presented as tilted polaroid --- */
+/* --- pt-polaroid --- */
 .book-page.pt-polaroid .page-gallery {
   position: absolute; top: 18%; left: 50%; transform: translateX(-52%) rotate(-3.5deg);
-  width: 72%; z-index: 0;
-  background: #fff; padding: 10px 10px 36px;
+  width: 72%; z-index: 0; background: #fff; padding: 10px 10px 36px;
   box-shadow: 0 18px 42px rgba(0,0,0,0.28), 0 2px 6px rgba(0,0,0,0.12);
 }
 .book-page.pt-polaroid .book-page-copy { position: relative; z-index: 2; }
 
-/* --- pt-diagonal: photo behind diagonal clip-path slash --- */
+/* --- pt-diagonal (right diagonal slash) / pt-diagonal-left --- */
 .book-page.pt-diagonal { overflow: hidden; }
-.book-page.pt-diagonal .page-gallery {
-  position: absolute; top: 0; right: 0; width: 62%; height: 100%; z-index: 0;
-  clip-path: polygon(18% 0, 100% 0, 100% 100%, 0% 100%);
-}
+.book-page.pt-diagonal .page-gallery { position: absolute; top: 0; right: 0; width: 62%; height: 100%; z-index: 0; clip-path: polygon(18% 0, 100% 0, 100% 100%, 0% 100%); }
 .book-page.pt-diagonal .book-page-copy { position: relative; z-index: 2; max-width: 56%; }
+.book-page.pt-diagonal-left { overflow: hidden; }
+.book-page.pt-diagonal-left .page-gallery { position: absolute; top: 0; left: 0; width: 62%; height: 100%; z-index: 0; clip-path: polygon(0 0, 100% 0, 82% 100%, 0 100%); }
+.book-page.pt-diagonal-left .book-page-copy { position: absolute; right: 0; top: 0; bottom: 0; width: 50%; padding: 20px; z-index: 2; }
 
 /* --- pt-hidden: no photo, pure text page --- */
 .book-page.pt-hidden .page-gallery { display: none !important; }
 .book-page.pt-hidden .book-page-copy { position: relative; inset: auto; padding: 28px; }
 
 /* --- pt-border-frame: photo inset with thick accent border --- */
-.book-page.pt-border-frame .page-gallery {
-  position: absolute; inset: 14px; height: calc(100% - 28px); z-index: 0;
-  outline: 6px solid var(--c2, currentColor); outline-offset: -6px;
-  padding: 6px;
-}
+.book-page.pt-border-frame .page-gallery { position: absolute; inset: 14px; height: calc(100% - 28px); z-index: 0; outline: 6px solid var(--c2, currentColor); outline-offset: -6px; padding: 6px; }
 .book-page.pt-border-frame .book-page-copy { position: relative; z-index: 2; }
+
+/* --- pt-thumbnail-row: small strip of thumbnails at bottom --- */
+.book-page.pt-thumbnail-row .page-gallery { position: absolute; bottom: 0; left: 0; right: 0; height: 22%; z-index: 0; display: flex; gap: 2px; }
+.book-page.pt-thumbnail-row .page-gallery .gallery-image { flex: 1; height: 100%; }
+.book-page.pt-thumbnail-row .book-page-copy { position: absolute; top: 0; left: 0; right: 0; height: 78%; padding: 20px; z-index: 2; }
+
+
+
 
 .book-page.editor-effects-0 .page-image,
 .book-page.editor-effects-0 .book-page-copy {
