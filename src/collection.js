@@ -75,6 +75,7 @@ export function visibleBooklets() {
         if (filter === 'events') {
           return itemCat.includes('event') || itemTopic.includes('gallery') || itemTopic.includes('exhibition') || itemTopic.includes('выставк') || itemTopic.includes('фестивал');
         }
+        return itemCat === filter;
       }
       return activeFilter === 'All' || item.category === activeFilter;
     })
@@ -266,33 +267,59 @@ export function renderCards() {
   loadGoogleFonts(collectionFonts, 'collection');
 
   pageItems.forEach((item, index) => {
-    const pages = pagesFor(item);
-    const firstPage = pages[0] || {};
-    const dna = item.designDna || {};
-    const card = template.content.firstElementChild.cloneNode(true);
-    const cover = card.querySelector('.cover');
-
-    card.dataset.layout = item.layout;
-    card.dataset.cover = dna.coverArchetype || 'type-only';
-    card.classList.add(...designClasses(item).split(' '));
-    cover.classList.add(`cover-${safeClass(dna.coverArchetype || 'type-only')}`);
-    applyPalette(card, item.palette);
-    setFontVariables(card, item, firstPage);
-
-    card.querySelector('.cover-kicker').textContent = `${item.era} / ${item.style}`;
-    card.querySelector('.cover-title').textContent = coverTitle(item.title);
-    card.querySelector('.cover-number').textContent = String(startIndex + index + 1).padStart(2, '0');
-    card.querySelector('.card-audience').textContent = `For ${item.audience} · ${pages.length} print pages · ${dna.fontCount || fontsFor(item).length || 2} fonts`;
-    card.querySelector('.card-title').textContent = item.title;
-    card.querySelector('.card-direction').textContent = item.direction;
-
-    cover.addEventListener('click', () => openBooklet(item));
-    card.addEventListener('click', (event) => {
-      if (event.target.closest('a, button')) return;
-      openBooklet(item);
-    });
-    grid.append(card);
+    grid.append(createBookletCard(item, startIndex + index));
   });
+}
+
+function createBookletCard(item, displayIndex) {
+  const template = document.querySelector('#booklet-card-template');
+  if (!template) return document.createElement('article');
+
+  const pages = pagesFor(item);
+  const firstPage = pages[0] || {};
+  const dna = item.designDna || {};
+  const card = template.content.firstElementChild.cloneNode(true);
+  const cover = card.querySelector('.cover');
+
+  card.dataset.layout = item.layout;
+  card.dataset.cover = dna.coverArchetype || 'type-only';
+  card.classList.add(...designClasses(item).split(' '));
+  cover.classList.add(`cover-${safeClass(dna.coverArchetype || 'type-only')}`);
+  applyPalette(card, item.palette);
+  setFontVariables(card, item, firstPage);
+  card.querySelector('.cover-kicker').textContent = `${item.era} / ${item.style}`;
+  card.querySelector('.cover-title').textContent = coverTitle(item.title);
+  card.querySelector('.cover-number').textContent = String(displayIndex + 1).padStart(2, '0');
+  card.querySelector('.card-audience').textContent = `For ${item.audience} · ${pages.length} print pages · ${dna.fontCount || fontsFor(item).length || 2} fonts`;
+  card.querySelector('.card-title').textContent = item.title;
+  card.querySelector('.card-direction').textContent = item.direction;
+
+  cover.addEventListener('click', () => openBooklet(item));
+  card.addEventListener('click', (event) => {
+    if (event.target.closest('a, button')) return;
+    openBooklet(item);
+  });
+  return card;
+}
+
+function renderCategoryShowcase() {
+  const showcaseGrids = document.querySelectorAll('[data-showcase-grid]');
+  if (!showcaseGrids.length) return;
+
+  const published = allBooklets.filter(isPublished).sort((a, b) => b.publishDate.localeCompare(a.publishDate));
+  const showcaseItems = [];
+
+  showcaseGrids.forEach(grid => {
+    const category = grid.dataset.showcaseGrid;
+    const items = published.filter(item => item.category === category).slice(0, 3);
+    grid.innerHTML = '';
+    items.forEach((item, index) => {
+      showcaseItems.push(item);
+      grid.append(createBookletCard(item, index));
+    });
+  });
+
+  loadGoogleFonts(showcaseItems.slice(0, 18).flatMap(item => fontsFor(item).slice(0, 2)), 'catalog-showcase');
 }
 
 export function initCollection(booklets) {
@@ -314,6 +341,7 @@ export function initCollection(booklets) {
   renderFilters();
   renderCards();
   renderPagination();
+  renderCategoryShowcase();
 
   document.querySelectorAll('[data-category-target]').forEach(button => {
     if (button.dataset.categoryBound) return;
@@ -329,4 +357,3 @@ export function initCollection(booklets) {
     });
   });
 }
-

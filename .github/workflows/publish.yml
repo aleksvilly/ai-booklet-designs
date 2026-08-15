@@ -224,7 +224,10 @@ jobs:
             cp wedding.html menu.html gifts.html events.html _site/ 2>/dev/null || true
           fi
           touch _site/.nojekyll
-          cp robots.txt sitemap.xml _site/ 2>/dev/null || true
+          cp robots.txt _site/ 2>/dev/null || true
+          if [ ! -f "_site/sitemap.xml" ]; then
+            cp sitemap.xml _site/ 2>/dev/null || true
+          fi
           cp -R data _site/data 2>/dev/null || true
           cp -R vendor _site/vendor 2>/dev/null || true
           cp -R src _site/src 2>/dev/null || true

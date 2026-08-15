@@ -1,0 +1,138 @@
+---
+import { categoryCountText, categoryLabel, getPublishedCategoryCatalog } from '../category-catalog';
+
+interface Props {
+  lang?: 'en' | 'ru';
+}
+
+const { lang = 'en' } = Astro.props;
+const isRu = lang === 'ru';
+const categories = getPublishedCategoryCatalog();
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+const copy = isRu ? {
+  eyebrow: 'Каталог идей',
+  title: 'Найдите свою тему',
+  intro: 'От подарка одному человеку до тиража для целого офиса. Выберите направление — или придумайте тему, которой ещё нет.',
+  seeAll: 'Посмотреть все',
+  browseAll: 'Вся коллекция',
+  rowEyebrow: 'Готовые буклеты',
+  promos: [
+    { type: 'speed', kicker: 'Быстрый старт', title: 'Буклет за пару минут.', text: 'Задайте тему, выберите настроение — страницы, текст и визуальный ритм соберутся автоматически.' },
+    { type: 'type', kicker: 'Живая типографика', title: 'Один текст. Сотни характеров.', text: 'Двигайте ползунок: шрифт меняется так же легко, как настроение будущего буклета.' },
+    { type: 'gift', kicker: 'Не знаете, что подарить?', title: 'Книга, которая выглядит как картина.', text: 'Для друга, фаната, гика или человека, у которого всё есть.', primary: 'Создать бесплатно', secondary: 'Написать нам' },
+    { type: 'switches', kicker: 'Настройки', title: 'Соберите собственный визуальный язык.', text: 'Фото, плотность, шрифт и эффекты переключаются прямо в редакторе.' },
+    { type: 'print', kicker: 'Экран → бумага', title: 'Скачайте. Распечатайте. Подарите.', text: 'Готовый PDF можно отнести в ближайшую типографию или сохранить как цифровой TikTok-book.' },
+    { type: 'horror', kicker: 'Любая тема — правда любая', title: 'Даже та, о которой обычно не делают книги.', text: 'Футбол, рыбалка, хоррор, политика, бизнес, редкие хобби и странные личные истории.' },
+    { type: 'custom', kicker: 'Полностью кастомный буклет', title: 'Нужен дизайн только для вас?', text: 'Сделаем персональный или корпоративный буклет под конкретную задачу — от $1.', primary: 'Заказать буклет', secondary: 'Email' }
+  ]
+} : {
+  eyebrow: 'Idea catalog',
+  title: 'Find your subject',
+  intro: 'From a gift for one person to a print run for an entire office. Pick a direction — or invent a subject that does not exist yet.',
+  seeAll: 'View all',
+  browseAll: 'Full collection',
+  rowEyebrow: 'Published booklets',
+  promos: [
+    { type: 'speed', kicker: 'Quick start', title: 'A booklet in minutes.', text: 'Name the subject and choose a mood. Pages, copy and visual rhythm come together automatically.' },
+    { type: 'type', kicker: 'Live typography', title: 'One message. Hundreds of voices.', text: 'Move the slider: type changes as easily as the mood of your next booklet.' },
+    { type: 'gift', kicker: 'No idea what to give?', title: 'A book that looks like a picture.', text: 'For a friend, a fan, a geek, or the person who already has everything.', primary: 'Create for free', secondary: 'Email us' },
+    { type: 'switches', kicker: 'Settings', title: 'Build your own visual language.', text: 'Photos, density, typography and effects switch directly in the live editor.' },
+    { type: 'print', kicker: 'Screen → paper', title: 'Download. Print. Give.', text: 'Take the PDF to a nearby print shop or keep it as a digital TikTok-book.' },
+    { type: 'horror', kicker: 'Any subject really means any', title: 'Even the subject nobody usually makes books about.', text: 'Football, fishing, horror, politics, business, rare hobbies and strange personal stories.' },
+    { type: 'custom', kicker: 'Fully custom booklet', title: 'Need a design made only for you?', text: 'A personal or corporate booklet for a specific brief — from $1.', primary: 'Order a booklet', secondary: 'Email' }
+  ]
+};
+
+---
+
+<section class="catalog-directory" id="categories" aria-labelledby="catalog-directory-title">
+  <div class="catalog-directory-copy">
+    <p class="eyebrow">{copy.eyebrow}</p>
+    <h2 id="catalog-directory-title">{copy.title}</h2>
+    <p>{copy.intro}</p>
+  </div>
+  <nav class="catalog-directory-list" aria-label={copy.title}>
+    {categories.map((entry, index) => (
+      <a href={`#category-${entry.slug}`}>
+        <span>{String(index + 1).padStart(2, '0')}</span>
+        <strong>{categoryLabel(entry.category, lang)}</strong>
+        <small>{categoryCountText(entry.count, lang)}</small>
+      </a>
+    ))}
+  </nav>
+</section>
+
+<div class="catalog-showcase" aria-label={copy.browseAll}>
+  {categories.map((entry, index) => {
+    const promo = copy.promos[(Math.floor(index / 2) - 1 + copy.promos.length) % copy.promos.length];
+    const showPromo = index > 0 && index % 2 === 0;
+    return (
+      <>
+        {showPromo && (
+          <aside class={`catalog-interlude catalog-interlude-${promo.type}`} aria-label={promo.kicker}>
+            <div class="interlude-copy">
+              <p class="eyebrow">{promo.kicker}</p>
+              <h2>{promo.title}</h2>
+              <p>{promo.text}</p>
+              {(promo.type === 'gift' || promo.type === 'custom') && (
+                <div class="interlude-actions">
+                  <a class="primary-button" href={promo.type === 'custom' ? '#contact' : '#generation-form'}>{promo.primary}</a>
+                  <a class="interlude-mail" href="#contact">{promo.secondary} ↗</a>
+                </div>
+              )}
+            </div>
+
+            {promo.type === 'speed' && <div class="speed-meter" aria-hidden="true"><span>01</span><i></i><span>02</span><i></i><span>PDF</span></div>}
+            {promo.type === 'type' && (
+              <div class="type-demo">
+                <output data-type-demo-output>Editorial</output>
+                <input class="type-demo-range" type="range" min="0" max="4" value="0" aria-label={isRu ? 'Изменить стиль шрифта' : 'Change type style'} />
+              </div>
+            )}
+            {promo.type === 'switches' && (
+              <div class="switch-demo" aria-label={isRu ? 'Пример настроек' : 'Settings preview'}>
+                {['Photos', 'Editorial type', 'Grain'].map((setting, settingIndex) => (
+                  <button type="button" class={settingIndex < 2 ? 'is-on' : ''} aria-pressed={settingIndex < 2 ? 'true' : 'false'}>
+                    <span>{isRu ? ['Фото', 'Типографика', 'Зерно'][settingIndex] : setting}</span><i aria-hidden="true"></i>
+                  </button>
+                ))}
+              </div>
+            )}
+            {promo.type === 'print' && <div class="print-demo" aria-hidden="true"><span>PDF</span><i>→</i><b>A4</b></div>}
+            {promo.type === 'horror' && <div class="horror-mark" aria-hidden="true">100<br/><span>{isRu ? 'тем' : 'subjects'}</span></div>}
+          </aside>
+        )}
+
+        <section class="catalog-category" id={`category-${entry.slug}`} data-showcase-section={entry.category}>
+          <header class="catalog-category-heading">
+            <div>
+              <p class="eyebrow">{copy.rowEyebrow} · {entry.count}</p>
+              <h2>{categoryLabel(entry.category, lang)}</h2>
+            </div>
+            <a class="catalog-view-all" href={`${baseUrl}/${isRu ? 'ru/' : ''}category/${entry.slug}/`}>{copy.seeAll} <span>↗</span></a>
+          </header>
+          <div class="booklet-grid catalog-booklet-row" data-showcase-grid={entry.category} aria-live="polite"></div>
+        </section>
+      </>
+    );
+  })}
+</div>
+
+<script>
+  const typeFamilies = ['"DM Sans", sans-serif', '"Playfair Display", serif', '"IBM Plex Mono", monospace', '"Bebas Neue", sans-serif', '"Cormorant Garamond", serif'];
+  document.querySelectorAll('.type-demo-range').forEach((range) => {
+    range.addEventListener('input', () => {
+      const output = range.closest('.type-demo')?.querySelector('[data-type-demo-output]');
+      if (output) output.style.fontFamily = typeFamilies[Number(range.value)] || typeFamilies[0];
+    });
+  });
+
+  document.querySelectorAll('.switch-demo button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const isOn = button.getAttribute('aria-pressed') !== 'true';
+      button.setAttribute('aria-pressed', String(isOn));
+      button.classList.toggle('is-on', isOn);
+    });
+  });
+</script>

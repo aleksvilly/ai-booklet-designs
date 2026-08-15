@@ -48,12 +48,18 @@
       the end adds four editable pages, the companion action removes the last
       four, and the 4–20 page limits are enforced. Future generation now uses
       only 4/8/12/16/20-page formats; existing booklet data remains untouched.
+- [x] Long-form English/Russian collection catalog generated from published
+      booklet categories: scalable directory, three-booklet category shelves,
+      dedicated bilingual SEO routes for every category, full-category links,
+      generated sitemap entries and compact interactive editorial interludes.
 
 ## In progress
 
 - [ ] Grow the initial topic tree without making the hero form visually heavy.
 - [ ] Move remaining legacy generator arrays into the registries.
 - [ ] Add visual preview thumbnails and provenance to every style.
+- [ ] Localize the long-form category catalog and interlude copy for Spanish,
+      German, French and Chinese landing pages.
 
 ## Next
 

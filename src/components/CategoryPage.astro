@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from './Header.astro';
+import Footer from './Footer.astro';
+import { categoryCountText, categoryLabel } from '../category-catalog';
+
+interface Props {
+  entry: {
+    category: string;
+    slug: string;
+    count: number;
+  };
+  lang?: 'en' | 'ru';
+}
+
+const { entry, lang = 'en' } = Astro.props;
+const isRu = lang === 'ru';
+const label = categoryLabel(entry.category, lang);
+const count = categoryCountText(entry.count, lang);
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+const categoryPath = `/${isRu ? 'ru/' : ''}category/${entry.slug}/`;
+
+const title = isRu
+  ? `${label}: ИИ-буклеты, готовые дизайны и шаблоны`
+  : `${label} AI Booklets — Published Editorial Designs & Templates`;
+const description = isRu
+  ? `${count} в категории «${label}». Просматривайте готовые дизайны, редактируйте страницы и типографику, скачивайте PDF для печати или создайте новый буклет бесплатно.`
+  : `Explore ${count} in ${label}. Open published editorial designs, edit pages and typography, export a print-ready PDF, or generate a new booklet for free.`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  lang={lang}
+  categoryFilter={entry.category}
+  canonicalPath={categoryPath}
+  alternateEnPath={`/category/${entry.slug}/`}
+  alternateRuPath={`/ru/category/${entry.slug}/`}
+>
+  <Header slot="header" lang={lang} activeNav="collection" />
+
+  <section class="category-route-hero">
+    <a class="category-route-back" href={`${baseUrl}/${isRu ? 'ru/' : ''}#categories`}>← {isRu ? 'Все категории' : 'All categories'}</a>
+    <p class="eyebrow">{isRu ? 'Каталог буклетов' : 'Booklet catalog'} · {count}</p>
+    <h1>{label}</h1>
+    <p class="category-route-intro">{description}</p>
+    <div class="hero-actions">
+      <a class="primary-button" href={`${baseUrl}/${isRu ? 'ru/' : ''}#generation-form`}>{isRu ? 'Создать свой буклет — бесплатно' : 'Create your booklet — free'}</a>
+      <a class="secondary-button" href="#collection">{isRu ? 'Смотреть буклеты' : 'Browse booklets'}</a>
+    </div>
+  </section>
+
+  <section class="collection category-route-collection" id="collection">
+    <div class="category-route-toolbar">
+      <p>{count}</p>
+      <div>
+        <details class="category-sort-placeholder">
+          <summary>
+            <span>{isRu ? 'Сортировка' : 'Sort by'}</span>
+            <strong>{isRu ? 'Сначала новые' : 'Newest first'}</strong>
+            <i aria-hidden="true">⌄</i>
+          </summary>
+          <div class="category-sort-menu">
+            <button type="button" aria-current="true" disabled>{isRu ? 'Сначала новые' : 'Newest first'} <span>✓</span></button>
+            <button type="button" disabled>{isRu ? 'Популярные' : 'Popular'} <span>—</span></button>
+            <button type="button" disabled>{isRu ? 'Сначала старые' : 'Oldest first'} <span>—</span></button>
+            <button type="button" disabled>{isRu ? 'Выбор редакции' : "Editor's choice"} <span>—</span></button>
+            <small>{isRu ? 'Сортировка появится в следующей версии' : 'Sorting is coming in the next version'}</small>
+          </div>
+        </details>
+      </div>
+    </div>
+    <div class="booklet-grid" id="booklet-grid" aria-live="polite"></div>
+    <p class="empty-state" id="empty-state" hidden>{isRu ? 'Ничего не найдено.' : 'No booklets match this search.'}</p>
+    <nav class="pagination" id="pagination" aria-label={isRu ? 'Навигация буклетов' : 'Booklet navigation'}></nav>
+  </section>
+
+  <Footer slot="footer" />
+</BaseLayout>

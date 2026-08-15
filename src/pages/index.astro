@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import CatalogShowcase from '../components/CatalogShowcase.astro';
 ---
 <BaseLayout title="AI Booklet Designs — unique editorial booklets for any occasion" lang="en">
   <Header slot="header" lang="en" activeNav="home" />
@@ -14,84 +15,19 @@ import Footer from '../components/Footer.astro';
 
       <div class="hero-actions">
         <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">Create booklet</button>
-        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">View examples</a>
+        <a class="secondary-button" href="#categories" data-i18n="btn_see_examples">View examples</a>
       </div>
     </div>
   </section>
 
+  <CatalogShowcase lang="en" />
 
-
-  <!-- CATEGORY QUICK EXPLORER -->
-  <section class="category-explorer" id="categories" aria-label="Explore booklet categories">
-    <div class="category-explorer-inner">
-      <div class="category-explorer-header">
-        <div class="cat-pill-badge">
-          <span class="cat-pill-dot"></span>
-          <span>Templates &amp; Categories</span>
-        </div>
-        <p class="cat-subtext">Click any category to filter print-ready editorial layouts &amp; live spreads:</p>
-      </div>
-      <div class="category-chips" id="category-chips">
-        <button class="category-chip active" type="button" data-category-target="All">
-          <span class="cat-icon">✨</span>
-          <span class="cat-name">All Booklets</span>
-          <span class="cat-count">60+</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Birthday">
-          <span class="cat-icon">🎂</span>
-          <span class="cat-name">Birthdays &amp; Gifts</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Relationships">
-          <span class="cat-icon">💍</span>
-          <span class="cat-name">Weddings &amp; Love</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Food">
-          <span class="cat-icon">☕</span>
-          <span class="cat-name">Café &amp; Menus</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Sports">
-          <span class="cat-icon">🏃</span>
-          <span class="cat-name">Sports &amp; Fitness</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Cinema">
-          <span class="cat-icon">🎬</span>
-          <span class="cat-name">Cinema &amp; Movies</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Travel">
-          <span class="cat-icon">✈️</span>
-          <span class="cat-name">Travel &amp; City Guides</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Music">
-          <span class="cat-icon">🎸</span>
-          <span class="cat-name">Music &amp; Festivals</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Architecture">
-          <span class="cat-icon">🏛️</span>
-          <span class="cat-name">Architecture &amp; Design</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Animals">
-          <span class="cat-icon">🐾</span>
-          <span class="cat-name">Animals &amp; Wildlife</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Nature">
-          <span class="cat-icon">🌿</span>
-          <span class="cat-name">Nature &amp; Ocean</span>
-        </button>
-        <button class="category-chip" type="button" data-category-target="Technology">
-          <span class="cat-icon">🚀</span>
-          <span class="cat-name">Tech &amp; Space</span>
-        </button>
-      </div>
-    </div>
-  </section>
-
-
-  <section class="collection" id="collection">
+  <section class="collection collection-browser" id="collection">
     <div class="section-heading">
       <div>
-        <p class="eyebrow" data-i18n="collection_eyebrow">Current collection</p>
-        <h2 data-i18n="collection_title">Editorial booklet collection</h2>
-        <p data-i18n="collection_subtitle">Browse print-ready generated editorial booklets. Open any design to inspect spreads, edit typography, or export PDF.</p>
+        <p class="eyebrow" data-i18n="collection_eyebrow">Full collection</p>
+        <h2 data-i18n="collection_title">Search all booklets</h2>
+        <p data-i18n="collection_subtitle">Filter every published design by category, title, style or date.</p>
       </div>
       <div class="collection-controls">
         <div class="filters" id="filters" aria-label="Filter booklets"></div>

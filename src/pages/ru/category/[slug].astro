@@ -1,0 +1,15 @@
+---
+import CategoryPage from '../../../components/CategoryPage.astro';
+import { getPublishedCategoryCatalog } from '../../../category-catalog';
+
+export function getStaticPaths() {
+  return getPublishedCategoryCatalog().map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry }
+  }));
+}
+
+const { entry } = Astro.props;
+---
+
+<CategoryPage entry={entry} lang="ru" />

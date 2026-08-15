@@ -4,13 +4,19 @@ interface Props {
   description?: string;
   lang?: string;
   categoryFilter?: string;
+  canonicalPath?: string;
+  alternateEnPath?: string;
+  alternateRuPath?: string;
 }
 
 const {
   title = "AI Booklet Designs — unique editorial booklets for any occasion",
   description = "AI-generated editorial booklets for any person and any occasion — birthday gifts, café menus, event programmes, wedding booklets. Free, automatic, print-ready.",
   lang = "en",
-  categoryFilter = ""
+  categoryFilter = "",
+  canonicalPath = "/",
+  alternateEnPath = "/",
+  alternateRuPath = "/ru/"
 } = Astro.props;
 
 const baseUrl = "https://aleksvilly.github.io/ai-booklet-designs";
@@ -109,12 +115,12 @@ const photoCopy = isRussian ? {
   <meta name="keywords" content="AI booklet generator, editorial design, print-ready booklet, ИИ буклеты, генератор буклетов, folletos IA, AI Broschüren, brochure design, free booklet maker, booklet templates">
   <meta name="theme-color" content="#f3f0e8" id="theme-color">
   <title>{title}</title>
-  <link rel="canonical" href={`${baseUrl}/`}>
+  <link rel="canonical" href={`${baseUrl}${canonicalPath}`}>
 
   <meta property="og:title" content={title}>
   <meta property="og:description" content={description}>
   <meta property="og:type" content="website">
-  <meta property="og:url" content={`${baseUrl}/`}>
+  <meta property="og:url" content={`${baseUrl}${canonicalPath}`}>
   <meta property="og:site_name" content="AI Booklet Designs">
   <meta property="og:locale" content={lang === 'ru' ? 'ru_RU' : 'en_US'}>
 
@@ -122,9 +128,9 @@ const photoCopy = isRussian ? {
   <meta name="twitter:title" content={title}>
   <meta name="twitter:description" content={description}>
 
-  <link rel="alternate" hreflang="x-default" href={`${baseUrl}/`}>
-  <link rel="alternate" hreflang="en" href={`${baseUrl}/`}>
-  <link rel="alternate" hreflang="ru" href={`${baseUrl}/ru/`}>
+  <link rel="alternate" hreflang="x-default" href={`${baseUrl}${alternateEnPath}`}>
+  <link rel="alternate" hreflang="en" href={`${baseUrl}${alternateEnPath}`}>
+  <link rel="alternate" hreflang="ru" href={`${baseUrl}${alternateRuPath}`}>
   <link rel="alternate" hreflang="es" href={`${baseUrl}/es/`}>
   <link rel="alternate" hreflang="de" href={`${baseUrl}/de/`}>
   <link rel="alternate" hreflang="fr" href={`${baseUrl}/fr/`}>
