@@ -145,6 +145,20 @@ export function updatePageUrl(page, replace = false) {
   history[replace ? 'replaceState' : 'pushState'](state, '', url);
 }
 
+export function setCategoryFilter(category) {
+  activeFilter = category;
+  currentPage = 1;
+  updatePageUrl(currentPage, true);
+  renderFilters();
+  renderCards();
+  renderPagination();
+
+  // Sync category chip buttons on the page
+  document.querySelectorAll('[data-category-target]').forEach(chip => {
+    chip.classList.toggle('active', chip.dataset.categoryTarget === category);
+  });
+}
+
 export function renderFilters() {
   const filtersNode = document.querySelector('#filters');
   if (!filtersNode) return;
@@ -157,16 +171,12 @@ export function renderFilters() {
     button.type = 'button';
     button.textContent = category;
     button.addEventListener('click', () => {
-      activeFilter = category;
-      currentPage = 1;
-      updatePageUrl(currentPage, true);
-      renderFilters();
-      renderCards();
-      renderPagination();
+      setCategoryFilter(category);
     });
     filtersNode.append(button);
   }
 }
+
 
 export function renderPagination() {
   const paginationNode = document.querySelector('#pagination');
@@ -304,4 +314,19 @@ export function initCollection(booklets) {
   renderFilters();
   renderCards();
   renderPagination();
+
+  document.querySelectorAll('[data-category-target]').forEach(button => {
+    if (button.dataset.categoryBound) return;
+    button.dataset.categoryBound = 'true';
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      const targetCategory = button.dataset.categoryTarget;
+      setCategoryFilter(targetCategory);
+      const collectionSection = document.querySelector('#collection');
+      if (collectionSection) {
+        collectionSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
 }
+

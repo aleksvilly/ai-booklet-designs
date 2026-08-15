@@ -8,19 +8,31 @@ import Footer from '../components/Footer.astro';
 
   <section class="hero" id="generate">
     <div class="hero-intro">
-      <p class="eyebrow" data-i18n="hero_eyebrow">AI-generated editorial booklets — free, automatic, unique</p>
-      <h1 data-i18n="hero_title">Any person.<br><em>Any occasion.</em></h1>
-      <p class="hero-copy" data-i18n="hero_copy">Birthday gift for a jazz fan. Opening menu for a café. Programme for a gallery night. Event booklet for a wedding. Describe the idea — a unique editorial booklet is generated automatically.</p>
-      <ul class="hero-usecases" aria-label="Example use cases">
-        <li><a href="gifts.html">🎁 <strong>Gift</strong> — birthday, anniversary, graduation</a></li>
-        <li><a href="menu.html">☕ <strong>Business</strong> — café menu, brand story, product launch</a></li>
-        <li><a href="events.html">🎉 <strong>Event</strong> — conference, gallery opening, festival</a></li>
-        <li><a href="wedding.html">💍 <strong>Wedding</strong> — ceremonies, anniversaries, love stories</a></li>
-      </ul>
+      <div class="hero-badge-row">
+        <span class="hero-badge hero-badge-oss">✦ Open-Source Pet Project</span>
+        <span class="hero-badge">⚡ 225+ Layout Combinations</span>
+        <span class="hero-badge">📦 Zero Install · Browser Native</span>
+      </div>
+
+      <h1 data-i18n="hero_title">Generative Booklet Engine.<br><em>Open Design DNA.</em></h1>
+      
+      <p class="hero-copy" data-i18n="hero_copy">A fast, open playground for editorial booklets, zines, café menus, gifts, and event programs. Pick layout recipes, tweak typography, edit photos live, or generate from any topic — instantly print-ready.</p>
+
       <div class="hero-actions">
-        <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">Create a booklet — free</button>
-        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">See examples</a>
+        <button class="primary-button hero-main-cta" id="hero-create-btn" type="button" data-i18n="btn_create">
+          <span class="btn-icon">⚡</span>
+          <span>Launch Live Editor</span>
+        </button>
+        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">
+          <span>Browse 60+ Booklets ↓</span>
+        </a>
         <button class="text-button" id="surprise-button" type="button" data-i18n="btn_surprise">Surprise me ↗</button>
+      </div>
+
+      <div class="hero-specs-strip">
+        <div class="spec-item"><span>📄</span> A5 Print-Ready Spreads</div>
+        <div class="spec-item"><span>🎨</span> 30+ Modular Page Styles</div>
+        <div class="spec-item"><span>🚀</span> Free &amp; Open Source</div>
       </div>
     </div>
 
@@ -29,27 +41,92 @@ import Footer from '../components/Footer.astro';
         <span class="hero-booklet-shadow" aria-hidden="true"></span>
         <span class="hero-booklet-spread" aria-hidden="true">
           <span class="hero-booklet-page hero-booklet-copy">
-            <small>Start with a real template</small>
-            <strong>Make it<br><em>yours.</em></strong>
-            <span>Edit the pages before you generate.</span>
-            <i>Live preview · Print-ready</i>
+            <small>Interactive Canvas</small>
+            <strong>Live<br><em>Editor.</em></strong>
+            <span>Inspect typography, photo layouts, and spreads.</span>
+            <i>Free · Instant preview</i>
           </span>
           <span class="hero-booklet-page hero-booklet-add">
             <span class="hero-booklet-plus"></span>
             <strong>Open editor</strong>
-            <span>Every slider works live</span>
+            <span>All sliders active live</span>
             <span class="hero-slider-preview"><i></i></span>
           </span>
         </span>
       </button>
       <div class="hero-booklet-meta">
-        <p><strong>One click.</strong> A starter booklet and the full edit menu open together.</p>
+        <p><strong>Open source &amp; free.</strong> Click to launch the live booklet workbench.</p>
         <button class="request-history-button" id="request-history-button" type="button" hidden>
           Request history <span id="request-history-count">0</span>
         </button>
       </div>
     </div>
   </section>
+
+  <!-- CATEGORY QUICK EXPLORER -->
+  <section class="category-explorer" id="categories" aria-label="Explore booklet categories">
+    <div class="category-explorer-inner">
+      <div class="category-explorer-header">
+        <div class="cat-pill-badge">
+          <span class="cat-pill-dot"></span>
+          <span>Templates &amp; Categories</span>
+        </div>
+        <p class="cat-subtext">Click any category to filter print-ready editorial layouts &amp; live spreads:</p>
+      </div>
+      <div class="category-chips" id="category-chips">
+        <button class="category-chip active" type="button" data-category-target="All">
+          <span class="cat-icon">✨</span>
+          <span class="cat-name">All Booklets</span>
+          <span class="cat-count">60+</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Birthday">
+          <span class="cat-icon">🎂</span>
+          <span class="cat-name">Birthdays &amp; Gifts</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Relationships">
+          <span class="cat-icon">💍</span>
+          <span class="cat-name">Weddings &amp; Love</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Food">
+          <span class="cat-icon">☕</span>
+          <span class="cat-name">Café &amp; Menus</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Sports">
+          <span class="cat-icon">🏃</span>
+          <span class="cat-name">Sports &amp; Fitness</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Cinema">
+          <span class="cat-icon">🎬</span>
+          <span class="cat-name">Cinema &amp; Movies</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Travel">
+          <span class="cat-icon">✈️</span>
+          <span class="cat-name">Travel &amp; City Guides</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Music">
+          <span class="cat-icon">🎸</span>
+          <span class="cat-name">Music &amp; Festivals</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Architecture">
+          <span class="cat-icon">🏛️</span>
+          <span class="cat-name">Architecture &amp; Design</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Animals">
+          <span class="cat-icon">🐾</span>
+          <span class="cat-name">Animals &amp; Wildlife</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Nature">
+          <span class="cat-icon">🌿</span>
+          <span class="cat-name">Nature &amp; Ocean</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Technology">
+          <span class="cat-icon">🚀</span>
+          <span class="cat-name">Tech &amp; Space</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
 
   <section class="collection" id="collection">
     <div class="section-heading">

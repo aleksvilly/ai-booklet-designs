@@ -8,19 +8,31 @@ import Footer from '../../components/Footer.astro';
 
   <section class="hero" id="generate">
     <div class="hero-intro">
-      <p class="eyebrow" data-i18n="hero_eyebrow">ИИ-буклеты — бесплатно, автоматически, уникально</p>
-      <h1 data-i18n="hero_title">Для любого человека.<br><em>К любому событию.</em></h1>
-      <p class="hero-copy" data-i18n="hero_copy">Подарок на день рождения джазовому фанату. Меню для новой кофейни. Программа галерейного вечера. Буклет на свадьбу. Опишите идею — уникальный полиграфический буклет создаётся автоматически.</p>
-      <ul class="hero-usecases" aria-label="Примеры использования">
-        <li><a href="gifts.html">🎁 <strong>Подарок</strong> — день рождения, юбилей, выпускной</a></li>
-        <li><a href="menu.html">☕ <strong>Бизнес</strong> — меню кафе, история бренда, запуск продукта</a></li>
-        <li><a href="events.html">🎉 <strong>Событие</strong> — конференция, открытие галереи, фестиваль</a></li>
-        <li><a href="wedding.html">💍 <strong>Свадьба</strong> — церемонии, юбилеи, истории любви</a></li>
-      </ul>
+      <div class="hero-badge-row">
+        <span class="hero-badge hero-badge-oss">✦ Открытый Pet-проект</span>
+        <span class="hero-badge">⚡ 225+ комбинаций вёрстки</span>
+        <span class="hero-badge">📦 Без установки · В браузере</span>
+      </div>
+
+      <h1 data-i18n="hero_title">Генератор полиграфических буклетов.<br><em>Открытый дизайн и вёрстка.</em></h1>
+      
+      <p class="hero-copy" data-i18n="hero_copy">Быстрый открытый движок и визуальный редактор для editorial-буклетов, подарков, меню кафе и программ. Выбирайте сетки верстки, настраивайте типографику, редактируйте фото и экспортируйте в печать.</p>
+
       <div class="hero-actions">
-        <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">Создать буклет — бесплатно</button>
-        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">Смотреть примеры</a>
+        <button class="primary-button hero-main-cta" id="hero-create-btn" type="button" data-i18n="btn_create">
+          <span class="btn-icon">⚡</span>
+          <span>Запустить редактор</span>
+        </button>
+        <a class="secondary-button" href="#collection" data-i18n="btn_see_examples">
+          <span>Смотреть 60+ буклетов ↓</span>
+        </a>
         <button class="text-button" id="surprise-button" type="button" data-i18n="btn_surprise">Удиви меня ↗</button>
+      </div>
+
+      <div class="hero-specs-strip">
+        <div class="spec-item"><span>📄</span> Формат A5 / Развороты</div>
+        <div class="spec-item"><span>🎨</span> 30+ стилей страниц</div>
+        <div class="spec-item"><span>🚀</span> 100% Бесплатно &amp; Open Source</div>
       </div>
     </div>
 
@@ -29,27 +41,92 @@ import Footer from '../../components/Footer.astro';
         <span class="hero-booklet-shadow" aria-hidden="true"></span>
         <span class="hero-booklet-spread" aria-hidden="true">
           <span class="hero-booklet-page hero-booklet-copy">
-            <small>Начните с готового шаблона</small>
-            <strong>Сделайте<br><em>по-своему.</em></strong>
-            <span>Настройте страницы до генерации.</span>
-            <i>Живое превью · Готово к печати</i>
+            <small>Интерактивный холст</small>
+            <strong>Живой<br><em>редактор.</em></strong>
+            <span>Настраивайте типографику, сетки фото и развороты.</span>
+            <i>Бесплатно · Живое превью</i>
           </span>
           <span class="hero-booklet-page hero-booklet-add">
             <span class="hero-booklet-plus"></span>
             <strong>Открыть редактор</strong>
-            <span>Все слайдеры работают сразу</span>
+            <span>Все слайдеры активны сразу</span>
             <span class="hero-slider-preview"><i></i></span>
           </span>
         </span>
       </button>
       <div class="hero-booklet-meta">
-        <p><strong>Один клик.</strong> Шаблон буклета и полное меню редактирования откроются вместе.</p>
+        <p><strong>Open source &amp; бесплатно.</strong> Кликните для запуска интерактивного воркбенча.</p>
         <button class="request-history-button" id="request-history-button" type="button" hidden>
           История запросов <span id="request-history-count">0</span>
         </button>
       </div>
     </div>
   </section>
+
+  <!-- БЛОК КАТЕГОРИЙ (Сразу после Hero) -->
+  <section class="category-explorer" id="categories" aria-label="Категории и темы буклетов">
+    <div class="category-explorer-inner">
+      <div class="category-explorer-header">
+        <div class="cat-pill-badge">
+          <span class="cat-pill-dot"></span>
+          <span>Открытые шаблоны и категории</span>
+        </div>
+        <p class="cat-subtext">Выберите тему для быстрого фильтра и просмотра готовых страниц:</p>
+      </div>
+      <div class="category-chips" id="category-chips">
+        <button class="category-chip active" type="button" data-category-target="All">
+          <span class="cat-icon">✨</span>
+          <span class="cat-name">Все буклеты</span>
+          <span class="cat-count">60+</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Birthday">
+          <span class="cat-icon">🎂</span>
+          <span class="cat-name">Праздники и Дни рождения</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Relationships">
+          <span class="cat-icon">💍</span>
+          <span class="cat-name">Свадьбы и истории</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Food">
+          <span class="cat-icon">☕</span>
+          <span class="cat-name">Меню и кофейни</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Sports">
+          <span class="cat-icon">🏃</span>
+          <span class="cat-name">Спорт и активность</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Cinema">
+          <span class="cat-icon">🎬</span>
+          <span class="cat-name">Кино и фильмы</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Travel">
+          <span class="cat-icon">✈️</span>
+          <span class="cat-name">Путешествия и гиды</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Music">
+          <span class="cat-icon">🎸</span>
+          <span class="cat-name">Музыка и фестивали</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Architecture">
+          <span class="cat-icon">🏛️</span>
+          <span class="cat-name">Архитектура и арт</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Animals">
+          <span class="cat-icon">🐾</span>
+          <span class="cat-name">Животные и питомцы</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Nature">
+          <span class="cat-icon">🌿</span>
+          <span class="cat-name">Природа и океан</span>
+        </button>
+        <button class="category-chip" type="button" data-category-target="Technology">
+          <span class="cat-icon">🚀</span>
+          <span class="cat-name">Технологии и наука</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
 
   <section class="collection" id="collection">
     <div class="section-heading">
