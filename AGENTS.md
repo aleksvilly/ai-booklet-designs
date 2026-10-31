@@ -172,10 +172,11 @@ Browser
   - Trigger: an opened issue whose title starts with `[BOOKLET REQUEST]` and
     which already has the `booklet-request` label.
   - Parses and validates the issue fields, then dispatches `publish.yml`.
+- `.github/workflows/deploy.yml`
+  - Deploy-only: build and publish GitHub Pages on every push to `main`.
 - `.github/workflows/publish.yml`
   - Generates on `schedule` or `workflow_dispatch`.
-  - A normal push to `main` deploys the current static site without generating a
-    new booklet.
+  - No longer runs on push; `deploy.yml` handles normal deployments.
   - Generation commits `data/booklets.json`, then deploys GitHub Pages.
   - When `request_issue` is supplied, it marks that issue `finished`, adds
     `result_url`, comments with the direct booklet URL, and closes the issue.
@@ -597,18 +598,18 @@ Current UI behaviour:
 
 ## Deployment behaviour
 
-`publish.yml` runs on every push to `main`, but the generation step is guarded:
+Deployment and generation are separate workflows:
 
-```text
-github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-```
-
-Therefore:
-
-- code/data pushes deploy the static site;
-- scheduled or manually dispatched runs generate and deploy;
-- the generator's own `data/booklets.json` commit causes another deployment
-  push, but must not generate recursively.
+- `deploy.yml` runs on every push to `main` (and manually). It builds Astro,
+  runs `scripts/prepare-site.sh` and deploys GitHub Pages. It never generates.
+- `publish.yml` runs only on `schedule` or `workflow_dispatch`. It generates,
+  commits `data/booklets.json`, then builds and deploys with the same script.
+  Its own commit is pushed with `GITHUB_TOKEN`, which does not trigger
+  `deploy.yml`.
+- Both share the `pages` concurrency group, so deployments never overlap.
+- The generation and queue workflows may be disabled while `deploy.yml` stays
+  enabled. As of 2026-10-31 the user chose deploy-only: generation and queue
+  workflows stay disabled (they were disabled on 2026-08-18).
 
 The generator prepends additions:
 
