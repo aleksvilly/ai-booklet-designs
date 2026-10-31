@@ -1,0 +1,123 @@
+---
+import { giftPresets } from '../gift-presets';
+
+interface Props {
+  lang?: 'en' | 'ru';
+}
+
+const { lang = 'en' } = Astro.props;
+const isRu = lang === 'ru';
+const presets = giftPresets(lang);
+const first = presets[0];
+const defaultName = isRu ? 'Саша' : 'Alex';
+
+const copy = isRu ? {
+  title: 'Буклет в подарок другу — в стиле любимых фильмов и игр.',
+  text: 'Хорроры, CS2, старое итальянское кино, футбол. Выберите стиль, впишите имя и двигайте ползунки, пока не станет похоже. Потом — PDF или печать.',
+  create: 'Сделать буклет',
+  examples: 'Смотреть примеры',
+  name: 'Имя',
+  style: 'Стиль',
+  loud: 'Тихо ↔ громко',
+  demoLabel: 'Попробуйте стиль'
+} : {
+  title: 'A booklet about your friend, in the style of what they love.',
+  text: 'Horror films, CS2, old Italian cinema, football. Pick a style, type their name and move the sliders until it feels like them. Then print it or send the PDF.',
+  create: 'Make a booklet',
+  examples: 'See examples',
+  name: 'Name',
+  style: 'Style',
+  loud: 'Quiet ↔ loud',
+  demoLabel: 'Try a style'
+};
+---
+
+<section class="home-hero" id="generate">
+  <div class="home-hero-copy">
+    <h1>{copy.title}</h1>
+    <p>{copy.text}</p>
+    <div class="home-hero-actions">
+      <button class="primary-button" id="hero-create-btn" type="button">{copy.create}</button>
+      <a class="secondary-button" href="#collection">{copy.examples}</a>
+    </div>
+  </div>
+
+  <div class="style-demo" aria-label={copy.demoLabel} data-style-demo data-default-name={defaultName}>
+    <div class="style-demo-stage">
+      <div class="gift-cover" data-preset={first.id} style="--loud: .5" aria-hidden="true">
+        <span class="gc-band">{first.band}</span>
+        <span class="gc-kicker">{first.kicker}</span>
+        <strong class="gc-title">{first.title.replace('{name}', defaultName)}</strong>
+        <span class="gc-sub">{first.sub}</span>
+        <span class="gc-meta">{first.meta}</span>
+        <span class="gc-ticker"><span>{first.ticker}</span></span>
+        <i class="gc-deco gc-deco-a"></i>
+        <i class="gc-deco gc-deco-b"></i>
+      </div>
+    </div>
+
+    <div class="style-demo-controls">
+      <label class="style-demo-field">
+        <span>{copy.name}</span>
+        <input type="text" maxlength="24" value={defaultName} data-demo-name autocomplete="off">
+      </label>
+      <label class="style-demo-field">
+        <span>{copy.style} <output data-demo-style-label>{first.label}</output></span>
+        <input type="range" min="0" max={presets.length - 1} step="1" value="0" data-demo-style>
+      </label>
+      <div class="style-demo-chips" role="group" aria-label={copy.style}>
+        {presets.map((preset, index) => (
+          <button type="button" data-demo-chip={index} aria-pressed={index === 0 ? 'true' : 'false'}>{preset.label}</button>
+        ))}
+      </div>
+      <label class="style-demo-field">
+        <span>{copy.loud}</span>
+        <input type="range" min="0" max="100" value="50" data-demo-loud>
+      </label>
+    </div>
+  </div>
+</section>
+
+<script type="application/json" id="gift-presets-data" set:html={JSON.stringify(presets)}></script>
+
+<script>
+  const demo = document.querySelector('[data-style-demo]');
+  const dataNode = document.querySelector('#gift-presets-data');
+  if (demo && dataNode) {
+    const presets = JSON.parse(dataNode.textContent || '[]');
+    const cover = demo.querySelector('.gift-cover');
+    const nameInput = demo.querySelector('[data-demo-name]');
+    const styleRange = demo.querySelector('[data-demo-style]');
+    const loudRange = demo.querySelector('[data-demo-loud]');
+    const styleLabel = demo.querySelector('[data-demo-style-label]');
+    const chips = [...demo.querySelectorAll('[data-demo-chip]')];
+    const defaultName = demo.dataset.defaultName || '';
+
+    const setText = (selector, value) => {
+      const node = cover.querySelector(selector);
+      if (node) node.textContent = value;
+    };
+
+    const render = () => {
+      const preset = presets[Number(styleRange.value)] || presets[0];
+      const name = nameInput.value.trim() || defaultName;
+      cover.dataset.preset = preset.id;
+      setText('.gc-band', preset.band);
+      setText('.gc-kicker', preset.kicker);
+      setText('.gc-title', preset.title.replace('{name}', name));
+      setText('.gc-sub', preset.sub);
+      setText('.gc-meta', preset.meta);
+      setText('.gc-ticker span', preset.ticker);
+      styleLabel.textContent = preset.label;
+      chips.forEach((chip, index) => chip.setAttribute('aria-pressed', String(index === Number(styleRange.value))));
+    };
+
+    nameInput.addEventListener('input', render);
+    styleRange.addEventListener('input', render);
+    loudRange.addEventListener('input', () => cover.style.setProperty('--loud', String(Number(loudRange.value) / 100)));
+    chips.forEach((chip) => chip.addEventListener('click', () => {
+      styleRange.value = chip.dataset.demoChip;
+      render();
+    }));
+  }
+</script>

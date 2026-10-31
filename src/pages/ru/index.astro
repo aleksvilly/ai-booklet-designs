@@ -2,35 +2,24 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
-import CatalogShowcase from '../../components/CatalogShowcase.astro';
+import HomeHero from '../../components/HomeHero.astro';
+import ThemeShelf from '../../components/ThemeShelf.astro';
+import CategoryIndex from '../../components/CategoryIndex.astro';
 ---
 <BaseLayout title="AI Booklet Designs — уникальные ИИ-буклеты к любому событию" description="ИИ-буклеты для любого человека и к любому событию — подарки на день рождения, меню для кафе, программы мероприятий, свадебные буклеты. Бесплатно, автоматически, готово к печати." lang="ru">
   <Header slot="header" lang="ru" activeNav="home" />
 
-  <section class="hero" id="generate">
-    <div class="hero-center">
-      <p class="eyebrow" data-i18n="hero_eyebrow">Онлайн-редактор</p>
-      <h1 data-i18n="hero_title">Создание буклетов</h1>
-      <p class="hero-copy" data-i18n="hero_copy">Настройка страниц, текста и фотографий прямо в браузере. Более 1000 комбинаций стилей.</p>
+  <HomeHero lang="ru" />
 
-      <div class="hero-actions">
-        <button class="primary-button" id="hero-create-btn" type="button" data-i18n="btn_create">Создать буклет</button>
-        <a class="secondary-button" href="#categories" data-i18n="btn_see_examples">Смотреть примеры</a>
-      </div>
-    </div>
-  </section>
-
-  <CatalogShowcase lang="ru" />
+  <ThemeShelf lang="ru" />
 
   <section class="collection collection-browser" id="collection">
     <div class="section-heading">
       <div>
-        <p class="eyebrow" data-i18n="collection_eyebrow">Вся коллекция</p>
-        <h2 data-i18n="collection_title">Поиск по всем буклетам</h2>
-        <p data-i18n="collection_subtitle">Фильтруйте все опубликованные дизайны по категории, теме, стилю или дате.</p>
+        <h2>Уже сделанные буклеты</h2>
+        <p>Все они созданы здесь. Откройте любой и отредактируйте.</p>
       </div>
       <div class="collection-controls">
-        <div class="filters" id="filters" aria-label="Фильтры буклетов"></div>
         <label class="search-box">
           <span class="sr-only">Поиск буклетов</span>
           <input id="collection-search" type="search" placeholder="Поиск по теме, стилю, дате…" autocomplete="off">
@@ -40,6 +29,7 @@ import CatalogShowcase from '../../components/CatalogShowcase.astro';
     <div class="booklet-grid" id="booklet-grid" aria-live="polite"></div>
     <p class="empty-state" id="empty-state" hidden>Пока нет концептов, соответствующих этому фильтру.</p>
     <nav class="pagination" id="pagination" aria-label="Навигация буклетов"></nav>
+    <CategoryIndex lang="ru" />
   </section>
 
   <section class="contact-section" id="contact">

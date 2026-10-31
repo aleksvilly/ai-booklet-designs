@@ -1,0 +1,59 @@
+---
+import { giftPresets, giftThemes } from '../gift-presets';
+
+interface Props {
+  lang?: 'en' | 'ru';
+}
+
+const { lang = 'en' } = Astro.props;
+const isRu = lang === 'ru';
+const presets = Object.fromEntries(giftPresets(lang).map((preset) => [preset.id, preset]));
+const themes = giftThemes(lang);
+
+const copy = isRu ? {
+  title: 'Выберите тему',
+  text: 'Тема задаёт стиль и тон. Имя, фото и шутки добавите в редакторе.'
+} : {
+  title: 'Pick a theme',
+  text: 'A theme sets the style and tone. Add the name, photos and inside jokes in the editor.'
+};
+---
+
+<section class="theme-shelf" id="themes" aria-labelledby="theme-shelf-title">
+  <header class="theme-shelf-heading">
+    <h2 id="theme-shelf-title">{copy.title}</h2>
+    <p>{copy.text}</p>
+  </header>
+  <div class="theme-shelf-grid">
+    {themes.map((theme) => {
+      const preset = presets[theme.preset];
+      return (
+        <button class="theme-tile" type="button" data-theme-topic={theme.topic}>
+          <span class="gift-cover" data-preset={theme.preset} style={`--loud: .55;${theme.accent ? ` --gc-accent: ${theme.accent};` : ''}`} aria-hidden="true">
+            <span class="gc-band">{preset.band}</span>
+            <span class="gc-kicker">{preset.kicker}</span>
+            <strong class="gc-title">{theme.title}</strong>
+            <span class="gc-ticker"><span>{preset.ticker}</span></span>
+            <i class="gc-deco gc-deco-a"></i>
+            <i class="gc-deco gc-deco-b"></i>
+          </span>
+          <span class="theme-tile-copy">
+            <strong>{theme.title}</strong>
+            <span>{theme.note}</span>
+          </span>
+        </button>
+      );
+    })}
+  </div>
+</section>
+
+<script>
+  // Opens the starter editor and pre-fills the request topic for that theme.
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-topic]').forEach((tile) => {
+    tile.addEventListener('click', () => {
+      const topic = document.querySelector<HTMLInputElement>('#booklet-topic');
+      if (topic) topic.value = tile.dataset.themeTopic || '';
+      document.querySelector<HTMLButtonElement>('#hero-create-btn')?.click();
+    });
+  });
+</script>

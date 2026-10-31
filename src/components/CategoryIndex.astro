@@ -1,0 +1,25 @@
+---
+import { categoryLabel, getPublishedCategoryCatalog } from '../category-catalog';
+
+interface Props {
+  lang?: 'en' | 'ru';
+}
+
+const { lang = 'en' } = Astro.props;
+const isRu = lang === 'ru';
+const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, '');
+const categories = getPublishedCategoryCatalog();
+---
+
+<nav class="category-index" id="categories" aria-label={isRu ? 'Категории' : 'Categories'}>
+  <h2>{isRu ? 'Все категории' : 'All categories'}</h2>
+  <ul>
+    {categories.map((entry) => (
+      <li>
+        <a href={`${baseUrl}/${isRu ? 'ru/' : ''}category/${entry.slug}/`}>
+          {categoryLabel(entry.category, lang)} <span>{entry.count}</span>
+        </a>
+      </li>
+    ))}
+  </ul>
+</nav>
