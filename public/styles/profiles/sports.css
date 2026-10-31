@@ -49,14 +49,7 @@
   border: 2px solid var(--sports-blue);
 }
 
-/* Speed stripe at top */
-.style-sports-broadcast .book-page::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--sports-blue) 0%, var(--sports-yellow) 100%);
-}
+/* Speed stripe at top — now style elements (data/catalog/style-elements.json) */
 
 .style-sports-broadcast .book-page-type {
   font: 700 8px/1 "IBM Plex Mono", monospace;

@@ -53,16 +53,7 @@
   box-shadow: 0 8px 32px rgba(23, 35, 40, 0.06);
 }
 
-/* Gold accent rule at bottom */
-.style-minimal-editorial .book-page::after {
-  content: "";
-  position: absolute;
-  left: var(--editor-space, 28px);
-  bottom: 20px;
-  width: 48px;
-  height: 2px;
-  background: var(--minimal-gold);
-}
+/* Gold accent rule at bottom — now style elements (data/catalog/style-elements.json) */
 
 .style-minimal-editorial .book-page-type,
 .style-swiss-minimal .book-page-type {

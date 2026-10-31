@@ -143,8 +143,6 @@ a { color: inherit; }
 }
 .theme-toggle:hover { background: var(--ink); color: var(--paper); }
 
-
-
 .lang-picker {
   position: relative;
   display: inline-block;
@@ -324,7 +322,6 @@ main { overflow: hidden; }
   color: var(--paper);
 }
 
-
 /* ===================================================================
    CATEGORY QUICK EXPLORER (Immediately after Hero)
    =================================================================== */
@@ -410,8 +407,6 @@ main { overflow: hidden; }
   border-radius: 999px;
   background: color-mix(in srgb, currentColor 15%, transparent);
 }
-
-
 
 .hero-booklet-entry {
   position: relative;
@@ -599,7 +594,6 @@ main { overflow: hidden; }
 .hero-booklet-meta strong { color: var(--ink); }
 .hero-booklet-meta .request-history-button { flex: 0 0 auto; margin-top: 0; }
 
-
 .generator-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
 .generator-heading .eyebrow { margin-bottom: 8px; }
 .generator-heading h2 { font-size: clamp(31px, 3vw, 46px); }
@@ -750,8 +744,6 @@ main { overflow: hidden; }
 .request-history-button span { display: inline-grid; place-items: center; min-width: 20px; min-height: 20px; margin-left: 5px; border-radius: 50%; background: var(--ink); color: var(--paper); }
 .hero-generator { transition: filter .25s ease, opacity .25s ease; }
 .hero-generator.is-request-active { filter: blur(4px); opacity: .38; pointer-events: none; user-select: none; }
-
-
 
 .request-status-dialog {
   width: min(980px, calc(100vw - 32px));
@@ -923,7 +915,6 @@ html[data-theme="dark"] .cover:hover { box-shadow: 0 26px 55px rgba(0,0,0,.48); 
 .category-sort-menu button { display: flex; justify-content: space-between; width: 100%; padding: 11px 9px; border: 0; background: transparent; color: var(--ink); text-align: left; font-size: 13px; opacity: .5; }
 .category-sort-menu button[aria-current="true"] { opacity: 1; font-weight: 700; }
 .category-sort-menu small { display: block; margin-top: 5px; padding: 10px 9px 5px; border-top: 1px solid var(--line); color: var(--muted); font: 500 9px/1.35 "IBM Plex Mono", monospace; }
-
 
 footer { display: flex; justify-content: space-between; gap: 30px; padding: 28px clamp(20px, 4vw, 64px); border-top: 1px solid var(--line); color: var(--muted); font-size: 12px; }
 footer a { text-underline-offset: 3px; }
@@ -1667,7 +1658,6 @@ footer a { text-underline-offset: 3px; }
 .style-wedding-editorial .detail-title,
 .style-wedding-editorial h4 { font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif; font-weight: 400; font-style: italic; }
 .style-wedding-editorial .book-page { background: #fbf7f0; border: 1px solid #d8b9ad; box-shadow: 0 12px 35px rgba(91,81,76,.08); }
-.style-wedding-editorial .book-page::after { content: ""; position: absolute; inset: 12px; border: 1px solid rgba(178,143,88,.3); pointer-events: none; }
 
 .style-halloween-noir .cover,
 .style-halloween-noir.detail-hero { background: #111014; color: #f1e8d3; }
@@ -1764,7 +1754,7 @@ footer a { text-underline-offset: 3px; }
 .style-horror-slasher .detail-title,
 .style-horror-slasher h4 { font-family: "Barlow Condensed", "Impact", sans-serif; text-transform: uppercase; color: #e11d48; text-shadow: 3px 3px 0 #000; letter-spacing: -.03em; }
 .style-horror-slasher .book-page { background: #08080a; color: #f8fafc; border: 2px solid #e11d48; box-shadow: 0 10px 30px rgba(225,29,72,.3); }
-.style-horror-slasher .book-page::before { content: "⚙ ⚙ ⚙ CHAIN SLAW ⚙ ⚙ ⚙"; position: absolute; top: 8px; left: 16px; font: 700 8px/1 monospace; color: #e11d48; letter-spacing: 2px; opacity: .7; }
+
 .style-horror-slasher .book-page-type { background: #e11d48; color: #fff; padding: 2px 8px; transform: rotate(-2deg); display: inline-block; }
 
 .style-apple-manual .cover,
@@ -1774,7 +1764,6 @@ footer a { text-underline-offset: 3px; }
 .style-apple-manual h4 { font-family: "Inter", -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif; font-weight: 600; letter-spacing: -.03em; color: #000000; }
 .style-apple-manual .book-page { background: #ffffff; color: #1d1d1f; border: 1px solid #e5e5e7; box-shadow: 0 4px 20px rgba(0,0,0,.04); border-radius: 12px; }
 .style-apple-manual .book-page-type { background: #f5f5f7; color: #0071e3; border-radius: 999px; padding: 4px 12px; font: 600 10px/1 "Inter", sans-serif; display: inline-block; }
-.style-apple-manual .book-page::after { content: "STEP " attr(data-page-index); position: absolute; bottom: 16px; right: 20px; font: 600 11px/1 "Inter", sans-serif; color: #86868b; }
 
 .style-marketplace-modular .cover,
 .style-marketplace-modular.detail-hero {
@@ -1833,8 +1822,6 @@ footer a { text-underline-offset: 3px; }
 .style-thermal-receipt .detail-title,
 .style-thermal-receipt h4 { font-family: "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: -.02em; }
 .style-thermal-receipt .book-page { background: #fcfbfa; color: #18181b; border: 1px dashed #a1a1aa; font-family: "IBM Plex Mono", monospace; }
-.style-thermal-receipt .book-page::before { content: "****************************************"; position: absolute; top: 6px; left: 10px; right: 10px; font: 10px/1 monospace; color: #a1a1aa; overflow: hidden; white-space: nowrap; }
-.style-thermal-receipt .book-page::after { content: "|||||| ||||| ||||||| ||||"; position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); font: 16px/1 monospace; letter-spacing: 2px; color: #27272a; }
 
 .style-y2k-pastel-chaos .cover-title,
 .style-grunge-90s-zine .cover-title,
@@ -3946,9 +3933,6 @@ footer a { text-underline-offset: 3px; }
 .book-page.pt-thumbnail-row .page-gallery .gallery-image { flex: 1; height: 100%; }
 .book-page.pt-thumbnail-row .book-page-copy { position: absolute; top: 0; left: 0; right: 0; height: 78%; padding: 20px; z-index: 2; }
 
-
-
-
 .book-page.editor-effects-0 .page-image,
 .book-page.editor-effects-0 .book-page-copy {
   transform: none !important;
@@ -5176,3 +5160,21 @@ footer a { text-underline-offset: 3px; }
 .se-vignette { background: radial-gradient(ellipse at center, transparent calc(100% - var(--se-size) * 1.2), rgba(0, 0, 0, .88) 100%); }
 .se-tape { inset: auto -25%; top: 42%; height: var(--se-size); display: flex; align-items: center; overflow: hidden; background: currentColor; transform: rotate(var(--se-rotate, -20deg)); }
 .se-tape > span { color: var(--se-on); font: 800 calc(var(--se-size) * .5)/1 "Barlow Condensed", "Impact", sans-serif; letter-spacing: .08em; }
+.se-label { width: max-content; max-width: 86cqw; overflow: hidden; font: 600 calc(var(--se-size) * .09)/1.2 var(--font-accent, "IBM Plex Mono"), monospace; letter-spacing: .14em; text-transform: uppercase; text-overflow: ellipsis; }
+.se-barcode { aspect-ratio: 3.2; background: repeating-linear-gradient(90deg, currentColor 0 2%, transparent 2% 3.5%, currentColor 3.5% 4.3%, transparent 4.3% 6%, currentColor 6% 9%, transparent 9% 10%, currentColor 10% 10.8%, transparent 10.8% 12.5%); }
+.se-chart { aspect-ratio: 1.4; border-bottom: max(1px, calc(var(--se-size) * .02)) solid currentColor; background:
+  linear-gradient(currentColor, currentColor) 6% 100% / 11% 35% no-repeat,
+  linear-gradient(currentColor, currentColor) 22% 100% / 11% 62% no-repeat,
+  linear-gradient(currentColor, currentColor) 38% 100% / 11% 44% no-repeat,
+  linear-gradient(currentColor, currentColor) 54% 100% / 11% 80% no-repeat,
+  linear-gradient(currentColor, currentColor) 70% 100% / 11% 58% no-repeat,
+  linear-gradient(currentColor, currentColor) 86% 100% / 11% 96% no-repeat; }
+.se-play { aspect-ratio: 1; border-radius: 50%; background: currentColor; }
+.se-play::after { content: ""; position: absolute; inset: 30% 27% 30% 39%; background: var(--se-on); clip-path: polygon(0 0, 100% 50%, 0 100%); }
+.se-progress { height: max(3px, calc(var(--se-size) * .025)); border-radius: 999px;
+  background: linear-gradient(90deg, currentColor calc(30% + var(--se-rand, .5) * 55%), color-mix(in srgb, currentColor 22%, transparent) 0); }
+.se-sphere { aspect-ratio: 1; border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, color-mix(in srgb, currentColor 18%, #fff) 0, currentColor 46%, color-mix(in srgb, currentColor 62%, #000) 100%);
+  box-shadow: 0 calc(var(--se-size) * .09) calc(var(--se-size) * .14) rgba(0, 0, 0, .18); }
+.se-tapebit { aspect-ratio: 3.6; background: currentColor; background-image: repeating-linear-gradient(45deg, transparent 0 8%, rgba(255, 255, 255, .28) 8% 13%);
+  clip-path: polygon(2% 0, 98% 5%, 100% 50%, 97% 100%, 3% 95%, 0 50%); }

@@ -8,12 +8,23 @@ import { safeClass } from './utils.js';
 //   position   0–100  moves elements clockwise around the page edge
 //   variation  0–100  how differently each page is decorated
 //   color      auto | c1 | c2 | c3 | c4 | ink (palette slot or text colour)
+// An element's own colour may also be a profile variable (--sports-yellow)
+// or a hex value, for styles whose colours are not in palette slots.
+// Text may contain {page}, replaced with the page number.
 // Layout is seeded by page index, so a booklet always renders the same way.
 
 export const ELEMENT_COLORS = ['auto', 'c1', 'c2', 'c3', 'c4', 'ink'];
 const COLOR_TOKENS = { c1: 'var(--c1)', c2: 'var(--c2)', c3: 'var(--c3)', c4: 'var(--c4)', ink: 'currentColor' };
 // Kinds that sit inside the page; the rest may bleed off the edge.
-const INSET_KINDS = new Set(['stamp', 'text', 'bar', 'pill', 'star', 'cross', 'petal', 'slash']);
+const INSET_KINDS = new Set(['stamp', 'text', 'label', 'bar', 'pill', 'star', 'cross', 'petal', 'slash',
+  'barcode', 'chart', 'play', 'progress', 'tapebit']);
+
+function colorValue(token) {
+  if (COLOR_TOKENS[token]) return COLOR_TOKENS[token];
+  if (/^--[a-z0-9-]+$/.test(token)) return `var(${token}, var(--c2))`;
+  if (/^#[0-9a-f]{3,8}$/i.test(token)) return token;
+  return COLOR_TOKENS.c2;
+}
 
 function elementCatalog() {
   return getGeneratorCatalog()?.styleElements || null;
@@ -74,7 +85,7 @@ function chooseElements(elements, count, variation, random) {
   return order.slice(0, count).map(entry => entry.element);
 }
 
-function elementNode(element, settings, seed, lang) {
+function elementNode(element, settings, seed, lang, pageNumber) {
   const random = seededRandom(hashString(`${seed}:${element.id || element.kind}`));
   const variation = settings.variation / 100;
   const jitter = amount => (random() - 0.5) * 2 * amount * variation;
@@ -90,7 +101,8 @@ function elementNode(element, settings, seed, lang) {
   node.style.setProperty('--se-size', `${(size * 100).toFixed(2)}cqw`);
   node.style.setProperty('--se-rotate', `${rotate.toFixed(1)}deg`);
   node.style.setProperty('--se-opacity', String(Math.max(0, Math.min(1, Number(element.opacity ?? 1)))));
-  node.style.setProperty('--se-color', COLOR_TOKENS[colorToken] || COLOR_TOKENS.c2);
+  node.style.setProperty('--se-color', colorValue(colorToken));
+  node.style.setProperty('--se-rand', random().toFixed(3));
   // Text on filled shapes uses the paper colour, or the accent when the shape itself is paper-coloured.
   node.style.setProperty('--se-on', colorToken === 'c1' ? 'var(--c2)' : 'var(--c1)');
   if (element.variant) node.dataset.variant = safeClass(element.variant);
@@ -114,7 +126,8 @@ function elementNode(element, settings, seed, lang) {
   const label = element.text?.[lang] || element.text?.en;
   if (label) {
     const text = document.createElement('span');
-    text.textContent = element.kind === 'ticker' || element.kind === 'tape' ? label.repeat(6) : label;
+    const filled = label.replaceAll('{page}', String(pageNumber));
+    text.textContent = element.kind === 'ticker' || element.kind === 'tape' ? filled.repeat(6) : filled;
     node.append(text);
   }
   return node;
@@ -143,6 +156,6 @@ export function renderStyleElements(pageNode, { profile, pageIndex, amount, scal
   layer.className = 'style-elements';
   layer.setAttribute('aria-hidden', 'true');
   chooseElements(set.elements, count, settings.variation, random)
-    .forEach(element => layer.append(elementNode(element, settings, seed, lang)));
+    .forEach(element => layer.append(elementNode(element, settings, seed, lang, pageIndex + 1)));
   pageNode.append(layer);
 }

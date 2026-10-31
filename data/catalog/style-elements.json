@@ -3,13 +3,13 @@
   "description": "Decorative elements each style places on its pages. The live editor controls them for any style with the same sliders: amount, size, position (around the page edge), variation (how much pages differ) and colour. Keys under 'styles' are style IDs from styles.json; 'default' is used by every style without its own set. Elements are listed in priority order: amount reveals them from the top.",
   "fields": {
     "kind": "Shape primitive drawn by styles.css (.se-<kind>). See 'kinds'.",
-    "color": "Palette slot: c1 (page paper), c2, c3, c4, or ink (the page's text colour). Each style decides which slot is its accent.",
+    "color": "Palette slot c1 (page paper), c2, c3, c4, or ink (the page's text colour). May also be a variable the style's profile defines (e.g. --sports-yellow) or a hex value, for styles whose colours are not in palette slots.",
     "size": "Fraction of the page width (0–1). For edge kinds it is the thickness; for fill kinds the inset or strength.",
     "anchor": "Position on the page edge, clockwise from the top-left corner: 0 top-left, 0.25 top-right, 0.5 bottom-right, 0.75 bottom-left. Ignored by fill kinds.",
     "rotate": "Degrees.",
     "opacity": "0–1.",
     "thickness": "Ring/arc stroke as a fraction of the element size.",
-    "text": "Optional { en, ru } label for text kinds.",
+    "text": "Optional { en, ru } label for text kinds. {page} is replaced with the page number.",
     "variant": "Optional. 'filled' draws stamps as solid badges with paper-coloured text."
   },
   "kinds": {
@@ -27,7 +27,14 @@
       "bar",
       "pill",
       "stamp",
-      "text"
+      "text",
+      "label",
+      "barcode",
+      "chart",
+      "play",
+      "progress",
+      "sphere",
+      "tapebit"
     ],
     "edge": [
       "band",
@@ -227,6 +234,18 @@
           "color": "c2",
           "size": 0.12,
           "opacity": 0.95
+        },
+        {
+          "id": "sysline",
+          "kind": "label",
+          "color": "c2",
+          "size": 0.36,
+          "anchor": 0.03,
+          "opacity": 0.45,
+          "text": {
+            "en": "SYS://LOAD ■■■■■■░░░░ 62%",
+            "ru": "SYS://LOAD ■■■■■■░░░░ 62%"
+          }
         },
         {
           "id": "hud",
@@ -492,6 +511,882 @@
           "text": {
             "en": "SCENE 14",
             "ru": "СЦЕНА 14"
+          }
+        }
+      ]
+    },
+    "gq-editorial": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "masthead",
+          "kind": "label",
+          "color": "--gq-gold",
+          "size": 0.3,
+          "anchor": 0.23,
+          "opacity": 0.85,
+          "text": {
+            "en": "GQ Editorial  //  Magazine",
+            "ru": "GQ Editorial  //  Журнал"
+          }
+        },
+        {
+          "id": "gold-rule",
+          "kind": "bar",
+          "color": "--gq-gold",
+          "size": 0.26,
+          "anchor": 0.77,
+          "opacity": 0.9
+        },
+        {
+          "id": "issue",
+          "kind": "stamp",
+          "color": "#e60000",
+          "size": 0.2,
+          "anchor": 0.03,
+          "opacity": 1,
+          "variant": "filled",
+          "text": {
+            "en": "New issue",
+            "ru": "Новый номер"
+          }
+        },
+        {
+          "id": "numeral",
+          "kind": "text",
+          "color": "--gq-gold",
+          "size": 0.26,
+          "anchor": 0.5,
+          "opacity": 0.55,
+          "text": {
+            "en": "№ {page}",
+            "ru": "№ {page}"
+          }
+        },
+        {
+          "id": "frame",
+          "kind": "frame",
+          "color": "--gq-gold",
+          "size": 0.03,
+          "opacity": 0.35
+        },
+        {
+          "id": "arc",
+          "kind": "arc",
+          "color": "--gq-gold",
+          "size": 0.6,
+          "anchor": 0.6,
+          "opacity": 0.3,
+          "thickness": 0.015
+        }
+      ]
+    },
+    "encyclopedia-reference": {
+      "defaultAmount": 1,
+      "elements": [
+        {
+          "id": "margin-rule",
+          "kind": "band",
+          "color": "--enc-border",
+          "size": 0.006,
+          "anchor": 0.875,
+          "opacity": 1
+        },
+        {
+          "id": "figure",
+          "kind": "label",
+          "color": "--enc-accent",
+          "size": 0.22,
+          "anchor": 0.03,
+          "opacity": 0.8,
+          "text": {
+            "en": "Fig. {page}",
+            "ru": "Рис. {page}"
+          }
+        },
+        {
+          "id": "diagram",
+          "kind": "ring",
+          "color": "--enc-accent",
+          "size": 0.32,
+          "anchor": 0.3,
+          "opacity": 0.35,
+          "thickness": 0.012
+        },
+        {
+          "id": "register",
+          "kind": "cross",
+          "color": "--enc-accent",
+          "size": 0.07,
+          "anchor": 0.52,
+          "opacity": 0.6
+        },
+        {
+          "id": "ruled",
+          "kind": "scanlines",
+          "color": "--enc-border",
+          "size": 0.6,
+          "opacity": 0.35
+        },
+        {
+          "id": "grid",
+          "kind": "dots",
+          "color": "--enc-border",
+          "size": 0.22,
+          "anchor": 0.72,
+          "opacity": 0.9
+        }
+      ]
+    },
+    "scientific-journal": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "top-rule",
+          "kind": "band",
+          "color": "c2",
+          "size": 0.006,
+          "anchor": 0.125,
+          "opacity": 0.9
+        },
+        {
+          "id": "volume",
+          "kind": "label",
+          "color": "c4",
+          "size": 0.24,
+          "anchor": 0.03,
+          "opacity": 0.8,
+          "text": {
+            "en": "Vol. 12 · No. {page}",
+            "ru": "Т. 12 · № {page}"
+          }
+        },
+        {
+          "id": "chart",
+          "kind": "chart",
+          "color": "c4",
+          "size": 0.24,
+          "anchor": 0.3,
+          "opacity": 0.55
+        },
+        {
+          "id": "register",
+          "kind": "cross",
+          "color": "c4",
+          "size": 0.07,
+          "anchor": 0.5,
+          "opacity": 0.55
+        },
+        {
+          "id": "orbit",
+          "kind": "ring",
+          "color": "c3",
+          "size": 0.42,
+          "anchor": 0.62,
+          "opacity": 0.6,
+          "thickness": 0.01
+        },
+        {
+          "id": "grid",
+          "kind": "dots",
+          "color": "c3",
+          "size": 0.2,
+          "anchor": 0.85,
+          "opacity": 0.9
+        }
+      ]
+    },
+    "sports-broadcast": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "top-stripe",
+          "kind": "band",
+          "color": "--sports-yellow",
+          "size": 0.012,
+          "anchor": 0.125,
+          "opacity": 1
+        },
+        {
+          "id": "scorebug",
+          "kind": "stamp",
+          "color": "--sports-blue",
+          "size": 0.2,
+          "anchor": 0.03,
+          "opacity": 1,
+          "variant": "filled",
+          "text": {
+            "en": "Live  2–1",
+            "ru": "Live  2–1"
+          }
+        },
+        {
+          "id": "ticker",
+          "kind": "ticker",
+          "color": "--sports-blue",
+          "size": 0.06,
+          "anchor": 0.625,
+          "opacity": 1,
+          "text": {
+            "en": "GOAL · REPLAY · FULL TIME · ",
+            "ru": "ГОЛ · ПОВТОР · КОНЕЦ МАТЧА · "
+          }
+        },
+        {
+          "id": "jersey",
+          "kind": "text",
+          "color": "--sports-yellow",
+          "size": 0.5,
+          "anchor": 0.3,
+          "opacity": 0.25,
+          "text": {
+            "en": "10",
+            "ru": "10"
+          }
+        },
+        {
+          "id": "speed",
+          "kind": "lines",
+          "color": "--sports-yellow",
+          "size": 0.24,
+          "anchor": 0.78,
+          "opacity": 0.6
+        },
+        {
+          "id": "slash",
+          "kind": "slash",
+          "color": "--sports-blue",
+          "size": 0.26,
+          "anchor": 0.45,
+          "rotate": -12,
+          "opacity": 0.5
+        }
+      ]
+    },
+    "athletic-campaign": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "volt-slash",
+          "kind": "slash",
+          "color": "#c7ff2e",
+          "size": 0.34,
+          "anchor": 0.3,
+          "rotate": -20,
+          "opacity": 0.95
+        },
+        {
+          "id": "tag",
+          "kind": "stamp",
+          "color": "#c7ff2e",
+          "size": 0.22,
+          "anchor": 0.03,
+          "opacity": 1,
+          "variant": "filled",
+          "text": {
+            "en": "Personal best",
+            "ru": "Личный рекорд"
+          }
+        },
+        {
+          "id": "speed",
+          "kind": "lines",
+          "color": "ink",
+          "size": 0.3,
+          "anchor": 0.72,
+          "opacity": 0.35
+        },
+        {
+          "id": "bar",
+          "kind": "bar",
+          "color": "#c7ff2e",
+          "size": 0.4,
+          "anchor": 0.6,
+          "opacity": 0.9
+        },
+        {
+          "id": "number",
+          "kind": "text",
+          "color": "ink",
+          "size": 0.46,
+          "anchor": 0.5,
+          "opacity": 0.12,
+          "text": {
+            "en": "{page}",
+            "ru": "{page}"
+          }
+        },
+        {
+          "id": "disc",
+          "kind": "disc",
+          "color": "#c7ff2e",
+          "size": 0.18,
+          "anchor": 0.95,
+          "opacity": 0.85
+        }
+      ]
+    },
+    "halloween-noir": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "moon",
+          "kind": "disc",
+          "color": "#f1e8d3",
+          "size": 0.3,
+          "anchor": 0.22,
+          "opacity": 0.9
+        },
+        {
+          "id": "vignette",
+          "kind": "vignette",
+          "color": "c4",
+          "size": 0.5,
+          "opacity": 0.8
+        },
+        {
+          "id": "date",
+          "kind": "stamp",
+          "color": "#f36b2b",
+          "size": 0.18,
+          "anchor": 0.03,
+          "rotate": -8,
+          "opacity": 1,
+          "text": {
+            "en": "Oct 31",
+            "ru": "31 окт"
+          }
+        },
+        {
+          "id": "star",
+          "kind": "star",
+          "color": "#f36b2b",
+          "size": 0.08,
+          "anchor": 0.33,
+          "opacity": 0.9
+        },
+        {
+          "id": "haze",
+          "kind": "arc",
+          "color": "#7b3f98",
+          "size": 0.75,
+          "anchor": 0.62,
+          "opacity": 0.5,
+          "thickness": 0.08
+        },
+        {
+          "id": "ground",
+          "kind": "band",
+          "color": "#f36b2b",
+          "size": 0.02,
+          "anchor": 0.625,
+          "opacity": 0.9
+        }
+      ]
+    },
+    "apple-manual": {
+      "defaultAmount": 1,
+      "elements": [
+        {
+          "id": "step",
+          "kind": "label",
+          "color": "--apple-grey",
+          "size": 0.2,
+          "anchor": 0.5,
+          "opacity": 1,
+          "text": {
+            "en": "Step {page}",
+            "ru": "Шаг {page}"
+          }
+        },
+        {
+          "id": "rule",
+          "kind": "bar",
+          "color": "--apple-light-grey",
+          "size": 0.6,
+          "anchor": 0.125,
+          "opacity": 1
+        },
+        {
+          "id": "dot",
+          "kind": "disc",
+          "color": "--apple-blue",
+          "size": 0.05,
+          "anchor": 0.03,
+          "opacity": 1
+        },
+        {
+          "id": "outline",
+          "kind": "ring",
+          "color": "--apple-grey",
+          "size": 0.36,
+          "anchor": 0.3,
+          "opacity": 0.25,
+          "thickness": 0.006
+        },
+        {
+          "id": "register",
+          "kind": "cross",
+          "color": "--apple-grey",
+          "size": 0.06,
+          "anchor": 0.72,
+          "opacity": 0.5
+        }
+      ]
+    },
+    "thermal-receipt": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "stars",
+          "kind": "label",
+          "color": "c3",
+          "size": 0.9,
+          "anchor": 0.125,
+          "opacity": 0.5,
+          "text": {
+            "en": "* * * * * * * * * * * * * * * * * * * * *",
+            "ru": "* * * * * * * * * * * * * * * * * * * * *"
+          }
+        },
+        {
+          "id": "barcode",
+          "kind": "barcode",
+          "color": "c2",
+          "size": 0.4,
+          "anchor": 0.625,
+          "opacity": 0.9
+        },
+        {
+          "id": "torn",
+          "kind": "zigzag",
+          "color": "c4",
+          "size": 0.025,
+          "anchor": 0.625,
+          "opacity": 1
+        },
+        {
+          "id": "paid",
+          "kind": "stamp",
+          "color": "c2",
+          "size": 0.18,
+          "anchor": 0.3,
+          "rotate": -14,
+          "opacity": 0.75,
+          "text": {
+            "en": "Paid",
+            "ru": "Оплачено"
+          }
+        },
+        {
+          "id": "total",
+          "kind": "label",
+          "color": "c2",
+          "size": 0.5,
+          "anchor": 0.55,
+          "opacity": 0.7,
+          "text": {
+            "en": "Total ........ {page}.00",
+            "ru": "Итого ........ {page}.00"
+          }
+        }
+      ]
+    },
+    "minimal-editorial": {
+      "defaultAmount": 1,
+      "elements": [
+        {
+          "id": "gold-rule",
+          "kind": "bar",
+          "color": "--minimal-gold",
+          "size": 0.14,
+          "anchor": 0.74,
+          "opacity": 1
+        },
+        {
+          "id": "number",
+          "kind": "label",
+          "color": "--minimal-burgundy",
+          "size": 0.18,
+          "anchor": 0.03,
+          "opacity": 0.8,
+          "text": {
+            "en": "No. {page}",
+            "ru": "№ {page}"
+          }
+        },
+        {
+          "id": "halo",
+          "kind": "ring",
+          "color": "--minimal-gold",
+          "size": 0.46,
+          "anchor": 0.25,
+          "opacity": 0.35,
+          "thickness": 0.008
+        },
+        {
+          "id": "petal",
+          "kind": "petal",
+          "color": "--minimal-burgundy",
+          "size": 0.07,
+          "anchor": 0.4,
+          "rotate": 30,
+          "opacity": 0.7
+        },
+        {
+          "id": "frame",
+          "kind": "frame",
+          "color": "--minimal-gold",
+          "size": 0.035,
+          "opacity": 0.3
+        }
+      ]
+    },
+    "youtube-inspired": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "progress",
+          "kind": "progress",
+          "color": "--video-accent",
+          "size": 0.86,
+          "anchor": 0.625,
+          "opacity": 1
+        },
+        {
+          "id": "play",
+          "kind": "play",
+          "color": "--video-accent",
+          "size": 0.16,
+          "anchor": 0.3,
+          "opacity": 0.95
+        },
+        {
+          "id": "live",
+          "kind": "stamp",
+          "color": "--video-accent",
+          "size": 0.14,
+          "anchor": 0.03,
+          "opacity": 1,
+          "variant": "filled",
+          "text": {
+            "en": "Live",
+            "ru": "Эфир"
+          }
+        },
+        {
+          "id": "views",
+          "kind": "label",
+          "color": "--video-muted",
+          "size": 0.32,
+          "anchor": 0.7,
+          "opacity": 0.9,
+          "text": {
+            "en": "1.2M views · 2 days ago",
+            "ru": "1,2 млн просмотров · 2 дня назад"
+          }
+        },
+        {
+          "id": "glow",
+          "kind": "disc",
+          "color": "--video-magenta",
+          "size": 0.4,
+          "anchor": 0.25,
+          "opacity": 0.18
+        }
+      ]
+    },
+    "streaming-library": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "collection",
+          "kind": "label",
+          "color": "--stream-muted",
+          "size": 0.3,
+          "anchor": 0.03,
+          "opacity": 1,
+          "text": {
+            "en": "Collection  /  Now reading",
+            "ru": "Коллекция  /  Сейчас читаю"
+          }
+        },
+        {
+          "id": "progress",
+          "kind": "progress",
+          "color": "--stream-accent",
+          "size": 0.84,
+          "anchor": 0.625,
+          "opacity": 1
+        },
+        {
+          "id": "play",
+          "kind": "play",
+          "color": "--stream-accent",
+          "size": 0.14,
+          "anchor": 0.3,
+          "opacity": 1
+        },
+        {
+          "id": "eq",
+          "kind": "chart",
+          "color": "--stream-accent",
+          "size": 0.18,
+          "anchor": 0.72,
+          "opacity": 0.7
+        },
+        {
+          "id": "vinyl",
+          "kind": "ring",
+          "color": "--stream-soft",
+          "size": 0.6,
+          "anchor": 0.25,
+          "opacity": 0.9,
+          "thickness": 0.32
+        }
+      ]
+    },
+    "mobile-social-feed": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "notch",
+          "kind": "pill",
+          "color": "--feed-ink",
+          "size": 0.18,
+          "anchor": 0.125,
+          "opacity": 0.18
+        },
+        {
+          "id": "likes",
+          "kind": "label",
+          "color": "--feed-coral",
+          "size": 0.26,
+          "anchor": 0.62,
+          "opacity": 1,
+          "text": {
+            "en": "♥ 2.4k  ·  💬 128",
+            "ru": "♥ 2,4 тыс.  ·  💬 128"
+          }
+        },
+        {
+          "id": "handle",
+          "kind": "label",
+          "color": "--feed-muted",
+          "size": 0.22,
+          "anchor": 0.03,
+          "opacity": 1,
+          "text": {
+            "en": "@friend · 2h",
+            "ru": "@друг · 2 ч"
+          }
+        },
+        {
+          "id": "blob",
+          "kind": "blot",
+          "color": "--feed-violet",
+          "size": 0.34,
+          "anchor": 0.25,
+          "opacity": 0.3
+        },
+        {
+          "id": "new",
+          "kind": "stamp",
+          "color": "--feed-coral",
+          "size": 0.14,
+          "anchor": 0.35,
+          "opacity": 1,
+          "variant": "filled",
+          "text": {
+            "en": "New",
+            "ru": "Новое"
+          }
+        },
+        {
+          "id": "dots",
+          "kind": "dots",
+          "color": "--feed-blue",
+          "size": 0.2,
+          "anchor": 0.85,
+          "opacity": 0.7
+        }
+      ]
+    },
+    "analytics-dashboard": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "status",
+          "kind": "label",
+          "color": "--dash-muted",
+          "size": 0.28,
+          "anchor": 0.24,
+          "opacity": 1,
+          "text": {
+            "en": "Live data  •  Updated now",
+            "ru": "Данные онлайн  •  Обновлено"
+          }
+        },
+        {
+          "id": "chart",
+          "kind": "chart",
+          "color": "--dash-accent",
+          "size": 0.28,
+          "anchor": 0.5,
+          "opacity": 0.3
+        },
+        {
+          "id": "donut",
+          "kind": "ring",
+          "color": "--dash-cyan",
+          "size": 0.24,
+          "anchor": 0.3,
+          "opacity": 0.8,
+          "thickness": 0.22
+        },
+        {
+          "id": "delta",
+          "kind": "stamp",
+          "color": "--dash-accent",
+          "size": 0.14,
+          "anchor": 0.03,
+          "opacity": 1,
+          "variant": "filled",
+          "text": {
+            "en": "+{page}4%",
+            "ru": "+{page}4%"
+          }
+        },
+        {
+          "id": "progress",
+          "kind": "progress",
+          "color": "--dash-accent",
+          "size": 0.7,
+          "anchor": 0.62,
+          "opacity": 0.8
+        },
+        {
+          "id": "grid",
+          "kind": "dots",
+          "color": "--dash-line",
+          "size": 0.24,
+          "anchor": 0.8,
+          "opacity": 1
+        }
+      ]
+    },
+    "soft-3d-surreal": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "sphere",
+          "kind": "sphere",
+          "color": "c2",
+          "size": 0.34,
+          "anchor": 0.24,
+          "opacity": 1
+        },
+        {
+          "id": "small-sphere",
+          "kind": "sphere",
+          "color": "c3",
+          "size": 0.13,
+          "anchor": 0.62,
+          "opacity": 1
+        },
+        {
+          "id": "cloud",
+          "kind": "blot",
+          "color": "c2",
+          "size": 0.5,
+          "anchor": 0.7,
+          "opacity": 0.35
+        },
+        {
+          "id": "orbit",
+          "kind": "arc",
+          "color": "c3",
+          "size": 0.7,
+          "anchor": 0.4,
+          "opacity": 0.35,
+          "thickness": 0.02
+        },
+        {
+          "id": "pill",
+          "kind": "pill",
+          "color": "c3",
+          "size": 0.3,
+          "anchor": 0.9,
+          "rotate": -25,
+          "opacity": 0.6
+        }
+      ]
+    },
+    "scrapbook-memory": {
+      "defaultAmount": 3,
+      "elements": [
+        {
+          "id": "tape",
+          "kind": "tapebit",
+          "color": "c2",
+          "size": 0.26,
+          "anchor": 0.06,
+          "rotate": -18,
+          "opacity": 0.75
+        },
+        {
+          "id": "tape-2",
+          "kind": "tapebit",
+          "color": "c3",
+          "size": 0.22,
+          "anchor": 0.3,
+          "rotate": 22,
+          "opacity": 0.55
+        },
+        {
+          "id": "stamp",
+          "kind": "stamp",
+          "color": "c3",
+          "size": 0.2,
+          "anchor": 0.55,
+          "rotate": -6,
+          "opacity": 0.8,
+          "text": {
+            "en": "Memories",
+            "ru": "Воспоминания"
+          }
+        },
+        {
+          "id": "heart",
+          "kind": "text",
+          "color": "c2",
+          "size": 0.18,
+          "anchor": 0.85,
+          "opacity": 0.85,
+          "text": {
+            "en": "♥",
+            "ru": "♥"
+          }
+        },
+        {
+          "id": "star",
+          "kind": "star",
+          "color": "c2",
+          "size": 0.08,
+          "anchor": 0.4,
+          "rotate": 10,
+          "opacity": 0.8
+        },
+        {
+          "id": "date",
+          "kind": "label",
+          "color": "c4",
+          "size": 0.22,
+          "anchor": 0.65,
+          "opacity": 0.7,
+          "text": {
+            "en": "Summer · page {page}",
+            "ru": "Лето · стр. {page}"
           }
         }
       ]

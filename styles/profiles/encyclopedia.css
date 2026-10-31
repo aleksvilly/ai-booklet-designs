@@ -49,15 +49,7 @@
   border: 3px double var(--enc-border);
 }
 
-/* Inner margin rule */
-.style-encyclopedia-reference .book-page::after {
-  content: "";
-  position: absolute;
-  top: 8px; bottom: 8px;
-  left: 8px;
-  width: 2px;
-  background: var(--enc-border);
-}
+/* Inner margin rule — now style elements (data/catalog/style-elements.json) */
 
 .style-encyclopedia-reference .book-page-type,
 .style-scientific-journal .book-page-type {

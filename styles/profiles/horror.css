@@ -45,15 +45,7 @@
   border: 2px solid #e11d48;
   box-shadow: 0 0 0 1px #000, inset 0 0 60px rgba(0,0,0,.6);
 }
-.style-horror-slasher .book-page::before {
-  content: "⚙ ⚙ ⚙";
-  position: absolute;
-  top: 8px;
-  left: 14px;
-  font: 700 7px/1 monospace;
-  color: rgba(225, 29, 72, .5);
-  letter-spacing: 4px;
-}
+
 .style-horror-slasher .book-page-type {
   color: #e11d48;
   font: 700 9px/1 "IBM Plex Mono", monospace;

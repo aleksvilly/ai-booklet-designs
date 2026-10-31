@@ -70,7 +70,6 @@
 }
 
 /* Top GQ Header Bar Watermark */
-.style-gq-editorial .book-page::before,
 .style-gq .book-page::before {
   content: "GQ EDITORIAL  //  MAGAZINE";
   position: absolute;

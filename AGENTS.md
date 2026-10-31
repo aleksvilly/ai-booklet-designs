@@ -128,7 +128,9 @@ Browser
 - `data/catalog/style-elements.json`
   - Decorative elements per style (rings, badges, tickers, drips, frames…),
     rendered by `src/style-elements.js` into `.style-elements` on each page.
-  - `default` applies to every style without its own set. Run
+  - Every catalog style has its own set; `default` covers legacy styles.
+    Colours are palette slots (`c1`–`c4`, `ink`), a profile variable
+    (`--sports-yellow`) or a hex value. Text may use `{page}`. Run
     `npm run test:catalog` after editing.
 - `data/catalog/fonts.json`
   - Font families, availability, provider and fallback metadata shared by the

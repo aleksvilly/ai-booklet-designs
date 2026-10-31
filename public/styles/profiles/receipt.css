@@ -46,32 +46,9 @@
   box-shadow: 2px 2px 0 rgba(0,0,0,.04);
 }
 
-/* Top receipt divider */
-.style-thermal-receipt .book-page::before {
-  content: "* * * * * * * * * * * * * * * * * * * * * * *";
-  position: absolute;
-  top: 8px;
-  left: 10px;
-  right: 10px;
-  font: 9px/1 "Space Mono", monospace;
-  color: #d4d4d8;
-  overflow: hidden;
-  white-space: nowrap;
-  letter-spacing: 2px;
-}
+/* Top receipt divider — now style elements (data/catalog/style-elements.json) */
 
-/* Bottom barcode simulation */
-.style-thermal-receipt .book-page::after {
-  content: "| || | | ||| || | |||| | | || | || |||";
-  position: absolute;
-  bottom: 14px;
-  left: 50%;
-  transform: translateX(-50%);
-  font: bold 14px/1 "Space Mono", monospace;
-  letter-spacing: 1px;
-  color: #27272a;
-  white-space: nowrap;
-}
+/* Bottom barcode simulation — now style elements (data/catalog/style-elements.json) */
 
 .style-thermal-receipt .book-page-type {
   font: 700 8px/1 "Space Mono", monospace;

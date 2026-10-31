@@ -69,7 +69,8 @@ for (const [styleId, set] of Object.entries(styleElements.styles || {})) {
   for (const element of set.elements || []) {
     elementCount += 1;
     assert(elementKinds.has(element.kind), `Element ${styleId}/${element.id} has unknown kind ${element.kind}.`);
-    assert(elementColors.has(element.color), `Element ${styleId}/${element.id} has invalid color ${element.color}.`);
+    assert(elementColors.has(element.color) || /^--[a-z0-9-]+$/.test(element.color) || /^#[0-9a-f]{3,8}$/i.test(element.color),
+      `Element ${styleId}/${element.id} has invalid color ${element.color}.`);
     assert(element.size > 0 && element.size <= 1, `Element ${styleId}/${element.id} needs size in (0, 1].`);
   }
 }

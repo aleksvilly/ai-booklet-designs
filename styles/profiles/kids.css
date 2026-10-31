@@ -66,17 +66,7 @@
   color: var(--kids-red);
 }
 
-/* Star decoration at top right */
-.style-kids-party-pop .book-page::before {
-  content: "★";
-  position: absolute;
-  top: 12px;
-  right: 16px;
-  font-size: 20px;
-  color: var(--kids-yellow);
-  text-shadow: 0 0 0 var(--kids-red);
-  -webkit-text-stroke: 2px var(--kids-red);
-}
+/* Star decoration at top right — now style elements (data/catalog/style-elements.json) */
 
 /* === Layout Variations === */
 .style-kids-party-pop .book-page.layout-split {
