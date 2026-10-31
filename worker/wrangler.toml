@@ -1,0 +1,15 @@
+# Gift photo storage Worker. Free plan only: Workers KV has hard limits, so
+# exceeding them makes uploads fail instead of billing.
+# No secrets in this file. ADMIN_TOKEN is set with `npx wrangler secret put ADMIN_TOKEN`.
+name = "ai-booklet-gift-photos"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://aleksvilly.github.io,http://localhost:*,http://127.0.0.1:*"
+PHOTO_TTL_DAYS = "365"
+
+# Created with `npx wrangler kv namespace create GIFT_PHOTOS`.
+[[kv_namespaces]]
+binding = "GIFT_PHOTOS"
+id = "REPLACE_WITH_KV_NAMESPACE_ID"

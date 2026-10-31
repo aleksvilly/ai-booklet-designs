@@ -50,6 +50,22 @@ function canvasBlob(canvas, type, quality) {
   });
 }
 
+// Re-encodes a stored photo smaller for sharing; keeps uploads well under 3 MB.
+export async function shrinkPhotoBlob(blob, maxSide = 1600, quality = .82) {
+  const source = await createImageBitmap(blob);
+  const scale = Math.min(1, maxSide / Math.max(source.width, source.height));
+  const canvas = document.createElement('canvas');
+  canvas.width = Math.max(1, Math.round(source.width * scale));
+  canvas.height = Math.max(1, Math.round(source.height * scale));
+  canvas.getContext('2d').drawImage(source, 0, 0, canvas.width, canvas.height);
+  source.close();
+  try {
+    return await canvasBlob(canvas, 'image/webp', quality);
+  } catch {
+    return canvasBlob(canvas, 'image/jpeg', quality);
+  }
+}
+
 export async function prepareLocalPhoto(file) {
   if (!file?.type?.startsWith('image/')) throw new Error('Choose an image file.');
   if (file.size > 25 * 1024 * 1024) throw new Error('The image is too large. Maximum file size is 25 MB.');

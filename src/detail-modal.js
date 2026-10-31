@@ -18,7 +18,7 @@ import {
 } from './utils.js';
 import { pagesFor, imagesForPage, getCurrentPage } from './collection.js';
 import { GENERATION_ENABLED } from './config.js';
-import { giftShareLink } from './gift-links.js';
+import { giftShareLink, giftPhotoUploadsEnabled, localPhotoCount } from './gift-links.js';
 import { initializeBookletEditor, openBookletEditor, closeBookletEditor } from './editor.js';
 import { openPrintSettings, closePrintSettings, setPrintExportItem } from './pdf-exporter.js';
 
@@ -153,6 +153,7 @@ export function detailHtml(item) {
       <div class="detail-actions">
         <button type="button" data-action="edit">Edit booklet</button>
         ${item.gift ? `<button type="button" data-action="gift-link">${giftCopy(item).send}</button>` : ''}
+        ${item.isReceivedGift ? `<button type="button" data-action="report-gift">${giftCopy(item).report}</button>` : ''}
         ${item.isStarterDraft ? '' : '<button type="button" data-action="copy">Copy share link</button>'}
         <button type="button" data-action="print">Download PDF</button>
         <button type="button" data-action="close">Back to collection</button>
@@ -173,7 +174,13 @@ function giftCopy(item) {
     shared: 'Подарок отправлен.',
     photos: count => ` Загруженные фото (${count}) не попадут в ссылку: она переносит только фото, добавленные по URL.`,
     tooLong: 'Подарок слишком большой для ссылки. Уберите часть страниц или фото по URL.',
-    manual: 'Автоматическое копирование заблокировано — выделите ссылку ниже.'
+    manual: 'Автоматическое копирование заблокировано — выделите ссылку ниже.',
+    confirmUpload: count => `Загрузить ваши фото (${count}), чтобы друг их увидел?\n\nФото будут храниться 1 год. Их сможет открыть любой, у кого есть ссылка.\n\nОтмена — отправить без загруженных фото.`,
+    uploading: (done, total) => `Загружаем фото ${done} из ${total}…`,
+    uploadFull: 'Место для фото на сегодня закончилось. Попробуйте завтра или добавьте фото по URL. Ссылка не скопирована.',
+    uploadFailed: 'Не удалось загрузить фото. Проверьте интернет и попробуйте ещё раз. Ссылка не скопирована.',
+    report: 'Пожаловаться',
+    reportMessage: url => `Жалоба на подарок: ${url}\n\nЧто не так:`
   } : {
     send: 'Send as a gift',
     copied: 'Link copied ✓',
@@ -181,7 +188,13 @@ function giftCopy(item) {
     shared: 'Gift sent.',
     photos: count => ` ${count} uploaded photo${count === 1 ? '' : 's'} won't be included: links only carry photos added by URL.`,
     tooLong: 'This gift is too big for a link. Remove some pages or URL photos.',
-    manual: 'Automatic copying was blocked — select the link below.'
+    manual: 'Automatic copying was blocked — select the link below.',
+    confirmUpload: count => `Upload your ${count} photo${count === 1 ? '' : 's'} so your friend can see ${count === 1 ? 'it' : 'them'}?\n\nPhotos are kept for 1 year. Anyone with the link can view them.\n\nCancel to send without uploaded photos.`,
+    uploading: (done, total) => `Uploading photo ${done} of ${total}…`,
+    uploadFull: 'Photo storage is full for today. Try tomorrow or add photos by URL. The link was not copied.',
+    uploadFailed: 'Could not upload the photos. Check your connection and try again. The link was not copied.',
+    report: 'Report this gift',
+    reportMessage: url => `Report gift: ${url}\n\nWhat is wrong:`
   };
 }
 
@@ -191,7 +204,26 @@ async function sendGiftLink(item, button) {
   const fallback = dialogContent?.querySelector('[data-share-fallback]');
   const fallbackInput = fallback?.querySelector('[data-share-url]');
   const copy = giftCopy(item);
-  const { url, skippedPhotos, tooLong } = await giftShareLink(item);
+  const localPhotos = giftPhotoUploadsEnabled() ? localPhotoCount(item) : 0;
+  const uploadPhotos = localPhotos > 0 && window.confirm(copy.confirmUpload(localPhotos));
+
+  let link;
+  button.disabled = true;
+  try {
+    link = await giftShareLink(item, {
+      uploadPhotos,
+      onProgress: (done, total) => {
+        if (status && total) status.textContent = copy.uploading(Math.min(done + 1, total), total);
+      }
+    });
+  } catch (error) {
+    if (status) status.textContent = error?.code === 'storage-full' ? copy.uploadFull : copy.uploadFailed;
+    console.error(error);
+    return;
+  } finally {
+    button.disabled = false;
+  }
+  const { url, skippedPhotos, tooLong } = link;
   const photoNote = skippedPhotos ? copy.photos(skippedPhotos) : '';
 
   if (tooLong) {
@@ -413,6 +445,16 @@ export function openBooklet(item, updateUrl = true) {
   dialogContent.querySelector('[data-action="print"]')?.addEventListener('click', openPrintSettings);
   dialogContent.querySelector('[data-action="gift-link"]')?.addEventListener('click', event => {
     sendGiftLink(item, event.currentTarget).catch(error => console.error(error));
+  });
+  dialogContent.querySelector('[data-action="report-gift"]')?.addEventListener('click', () => {
+    const reportUrl = window.location.href;
+    closeDialog();
+    const message = document.querySelector('#contact-form [name="message"]');
+    if (message) {
+      message.value = giftCopy(item).reportMessage(reportUrl);
+      document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      message.focus({ preventScroll: true });
+    }
   });
   dialogContent.querySelector('[data-action="copy"]')?.addEventListener('click', event => {
     copyBookletShareLink(item, event.currentTarget);

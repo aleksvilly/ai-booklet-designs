@@ -3,6 +3,7 @@ import { getGeneratorCatalog } from './catalog.js';
 import { openBooklet } from './detail-modal.js';
 import { openBookletEditor, editorStorageKey } from './editor.js';
 import { readGiftLink } from './gift-links.js';
+import { GIFT_PHOTO_API } from './config.js';
 
 let templatesPromise = null;
 
@@ -93,7 +94,27 @@ export async function openSharedGift() {
     // Without storage the gift still opens, just without the sender's edits.
   }
   openBooklet(booklet, false);
+  retryFreshGiftPhotos();
   return true;
+}
+
+// Workers KV can take up to a minute to serve a new photo everywhere, so a
+// friend who opens the link straight away may briefly get 404s.
+function retryFreshGiftPhotos() {
+  const root = document.querySelector('#dialog-content');
+  if (!root || !GIFT_PHOTO_API) return;
+  root.addEventListener('error', event => {
+    const img = event.target;
+    if (!(img instanceof HTMLImageElement) || !img.src.startsWith(GIFT_PHOTO_API)) return;
+    const attempt = Number(img.dataset.giftRetry || 0);
+    if (attempt >= 4) return;
+    img.dataset.giftRetry = String(attempt + 1);
+    window.setTimeout(() => {
+      const url = new URL(img.src);
+      url.searchParams.set('retry', String(attempt + 1));
+      img.src = url.toString();
+    }, 15000);
+  }, true);
 }
 
 export async function openGiftTemplate(themeId, name) {

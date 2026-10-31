@@ -1,5 +1,7 @@
 import { resolveRootUrl, safeImageUrl } from './utils.js';
 import { editorStateFor } from './editor.js';
+import { readLocalPhoto, shrinkPhotoBlob } from './photo-library.js';
+import { GIFT_PHOTO_API } from './config.js';
 
 // A gift link carries the whole gift in the URL fragment, which browsers never
 // send to a server: template id, language, name and the editor state.
@@ -7,6 +9,7 @@ import { editorStateFor } from './editor.js';
 export const GIFT_HASH_PREFIX = '#gift=';
 const MAX_ENCODED_LENGTH = 60000;
 const MAX_NAME_LENGTH = 40;
+const UPLOAD_CACHE_KEY = 'ai-booklet-gift-uploads-v1';
 
 function toBase64Url(bytes) {
   let binary = '';
@@ -79,8 +82,91 @@ function shareableState(state) {
   };
 }
 
-export async function giftShareLink(item) {
-  const { state, skippedPhotos } = shareableState(editorStateFor(item));
+export function giftPhotoUploadsEnabled() {
+  return Boolean(GIFT_PHOTO_API);
+}
+
+function localPhotosIn(state) {
+  return Object.values(state?.pages || {})
+    .flatMap(page => (Array.isArray(page?.images) ? page.images : []))
+    .filter(image => image?.localBlobId);
+}
+
+export function localPhotoCount(item) {
+  return new Set(localPhotosIn(editorStateFor(item)).map(image => image.localBlobId)).size;
+}
+
+function readUploadCache() {
+  try {
+    return JSON.parse(localStorage.getItem(UPLOAD_CACHE_KEY) || '{}') || {};
+  } catch {
+    return {};
+  }
+}
+
+function writeUploadCache(cache) {
+  try {
+    localStorage.setItem(UPLOAD_CACHE_KEY, JSON.stringify(cache));
+  } catch {
+    // Without the cache a re-send simply uploads again.
+  }
+}
+
+export class GiftPhotoUploadError extends Error {
+  constructor(code) {
+    super(`Gift photo upload failed: ${code}`);
+    this.code = code;
+  }
+}
+
+async function uploadLocalPhoto(localBlobId) {
+  const record = await readLocalPhoto(localBlobId);
+  if (!record?.blob) throw new GiftPhotoUploadError('missing-local-photo');
+  const blob = await shrinkPhotoBlob(record.blob);
+  let response;
+  try {
+    response = await fetch(`${GIFT_PHOTO_API.replace(/\/$/, '')}/photos`, { method: 'POST', body: blob });
+  } catch {
+    throw new GiftPhotoUploadError('network');
+  }
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok || !result.url) throw new GiftPhotoUploadError(result.error || `http-${response.status}`);
+  return result.url;
+}
+
+// Uploads each device-local photo once (cached across sends) and returns a
+// copy of the state where those photos point at their uploaded URLs.
+async function stateWithUploadedPhotos(state, onProgress) {
+  const ids = [...new Set(localPhotosIn(state).map(image => image.localBlobId))];
+  const cache = readUploadCache();
+  let done = 0;
+  for (const id of ids) {
+    onProgress?.(done, ids.length);
+    if (!cache[id]) {
+      cache[id] = await uploadLocalPhoto(id);
+      writeUploadCache(cache);
+    }
+    done += 1;
+  }
+  onProgress?.(done, ids.length);
+
+  const copy = JSON.parse(JSON.stringify(state || {}));
+  Object.values(copy.pages || {}).forEach(page => {
+    if (!Array.isArray(page?.images)) return;
+    page.images = page.images.map(image => {
+      if (!image?.localBlobId || !cache[image.localBlobId]) return image;
+      const { localBlobId, ...rest } = image;
+      return { ...rest, url: cache[localBlobId], source: 'Gift photo', creator: 'Gift sender' };
+    });
+  });
+  return copy;
+}
+
+export async function giftShareLink(item, { uploadPhotos = false, onProgress } = {}) {
+  const editorState = uploadPhotos && giftPhotoUploadsEnabled()
+    ? await stateWithUploadedPhotos(editorStateFor(item), onProgress)
+    : editorStateFor(item);
+  const { state, skippedPhotos } = shareableState(editorState);
   const encoded = await encodePayload({
     v: 1,
     t: item.gift.template,

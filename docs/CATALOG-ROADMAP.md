@@ -78,8 +78,8 @@
 - [ ] Add effect controls to the live booklet/spread/page editor.
 - [ ] Add per-property inheritance indicators and a one-tap “return to parent”.
 - [ ] Save an edited booklet as a reusable personal template.
-- [ ] Gift links V2: store uploaded photos (needs a small backend such as
-      Cloudflare R2/KV or Supabase); V1 links carry only URL photos.
+- [ ] Gift links V2: deploy `worker/` (Cloudflare Workers KV, free plan) and
+      set `GIFT_PHOTO_API`; code and local tests are done.
 - [ ] Pass the home demo's quiet/loud value into the gift template's effect level.
 - [ ] Photo manager V2: protected Unsplash/Pexels search proxy with provider
       attribution and required download tracking.

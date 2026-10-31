@@ -9,7 +9,7 @@ import Footer from '../components/Footer.astro';
   <section class="privacy-section">
     <div class="privacy-container">
       <h1>Privacy Policy</h1>
-      <p class="privacy-updated">Last updated: August 2026</p>
+      <p class="privacy-updated">Last updated: October 2026</p>
       
       <h2>1. Overview</h2>
       <p>AI Booklet Designs values your privacy. This policy outlines how information is collected, used, and protected across our platform.</p>
@@ -22,6 +22,13 @@ import Footer from '../components/Footer.astro';
 
       <h2>4. Analytics</h2>
       <p>We use Google Analytics and Microsoft Clarity to understand aggregate usage patterns and improve user experience. All analytics are handled anonymously.</p>
+
+      <h2>5. Gift Booklets and Gift Links</h2>
+      <p>Gift booklets you edit are saved only in your own browser. When you press “Send as a gift”, the text, design settings and photo addresses are packed into the link itself, after the <code>#</code> sign. Browsers do not send that part of a link to our servers, so we never receive it.</p>
+
+      <h2>6. Gift Photos</h2>
+      <p>Photos you upload stay on your device until you send a gift. If you agree to upload them, they are stored on Cloudflare (Workers KV) so the person you send the link to can see them. Anyone who has the link can view those photos. Each photo gets a random address, is never listed publicly, and is deleted automatically after one year. Do not upload photos you are not allowed to share.</p>
+      <p>To have a gift photo removed sooner, or to report a gift, use “Report this gift” in the booklet or the contact form, and include the gift link.</p>
 
       <p><a href={`${import.meta.env.BASE_URL}/`} class="primary-button">← Back to Home</a></p>
     </div>
