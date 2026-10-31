@@ -1,3 +1,4 @@
+import { readFile } from 'node:fs/promises';
 import { loadDesignCatalog } from './catalog-registry.mjs';
 
 const catalog = await loadDesignCatalog();
@@ -55,8 +56,26 @@ for (const font of catalog.fonts.items) {
   assert(font.provider, `Font ${font.family} has no provider.`);
 }
 
+const styleElements = JSON.parse(await readFile(new URL('../data/catalog/style-elements.json', import.meta.url), 'utf8'));
+const elementKinds = new Set(Object.values(styleElements.kinds || {}).flat());
+const styleIds = new Set(catalog.styles.items.map(style => style.id));
+const elementColors = new Set(['c1', 'c2', 'c3', 'c4', 'ink']);
+let elementCount = 0;
+assert(styleElements.styles?.default, 'Style elements need a default set.');
+for (const [styleId, set] of Object.entries(styleElements.styles || {})) {
+  assert(styleId === 'default' || styleIds.has(styleId), `Style elements reference missing style ${styleId}.`);
+  assert(Number.isInteger(set.defaultAmount) && set.defaultAmount >= 0 && set.defaultAmount <= 5, `Style elements for ${styleId} need defaultAmount 0–5.`);
+  uniqueIds(set.elements || [], `Style elements for ${styleId}`);
+  for (const element of set.elements || []) {
+    elementCount += 1;
+    assert(elementKinds.has(element.kind), `Element ${styleId}/${element.id} has unknown kind ${element.kind}.`);
+    assert(elementColors.has(element.color), `Element ${styleId}/${element.id} has invalid color ${element.color}.`);
+    assert(element.size > 0 && element.size <= 1, `Element ${styleId}/${element.id} needs size in (0, 1].`);
+  }
+}
+
 console.log(
   `Catalog OK: ${catalog.topics.groups.length} topic groups, ` +
   `${catalog.styles.items.length} styles, ${catalog.effects.items.length} effects, ` +
-  `${catalog.fonts.items.length} fonts.`
+  `${catalog.fonts.items.length} fonts, ${elementCount} style elements.`
 );

@@ -228,12 +228,13 @@ export async function loadGeneratorCatalogs() {
   const topicPathPreview = document.querySelector('#topic-path-preview');
   const topicCatalogSearch = document.querySelector('#topic-catalog-search');
 
-  const [topicsResponse, stylesResponse, effectsResponse, fontsResponse, treatmentsResponse] = await Promise.all([
+  const [topicsResponse, stylesResponse, effectsResponse, fontsResponse, treatmentsResponse, elementsResponse] = await Promise.all([
     fetch(resolveRootUrl('data/catalog/topics.json'), { cache: 'no-store' }),
     fetch(resolveRootUrl('data/catalog/styles.json'), { cache: 'no-store' }),
     fetch(resolveRootUrl('data/catalog/effects.json'), { cache: 'no-store' }),
     fetch(resolveRootUrl('data/catalog/fonts.json'), { cache: 'no-store' }),
-    fetch(resolveRootUrl('data/catalog/page-treatments.json'), { cache: 'no-store' }).catch(() => null)
+    fetch(resolveRootUrl('data/catalog/page-treatments.json'), { cache: 'no-store' }).catch(() => null),
+    fetch(resolveRootUrl('data/catalog/style-elements.json'), { cache: 'no-store' }).catch(() => null)
   ]);
 
   if (![topicsResponse, stylesResponse, effectsResponse, fontsResponse].every(response => response.ok)) {
@@ -244,7 +245,9 @@ export async function loadGeneratorCatalogs() {
     topics: await topicsResponse.json(),
     styles: await stylesResponse.json(),
     effects: await effectsResponse.json(),
-    fonts: await fontsResponse.json()
+    fonts: await fontsResponse.json(),
+    // Optional: without it pages simply render without style elements.
+    styleElements: elementsResponse?.ok ? await elementsResponse.json().catch(() => null) : null
   };
 
   renderTopicWheel();

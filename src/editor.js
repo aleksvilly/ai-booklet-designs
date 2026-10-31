@@ -1,3 +1,4 @@
+import { renderStyleElements, defaultElementAmount } from './style-elements.js';
 import { EDITOR_STORAGE_PREFIX, EDITOR_COMPACT_STORAGE_KEY } from './config.js';
 import { safeUrl, safeClass, fontStack, loadGoogleFonts } from './utils.js';
 import { pagesFor, imagesForPage } from './collection.js';
@@ -56,6 +57,11 @@ const editorLoremSentences = [
 ];
 
 const PARAM_ICONS = {
+  elementAmount: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="3"/><rect x="14" y="4" width="6" height="6" rx="1"/><path d="m7 14 3.5 6h-7z"/><path d="M14 17h6"/></svg>`,
+  elementScale: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="15" r="3"/><circle cx="15" cy="9" r="6"/></svg>`,
+  elementPosition: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="17" cy="7" r="2"/><path d="M8 3a5 5 0 0 0-5 5"/></svg>`,
+  elementVariation: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="8" height="14" rx="1"/><rect x="14" y="5" width="8" height="14" rx="1"/><circle cx="6" cy="9" r="1.5"/><circle cx="18" cy="15" r="1.5"/></svg>`,
+  elementColor: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1 0 1.5-.8 1.5-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6H16a5 5 0 0 0 5-5c0-4-4-7.4-9-7.4z"/><circle cx="7.5" cy="10.5" r="1"/><circle cx="12" cy="7.5" r="1"/><circle cx="16.5" cy="10.5" r="1"/></svg>`,
   profile: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M9 6h6"/><path d="M9 10h6"/></svg>`,
   visualMode: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.92 0 1.7-.6 1.9-1.5.24-1.1.9-2 2.1-2h2c2.2 0 4-1.8 4-4 0-4.5-4.5-12.5-10-12.5z"/></svg>`,
   layoutComplexity: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/><path d="M15 21V9"/></svg>`,
@@ -145,6 +151,15 @@ function getEditorControls() {
     editorTypographySettingEditor: document.querySelector('#editor-typography-setting-editor'),
     editorSpacing: document.querySelector('#editor-spacing'),
     editorEffectLevel: document.querySelector('#editor-effect-level'),
+    editorElementAmount: document.querySelector('#editor-element-amount'),
+    editorElementAmountOutput: document.querySelector('#editor-element-amount-output'),
+    editorElementScale: document.querySelector('#editor-element-scale'),
+    editorElementScaleOutput: document.querySelector('#editor-element-scale-output'),
+    editorElementPosition: document.querySelector('#editor-element-position'),
+    editorElementPositionOutput: document.querySelector('#editor-element-position-output'),
+    editorElementVariation: document.querySelector('#editor-element-variation'),
+    editorElementVariationOutput: document.querySelector('#editor-element-variation-output'),
+    editorElementColor: document.querySelector('#editor-element-color'),
     editorShowTitle: document.querySelector('#editor-show-title'),
     editorShowSubtitle: document.querySelector('#editor-show-subtitle'),
     editorShowBody: document.querySelector('#editor-show-body'),
@@ -374,12 +389,18 @@ export function availableEditorParameters() {
     editorTypographyTargetList,
     editorSpacing, editorEffectLevel, editorVisibilityOptions,
     editorPhotoLayout, editorPhotoLayoutVariant, editorLayoutSystem,
-    editorTextTreatment, editorPhotoTreatment
+    editorTextTreatment, editorPhotoTreatment,
+    editorElementAmount, editorElementScale, editorElementPosition, editorElementVariation, editorElementColor
   } = getEditorControls();
 
   const editorParameters = [
     { key: 'profile', label: 'Editorial profile', control: editorProfile },
     { key: 'visualMode', label: 'Visual language', control: editorVisualMode },
+    { key: 'elementAmount', label: 'Elements', control: editorElementAmount },
+    { key: 'elementScale', label: 'Element size', control: editorElementScale },
+    { key: 'elementPosition', label: 'Element position', control: editorElementPosition },
+    { key: 'elementVariation', label: 'Page variation', control: editorElementVariation },
+    { key: 'elementColor', label: 'Element colour', control: editorElementColor },
     { key: 'layoutComplexity', label: 'Page complexity', control: editorLayoutComplexity },
     { key: 'imageCount', label: 'Page photos', control: editorImageCount },
     { key: 'photoLayout', label: 'Photo layout', control: editorPhotoLayout },
@@ -617,6 +638,12 @@ export function originalEditorSettings(item, page) {
     bodyFontUppercase: false,
     spacing: 3,
     effectLevel: Math.max(0, Math.min(5, Number(dna.effectLevel ?? 2))),
+    // null = the active style's own defaultAmount (see style-elements.json).
+    elementAmount: null,
+    elementScale: 0,
+    elementPosition: 0,
+    elementVariation: 40,
+    elementColor: 'auto',
     showTitle: Boolean(page.title),
     showSubtitle: Boolean(page.module || page.type),
     showBody: Boolean(page.body),
@@ -1163,6 +1190,13 @@ function applyEditorTypography(node, prefix, pageIndex) {
   });
 }
 
+function resolvedElementAmount(pageIndex) {
+  const value = resolvedEditorSetting('elementAmount', pageIndex);
+  return value === null || value === undefined
+    ? defaultElementAmount(resolvedEditorSetting('profile', 0))
+    : Number(value);
+}
+
 export function applyEditorPage(pageNode, page, pageIndex) {
   const values = {
     visualMode: resolvedEditorSetting('visualMode', pageIndex),
@@ -1205,6 +1239,17 @@ export function applyEditorPage(pageNode, page, pageIndex) {
   replaceEditorLevelClass(pageNode, 'editor-font-', values.fontScale, hasEditorOverride('fontScale', pageIndex));
   replaceEditorLevelClass(pageNode, 'editor-spacing-', values.spacing, hasEditorOverride('spacing', pageIndex));
   replaceEditorLevelClass(pageNode, 'editor-effects-', values.effectLevel, hasEditorOverride('effectLevel', pageIndex));
+
+  const profile = resolvedEditorSetting('profile', 0);
+  renderStyleElements(pageNode, {
+    profile,
+    pageIndex,
+    amount: resolvedElementAmount(pageIndex),
+    scale: resolvedEditorSetting('elementScale', pageIndex),
+    position: resolvedEditorSetting('elementPosition', pageIndex),
+    variation: resolvedEditorSetting('elementVariation', pageIndex),
+    color: resolvedEditorSetting('elementColor', pageIndex)
+  });
 
   // Layout system override
   const layoutSystemValue = hasEditorOverride('layoutSystem', pageIndex) ? String(values.layoutSystem || 'auto') : 'auto';
@@ -2053,6 +2098,14 @@ export function syncBookletEditorControls() {
   if (controls.editorFontUppercase) controls.editorFontUppercase.checked = Boolean(get(`${fontPrefix}FontUppercase`));
   if (controls.editorSpacing) controls.editorSpacing.value = get('spacing');
   if (controls.editorEffectLevel) controls.editorEffectLevel.value = get('effectLevel');
+  if (controls.editorElementAmount) controls.editorElementAmount.value = resolvedElementAmount(index);
+  if (controls.editorElementScale) controls.editorElementScale.value = get('elementScale') ?? 0;
+  if (controls.editorElementPosition) controls.editorElementPosition.value = get('elementPosition') ?? 0;
+  if (controls.editorElementVariation) controls.editorElementVariation.value = get('elementVariation') ?? 40;
+  if (controls.editorElementColor) {
+    controls.editorElementColor.value = get('elementColor') || 'auto';
+    syncEditorSliderSelect(controls.editorElementColor);
+  }
   if (controls.editorShowTitle) controls.editorShowTitle.checked = Boolean(get('showTitle'));
   if (controls.editorShowSubtitle) controls.editorShowSubtitle.checked = Boolean(get('showSubtitle'));
   if (controls.editorShowBody) controls.editorShowBody.checked = Boolean(get('showBody'));
@@ -2070,6 +2123,14 @@ export function syncBookletEditorControls() {
   if (controls.editorFontLineHeightOutput && controls.editorFontLineHeight) controls.editorFontLineHeightOutput.value = controls.editorFontLineHeight.value;
   if (controls.editorSpacingOutput && controls.editorSpacing) controls.editorSpacingOutput.value = controls.editorSpacing.value;
   if (controls.editorEffectOutput && controls.editorEffectLevel) controls.editorEffectOutput.value = controls.editorEffectLevel.value;
+  [
+    [controls.editorElementAmountOutput, controls.editorElementAmount],
+    [controls.editorElementScaleOutput, controls.editorElementScale],
+    [controls.editorElementPositionOutput, controls.editorElementPosition],
+    [controls.editorElementVariationOutput, controls.editorElementVariation]
+  ].forEach(([output, control]) => {
+    if (output && control) output.value = control.value;
+  });
   syncEditorFontRecommendations();
 
   if (controls.editorProfile && controls.editorScope) {
@@ -2541,6 +2602,9 @@ export function initializeBookletEditor(item) {
   if (controls.editorPhotoLayout) {
     bindStyleSlider(controls.editorPhotoLayout);
   }
+  if (controls.editorElementColor) {
+    bindStyleSlider(controls.editorElementColor);
+  }
   if (controls.editorLayoutSystem) {
     bindStyleSlider(controls.editorLayoutSystem);
   }
@@ -2651,7 +2715,12 @@ export function setupEditorEventListeners() {
     [controls.editorContentPosition, 'contentPosition', value => value],
     [controls.editorFontScale, 'fontScale', Number],
     [controls.editorSpacing, 'spacing', Number],
-    [controls.editorEffectLevel, 'effectLevel', Number]
+    [controls.editorEffectLevel, 'effectLevel', Number],
+    [controls.editorElementAmount, 'elementAmount', Number],
+    [controls.editorElementScale, 'elementScale', Number],
+    [controls.editorElementPosition, 'elementPosition', Number],
+    [controls.editorElementVariation, 'elementVariation', Number],
+    [controls.editorElementColor, 'elementColor', value => value]
   ].forEach(([control, key, parse]) => {
     if (!control) return;
     const eventName = control.type === 'range' ? 'input' : 'change';

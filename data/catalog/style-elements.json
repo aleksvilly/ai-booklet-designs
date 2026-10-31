@@ -1,0 +1,500 @@
+{
+  "schemaVersion": 1,
+  "description": "Decorative elements each style places on its pages. The live editor controls them for any style with the same sliders: amount, size, position (around the page edge), variation (how much pages differ) and colour. Keys under 'styles' are style IDs from styles.json; 'default' is used by every style without its own set. Elements are listed in priority order: amount reveals them from the top.",
+  "fields": {
+    "kind": "Shape primitive drawn by styles.css (.se-<kind>). See 'kinds'.",
+    "color": "Palette slot: c1 (page paper), c2, c3, c4, or ink (the page's text colour). Each style decides which slot is its accent.",
+    "size": "Fraction of the page width (0–1). For edge kinds it is the thickness; for fill kinds the inset or strength.",
+    "anchor": "Position on the page edge, clockwise from the top-left corner: 0 top-left, 0.25 top-right, 0.5 bottom-right, 0.75 bottom-left. Ignored by fill kinds.",
+    "rotate": "Degrees.",
+    "opacity": "0–1.",
+    "thickness": "Ring/arc stroke as a fraction of the element size.",
+    "text": "Optional { en, ru } label for text kinds.",
+    "variant": "Optional. 'filled' draws stamps as solid badges with paper-coloured text."
+  },
+  "kinds": {
+    "point": [
+      "ring",
+      "arc",
+      "disc",
+      "blot",
+      "petal",
+      "star",
+      "cross",
+      "dots",
+      "lines",
+      "slash",
+      "bar",
+      "pill",
+      "stamp",
+      "text"
+    ],
+    "edge": [
+      "band",
+      "ticker",
+      "zigzag",
+      "drip",
+      "filmstrip"
+    ],
+    "fill": [
+      "frame",
+      "brackets",
+      "scanlines",
+      "confetti",
+      "vignette",
+      "tape"
+    ]
+  },
+  "styles": {
+    "default": {
+      "defaultAmount": 1,
+      "elements": [
+        {
+          "id": "halo",
+          "kind": "ring",
+          "color": "ink",
+          "size": 0.62,
+          "anchor": 0.22,
+          "opacity": 0.11,
+          "thickness": 0.14
+        },
+        {
+          "id": "dot",
+          "kind": "disc",
+          "color": "c2",
+          "size": 0.16,
+          "anchor": 0.6,
+          "opacity": 0.9
+        },
+        {
+          "id": "rule",
+          "kind": "bar",
+          "color": "c4",
+          "size": 0.3,
+          "anchor": 0.8,
+          "opacity": 0.85
+        },
+        {
+          "id": "grid",
+          "kind": "dots",
+          "color": "c3",
+          "size": 0.24,
+          "anchor": 0.4,
+          "opacity": 0.8
+        },
+        {
+          "id": "hatch",
+          "kind": "lines",
+          "color": "c2",
+          "size": 0.2,
+          "anchor": 0.05,
+          "opacity": 0.7
+        }
+      ]
+    },
+    "euronews-inspired": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "ring",
+          "kind": "ring",
+          "color": "c2",
+          "size": 0.27,
+          "anchor": 0.23,
+          "opacity": 0.95,
+          "thickness": 0.16
+        },
+        {
+          "id": "side-rule",
+          "kind": "band",
+          "color": "c2",
+          "size": 0.012,
+          "anchor": 0.875,
+          "opacity": 1
+        },
+        {
+          "id": "live",
+          "kind": "stamp",
+          "color": "c2",
+          "size": 0.16,
+          "anchor": 0.03,
+          "opacity": 1,
+          "text": {
+            "en": "● LIVE",
+            "ru": "● ЭФИР"
+          },
+          "variant": "filled"
+        },
+        {
+          "id": "ticker",
+          "kind": "ticker",
+          "color": "c4",
+          "size": 0.06,
+          "anchor": 0.625,
+          "opacity": 1,
+          "text": {
+            "en": "BREAKING · EXCLUSIVE · MORE AT ELEVEN · ",
+            "ru": "СРОЧНО · ЭКСКЛЮЗИВ · ПОДРОБНОСТИ В 23:00 · "
+          }
+        },
+        {
+          "id": "arc",
+          "kind": "arc",
+          "color": "c3",
+          "size": 0.7,
+          "anchor": 0.6,
+          "opacity": 0.55,
+          "thickness": 0.06
+        },
+        {
+          "id": "dots",
+          "kind": "dots",
+          "color": "c2",
+          "size": 0.2,
+          "anchor": 0.42,
+          "opacity": 0.35
+        }
+      ]
+    },
+    "horror-slasher": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "drip",
+          "kind": "drip",
+          "color": "c2",
+          "size": 0.16,
+          "anchor": 0.12,
+          "opacity": 0.95
+        },
+        {
+          "id": "slashes",
+          "kind": "slash",
+          "color": "c2",
+          "size": 0.3,
+          "anchor": 0.68,
+          "rotate": -18,
+          "opacity": 0.8
+        },
+        {
+          "id": "stamp",
+          "kind": "stamp",
+          "color": "c2",
+          "size": 0.34,
+          "anchor": 0.38,
+          "rotate": -12,
+          "opacity": 0.9,
+          "text": {
+            "en": "DO NOT OPEN",
+            "ru": "НЕ ОТКРЫВАТЬ"
+          }
+        },
+        {
+          "id": "blot",
+          "kind": "blot",
+          "color": "c3",
+          "size": 0.22,
+          "anchor": 0.88,
+          "opacity": 0.75
+        },
+        {
+          "id": "tape",
+          "kind": "tape",
+          "color": "c4",
+          "size": 0.07,
+          "opacity": 0.85,
+          "rotate": -24,
+          "text": {
+            "en": "KEEP OUT · KEEP OUT · KEEP OUT · ",
+            "ru": "НЕ ВХОДИТЬ · НЕ ВХОДИТЬ · НЕ ВХОДИТЬ · "
+          }
+        },
+        {
+          "id": "vignette",
+          "kind": "vignette",
+          "color": "c4",
+          "size": 0.5,
+          "opacity": 0.7
+        }
+      ]
+    },
+    "gaming-editorial": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "brackets",
+          "kind": "brackets",
+          "color": "c2",
+          "size": 0.12,
+          "opacity": 0.95
+        },
+        {
+          "id": "hud",
+          "kind": "stamp",
+          "color": "c2",
+          "size": 0.14,
+          "anchor": 0.27,
+          "opacity": 1,
+          "text": {
+            "en": "MVP",
+            "ru": "MVP"
+          },
+          "variant": "filled"
+        },
+        {
+          "id": "crosshair",
+          "kind": "cross",
+          "color": "c2",
+          "size": 0.16,
+          "anchor": 0.44,
+          "opacity": 0.85
+        },
+        {
+          "id": "health",
+          "kind": "bar",
+          "color": "c2",
+          "size": 0.34,
+          "anchor": 0.58,
+          "opacity": 0.9
+        },
+        {
+          "id": "scanlines",
+          "kind": "scanlines",
+          "color": "c2",
+          "size": 0.3,
+          "opacity": 0.22
+        },
+        {
+          "id": "grid-dots",
+          "kind": "dots",
+          "color": "c3",
+          "size": 0.22,
+          "anchor": 0.8,
+          "opacity": 0.6
+        }
+      ]
+    },
+    "kids-party-pop": {
+      "defaultAmount": 3,
+      "elements": [
+        {
+          "id": "star",
+          "kind": "star",
+          "color": "c2",
+          "size": 0.2,
+          "anchor": 0.2,
+          "rotate": 12,
+          "opacity": 1
+        },
+        {
+          "id": "confetti",
+          "kind": "confetti",
+          "color": "c2",
+          "size": 0.5,
+          "opacity": 0.9
+        },
+        {
+          "id": "balloon",
+          "kind": "disc",
+          "color": "c3",
+          "size": 0.3,
+          "anchor": 0.7,
+          "opacity": 0.85
+        },
+        {
+          "id": "zigzag",
+          "kind": "zigzag",
+          "color": "c4",
+          "size": 0.05,
+          "anchor": 0.62,
+          "opacity": 0.9
+        },
+        {
+          "id": "yay",
+          "kind": "stamp",
+          "color": "c4",
+          "size": 0.18,
+          "anchor": 0.95,
+          "rotate": -10,
+          "opacity": 1,
+          "text": {
+            "en": "YAY!",
+            "ru": "УРА!"
+          }
+        },
+        {
+          "id": "pill",
+          "kind": "pill",
+          "color": "c2",
+          "size": 0.28,
+          "anchor": 0.4,
+          "rotate": 20,
+          "opacity": 0.8
+        }
+      ]
+    },
+    "wedding-editorial": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "frame",
+          "kind": "frame",
+          "color": "c4",
+          "size": 0.035,
+          "opacity": 0.45
+        },
+        {
+          "id": "halo",
+          "kind": "ring",
+          "color": "c4",
+          "size": 0.5,
+          "anchor": 0.25,
+          "opacity": 0.35,
+          "thickness": 0.01
+        },
+        {
+          "id": "petal",
+          "kind": "petal",
+          "color": "c2",
+          "size": 0.14,
+          "anchor": 0.6,
+          "rotate": 30,
+          "opacity": 0.7
+        },
+        {
+          "id": "rule",
+          "kind": "bar",
+          "color": "c4",
+          "size": 0.2,
+          "anchor": 0.62,
+          "opacity": 0.6
+        },
+        {
+          "id": "heart",
+          "kind": "text",
+          "color": "c4",
+          "size": 0.2,
+          "anchor": 0.9,
+          "opacity": 0.7,
+          "text": {
+            "en": "♡",
+            "ru": "♡"
+          }
+        }
+      ]
+    },
+    "marketplace-modular": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "badge",
+          "kind": "stamp",
+          "color": "c3",
+          "size": 0.26,
+          "anchor": 0.03,
+          "opacity": 1,
+          "text": {
+            "en": "BEST SELLER",
+            "ru": "ХИТ ПРОДАЖ"
+          },
+          "variant": "filled"
+        },
+        {
+          "id": "stars",
+          "kind": "text",
+          "color": "c3",
+          "size": 0.14,
+          "anchor": 0.6,
+          "opacity": 1,
+          "text": {
+            "en": "★★★★★",
+            "ru": "★★★★★"
+          }
+        },
+        {
+          "id": "button",
+          "kind": "pill",
+          "color": "c3",
+          "size": 0.5,
+          "anchor": 0.62,
+          "opacity": 0.9
+        },
+        {
+          "id": "sale",
+          "kind": "stamp",
+          "color": "c1",
+          "size": 0.16,
+          "anchor": 0.27,
+          "rotate": 12,
+          "opacity": 1,
+          "text": {
+            "en": "-50%",
+            "ru": "-50%"
+          },
+          "variant": "filled"
+        },
+        {
+          "id": "card",
+          "kind": "disc",
+          "color": "c3",
+          "size": 0.36,
+          "anchor": 0.4,
+          "opacity": 0.35
+        }
+      ]
+    },
+    "black-white-noir": {
+      "defaultAmount": 2,
+      "elements": [
+        {
+          "id": "filmstrip",
+          "kind": "filmstrip",
+          "color": "c2",
+          "size": 0.07,
+          "anchor": 0.875,
+          "opacity": 0.55
+        },
+        {
+          "id": "vignette",
+          "kind": "vignette",
+          "color": "c4",
+          "size": 0.55,
+          "opacity": 0.85
+        },
+        {
+          "id": "fin",
+          "kind": "text",
+          "color": "c2",
+          "size": 0.22,
+          "anchor": 0.55,
+          "opacity": 0.5,
+          "text": {
+            "en": "Fin",
+            "ru": "Fin"
+          }
+        },
+        {
+          "id": "halo",
+          "kind": "ring",
+          "color": "c2",
+          "size": 0.45,
+          "anchor": 0.22,
+          "opacity": 0.12,
+          "thickness": 0.02
+        },
+        {
+          "id": "scene",
+          "kind": "stamp",
+          "color": "c2",
+          "size": 0.2,
+          "anchor": 0.03,
+          "opacity": 0.6,
+          "text": {
+            "en": "SCENE 14",
+            "ru": "СЦЕНА 14"
+          }
+        }
+      ]
+    }
+  }
+}

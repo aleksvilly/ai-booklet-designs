@@ -43,15 +43,7 @@
   color: #002e44;
   border: 1px solid var(--euronews-blue-soft);
 }
-.style-euronews-inspired .book-page::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 4px;
-  height: 100%;
-  background: var(--euronews-blue);
-}
+/* The blue side rule and ring are style elements now (data/catalog/style-elements.json). */
 .style-euronews-inspired .book-page-type {
   color: var(--euronews-blue);
   font: 700 9px/1 "IBM Plex Mono", monospace;

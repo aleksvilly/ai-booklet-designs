@@ -125,6 +125,11 @@ Browser
 - `data/catalog/effects.json`
   - Public effect IDs, labels, groups, intensity hints, and internal Design DNA
     tokens.
+- `data/catalog/style-elements.json`
+  - Decorative elements per style (rings, badges, tickers, drips, frames…),
+    rendered by `src/style-elements.js` into `.style-elements` on each page.
+  - `default` applies to every style without its own set. Run
+    `npm run test:catalog` after editing.
 - `data/catalog/fonts.json`
   - Font families, availability, provider and fallback metadata shared by the
     generator and live editor.
@@ -440,6 +445,11 @@ directly to one page unless that is the selected scope.
 Current parameter families include:
 
 - editorial profile and visual language;
+- style elements: amount, size, position around the page edge, page
+  variation and colour (palette slot). These work for every style and follow
+  the booklet → spread → page chain. Layout is seeded per page, so the same
+  booklet always renders the same way. Do not hard-code page decorations with
+  `.book-page::before/::after` in a profile; add them as style elements.
 - page complexity and image count;
 - Photo Layout and layout intensity;
 - text amount and content position;

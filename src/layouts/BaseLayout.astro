@@ -271,6 +271,37 @@ const photoCopy = isRussian ? {
         </fieldset>
 
         <fieldset class="editor-group">
+          <legend>Style elements</legend>
+          <label class="editor-range" data-editor-parameter="elementAmount">
+            <span>Elements <output id="editor-element-amount-output">2</output> / 5</span>
+            <input id="editor-element-amount" type="range" min="0" max="5" value="2">
+          </label>
+          <label class="editor-range" data-editor-parameter="elementScale">
+            <span>Element size <output id="editor-element-scale-output">0</output>%</span>
+            <input id="editor-element-scale" type="range" min="-100" max="100" step="5" value="0">
+          </label>
+          <label class="editor-range" data-editor-parameter="elementPosition">
+            <span>Element position <output id="editor-element-position-output">0</output>%</span>
+            <input id="editor-element-position" type="range" min="0" max="100" step="1" value="0">
+          </label>
+          <label class="editor-range" data-editor-parameter="elementVariation">
+            <span>Page variation <output id="editor-element-variation-output">40</output>%</span>
+            <input id="editor-element-variation" type="range" min="0" max="100" step="5" value="40">
+          </label>
+          <label class="editor-range" data-editor-parameter="elementColor">
+            <span>Element colour</span>
+            <select id="editor-element-color">
+              <option value="auto">Style default</option>
+              <option value="c1">Palette 1 — paper</option>
+              <option value="c2">Palette 2</option>
+              <option value="c3">Palette 3</option>
+              <option value="c4">Palette 4</option>
+              <option value="ink">Text colour</option>
+            </select>
+          </label>
+        </fieldset>
+
+        <fieldset class="editor-group">
           <legend>Structure</legend>
           <label class="editor-range" data-editor-parameter="layoutComplexity">
             <span>Page complexity <output id="editor-layout-output">2</output> / 5</span>
