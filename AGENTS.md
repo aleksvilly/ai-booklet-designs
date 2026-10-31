@@ -553,6 +553,20 @@ While `.booklet-dialog` has `editor-is-open`:
 
 Once the editor is closed, normal backdrop and Escape behaviour resumes.
 
+### Gift templates and gift links
+
+- `data/gift-templates.json` holds hand-written gift booklets (EN/RU) opened
+  from the home-page theme shelf by `src/gift-templates.js`. `{name}` is the
+  recipient's name; Russian copy must keep `{name}` in a form that needs no
+  declension.
+- `src/gift-links.js` builds links of the form `#gift=<z|j><base64url>`
+  (deflate-raw or plain JSON of `{v, t, l, n, s}`). Keep old versions
+  decodable: links already sent to friends must keep opening.
+- A received link is untrusted input. It is sanitised in `readGiftLink()` and
+  device-local photos (`localBlobId`) are always stripped.
+- `GENERATION_ENABLED` in `src/config.js` hides the AI Generate button while
+  the queue workflows are disabled.
+
 ### Analytics
 
 Microsoft Clarity is installed in `index.html` using the public project tag.

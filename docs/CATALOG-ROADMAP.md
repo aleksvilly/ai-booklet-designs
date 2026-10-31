@@ -56,6 +56,9 @@
       bilingual six-page booklets (horror, CS2, PUBG Mobile, Italian & French
       cinema, news, five-star friend, birthday, love) opened from the home-page
       theme shelf in the live editor with the recipient's name filled in.
+- [x] Gift links V1: "Send as a gift" compresses template, name and editor
+      state into `#gift=` (URL fragment, never sent to a server). Recipients
+      get their own editable copy. Uploaded device photos are not included.
 - [x] `black-white-noir` promoted from a legacy generator array into the style
       catalog so the editor can label and select it.
 
@@ -75,7 +78,8 @@
 - [ ] Add effect controls to the live booklet/spread/page editor.
 - [ ] Add per-property inheritance indicators and a one-tap “return to parent”.
 - [ ] Save an edited booklet as a reusable personal template.
-- [ ] Shareable gift links: persist an edited gift booklet so a friend can open it.
+- [ ] Gift links V2: store uploaded photos (needs a small backend such as
+      Cloudflare R2/KV or Supabase); V1 links carry only URL photos.
 - [ ] Pass the home demo's quiet/loud value into the gift template's effect level.
 - [ ] Photo manager V2: protected Unsplash/Pexels search proxy with provider
       attribution and required download tracking.

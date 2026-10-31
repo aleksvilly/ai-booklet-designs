@@ -558,6 +558,12 @@ export function loadEditorState(item) {
   }
 }
 
+// The live state for the open booklet, or the saved state for any other one.
+export function editorStateFor(item) {
+  if (editorSession?.item?.id === item.id) return editorSession.state;
+  return loadEditorState(item);
+}
+
 export function scheduleEditorSave() {
   const { editorSaveStatus } = getEditorControls();
   if (!editorSession || !editorSaveStatus) return;

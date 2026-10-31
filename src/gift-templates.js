@@ -1,7 +1,8 @@
 import { resolveRootUrl } from './utils.js';
 import { getGeneratorCatalog } from './catalog.js';
 import { openBooklet } from './detail-modal.js';
-import { openBookletEditor } from './editor.js';
+import { openBookletEditor, editorStorageKey } from './editor.js';
+import { readGiftLink } from './gift-links.js';
 
 let templatesPromise = null;
 
@@ -38,6 +39,7 @@ export function buildGiftBooklet(themeId, template, lang, name) {
   return {
     id: `gift-${themeId}-${lang}`,
     isStarterDraft: true,
+    gift: { template: themeId, lang, name },
     title: pages[0]?.title || name,
     topic: pages[0]?.title || name,
     audience: name,
@@ -65,12 +67,41 @@ export function buildGiftBooklet(themeId, template, lang, name) {
   };
 }
 
+function giftLanguage() {
+  return document.documentElement.lang === 'ru' ? 'ru' : 'en';
+}
+
+// Opens a gift received through a link. The sender's edits are copied into
+// this browser's editor storage once, so the recipient can keep editing.
+export async function openSharedGift() {
+  const shared = await readGiftLink();
+  if (!shared) return false;
+  const data = await loadGiftTemplates();
+  const template = data.templates?.[shared.template];
+  if (!template) throw new Error(`Unknown gift template: ${shared.template}`);
+
+  const booklet = buildGiftBooklet(shared.template, template, shared.lang, shared.name || (shared.lang === 'ru' ? 'Саша' : 'Alex'));
+  booklet.id = `gift-shared-${shared.linkId}`;
+  booklet.isReceivedGift = true;
+  booklet.description = shared.lang === 'ru'
+    ? 'Этот буклет сделали для вас. Листайте, скачайте PDF или сделайте ответный подарок.'
+    : 'This booklet was made for you. Read it, download the PDF, or make one back.';
+  const storageKey = editorStorageKey(booklet);
+  try {
+    if (!localStorage.getItem(storageKey)) localStorage.setItem(storageKey, JSON.stringify(shared.state));
+  } catch {
+    // Without storage the gift still opens, just without the sender's edits.
+  }
+  openBooklet(booklet, false);
+  return true;
+}
+
 export async function openGiftTemplate(themeId, name) {
   const data = await loadGiftTemplates();
   const template = data.templates?.[themeId];
   if (!template) throw new Error(`Unknown gift template: ${themeId}`);
 
-  const lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
+  const lang = giftLanguage();
   const fallbackName = lang === 'ru' ? 'Саша' : 'Alex';
   const booklet = buildGiftBooklet(themeId, template, lang, String(name || '').trim() || fallbackName);
   openBooklet(booklet, false);
@@ -78,6 +109,11 @@ export async function openGiftTemplate(themeId, name) {
 }
 
 export function initGiftTemplates() {
+  openSharedGift().catch(error => {
+    console.error(error);
+    window.alert(giftLanguage() === 'ru' ? 'Не удалось открыть подарок: ссылка повреждена.' : 'Could not open this gift: the link looks damaged.');
+  });
+
   const demoName = () => document.querySelector('[data-demo-name]')?.value;
 
   // "Make a booklet" opens the template behind the style currently shown in the demo.

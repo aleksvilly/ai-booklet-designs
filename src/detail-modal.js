@@ -18,6 +18,7 @@ import {
 } from './utils.js';
 import { pagesFor, imagesForPage, getCurrentPage } from './collection.js';
 import { GENERATION_ENABLED } from './config.js';
+import { giftShareLink } from './gift-links.js';
 import { initializeBookletEditor, openBookletEditor, closeBookletEditor } from './editor.js';
 import { openPrintSettings, closePrintSettings, setPrintExportItem } from './pdf-exporter.js';
 
@@ -151,6 +152,7 @@ export function detailHtml(item) {
       <div class="spreads-list">${spreadsMarkup(pages, item)}</div>
       <div class="detail-actions">
         <button type="button" data-action="edit">Edit booklet</button>
+        ${item.gift ? `<button type="button" data-action="gift-link">${giftCopy(item).send}</button>` : ''}
         ${item.isStarterDraft ? '' : '<button type="button" data-action="copy">Copy share link</button>'}
         <button type="button" data-action="print">Download PDF</button>
         <button type="button" data-action="close">Back to collection</button>
@@ -161,6 +163,70 @@ export function detailHtml(item) {
         <input data-share-url type="text" readonly>
       </label>
     </section>`;
+}
+
+function giftCopy(item) {
+  return item.gift?.lang === 'ru' ? {
+    send: 'Отправить в подарок',
+    copied: 'Ссылка скопирована ✓',
+    ready: 'Ссылка на подарок скопирована. Отправьте её другу — книга откроется у него в браузере.',
+    shared: 'Подарок отправлен.',
+    photos: count => ` Загруженные фото (${count}) не попадут в ссылку: она переносит только фото, добавленные по URL.`,
+    tooLong: 'Подарок слишком большой для ссылки. Уберите часть страниц или фото по URL.',
+    manual: 'Автоматическое копирование заблокировано — выделите ссылку ниже.'
+  } : {
+    send: 'Send as a gift',
+    copied: 'Link copied ✓',
+    ready: 'Gift link copied. Send it to your friend — the booklet opens right in their browser.',
+    shared: 'Gift sent.',
+    photos: count => ` ${count} uploaded photo${count === 1 ? '' : 's'} won't be included: links only carry photos added by URL.`,
+    tooLong: 'This gift is too big for a link. Remove some pages or URL photos.',
+    manual: 'Automatic copying was blocked — select the link below.'
+  };
+}
+
+async function sendGiftLink(item, button) {
+  const dialogContent = document.querySelector('#dialog-content');
+  const status = dialogContent?.querySelector('[data-share-status]');
+  const fallback = dialogContent?.querySelector('[data-share-fallback]');
+  const fallbackInput = fallback?.querySelector('[data-share-url]');
+  const copy = giftCopy(item);
+  const { url, skippedPhotos, tooLong } = await giftShareLink(item);
+  const photoNote = skippedPhotos ? copy.photos(skippedPhotos) : '';
+
+  if (tooLong) {
+    if (status) status.textContent = copy.tooLong;
+    return;
+  }
+
+  // Phones get the native share sheet (messengers, mail); desktops copy.
+  if (navigator.share && window.matchMedia('(pointer: coarse)').matches) {
+    try {
+      await navigator.share({ title: item.title, url });
+      if (status) status.textContent = `${copy.shared}${photoNote}`;
+      return;
+    } catch (error) {
+      if (error?.name === 'AbortError') return;
+    }
+  }
+
+  if (await copyText(url)) {
+    button.textContent = copy.copied;
+    if (status) status.textContent = `${copy.ready}${photoNote}`;
+    if (fallback) fallback.hidden = true;
+    window.setTimeout(() => {
+      if (button.isConnected) button.textContent = copy.send;
+    }, 2200);
+    return;
+  }
+
+  if (status) status.textContent = `${copy.manual}${photoNote}`;
+  if (fallbackInput && fallback) {
+    fallbackInput.value = url;
+    fallback.hidden = false;
+    fallbackInput.focus();
+    fallbackInput.select();
+  }
 }
 
 export function shareUrlFor(item) {
@@ -345,6 +411,9 @@ export function openBooklet(item, updateUrl = true) {
   dialogContent.querySelector('[data-action="close"]')?.addEventListener('click', closeDialog);
   dialogContent.querySelector('[data-action="edit"]')?.addEventListener('click', openBookletEditor);
   dialogContent.querySelector('[data-action="print"]')?.addEventListener('click', openPrintSettings);
+  dialogContent.querySelector('[data-action="gift-link"]')?.addEventListener('click', event => {
+    sendGiftLink(item, event.currentTarget).catch(error => console.error(error));
+  });
   dialogContent.querySelector('[data-action="copy"]')?.addEventListener('click', event => {
     copyBookletShareLink(item, event.currentTarget);
   });
