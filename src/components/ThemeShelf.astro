@@ -28,7 +28,7 @@ const copy = isRu ? {
     {themes.map((theme) => {
       const preset = presets[theme.preset];
       return (
-        <button class="theme-tile" type="button" data-theme-topic={theme.topic}>
+        <button class="theme-tile" type="button" data-gift-template={theme.id} data-theme-topic={theme.topic}>
           <span class="gift-cover" data-preset={theme.preset} style={`--loud: .55;${theme.accent ? ` --gc-accent: ${theme.accent};` : ''}`} aria-hidden="true">
             <span class="gc-band">{preset.band}</span>
             <span class="gc-kicker">{preset.kicker}</span>
@@ -46,14 +46,3 @@ const copy = isRu ? {
     })}
   </div>
 </section>
-
-<script>
-  // Opens the starter editor and pre-fills the request topic for that theme.
-  document.querySelectorAll<HTMLButtonElement>('[data-theme-topic]').forEach((tile) => {
-    tile.addEventListener('click', () => {
-      const topic = document.querySelector<HTMLInputElement>('#booklet-topic');
-      if (topic) topic.value = tile.dataset.themeTopic || '';
-      document.querySelector<HTMLButtonElement>('#hero-create-btn')?.click();
-    });
-  });
-</script>

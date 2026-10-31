@@ -37,14 +37,14 @@ const copy = isRu ? {
     <h1>{copy.title}</h1>
     <p>{copy.text}</p>
     <div class="home-hero-actions">
-      <button class="primary-button" id="hero-create-btn" type="button">{copy.create}</button>
+      <button class="primary-button" type="button" data-gift-from-demo>{copy.create}</button>
       <a class="secondary-button" href="#collection">{copy.examples}</a>
     </div>
   </div>
 
   <div class="style-demo" aria-label={copy.demoLabel} data-style-demo data-default-name={defaultName}>
     <div class="style-demo-stage">
-      <div class="gift-cover" data-preset={first.id} style="--loud: .5" aria-hidden="true">
+      <div class="gift-cover" data-preset={first.id} data-template={first.template} style="--loud: .5" aria-hidden="true">
         <span class="gc-band">{first.band}</span>
         <span class="gc-kicker">{first.kicker}</span>
         <strong class="gc-title">{first.title.replace('{name}', defaultName)}</strong>
@@ -102,6 +102,7 @@ const copy = isRu ? {
       const preset = presets[Number(styleRange.value)] || presets[0];
       const name = nameInput.value.trim() || defaultName;
       cover.dataset.preset = preset.id;
+      cover.dataset.template = preset.template;
       setText('.gc-band', preset.band);
       setText('.gc-kicker', preset.kicker);
       setText('.gc-title', preset.title.replace('{name}', name));

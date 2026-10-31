@@ -17,6 +17,7 @@ import {
   copyText
 } from './utils.js';
 import { pagesFor, imagesForPage, getCurrentPage } from './collection.js';
+import { GENERATION_ENABLED } from './config.js';
 import { initializeBookletEditor, openBookletEditor, closeBookletEditor } from './editor.js';
 import { openPrintSettings, closePrintSettings, setPrintExportItem } from './pdf-exporter.js';
 
@@ -306,7 +307,7 @@ export function openBooklet(item, updateUrl = true) {
   if (!dialog || !dialogContent) return;
 
   dialog.classList.toggle('starter-draft-open', Boolean(item.isStarterDraft));
-  if (starterGenerateButton) starterGenerateButton.hidden = !item.isStarterDraft;
+  if (starterGenerateButton) starterGenerateButton.hidden = !item.isStarterDraft || !GENERATION_ENABLED;
   if (starterRequestPanel) starterRequestPanel.hidden = true;
 
   setPrintExportItem(item);

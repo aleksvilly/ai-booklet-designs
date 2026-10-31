@@ -1,0 +1,184 @@
+{
+  "schemaVersion": 1,
+  "note": "Hand-written gift booklet templates opened from the home-page theme shelf. {name} is replaced with the recipient's name. Captions are hints for the person making the gift and can be hidden in the editor.",
+  "templates": {
+    "horror": {
+      "profile": "horror-slasher",
+      "coverArchetype": "kinetic-type",
+      "pages": {
+        "en": [
+          { "module": "cover", "type": "cover", "layout": "full", "headlineScale": "extreme", "background": "dark-field", "typography": "condensed-headlines", "effect": "film-grain", "title": "{name}: the night nobody slept", "subtitle": "A horror double feature", "body": "Rated R for questionable snacks and screaming at the screen.", "caption": "Add a photo of {name} hiding behind a pillow." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "title": "For {name}", "subtitle": "Who watches with the lights off", "body": "And always says 'it wasn't that scary' at 3 a.m. with every light in the flat switched on." },
+          { "module": "giant_fact", "type": "facts", "layout": "poster", "headlineScale": "extreme", "background": "dark-field", "effect": "hard-shadow", "title": "312", "subtitle": "Films survived", "body": "Rough estimate. Includes the one we still don't talk about." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Do not go into the basement", "subtitle": "Rule No. 1", "body": "{name} always goes into the basement.", "caption": "Add your favourite movie-night photo here." },
+          { "module": "quote_page", "type": "quote", "layout": "asymmetric", "textAlign": "left", "headlineScale": "huge", "background": "textured", "effect": "torn-edge", "title": "“Just one more film.”", "subtitle": "— {name}, 1:47 a.m.", "body": "Famous last words." },
+          { "module": "closing", "type": "closing", "layout": "full", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "title": "The end?", "subtitle": "Sequel coming soon", "body": "Same couch. Same blanket. Something worse on the screen. We'll bring the popcorn." }
+        ],
+        "ru": [
+          { "module": "cover", "type": "cover", "layout": "full", "headlineScale": "extreme", "background": "dark-field", "typography": "condensed-headlines", "effect": "film-grain", "title": "{name}: ночь, когда никто не спал", "subtitle": "Двойной сеанс ужасов", "body": "18+ за сомнительные снеки и крики на экран.", "caption": "Добавьте фото, где {name} прячется за подушкой." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "title": "Для: {name}", "subtitle": "Смотрит хорроры без света", "body": "И всегда говорит «было не страшно» — в три часа ночи, при включённом свете во всей квартире." },
+          { "module": "giant_fact", "type": "facts", "layout": "poster", "headlineScale": "extreme", "background": "dark-field", "effect": "hard-shadow", "title": "312", "subtitle": "Фильмов пережито", "body": "Примерно. Включая тот, о котором мы до сих пор не говорим." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Не спускайся в подвал", "subtitle": "Правило № 1", "body": "{name} всегда спускается в подвал.", "caption": "Добавьте сюда любимое фото с киновечера." },
+          { "module": "quote_page", "type": "quote", "layout": "asymmetric", "textAlign": "left", "headlineScale": "huge", "background": "textured", "effect": "torn-edge", "title": "«Ещё один фильм — и спать».", "subtitle": "— {name}, 1:47 ночи", "body": "Знаменитые последние слова." },
+          { "module": "closing", "type": "closing", "layout": "full", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "title": "Конец?", "subtitle": "Продолжение следует", "body": "Тот же диван. Тот же плед. На экране — что-то ещё страшнее. Попкорн с нас." }
+        ]
+      }
+    },
+    "cs2": {
+      "profile": "gaming-editorial",
+      "coverArchetype": "neo-tech",
+      "pages": {
+        "en": [
+          { "module": "cover", "type": "cover", "layout": "full", "headlineScale": "extreme", "background": "grid-paper", "typography": "tech-mono", "effect": "glow-accent", "title": "{name}: Match MVP", "subtitle": "Season highlights", "body": "Round 30. One player left. You know how this ends.", "caption": "Add a screenshot of {name}'s best scoreboard." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "title": "GG, {name}", "subtitle": "For the one who always buys the AWP", "body": "Even on an eco round. Especially on an eco round." },
+          { "module": "giant_fact", "type": "facts", "layout": "grid", "headlineScale": "extreme", "background": "grid-paper", "effect": "oversized-number", "title": "1v4", "subtitle": "The clutch", "body": "Nobody on comms believed it. The replay is saved forever." },
+          { "module": "list_page", "type": "facts", "layout": "split", "headlineScale": "large", "background": "dark-field", "typography": "tech-mono", "title": "Loadout", "subtitle": "Never leaves spawn without", "body": "Energy drink. The headset with one working ear. Smoke lineups memorised for exactly one map. Unshakeable confidence.", "caption": "Swap in {name}'s real habits." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Rush B?", "subtitle": "Strategy meeting", "body": "Every plan starts with 'trust me'.", "caption": "Add a photo of {name}'s setup." },
+          { "module": "closing", "type": "closing", "layout": "full", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "effect": "glow-accent", "title": "Rematch tomorrow", "subtitle": "Same squad", "body": "Queue up, {name}. We'll take the next one together." }
+        ],
+        "ru": [
+          { "module": "cover", "type": "cover", "layout": "full", "headlineScale": "extreme", "background": "grid-paper", "typography": "tech-mono", "effect": "glow-accent", "title": "{name}: MVP матча", "subtitle": "Лучшие моменты сезона", "body": "Раунд 30. Один игрок в живых. Вы знаете, чем всё закончится.", "caption": "Добавьте скриншот лучшей таблицы." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "title": "GG, {name}", "subtitle": "Для того, кто всегда покупает AWP", "body": "Даже на эко-раунде. Особенно на эко-раунде." },
+          { "module": "giant_fact", "type": "facts", "layout": "grid", "headlineScale": "extreme", "background": "grid-paper", "effect": "oversized-number", "title": "1 на 4", "subtitle": "Тот самый клатч", "body": "В войсе никто не верил. Повтор сохранён навсегда." },
+          { "module": "list_page", "type": "facts", "layout": "split", "headlineScale": "large", "background": "dark-field", "typography": "tech-mono", "title": "Снаряжение", "subtitle": "Без этого — никуда", "body": "Энергетик. Наушники, где работает одно ухо. Раскидки смоков ровно для одной карты. Непоколебимая уверенность.", "caption": "Замените на настоящие привычки." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Раш Б?", "subtitle": "Тактическое совещание", "body": "Каждый план начинается со слов «доверься мне».", "caption": "Добавьте фото игрового места." },
+          { "module": "closing", "type": "closing", "layout": "full", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "effect": "glow-accent", "title": "Реванш завтра", "subtitle": "Тем же составом", "body": "Заходи в лобби, {name}. Следующую катку берём вместе." }
+        ]
+      }
+    },
+    "pubg": {
+      "profile": "gaming-editorial",
+      "coverArchetype": "poster-grid",
+      "palette": ["#14110b", "#f2a900", "#5b4a1f", "#f5ecd7"],
+      "pages": {
+        "en": [
+          { "module": "cover", "type": "cover", "layout": "full", "headlineScale": "extreme", "background": "dark-field", "typography": "condensed-headlines", "title": "Winner winner, {name}", "subtitle": "Squad report", "body": "100 dropped in. One name on the screen at the end.", "caption": "Add {name}'s best victory screenshot." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "textured", "title": "For {name}", "subtitle": "Always jumps last, always lives longest", "body": "And still has three energy drinks and a full medkit in the final circle." },
+          { "module": "giant_fact", "type": "facts", "layout": "poster", "headlineScale": "extreme", "background": "dark-field", "effect": "oversized-number", "title": "#1", "subtitle": "Final placement", "body": "Out of 100. Under fire. On 9% battery." },
+          { "module": "timeline_page", "type": "timeline", "layout": "vertical", "headlineScale": "large", "background": "grid-paper", "title": "The match, minute by minute", "subtitle": "Reconstructed from voice chat", "body": "00:00 'Let's drop hot.' 04:12 'Why is it so hot?' 19:40 'Who has a car?' 27:05 'I'm on it.' 31:58 Chicken dinner.", "caption": "Rewrite with a real match you played together." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "The last circle", "subtitle": "Where legends are made", "body": "Prone in the grass. Breathing very quietly.", "caption": "Add a squad photo here." },
+          { "module": "closing", "type": "closing", "layout": "full", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "title": "Ready for the next drop", "subtitle": "Same squad", "body": "Lobby's open, {name}. Pick the spot." }
+        ],
+        "ru": [
+          { "module": "cover", "type": "cover", "layout": "full", "headlineScale": "extreme", "background": "dark-field", "typography": "condensed-headlines", "title": "Winner winner, {name}", "subtitle": "Отчёт отряда", "body": "Высадились сто. В конце на экране одно имя.", "caption": "Добавьте скриншот лучшей победы." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "textured", "title": "Для: {name}", "subtitle": "Прыгает последним, живёт дольше всех", "body": "И в финальной зоне всё ещё с тремя энергетиками и полной аптечкой." },
+          { "module": "giant_fact", "type": "facts", "layout": "poster", "headlineScale": "extreme", "background": "dark-field", "effect": "oversized-number", "title": "№1", "subtitle": "Итоговое место", "body": "Из ста. Под огнём. С 9% заряда." },
+          { "module": "timeline_page", "type": "timeline", "layout": "vertical", "headlineScale": "large", "background": "grid-paper", "title": "Матч по минутам", "subtitle": "Восстановлено по войсу", "body": "00:00 «Прыгаем в замес». 04:12 «Почему тут так жарко?» 19:40 «У кого машина?» 27:05 «Я его вижу». 31:58 Топ-1.", "caption": "Перепишите на реальный матч, сыгранный вместе." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Последняя зона", "subtitle": "Здесь рождаются легенды", "body": "Лёжа в траве. Дыша очень тихо.", "caption": "Добавьте сюда фото отряда." },
+          { "module": "closing", "type": "closing", "layout": "full", "textAlign": "center", "headlineScale": "large", "background": "dark-field", "title": "Готовы к следующей высадке", "subtitle": "Тем же отрядом", "body": "Лобби открыто, {name}. Выбирай точку." }
+        ]
+      }
+    },
+    "cinema": {
+      "profile": "black-white-noir",
+      "coverArchetype": "classic-book",
+      "fonts": ["Cormorant Garamond", "Playfair Display", "IBM Plex Mono"],
+      "pages": {
+        "en": [
+          { "module": "cover", "type": "cover", "layout": "minimal", "textAlign": "center", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "effect": "grain-texture", "title": "Un film di {name}", "subtitle": "Rome · Paris · 1962", "body": "A small book of long scarves, black coffee and films with subtitles.", "caption": "Add a black-and-white photo of {name}." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "paper", "typography": "huge-serif", "title": "Per {name}", "subtitle": "Pour {name}", "body": "Who taught us that a film can be two hours of people talking in a kitchen and still be the best thing we saw all year." },
+          { "module": "list_page", "type": "editorial", "layout": "split", "headlineScale": "large", "background": "paper", "typography": "mixed-serif-sans", "title": "The programme", "subtitle": "Tonight's double feature", "body": "La dolce vita. Breathless. 8½. Cléo from 5 to 7. An espresso between reels.", "caption": "Replace with {name}'s real favourites." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "effect": "grain-texture", "title": "Fontana di Trevi, 3 a.m.", "subtitle": "Scene 14", "body": "No permit. No crew. Just the two of us and a camera.", "caption": "Add a travel photo that feels like a film still." },
+          { "module": "quote_page", "type": "quote", "layout": "asymmetric", "textAlign": "left", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "title": "“Life is a party. Let's live it together.”", "subtitle": "— borrowed for {name}", "body": "Subtitles not included." },
+          { "module": "closing", "type": "closing", "layout": "minimal", "textAlign": "center", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "title": "Fine", "subtitle": "Fin", "body": "The lights come up. Nobody leaves. One more film, {name}?" }
+        ],
+        "ru": [
+          { "module": "cover", "type": "cover", "layout": "minimal", "textAlign": "center", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "effect": "grain-texture", "title": "Un film di {name}", "subtitle": "Рим · Париж · 1962", "body": "Маленькая книга о длинных шарфах, чёрном кофе и фильмах с субтитрами.", "caption": "Добавьте чёрно-белое фото." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "paper", "typography": "huge-serif", "title": "Per {name}", "subtitle": "Pour {name}", "body": "Человеку, который научил нас: фильм может два часа показывать разговор на кухне — и всё равно быть лучшим за год." },
+          { "module": "list_page", "type": "editorial", "layout": "split", "headlineScale": "large", "background": "paper", "typography": "mixed-serif-sans", "title": "Программа", "subtitle": "Двойной сеанс", "body": "«Сладкая жизнь». «На последнем дыхании». «8½». «Клео от 5 до 7». Эспрессо между частями.", "caption": "Замените на настоящие любимые фильмы." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "effect": "grain-texture", "title": "Фонтан Треви, 3 часа ночи", "subtitle": "Сцена 14", "body": "Без разрешения. Без съёмочной группы. Только мы и камера.", "caption": "Добавьте фото из поездки, похожее на кадр из фильма." },
+          { "module": "quote_page", "type": "quote", "layout": "asymmetric", "textAlign": "left", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "title": "«Жизнь — это праздник. Проживём её вместе».", "subtitle": "— посвящается: {name}", "body": "Субтитры не прилагаются." },
+          { "module": "closing", "type": "closing", "layout": "minimal", "textAlign": "center", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "title": "Fine", "subtitle": "Fin", "body": "Зажигается свет. Никто не уходит. Ещё один фильм, {name}?" }
+        ]
+      }
+    },
+    "news": {
+      "profile": "euronews-inspired",
+      "coverArchetype": "magazine",
+      "pages": {
+        "en": [
+          { "module": "cover", "type": "cover", "layout": "newspaper", "headlineScale": "extreme", "background": "pure", "typography": "clean-sans", "title": "Breaking: {name} named friend of the year", "subtitle": "Special edition", "body": "Sources close to the group confirm it. Celebrations are expected to continue all night.", "caption": "Add a portrait of {name} — it's the front page." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "headlineScale": "large", "background": "pure", "title": "Editor's note", "subtitle": "Why this story matters", "body": "Some people make the news. {name} makes everyone's week better, which is frankly a bigger story." },
+          { "module": "giant_fact", "type": "facts", "layout": "grid", "headlineScale": "extreme", "background": "grid-paper", "effect": "oversized-number", "title": "98%", "subtitle": "Approval rating", "body": "The remaining 2% were busy and promise to vote next time." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Live from the scene", "subtitle": "Eyewitness photo", "body": "Our reporter arrived just in time to see {name} order dessert first.", "caption": "Add the funniest candid photo you have." },
+          { "module": "quote_page", "type": "quote", "layout": "split", "headlineScale": "large", "background": "pure", "title": "“No comment.”", "subtitle": "— {name}, asked about the rumours", "body": "Our team will keep investigating." },
+          { "module": "closing", "type": "closing", "layout": "newspaper", "headlineScale": "large", "background": "pure", "title": "More at eleven", "subtitle": "This story is developing", "body": "Stay tuned for the next chapter. Same channel, same {name}." }
+        ],
+        "ru": [
+          { "module": "cover", "type": "cover", "layout": "newspaper", "headlineScale": "extreme", "background": "pure", "typography": "clean-sans", "title": "Срочно: {name} — друг года", "subtitle": "Специальный выпуск", "body": "Источники в компании подтверждают. Празднование продолжится всю ночь.", "caption": "Добавьте портрет — это первая полоса." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "headlineScale": "large", "background": "pure", "title": "Слово редактора", "subtitle": "Почему это важно", "body": "Одни люди попадают в новости. {name} делает лучше неделю всех вокруг — и это, честно говоря, новость покрупнее." },
+          { "module": "giant_fact", "type": "facts", "layout": "grid", "headlineScale": "extreme", "background": "grid-paper", "effect": "oversized-number", "title": "98%", "subtitle": "Рейтинг одобрения", "body": "Оставшиеся 2% были заняты и обещают проголосовать в следующий раз." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Прямое включение", "subtitle": "Фото очевидца", "body": "Наш корреспондент успел увидеть, как {name} заказывает десерт раньше основного блюда.", "caption": "Добавьте самое смешное случайное фото." },
+          { "module": "quote_page", "type": "quote", "layout": "split", "headlineScale": "large", "background": "pure", "title": "«Без комментариев».", "subtitle": "— {name} о слухах", "body": "Наша команда продолжает расследование." },
+          { "module": "closing", "type": "closing", "layout": "newspaper", "headlineScale": "large", "background": "pure", "title": "Подробности в 23:00", "subtitle": "История развивается", "body": "Следите за продолжением. Тот же канал, и снова {name}." }
+        ]
+      }
+    },
+    "five-star": {
+      "profile": "marketplace-modular",
+      "coverArchetype": "split-object",
+      "pages": {
+        "en": [
+          { "module": "cover", "type": "cover", "layout": "catalog", "headlineScale": "huge", "background": "pure", "typography": "clean-sans", "title": "{name}", "subtitle": "★★★★★ 4.9 · 2,481 reviews", "body": "#1 Best seller in Friends. Only 1 left in stock — and it's not for sale.", "caption": "Add a 'product photo' of {name}." },
+          { "module": "list_page", "type": "facts", "layout": "split", "headlineScale": "large", "background": "pure", "title": "About this item", "subtitle": "Key features", "body": "Shows up on time (usually). Remembers your birthday. Excellent hugs. Water-resistant to bad news. Battery lasts until 4 a.m.", "caption": "Edit the features list." },
+          { "module": "giant_fact", "type": "facts", "layout": "grid", "headlineScale": "extreme", "background": "grid-paper", "effect": "oversized-number", "title": "4.9", "subtitle": "Customer rating", "body": "Lost 0.1 for eating the last slice of pizza. Once." },
+          { "module": "quote_page", "type": "quote", "layout": "split", "headlineScale": "large", "background": "pure", "title": "“Would befriend again.”", "subtitle": "★★★★★ Verified friend", "body": "Arrived years ago, still works perfectly. Highly recommend to anyone who needs a good laugh.", "caption": "Write real reviews from your friends." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Customer photos", "subtitle": "Real people, real moments", "body": "Unboxed at a party in 2019. Still the best purchase ever made.", "caption": "Add group photos here." },
+          { "module": "closing", "type": "closing", "layout": "catalog", "textAlign": "center", "headlineScale": "large", "background": "pure", "title": "Frequently kept together", "subtitle": "{name} + all of us", "body": "Free delivery of hugs. No returns accepted." }
+        ],
+        "ru": [
+          { "module": "cover", "type": "cover", "layout": "catalog", "headlineScale": "huge", "background": "pure", "typography": "clean-sans", "title": "{name}", "subtitle": "★★★★★ 4,9 · 2 481 отзыв", "body": "Хит продаж №1 в категории «Друзья». Осталась одна штука — и она не продаётся.", "caption": "Добавьте «фото товара» — {name}." },
+          { "module": "list_page", "type": "facts", "layout": "split", "headlineScale": "large", "background": "pure", "title": "Описание товара", "subtitle": "Характеристики", "body": "Приходит вовремя (обычно). Помнит про ваш день рождения. Отличные объятия. Не боится плохих новостей. Батарея держит до четырёх утра.", "caption": "Отредактируйте список характеристик." },
+          { "module": "giant_fact", "type": "facts", "layout": "grid", "headlineScale": "extreme", "background": "grid-paper", "effect": "oversized-number", "title": "4,9", "subtitle": "Оценка покупателей", "body": "Минус 0,1 за последний кусок пиццы. Один раз." },
+          { "module": "quote_page", "type": "quote", "layout": "split", "headlineScale": "large", "background": "pure", "title": "«Дружить снова — однозначно».", "subtitle": "★★★★★ Проверенный друг", "body": "Получен много лет назад, работает идеально. Рекомендую всем, кому нужно посмеяться.", "caption": "Напишите настоящие отзывы друзей." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Фото покупателей", "subtitle": "Настоящие люди, настоящие моменты", "body": "Распакован на вечеринке в 2019-м. До сих пор лучшая покупка.", "caption": "Добавьте сюда общие фото." },
+          { "module": "closing", "type": "closing", "layout": "catalog", "textAlign": "center", "headlineScale": "large", "background": "pure", "title": "Часто берут вместе", "subtitle": "{name} + все мы", "body": "Бесплатная доставка объятий. Возврат не принимается." }
+        ]
+      }
+    },
+    "birthday": {
+      "profile": "kids-party-pop",
+      "coverArchetype": "children-cutout",
+      "pages": {
+        "en": [
+          { "module": "cover", "type": "cover", "layout": "full", "headlineScale": "extreme", "background": "gradient", "typography": "playful-rounded", "effect": "floating-object", "title": "Happy birthday, {name}!", "subtitle": "Cake first, questions later", "body": "A loud little book for a loud big day.", "caption": "Add {name}'s best birthday photo." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "gradient", "typography": "playful-rounded", "title": "Dear {name}", "subtitle": "From all of us", "body": "Another year of being the person everyone wants at the party. Thank you for being exactly you." },
+          { "module": "giant_fact", "type": "facts", "layout": "poster", "headlineScale": "extreme", "background": "gradient", "effect": "oversized-number", "title": "30", "subtitle": "Candles", "body": "Fire department has been notified, just in case.", "caption": "Change the number to the real age." },
+          { "module": "list_page", "type": "facts", "layout": "split", "headlineScale": "large", "background": "pure", "typography": "playful-rounded", "title": "Wishes", "subtitle": "This year {name} gets", "body": "More sleep. Better coffee. A trip somewhere warm. Zero group-chat drama. The last slice, guilt-free.", "caption": "Ask friends to add their wishes." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "effect": "tilted-photo", "title": "Party evidence", "subtitle": "Exhibit A", "body": "Photos may be used in future birthday speeches.", "caption": "Add party photos — the more the better." },
+          { "module": "closing", "type": "closing", "layout": "full", "textAlign": "center", "headlineScale": "huge", "background": "gradient", "typography": "playful-rounded", "title": "See you next year!", "subtitle": "Same people, bigger cake", "body": "Love you, {name}." }
+        ],
+        "ru": [
+          { "module": "cover", "type": "cover", "layout": "full", "headlineScale": "extreme", "background": "gradient", "typography": "playful-rounded", "effect": "floating-object", "title": "С днём рождения, {name}!", "subtitle": "Сначала торт, потом вопросы", "body": "Громкая маленькая книга для громкого большого дня.", "caption": "Добавьте лучшее праздничное фото." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "gradient", "typography": "playful-rounded", "title": "Дорогой человек по имени {name}", "subtitle": "От всех нас", "body": "Ещё один год, когда все хотят видеть тебя на вечеринке. Спасибо, что ты именно такой человек." },
+          { "module": "giant_fact", "type": "facts", "layout": "poster", "headlineScale": "extreme", "background": "gradient", "effect": "oversized-number", "title": "30", "subtitle": "Свечей", "body": "Пожарные предупреждены — на всякий случай.", "caption": "Поменяйте число на настоящий возраст." },
+          { "module": "list_page", "type": "facts", "layout": "split", "headlineScale": "large", "background": "pure", "typography": "playful-rounded", "title": "Пожелания", "subtitle": "{name}, в этом году тебя ждут", "body": "Больше сна. Вкуснее кофе. Поездка туда, где тепло. Ноль драмы в общем чате. Последний кусок — без угрызений совести.", "caption": "Попросите друзей дописать свои пожелания." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "effect": "tilted-photo", "title": "Улики с вечеринки", "subtitle": "Вещдок А", "body": "Фото могут быть использованы в будущих тостах.", "caption": "Добавьте фото с праздника — чем больше, тем лучше." },
+          { "module": "closing", "type": "closing", "layout": "full", "textAlign": "center", "headlineScale": "huge", "background": "gradient", "typography": "playful-rounded", "title": "До встречи через год!", "subtitle": "Те же люди, торт побольше", "body": "Любим тебя, {name}." }
+        ]
+      }
+    },
+    "love": {
+      "profile": "wedding-editorial",
+      "coverArchetype": "luxury-minimal",
+      "pages": {
+        "en": [
+          { "module": "cover", "type": "cover", "layout": "minimal", "textAlign": "center", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "title": "A small book about {name}", "subtitle": "Volume I", "body": "Printed in one copy, for one person.", "caption": "Add your favourite photo of the two of you." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "paper", "typography": "huge-serif", "title": "For {name}", "subtitle": "with love", "body": "Some things are easier to write than to say out loud. These pages are full of them." },
+          { "module": "timeline_page", "type": "timeline", "layout": "vertical", "headlineScale": "large", "background": "paper", "typography": "mixed-serif-sans", "title": "Our story so far", "subtitle": "In a few small moments", "body": "The first message. The first trip. The first argument about the map. The first time it felt like home.", "caption": "Replace with your real dates and moments." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "This one", "subtitle": "My favourite picture", "body": "Not because it's perfect. Because you're laughing.", "caption": "Add the photo you always come back to." },
+          { "module": "quote_page", "type": "quote", "layout": "asymmetric", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "title": "“Home is wherever you are.”", "subtitle": "— for {name}", "body": "Still true. Every single day." },
+          { "module": "closing", "type": "closing", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "paper", "typography": "huge-serif", "title": "To be continued", "subtitle": "Volume II is already being written", "body": "Thank you, {name}." }
+        ],
+        "ru": [
+          { "module": "cover", "type": "cover", "layout": "minimal", "textAlign": "center", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "title": "Маленькая книга о тебе, {name}", "subtitle": "Том I", "body": "Напечатано в одном экземпляре, для одного человека.", "caption": "Добавьте любимое общее фото." },
+          { "module": "dedication_page", "type": "quote", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "paper", "typography": "huge-serif", "title": "Для: {name}", "subtitle": "с любовью", "body": "Некоторые вещи легче написать, чем сказать вслух. Эти страницы полны ими." },
+          { "module": "timeline_page", "type": "timeline", "layout": "vertical", "headlineScale": "large", "background": "paper", "typography": "mixed-serif-sans", "title": "Наша история", "subtitle": "В нескольких маленьких моментах", "body": "Первое сообщение. Первая поездка. Первый спор из-за карты. Первый раз, когда стало по-настоящему как дома.", "caption": "Замените на ваши настоящие даты и моменты." },
+          { "module": "hero_photo", "type": "full_bleed", "layout": "full", "headlineScale": "huge", "background": "photo-based", "title": "Вот это", "subtitle": "Моё любимое фото", "body": "Не потому что идеальное. Потому что ты смеёшься.", "caption": "Добавьте фото, к которому вы всегда возвращаетесь." },
+          { "module": "quote_page", "type": "quote", "layout": "asymmetric", "headlineScale": "huge", "background": "paper", "typography": "huge-serif", "title": "«Дом — там, где ты».", "subtitle": "— посвящается: {name}", "body": "Всё ещё правда. Каждый день." },
+          { "module": "closing", "type": "closing", "layout": "minimal", "textAlign": "center", "headlineScale": "large", "background": "paper", "typography": "huge-serif", "title": "Продолжение следует", "subtitle": "Том II уже пишется", "body": "Спасибо тебе, {name}." }
+        ]
+      }
+    }
+  }
+}

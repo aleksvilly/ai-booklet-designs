@@ -18,6 +18,7 @@ import { setupEditorEventListeners } from './editor.js';
 import { setupPdfEvents } from './pdf-exporter.js';
 import { initQueueSystem } from './queue.js';
 import { initStarterComposer } from './starter-composer.js';
+import { initGiftTemplates } from './gift-templates.js';
 
 function setupLanguagePicker() {
   const langToggle = document.querySelector('#lang-toggle');
@@ -95,6 +96,7 @@ export async function initApp() {
 
   initCollection(booklets);
   initStarterComposer();
+  initGiftTemplates();
 
   const requestedId = new URL(window.location.href).searchParams.get('booklet');
   const requested = booklets.find(item => item.id === requestedId && isPublished(item));

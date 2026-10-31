@@ -1989,7 +1989,10 @@ export function syncBookletEditorControls() {
   if (controls.editorScopeCompact && controls.editorScope) {
     controls.editorScopeCompact.value = controls.editorScope.value;
   }
-  if (controls.editorProfile) controls.editorProfile.value = get('profile');
+  if (controls.editorProfile) {
+    controls.editorProfile.value = get('profile');
+    syncEditorSliderSelect(controls.editorProfile);
+  }
   if (controls.editorVisualMode) controls.editorVisualMode.value = get('visualMode');
   if (controls.editorLayoutComplexity) controls.editorLayoutComplexity.value = get('layoutComplexity');
   const activePagePhotoCount = pagePhotos(index).length;

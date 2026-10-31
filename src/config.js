@@ -7,6 +7,10 @@ export const EDITOR_COMPACT_STORAGE_KEY = 'ai-booklet-editor-compact-v1';
 export const PRINT_MODE_STORAGE_KEY = 'ai-booklet-print-mode-v1';
 export const ITEMS_PER_PAGE = 9;
 
+// AI generation (ntfy queue → GitHub workflows) is paused. Set to true when
+// poll-public-queue.yml and publish.yml are enabled again.
+export const GENERATION_ENABLED = false;
+
 export const WAITING_GIFS = [
   'https://media.giphy.com/media/13HgwGsXF0aiGY/giphy.gif',
   'https://media.giphy.com/media/LmNwrBhejkK9EFP504/giphy.gif',

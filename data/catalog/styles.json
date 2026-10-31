@@ -285,6 +285,36 @@
       }
     },
     {
+      "id": "black-white-noir",
+      "groupId": "entertainment",
+      "labels": { "en": "Black-and-white cinematic noir", "ru": "Чёрно-белый кинонуар" },
+      "topicAffinity": ["culture/cinema"],
+      "lockUntilChaos": 5,
+      "source": { "kind": "original" },
+      "generator": {
+        "weight": 7,
+        "eras": ["1960s", "1990s", "2026"],
+        "layouts": ["cinematic", "full", "split"],
+        "typography": ["huge-serif", "condensed-headlines", "tiny-editorial"],
+        "colors": ["black-white", "inverted"],
+        "effects": ["film-grain", "hard-light", "mirrored-layout"]
+      },
+      "contract": {
+        "archetypes": ["poster-book", "gift-booklet"],
+        "palette": ["#09090b", "#fafafa", "#a1a1aa", "#27272a"],
+        "typography": ["huge-serif"],
+        "fonts": ["Cormorant Garamond", "IBM Plex Mono"],
+        "layouts": ["minimal", "full", "asymmetric"],
+        "layoutSystems": ["full-bleed", "asymmetric-modern"],
+        "imageTreatments": ["black-white-photo", "grainy-photo"],
+        "shapeLanguages": ["geometric"],
+        "backgrounds": ["dark-field", "paper"],
+        "rhythms": ["cinematic"],
+        "effects": ["film-grain", "grain-texture"],
+        "covers": ["classic-book", "full-photo"]
+      }
+    },
+    {
       "id": "horror-slasher",
       "groupId": "entertainment",
       "labels": { "en": "Horror & slasher zine", "ru": "Хоррор и слэшер" },

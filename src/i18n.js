@@ -460,8 +460,10 @@ export function setLanguage(lang) {
 }
 
 export function initI18n() {
+  // Each language has its own URL, so the server-rendered <html lang> wins.
+  const pageLang = (document.documentElement.lang || '').slice(0, 2).toLowerCase();
   const saved = localStorage.getItem('user_lang');
   const navLang = (navigator.language || 'en').slice(0, 2).toLowerCase();
-  const initial = saved || (TRANSLATIONS[navLang] ? navLang : 'en');
+  const initial = TRANSLATIONS[pageLang] ? pageLang : saved || (TRANSLATIONS[navLang] ? navLang : 'en');
   setLanguage(initial);
 }

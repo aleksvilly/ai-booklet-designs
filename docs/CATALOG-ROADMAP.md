@@ -52,6 +52,12 @@
       booklet categories: scalable directory, three-booklet category shelves,
       dedicated bilingual SEO routes for every category, full-category links,
       generated sitemap entries and compact interactive editorial interludes.
+- [x] Gift templates (`data/gift-templates.json`): eight hand-written,
+      bilingual six-page booklets (horror, CS2, PUBG Mobile, Italian & French
+      cinema, news, five-star friend, birthday, love) opened from the home-page
+      theme shelf in the live editor with the recipient's name filled in.
+- [x] `black-white-noir` promoted from a legacy generator array into the style
+      catalog so the editor can label and select it.
 
 ## In progress
 
@@ -69,6 +75,8 @@
 - [ ] Add effect controls to the live booklet/spread/page editor.
 - [ ] Add per-property inheritance indicators and a one-tap “return to parent”.
 - [ ] Save an edited booklet as a reusable personal template.
+- [ ] Shareable gift links: persist an edited gift booklet so a friend can open it.
+- [ ] Pass the home demo's quiet/loud value into the gift template's effect level.
 - [ ] Photo manager V2: protected Unsplash/Pexels search proxy with provider
       attribution and required download tracking.
 - [ ] Photo manager V3: drag-and-drop ordering, crop/focal-point controls and
