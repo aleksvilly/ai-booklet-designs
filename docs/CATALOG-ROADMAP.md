@@ -65,6 +65,8 @@
       for Euronews, Horror, Gaming, Kids party, Wedding, Marketplace, Noir and
       a default set, controlled in the editor by five sliders (amount, size,
       position, page variation, colour).
+- [x] Per-element control: pick an element (list or tap on the page) and its
+      size, position, variation, colour and visibility apply to it alone.
 - [x] Element sets for all 22 catalog styles; hard-coded page decorations
       (`.book-page::before/::after`) moved into elements.
 - [x] `black-white-noir` promoted from a legacy generator array into the style
@@ -84,7 +86,6 @@
 - [ ] Recommend a stable style from topic affinity when profile is Automatic.
 - [ ] Add a style wheel: group → family → preset → intensity.
 - [ ] Add effect controls to the live booklet/spread/page editor.
-- [ ] Per-element controls (pick one element and move/resize only it).
 - [ ] Drive the home-page demo cover from the same style-elements catalog.
 - [ ] Add per-property inheritance indicators and a one-tap “return to parent”.
 - [ ] Save an edited booklet as a reusable personal template.

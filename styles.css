@@ -5178,3 +5178,11 @@ footer a { text-underline-offset: 3px; }
   box-shadow: 0 calc(var(--se-size) * .09) calc(var(--se-size) * .14) rgba(0, 0, 0, .18); }
 .se-tapebit { aspect-ratio: 3.6; background: currentColor; background-image: repeating-linear-gradient(45deg, transparent 0 8%, rgba(255, 255, 255, .28) 8% 13%);
   clip-path: polygon(2% 0, 98% 5%, 100% 50%, 97% 100%, 3% 95%, 0 50%); }
+
+/* Per-element editing: tap a point or edge element to select it. Fill elements
+   cover the whole page, so they stay click-through and are picked from the list. */
+.booklet-dialog.editor-is-open .style-elements .se-point,
+.booklet-dialog.editor-is-open .style-elements .se-edge { pointer-events: auto; cursor: pointer; }
+.booklet-dialog.editor-is-open .se-selected { outline: 2px dashed #38bdf8; outline-offset: 3px; }
+.booklet-dialog.editor-is-open .se-fill.se-selected { outline-offset: -6px; }
+.booklet-editor [data-editor-parameter][hidden] { display: none !important; }

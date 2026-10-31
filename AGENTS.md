@@ -450,7 +450,11 @@ Current parameter families include:
 - style elements: amount, size, position around the page edge, page
   variation and colour (palette slot). These work for every style and follow
   the booklet → spread → page chain. Layout is seeded per page, so the same
-  booklet always renders the same way. Do not hard-code page decorations with
+  booklet always renders the same way. Choosing one element in "Adjust"
+  (or tapping it on the page) scopes the sliders to it via flat state keys
+  `element:<id>:scale|position|variation|color|visible`; visible is
+  auto | show | hide. Fill-kind elements stay click-through so they never
+  block page taps. Do not hard-code page decorations with
   `.book-page::before/::after` in a profile; add them as style elements.
 - page complexity and image count;
 - Photo Layout and layout intensity;

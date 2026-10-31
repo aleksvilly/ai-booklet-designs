@@ -272,9 +272,23 @@ const photoCopy = isRussian ? {
 
         <fieldset class="editor-group">
           <legend>Style elements</legend>
+          <label class="editor-range" data-editor-parameter="elementTarget">
+            <span>Adjust</span>
+            <select id="editor-element-target">
+              <option value="all">All elements</option>
+            </select>
+          </label>
           <label class="editor-range" data-editor-parameter="elementAmount">
             <span>Elements <output id="editor-element-amount-output">2</output> / 5</span>
             <input id="editor-element-amount" type="range" min="0" max="5" value="2">
+          </label>
+          <label class="editor-range" data-editor-parameter="elementVisibility" hidden>
+            <span>Show element</span>
+            <select id="editor-element-visibility">
+              <option value="auto">Auto (by amount)</option>
+              <option value="show">Always</option>
+              <option value="hide">Hidden</option>
+            </select>
           </label>
           <label class="editor-range" data-editor-parameter="elementScale">
             <span>Element size <output id="editor-element-scale-output">0</output>%</span>

@@ -1,4 +1,4 @@
-import { renderStyleElements, defaultElementAmount } from './style-elements.js';
+import { renderStyleElements, defaultElementAmount, styleElementSet, elementLabel } from './style-elements.js';
 import { EDITOR_STORAGE_PREFIX, EDITOR_COMPACT_STORAGE_KEY } from './config.js';
 import { safeUrl, safeClass, fontStack, loadGoogleFonts } from './utils.js';
 import { pagesFor, imagesForPage } from './collection.js';
@@ -17,6 +17,9 @@ let editorSession = null;
 let editorSaveTimer = null;
 let editorParameterIndex = 0;
 let editorTypographyTarget = 'title';
+// 'all', or the id of one style element whose sliders are being adjusted.
+let editorElementTarget = 'all';
+let editorElementTargetsProfile = null;
 let editorTypographyLevel = 'targets';
 let editorTypographySetting = null;
 let editorParameterMenuOpen = false;
@@ -57,6 +60,8 @@ const editorLoremSentences = [
 ];
 
 const PARAM_ICONS = {
+  elementTarget: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7 18 2.5-7.5L20 11z"/></svg>`,
+  elementVisibility: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>`,
   elementAmount: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="7" cy="7" r="3"/><rect x="14" y="4" width="6" height="6" rx="1"/><path d="m7 14 3.5 6h-7z"/><path d="M14 17h6"/></svg>`,
   elementScale: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="15" r="3"/><circle cx="15" cy="9" r="6"/></svg>`,
   elementPosition: `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="17" cy="7" r="2"/><path d="M8 3a5 5 0 0 0-5 5"/></svg>`,
@@ -151,6 +156,8 @@ function getEditorControls() {
     editorTypographySettingEditor: document.querySelector('#editor-typography-setting-editor'),
     editorSpacing: document.querySelector('#editor-spacing'),
     editorEffectLevel: document.querySelector('#editor-effect-level'),
+    editorElementTarget: document.querySelector('#editor-element-target'),
+    editorElementVisibility: document.querySelector('#editor-element-visibility'),
     editorElementAmount: document.querySelector('#editor-element-amount'),
     editorElementAmountOutput: document.querySelector('#editor-element-amount-output'),
     editorElementScale: document.querySelector('#editor-element-scale'),
@@ -382,6 +389,57 @@ function syncEditorTypographyTargets(get, controls = getEditorControls()) {
   }
 }
 
+function editorElementTargetValue() {
+  return editorElementTarget || 'all';
+}
+
+const ELEMENT_OVERRIDE_PROPS = { elementScale: 'scale', elementPosition: 'position', elementVariation: 'variation', elementColor: 'color', elementVisibility: 'visible' };
+
+// Editor state key for a style-element slider: shared, or scoped to the selected element.
+function elementSettingKey(key, target = editorElementTargetValue()) {
+  const prop = ELEMENT_OVERRIDE_PROPS[key];
+  if (!prop || (target === 'all' && key !== 'elementVisibility')) return key;
+  return `element:${target}:${prop}`;
+}
+
+function elementOverridesFor(profile, pageIndex) {
+  const overrides = {};
+  (styleElementSet(profile)?.elements || []).forEach(element => {
+    const own = {};
+    Object.entries(ELEMENT_OVERRIDE_PROPS).forEach(([key, prop]) => {
+      const settingKey = `element:${element.id}:${prop}`;
+      if (hasEditorOverride(settingKey, pageIndex)) own[prop] = resolvedEditorSetting(settingKey, pageIndex);
+    });
+    if (Object.keys(own).length) overrides[element.id] = own;
+  });
+  return overrides;
+}
+
+// Fills the element picker for the active style; keeps the selection if it still exists.
+function populateElementTargets(force = false) {
+  const { editorElementTarget: select, editorElementAmount, editorElementVisibility } = getEditorControls();
+  if (!select || !editorSession) return;
+  const profile = resolvedEditorSetting('profile', 0);
+  if (force || editorElementTargetsProfile !== profile) {
+    editorElementTargetsProfile = profile;
+    const elements = styleElementSet(profile)?.elements || [];
+    select.replaceChildren(new Option('All elements', 'all'), ...elements.map(element => new Option(elementLabel(element), element.id)));
+    if (!elements.some(element => element.id === editorElementTarget)) editorElementTarget = 'all';
+    bindStyleSlider(select);
+  }
+  select.value = editorElementTargetValue();
+  syncEditorSliderSelect(select);
+  editorElementAmount?.closest('label')?.toggleAttribute('hidden', editorElementTargetValue() !== 'all');
+  editorElementVisibility?.closest('label')?.toggleAttribute('hidden', editorElementTargetValue() === 'all');
+}
+
+export function selectEditorElement(id) {
+  editorElementTarget = id || 'all';
+  populateElementTargets();
+  applyBookletEditorState();
+  syncBookletEditorControls();
+}
+
 export function availableEditorParameters() {
   const {
     editorScope, editorProfile, editorVisualMode, editorLayoutComplexity,
@@ -390,13 +448,17 @@ export function availableEditorParameters() {
     editorSpacing, editorEffectLevel, editorVisibilityOptions,
     editorPhotoLayout, editorPhotoLayoutVariant, editorLayoutSystem,
     editorTextTreatment, editorPhotoTreatment,
+    editorElementTarget, editorElementVisibility,
     editorElementAmount, editorElementScale, editorElementPosition, editorElementVariation, editorElementColor
   } = getEditorControls();
 
   const editorParameters = [
     { key: 'profile', label: 'Editorial profile', control: editorProfile },
     { key: 'visualMode', label: 'Visual language', control: editorVisualMode },
-    { key: 'elementAmount', label: 'Elements', control: editorElementAmount },
+    { key: 'elementTarget', label: 'Adjust element', control: editorElementTarget },
+    editorElementTargetValue() === 'all'
+      ? { key: 'elementAmount', label: 'Elements', control: editorElementAmount }
+      : { key: 'elementVisibility', label: 'Show element', control: editorElementVisibility },
     { key: 'elementScale', label: 'Element size', control: editorElementScale },
     { key: 'elementPosition', label: 'Element position', control: editorElementPosition },
     { key: 'elementVariation', label: 'Page variation', control: editorElementVariation },
@@ -1248,7 +1310,9 @@ export function applyEditorPage(pageNode, page, pageIndex) {
     scale: resolvedEditorSetting('elementScale', pageIndex),
     position: resolvedEditorSetting('elementPosition', pageIndex),
     variation: resolvedEditorSetting('elementVariation', pageIndex),
-    color: resolvedEditorSetting('elementColor', pageIndex)
+    color: resolvedEditorSetting('elementColor', pageIndex),
+    overrides: elementOverridesFor(profile, pageIndex),
+    selected: getEditorControls().bookletEditor?.hidden ? '' : (editorElementTargetValue() === 'all' ? '' : editorElementTargetValue())
   });
 
   // Layout system override
@@ -2099,12 +2163,25 @@ export function syncBookletEditorControls() {
   if (controls.editorSpacing) controls.editorSpacing.value = get('spacing');
   if (controls.editorEffectLevel) controls.editorEffectLevel.value = get('effectLevel');
   if (controls.editorElementAmount) controls.editorElementAmount.value = resolvedElementAmount(index);
-  if (controls.editorElementScale) controls.editorElementScale.value = get('elementScale') ?? 0;
-  if (controls.editorElementPosition) controls.editorElementPosition.value = get('elementPosition') ?? 0;
-  if (controls.editorElementVariation) controls.editorElementVariation.value = get('elementVariation') ?? 40;
+  populateElementTargets();
+  // A selected element shows its own value, or the shared one until it is changed.
+  const elementValue = key => {
+    const scoped = elementSettingKey(key);
+    return scoped !== key && hasEditorOverride(scoped, index) ? resolvedEditorSetting(scoped, index) : get(key);
+  };
+  if (controls.editorElementScale) controls.editorElementScale.value = elementValue('elementScale') ?? 0;
+  if (controls.editorElementPosition) controls.editorElementPosition.value = elementValue('elementPosition') ?? 0;
+  if (controls.editorElementVariation) controls.editorElementVariation.value = elementValue('elementVariation') ?? 40;
   if (controls.editorElementColor) {
-    controls.editorElementColor.value = get('elementColor') || 'auto';
+    controls.editorElementColor.value = elementValue('elementColor') || 'auto';
     syncEditorSliderSelect(controls.editorElementColor);
+  }
+  if (controls.editorElementVisibility) {
+    const visibilityKey = elementSettingKey('elementVisibility');
+    controls.editorElementVisibility.value = editorElementTargetValue() !== 'all' && hasEditorOverride(visibilityKey, index)
+      ? resolvedEditorSetting(visibilityKey, index)
+      : 'auto';
+    syncEditorSliderSelect(controls.editorElementVisibility);
   }
   if (controls.editorShowTitle) controls.editorShowTitle.checked = Boolean(get('showTitle'));
   if (controls.editorShowSubtitle) controls.editorShowSubtitle.checked = Boolean(get('showSubtitle'));
@@ -2443,6 +2520,15 @@ function bindEditorPageInteractions() {
         return;
       }
 
+      const elementTarget = event.target.closest('.se');
+      if (elementTarget && controls.bookletEditor && !controls.bookletEditor.hidden) {
+        event.preventDefault();
+        event.stopPropagation();
+        selectEditorPage(index);
+        selectEditorElement(elementTarget.dataset.element);
+        return;
+      }
+
       if (textTarget && !controls.editorPhotoManager?.hidden) closePhotoManager();
       if (textTarget && wasAlreadyActive) {
         event.preventDefault();
@@ -2481,6 +2567,13 @@ function bindEditorPageInteractions() {
 
       if (editorActiveTextSession) {
         closeTextEditor(false);
+        return;
+      }
+
+      const elementTarget = event.target.closest('.se');
+      if (elementTarget) {
+        selectEditorPage(index);
+        selectEditorElement(elementTarget.dataset.element);
         return;
       }
 
@@ -2605,6 +2698,10 @@ export function initializeBookletEditor(item) {
   if (controls.editorElementColor) {
     bindStyleSlider(controls.editorElementColor);
   }
+  if (controls.editorElementVisibility) {
+    bindStyleSlider(controls.editorElementVisibility);
+  }
+  populateElementTargets(true);
   if (controls.editorLayoutSystem) {
     bindStyleSlider(controls.editorLayoutSystem);
   }
@@ -2717,15 +2814,27 @@ export function setupEditorEventListeners() {
     [controls.editorSpacing, 'spacing', Number],
     [controls.editorEffectLevel, 'effectLevel', Number],
     [controls.editorElementAmount, 'elementAmount', Number],
-    [controls.editorElementScale, 'elementScale', Number],
-    [controls.editorElementPosition, 'elementPosition', Number],
-    [controls.editorElementVariation, 'elementVariation', Number],
-    [controls.editorElementColor, 'elementColor', value => value]
   ].forEach(([control, key, parse]) => {
     if (!control) return;
     const eventName = control.type === 'range' ? 'input' : 'change';
     control.addEventListener(eventName, () => setEditorValue(key, parse(control.value)));
   });
+
+  [
+    [controls.editorElementScale, 'elementScale', Number],
+    [controls.editorElementPosition, 'elementPosition', Number],
+    [controls.editorElementVariation, 'elementVariation', Number],
+    [controls.editorElementColor, 'elementColor', value => value],
+    [controls.editorElementVisibility, 'elementVisibility', value => value]
+  ].forEach(([control, key, parse]) => {
+    if (!control) return;
+    const eventName = control.type === 'range' ? 'input' : 'change';
+    control.addEventListener(eventName, () => {
+      if (key === 'elementVisibility' && editorElementTargetValue() === 'all') return;
+      setEditorValue(elementSettingKey(key), parse(control.value));
+    });
+  });
+  controls.editorElementTarget?.addEventListener('change', () => selectEditorElement(controls.editorElementTarget.value));
 
   controls.editorFontFamily?.addEventListener('change', () => {
     setEditorFontForTargets(controls.editorFontFamily.value);

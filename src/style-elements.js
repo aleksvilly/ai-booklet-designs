@@ -12,6 +12,8 @@ import { safeClass } from './utils.js';
 // or a hex value, for styles whose colours are not in palette slots.
 // Text may contain {page}, replaced with the page number.
 // Layout is seeded by page index, so a booklet always renders the same way.
+// Per-element overrides ({ [id]: { visible, scale, position, variation, color } })
+// replace the shared values for one element; visible is auto | show | hide.
 
 export const ELEMENT_COLORS = ['auto', 'c1', 'c2', 'c3', 'c4', 'ink'];
 const COLOR_TOKENS = { c1: 'var(--c1)', c2: 'var(--c2)', c3: 'var(--c3)', c4: 'var(--c4)', ink: 'currentColor' };
@@ -75,6 +77,11 @@ function perimeterPoint(t) {
   return { x: 0, y: 100 - along, side: 'left' };
 }
 
+export function elementLabel(element) {
+  const id = String(element.id || element.kind || '');
+  return id.charAt(0).toUpperCase() + id.slice(1).replace(/-/g, ' ');
+}
+
 function chooseElements(elements, count, variation, random) {
   const order = elements.map((element, index) => ({ element, index }));
   if (variation >= 50) {
@@ -133,21 +140,29 @@ function elementNode(element, settings, seed, lang, pageNumber) {
   return node;
 }
 
-export function renderStyleElements(pageNode, { profile, pageIndex, amount, scale = 0, position = 0, variation = 40, color = 'auto' }) {
+function normalizedSettings({ scale = 0, position = 0, variation = 40, color = 'auto' }) {
+  return {
+    scale: Math.max(-100, Math.min(100, Number(scale) || 0)),
+    position: Math.max(0, Math.min(100, Number(position) || 0)),
+    variation: Math.max(0, Math.min(100, Number(variation) || 0)),
+    color: ELEMENT_COLORS.includes(color) ? color : 'auto'
+  };
+}
+
+export function renderStyleElements(pageNode, {
+  profile, pageIndex, amount, scale = 0, position = 0, variation = 40, color = 'auto',
+  overrides = {}, selected = ''
+}) {
   pageNode.querySelector(':scope > .style-elements')?.remove();
   const set = styleElementSet(profile);
   pageNode.classList.toggle('has-style-elements', Boolean(set));
   if (!set || !Array.isArray(set.elements) || !set.elements.length) return;
 
   const level = Math.max(0, Math.min(5, Number(amount ?? set.defaultAmount ?? 1)));
-  if (!level) return;
-  const count = Math.max(1, Math.round((level / 5) * set.elements.length));
-  const settings = {
-    scale: Math.max(-100, Math.min(100, Number(scale) || 0)),
-    position: Math.max(0, Math.min(100, Number(position) || 0)),
-    variation: Math.max(0, Math.min(100, Number(variation) || 0)),
-    color: ELEMENT_COLORS.includes(color) ? color : 'auto'
-  };
+  const forced = set.elements.filter(element => overrides[element.id]?.visible === 'show');
+  if (!level && !forced.length) return;
+  const count = level ? Math.max(1, Math.round((level / 5) * set.elements.length)) : 0;
+  const settings = normalizedSettings({ scale, position, variation, color });
   const seed = `${profile}:${pageIndex}`;
   const random = seededRandom(hashString(seed));
   const lang = document.documentElement.lang === 'ru' ? 'ru' : 'en';
@@ -155,7 +170,14 @@ export function renderStyleElements(pageNode, { profile, pageIndex, amount, scal
   const layer = document.createElement('div');
   layer.className = 'style-elements';
   layer.setAttribute('aria-hidden', 'true');
-  chooseElements(set.elements, count, settings.variation, random)
-    .forEach(element => layer.append(elementNode(element, settings, seed, lang, pageIndex + 1)));
+  const chosen = chooseElements(set.elements, count, settings.variation, random)
+    .filter(element => overrides[element.id]?.visible !== 'hide');
+  forced.forEach(element => { if (!chosen.includes(element)) chosen.push(element); });
+  chosen.forEach(element => {
+    const own = overrides[element.id] || {};
+    const node = elementNode(element, normalizedSettings({ ...settings, ...own }), seed, lang, pageIndex + 1);
+    if (selected && element.id === selected) node.classList.add('se-selected');
+    layer.append(node);
+  });
   pageNode.append(layer);
 }
