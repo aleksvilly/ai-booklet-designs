@@ -689,6 +689,7 @@ const photoCopy = isRussian ? {
 
   <slot name="footer" />
 
+  <script is:inline define:vars={{ siteBase: import.meta.env.BASE_URL }}>window.BASE_URL = siteBase;</script>
   <script is:inline src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/vendor/html-to-image.min.js`}></script>
   <script is:inline src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/vendor/jspdf.umd.min.js`}></script>
   <script type="module" src={`${import.meta.env.BASE_URL.replace(/\/$/, '')}/src/main.js`}></script>
