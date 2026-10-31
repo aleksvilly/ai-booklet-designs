@@ -59,6 +59,8 @@
 - [x] Gift links V1: "Send as a gift" compresses template, name and editor
       state into `#gift=` (URL fragment, never sent to a server). Recipients
       get their own editable copy. Uploaded device photos are not included.
+- [x] Gift links V2: uploaded gift photos stored by `worker/` in Cloudflare
+      Workers KV (free plan, 1-year expiry), live at aleksvilly.workers.dev.
 - [x] `black-white-noir` promoted from a legacy generator array into the style
       catalog so the editor can label and select it.
 
@@ -78,8 +80,6 @@
 - [ ] Add effect controls to the live booklet/spread/page editor.
 - [ ] Add per-property inheritance indicators and a one-tap “return to parent”.
 - [ ] Save an edited booklet as a reusable personal template.
-- [ ] Gift links V2: deploy `worker/` (Cloudflare Workers KV, free plan) and
-      set `GIFT_PHOTO_API`; code and local tests are done.
 - [ ] Pass the home demo's quiet/loud value into the gift template's effect level.
 - [ ] Photo manager V2: protected Unsplash/Pexels search proxy with provider
       attribution and required download tracking.

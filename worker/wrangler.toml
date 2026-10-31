@@ -12,4 +12,4 @@ PHOTO_TTL_DAYS = "365"
 # Created with `npx wrangler kv namespace create GIFT_PHOTOS`.
 [[kv_namespaces]]
 binding = "GIFT_PHOTOS"
-id = "REPLACE_WITH_KV_NAMESPACE_ID"
+id = "7fefb938a2e8490882fa6cdf41b478cc"

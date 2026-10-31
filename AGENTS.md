@@ -571,7 +571,8 @@ Once the editor is closed, normal backdrop and Escape behaviour resumes.
   card on the account). Photos upload only after the sender confirms on
   "Send as a gift", are re-encoded to ≤1600 px, and expire after
   `PHOTO_TTL_DAYS` (365). `GIFT_PHOTO_API` in `src/config.js` is the Worker
-  URL; empty switches uploads off. `ALLOWED_ORIGINS` is a browser-abuse limit,
+  URL (<https://ai-booklet-gift-photos.aleksvilly.workers.dev>, deployed with
+  `cd worker && npx wrangler deploy`); empty switches uploads off. `ALLOWED_ORIGINS` is a browser-abuse limit,
   not authentication. `ADMIN_TOKEN` (for DELETE) is a Wrangler secret and must
   never be committed. Do not move this to R2 or a paid plan without asking.
 

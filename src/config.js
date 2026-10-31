@@ -13,7 +13,7 @@ export const GENERATION_ENABLED = false;
 
 // Cloudflare Worker that stores gift photos in Workers KV (see worker/).
 // Empty means uploads are off and gift links carry only URL photos.
-export const GIFT_PHOTO_API = '';
+export const GIFT_PHOTO_API = 'https://ai-booklet-gift-photos.aleksvilly.workers.dev';
 
 export const WAITING_GIFS = [
   'https://media.giphy.com/media/13HgwGsXF0aiGY/giphy.gif',
